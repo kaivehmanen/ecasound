@@ -64,7 +64,7 @@ void* ECA_CONTROL_BASE::start_normal_thread(void *ptr)
   sigaddset(&sigset, SIGINT);
   sigprocmask(SIG_BLOCK, &sigset, 0);
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects,"(eca-controller) Engine-thread pid: " + kvu_numtostr(getpid()));
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"Engine-thread pid: " + kvu_numtostr(getpid()));
   ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
   ctrl_base->run_engine();
   return 0;
@@ -122,7 +122,7 @@ void ECA_CONTROL_BASE::start(void)
   }
 
   if (is_engine_started() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-controller) Can't start processing: couldn't start engine.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: couldn't start engine.");
     return;
   }  
 
@@ -166,7 +166,7 @@ void ECA_CONTROL_BASE::run(bool batchmode)
   }
 
   if (is_engine_started() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control-base) Can't start processing: couldn't start the engine. (2)");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: couldn't start the engine. (2)");
   } 
   else { 
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
@@ -190,7 +190,7 @@ void ECA_CONTROL_BASE::run(bool batchmode)
 	else if (is_engine_started() == true) {
 	  if (engine_repp->status() == ECA_ENGINE::engine_status_error) {
 	    /* not running, so status() is either 'not_ready' or 'error' */
-	    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-control-base) Can't start processing: engine startup failed. (3)");
+	    ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: engine startup failed. (3)");
 	    break;
 	  }
 	  /* other valid state alternatives: */
@@ -266,7 +266,7 @@ void ECA_CONTROL_BASE::stop_on_condition(void)
   if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing stopped (cond)");
   engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "(eca-controller-base) Received stop-cond");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Received stop-cond");
 
   // --
   // blocks until engine has stopped (or 5 sec has passed);
