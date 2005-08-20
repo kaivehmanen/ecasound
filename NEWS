@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 190805) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 200805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,9 +16,13 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 xxyy2005 (v2.4.3)  -** stable release **-
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
+	- changed: scheduling changes for MIDI and disk i/o subsystems; 
+		   possibly affects performance in certain use-scenarios
 	- fixed: failed runtime check from eca-fileio-stream.cpp:159
 	- fixed: eiam - ao-remove'ing JACK input/outputs caused a segfault
 	- fixed: --disable-jack/--enable-jack did not work
+	- fixed: system-hangs when run in realtime mode and using a large
+	         disk i/o double-buffer (-z:db)
 07082005 (v2.4.2)  -** stable release **-
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
