@@ -21,6 +21,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: scheduling changes for MIDI and disk i/o subsystems; 
 		   possibly affects performance in certain use-scenarios;
 		   fixes debian bug #317900
+	- changed: updated config.guess and config.sub to more recent
+		   versions (timestamp 2005-04-22)
 	- fixed: failed runtime check from eca-fileio-stream.cpp:159
 	- fixed: eiam - ao-remove'ing JACK input/outputs caused a segfault
 	- fixed: --disable-jack/--enable-jack did not work
