@@ -126,7 +126,7 @@ void EWFFILE::read_buffer(SAMPLE_BUFFER* sbuf)
    *       position_in_samples value
    */
 
-  dump_child_debug();
+  //dump_child_debug();
 
   if (child_active != true) {
     // ---
