@@ -2,7 +2,7 @@
 // audioio-db-client.cpp: Client class for double-buffering providing 
 //                        additional layer of buffering for objects
 //                        derived from AUDIO_IO.
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
