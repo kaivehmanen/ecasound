@@ -17,15 +17,13 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 -----------------------------------------------------------------------
 [ Active development areas ]
 
-2.3:
-
-- improving support for JACK transport functionality
-- standalone ECI implementations (C, python, ruby, emacs-lisp, ...)
-- proper escaping of filenames, plugin description fields, etc 
-
 2.4:
 
 - better handling and reporting of errors when parsing chainsetups
+- addition of separate modes for 'sum-divide' and 'sum-only' mixing
+
+2.5: 
+
 - improvements to the .ewf file format
 - improve support for use-scenarios involving audio file sequencing 
 - if time permits: dithering, OSC support
