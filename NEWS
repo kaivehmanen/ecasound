@@ -13,11 +13,14 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xxyy2005 (v2.4.3)  -** stable release **-
+21082005 (v2.4.3)  -** stable release **-
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
+	- added: runtime warning about possible problems when mixing 
+		 resample and jack objects
 	- changed: scheduling changes for MIDI and disk i/o subsystems; 
-		   possibly affects performance in certain use-scenarios
+		   possibly affects performance in certain use-scenarios;
+		   fixes debian bug #317900
 	- fixed: failed runtime check from eca-fileio-stream.cpp:159
 	- fixed: eiam - ao-remove'ing JACK input/outputs caused a segfault
 	- fixed: --disable-jack/--enable-jack did not work
