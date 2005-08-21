@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050821-7
+:version: 20050821-8
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -421,7 +421,7 @@ Use of 3rd person
     "Writes samples to memory." instead of "Write samples to memory."
 Sentences start with a verb
     "Writes samples to memory." instead of "Samples are written to memory."
-This instead of 
+Use "this" instead of "the"
     "Get controllers connected to this effect." instead of "Get controllers connected to the effect.
 
 
@@ -987,7 +987,7 @@ Input/output:
 - audio objects can be opened for reading writing or read\&write
 - ... effects are not modal (i.e. modeless)
 - audio objects read from, or write to, a buffer
-- ... effects get a buffer which they operate (in-place processing)
+- ... effects get a buffer which they operate on (in-place processing)
 
 Audio format:
 
