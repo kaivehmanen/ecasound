@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050819-5
+:version: 20050821-6
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -527,21 +527,6 @@ multiple chains is mixed together to one output object.
 
 Control flow
 ============
-
-Basic audio flow inside an Ecasound chainsetup is as follows: Audio 
-data is routed from input audio objects to a group of chains. In
-the chains audio data is processed using chain operators. After
-processing data is routed to output objects.
-
-Using internal loop devices, it's also possible to route signals 
-from one chain to another. Looping causes extra latency of one
-engine cycle. 
-
-Routing of signals is based on the ability to assign inputs and 
-outputs to multiple chains. Assigning an input object to multiple
-chains divides the audio signal generating multiple copies of
-the original input data. Similarly with an output object, data from
-multiple chains is mixed together to one output object.
 
 Batch operation
 ---------------
