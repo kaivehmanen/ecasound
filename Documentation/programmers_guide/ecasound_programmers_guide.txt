@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050821-6
+:version: 20050821-7
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -34,6 +34,8 @@ Hmm, why doesn't this work...?
 
 ::
 
+| 21.08.2005 - Typos fixed, removed duplicated section on audio
+|              routing. Minor updates to various sections.
 | 25.04.2005 - Minor updates.
 | 28.03.2005 - Added section about "Source code markup", update the
 |              "Design principles" section.
@@ -297,15 +299,18 @@ updates have been made so far to the sources:
 eca-style-version: 1
     The opening braces of multi-line functions should be put on a separate
     line, at column 1, instead of being on the same line with 
-    function signature. This change only applies to functions, IOW 
-    the K&R style is followed.
+    function signature. This change only applies to functions, in
+    other words the K&R style is followed.
 
 eca-style-version: 2
-    Extra parenthesis around "return" values should be removed. 
+    Extra parenthesis around "return" values should be removed 
+    ("return" is a keyword, not a function).
 
 eca-style-version: 3
     The module name prefix, for example "(eca-session) ", should
-    be removed from ECA_LOG_MSG() statements.
+    be removed from ECA_LOG_MSG() statements. The module prefix
+    is added automatically to the debug messages when debug
+    level "module_names" is activated.
 
 If a file has been updated according to these guidelines,
 the appropriate style version should be mentioned at the
@@ -715,7 +720,7 @@ DYNAMIC_PARAMETERS<T> - dynamic-parameters.h
 
 Implemented by all classes that provide a set of generic parameters
 of type T. Parameter can be observed and modified, and they
-usually are identiefied by a unique name and a more verbose 
+usually are identified by a unique name and a more verbose 
 description. Number of parameters can vary dynamically. Other 
 objects can access these parameters without detailed knowledge of 
 the object itself.
@@ -777,7 +782,7 @@ Virtual base class for chain operators.
 CONTROLLER_SOURCE - ctrl-source.h
 ---------------------------------
 
-Virtual Base class for all controller sources.
+Virtual base class for all controller sources.
 
 MIDI_IO - midiio.h
 ------------------
@@ -904,7 +909,7 @@ operation (=operation()). Basicly you have three alternatives:
   operation.
 
 - If you are lazy, just declare the two functions as null
-  functions, and put them in _private_ access scope. At least this way
+  functions, and put them in "private:"_ access scope. At least this way
   nobody will use the functions by accident!
 
 
@@ -980,31 +985,31 @@ though, there are some differences:
 Input/output:
 
 - audio objects can be opened for reading writing or read\&write
-- effects are modeless
-- audio objects read from, or write to a buffer
-- effects get a buffer which they operate (in-place processing)
+- ... effects are not modal (i.e. modeless)
+- audio objects read from, or write to, a buffer
+- ... effects get a buffer which they operate (in-place processing)
 
 Audio format:
 
 - audio objects have a distinct audio format (sample rate, bits,
   channels)
-- effects should be capable of accepting audio data in any format
+- .... effects should be capable of accepting audio data in any format
   (this is usually easy as Ecasound converts all input data to its
   internal format)
 
 Control:
 
 - audio objects can be opened, closed, prepared, started and stopped
-- effects don't have a running state
+- ... effects have a much simpler running state: either uninitialized or ready-for-processing
 
 Position:
 
 - audio objects have length and position attributes
-- effects just process buffers and don't know about their position
+- ... effects just process buffers and don't need to care about position information
 
 A good example of the similarity between the two types are LADSPA
 oscillator plugins. Although they are effects, you can easily use them 
-as audio inputs by specifying:
+as audio sources (inputs) by specifying:
 
 ::
 
@@ -1079,7 +1084,7 @@ Specific tasks ECI is aimed at:
 - 3. sound services to other apps
 
 
-NetECI - {[}various{]}
+NetECI - [various]
 ======================
 
 NetECI is a network version of the ECI API. When Ecasound is
@@ -1098,7 +1103,7 @@ See implementation of ecamonitor (part of ecatools),
 for a working example.
 
 
-Libecasound's ECA_CONTROL class - {[}C++{]}
+Libecasound's ECA_CONTROL class - [C++]
 ===========================================
 
 Note! Direct use of libecasound and libkvutils is
@@ -1137,7 +1142,7 @@ batch mode:
 | --cut--
 
  
-Ecasound classes as building blocks - {[}C++{]}
+Ecasound classes as building blocks - [C++]
 ===============================================
 
 Note! Direct use of libecasound and libkvutils is
