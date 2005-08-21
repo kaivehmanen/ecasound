@@ -504,8 +504,14 @@ void AUDIO_IO_DB_SERVER::io_thread(void)
     DB_PROFILING_STATEMENT(impl_repp->looptimer_rep.start());
 
     for(unsigned int p = 0; p < clients_rep.size(); p++) {
+
       if (clients_rep[p] == 0 ||
-	  buffers_rep[p]->finished_rep.get()) continue;
+	  buffers_rep[p]->finished_rep.get()) {
+	continue;
+      }
+      else if (clients_rep[p]->finished() == true) {
+	buffers_rep[p]->finished_rep.set(1);
+      }
 
       int free_space = 0;
 
