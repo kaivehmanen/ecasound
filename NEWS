@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200805) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 210805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -23,6 +23,10 @@ xxyy2005 (v2.4.3)  -** stable release **-
 	- fixed: --disable-jack/--enable-jack did not work
 	- fixed: system-hangs when run in realtime mode and using a large
 	         disk i/o double-buffer (-z:db)
+	- fixed: ewf-debugging output was left enabled in 2.4.2 release
+	- fixed: bug in detecting finished-state with .ewf files when
+		 used with -z:db mode enabled -> caused flood of underrun
+		 warnings with multi .ewf file sessions
 07082005 (v2.4.2)  -** stable release **-
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
