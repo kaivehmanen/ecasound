@@ -2236,6 +2236,7 @@ void ECA_CHAINSETUP::add_controller(GENERIC_CONTROLLER* csrc)
   // --------
   DBC_REQUIRE(csrc != 0);
   DBC_REQUIRE(is_locked() != true);
+  DBC_REQUIRE(selected_chains().size() == 1);
   // --------
 
 #ifndef ECA_DISABLE_EFFECTS
@@ -2272,6 +2273,7 @@ void ECA_CHAINSETUP::add_chain_operator(CHAIN_OPERATOR* cotmp)
   // --------
   DBC_REQUIRE(cotmp != 0);
   DBC_REQUIRE(is_locked() != true);
+  DBC_REQUIRE(selected_chains().size() == 1);
   // --------
   
 #ifndef ECA_DISABLE_EFFECTS

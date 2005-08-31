@@ -619,12 +619,17 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const string& argu)
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "Interpreting preset \"" + argu + "\".");
       CHAIN_OPERATOR* cop = 0;
 
+      if (csetup_repp->selected_chainids.size() != 1) {
+	ECA_LOG_MSG(ECA_LOGGER::info, 
+		    "ERROR: Exactly one chain should be selected when adding chain operators.");
+	match = false;
+      }
+
       if (argu.size() < 3) return;  
       switch(argu[2]) {
       case 'f':
 	{
 #ifndef ECA_DISABLE_EFFECTS
-//  	  add_chain_operator(dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(kvu_get_argument_number(1,argu))));
           cop = dynamic_cast<CHAIN_OPERATOR*>(new FILE_PRESET(kvu_get_argument_number(1,argu)));
 #endif
 	  break;
@@ -649,7 +654,7 @@ void ECA_CHAINSETUP_PARSER::interpret_effect_preset (const string& argu)
           for(int n = 0; n < cop->number_of_params(); n++) {
               cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 2, argu).c_str()));
           }
-          csetup_repp->add_chain_operator(cop);
+	  csetup_repp->add_chain_operator(cop);
       }
       break;
     }
@@ -951,8 +956,15 @@ void ECA_CHAINSETUP_PARSER::interpret_chain_operator (const string& argu)
   CHAIN_OPERATOR* t = ECA_OBJECT_FACTORY::create_chain_operator(argu);
   if (t == 0) t = ECA_OBJECT_FACTORY::create_ladspa_plugin(argu);
   if (t != 0) {
-    csetup_repp->add_chain_operator(t);
-    istatus_rep = true;
+    if (csetup_repp->selected_chainids.size() == 1) {
+      csetup_repp->add_chain_operator(t);
+      istatus_rep = true;
+    }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "ERROR: Exactly one chain should be selected when adding chain operators.");
+      delete t;
+    }
   }
   else 
     interpret_effect_preset(argu);
@@ -982,13 +994,20 @@ void ECA_CHAINSETUP_PARSER::interpret_controller (const string& argu)
   else {
     GENERIC_CONTROLLER* t = ECA_OBJECT_FACTORY::create_controller(argu);
     if (t != 0) {
-      MIDI_CLIENT* p = dynamic_cast<MIDI_CLIENT*>(t->source_pointer());
-      if (p != 0) {
-	csetup_repp->midi_server_needed_rep = true;
-	p->register_server(csetup_repp->midi_server_repp);
+      if (csetup_repp->selected_chainids.size() != 1) {
+	ECA_LOG_MSG(ECA_LOGGER::info, 
+		    "ERROR: Exactly one chain should be selected when adding controllers.");
+	delete t;
       }
-      csetup_repp->add_controller(t);
-      istatus_rep = true;
+      else {
+	MIDI_CLIENT* p = dynamic_cast<MIDI_CLIENT*>(t->source_pointer());
+	if (p != 0) {
+	  csetup_repp->midi_server_needed_rep = true;
+	  p->register_server(csetup_repp->midi_server_repp);
+	}
+	csetup_repp->add_controller(t);
+	istatus_rep = true;
+      }
     }
   }
 }
