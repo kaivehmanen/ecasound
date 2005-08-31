@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 210805) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 310805) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -14,6 +14,14 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 -----------------------------------------------------------------------
 
 ????2005 (v2.4.4)  -** stable release **-
+	- added: eiam - ai-describe, ao-describe, cop-describe and
+	         ctrl-describe commands; see ecasound-iam(1)
+	- changed: minor changes to ecaplay console output
+	- fixed: compile-time bug in ecasignalview.cpp
+	- fixed: saving chainsetups where a ctrl is connected to
+	         a effect preset 
+	- fixed: DBC_CHECK failure from eca-chainsetup.cpp when
+	         running cs-edit on a non-connected chainsetup
 21082005 (v2.4.3)  -** stable release **-
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]

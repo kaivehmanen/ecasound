@@ -721,7 +721,7 @@ string CHAIN::to_string(void) const
     if (fpreset != 0) {
       t << "-pf:" << fpreset->filename();
       if (fpreset->number_of_params() > 0) t << ",";
-      t << operator_parameters_to_string(fpreset);
+      t << ECA_OBJECT_FACTORY::operator_parameters_to_eos(fpreset);
       t << " ";
     }
     else {
@@ -730,113 +730,33 @@ string CHAIN::to_string(void) const
       if (gpreset != 0) {
 	t << "-pn:" << gpreset->name();
 	if (gpreset->number_of_params() > 0) t << ",";
-	t << operator_parameters_to_string(gpreset);
+	t << ECA_OBJECT_FACTORY::operator_parameters_to_eos(gpreset);
 	t << " ";
       }
       else {
-        t << chain_operator_to_string(chainops_rep[q]) << " ";
+        t << ECA_OBJECT_FACTORY::chain_operator_to_eos(chainops_rep[q]) << " ";
       }
+    }
+    
+    /* check if the chainop is controlled by a gcontroller */
+    std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
+    while (p < gcontrollers_rep.size()) {
+      if (chainops_rep[q] == gcontrollers_rep[p]->target_pointer()) {
+	t << " " << ECA_OBJECT_FACTORY::controller_to_eos(gcontrollers_rep[p]);
+	/* check if the gcontroller is controlled by another gcontroller */
+	std::vector<GENERIC_CONTROLLER*>::size_type r = 0;
+	while (r < gcontrollers_rep.size()) {
+	  if (p != r && 
+	      gcontrollers_rep[p] == gcontrollers_rep[r]->target_pointer()) {
+	    t << " -kx " << ECA_OBJECT_FACTORY::controller_to_eos(gcontrollers_rep[r]);
+	  }
+	  ++r;
+	} 
+      }
+      ++p;
     }
 #endif
     ++q;
-  }
-
-  return(t.to_string());
-}
-
-/**
- * Makes an EOS-compatible option describing the current state
- * of chain operator 'gctrl'.
- */
-string CHAIN::chain_operator_to_string(CHAIN_OPERATOR* chainop) const
-{
-  MESSAGE_ITEM t;
-  
-  // >--
-  // special handling for LADPSA-plugins
-#ifndef ECA_DISABLE_EFFECTS
-  EFFECT_LADSPA* ladspa = dynamic_cast<EFFECT_LADSPA*>(chainop);
-  if (ladspa != 0) {
-    t << "-eli:" << ladspa->unique_number();
-    if (chainop->number_of_params() > 0) t << ",";
-  }
-  else {
-    ECA_OBJECT_MAP& copmap = ECA_OBJECT_FACTORY::chain_operator_map();
-    ECA_PRESET_MAP& presetmap = ECA_OBJECT_FACTORY::preset_map();
-    
-    string idstring = copmap.object_identifier(chainop);
-    if (idstring.size() == 0) {
-      idstring = presetmap.object_identifier(chainop);
-    }
-    if (idstring.size() == 0) {
-      ECA_LOG_MSG(ECA_LOGGER::errors,
-		  "Unable to save chain operator \"" +
-		  chainop->name() + "\".");
-      return t.to_string();
-    }
-     
-    t << "-" << idstring;
-    if (chainop->number_of_params() > 0) t << ":";
-  }
-#endif
-  // --<
-
-  t << operator_parameters_to_string(chainop);
-
-  std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
-  while (p < gcontrollers_rep.size()) {
-    if (chainop == gcontrollers_rep[p]->target_pointer()) {
-      t << " " << controller_to_string(gcontrollers_rep[p]);
-    }
-    ++p;
-  } 
-
-  return t.to_string();
-}
-
-/**
- * Makes an EOS-compatible option describing the current state
- * of controller object 'gctrl'.
- */
-string CHAIN::controller_to_string(GENERIC_CONTROLLER* gctrl) const
-{
-  MESSAGE_ITEM t;
-  ECA_OBJECT_MAP& ctrlmap = ECA_OBJECT_FACTORY::controller_map();
-  string idstring = ctrlmap.object_identifier(gctrl);
-
-  if (idstring.size() == 0) {
-    ECA_LOG_MSG(ECA_LOGGER::errors, 
-		"Unable to save controller \"" +
-		gctrl->name() + "\".");
-    return(t.to_string());
-  }
-
-  t << "-" << idstring;
-  t << ":";
-  t << operator_parameters_to_string(gctrl);
-
-  std::vector<GENERIC_CONTROLLER*>::size_type p = 0;
-  while (p < gcontrollers_rep.size()) {
-    if (gctrl == gcontrollers_rep[p]->target_pointer()) {
-      t << " -kx " << controller_to_string(gcontrollers_rep[p]);
-    }
-    ++p;
-  } 
-
-  return t.to_string();
-}
-
-/**
- * Makes an EOS-compatible, comma-separated list of parameter 
- * values for chain operator 'chainop'.
- */
-string CHAIN::operator_parameters_to_string(const OPERATOR* chainop) const
-{
-  MESSAGE_ITEM t;
-  
-  for(int n = 0; n < chainop->number_of_params(); n++) {
-    t << chainop->get_parameter(n + 1);
-    if (n + 1 < chainop->number_of_params()) t << ",";
   }
 
   return t.to_string();

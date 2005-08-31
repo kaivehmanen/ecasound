@@ -49,7 +49,6 @@ class ECA_CHAINSETUP_PARSER {
   std::string outputs_to_string(void) const;
   std::string chains_to_string(void) const;
   std::string midi_to_string(void) const;
-  std::string audioio_to_string(const AUDIO_IO* aiod, const std::string& direction) const;
   std::string general_options_to_string(void) const;
 
  private:

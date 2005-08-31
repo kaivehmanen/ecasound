@@ -17,6 +17,7 @@ class ECA_OBJECT_MAP;
 class ECA_PRESET_MAP;
 class EFFECT_LADSPA;
 class GENERIC_CONTROLLER;
+class OPERATOR;
 class LOOP_DEVICE;
 class MIDI_IO;
 class PRESET;
@@ -71,6 +72,17 @@ class ECA_OBJECT_FACTORY {
   /*@{*/
 
   static std::string probe_default_output_device(void);
+
+  /*@}*/
+
+  /** @name Functions for describing existing objects with EOS strings */
+  /*@{*/
+
+  static std::string chain_operator_to_eos(const CHAIN_OPERATOR* chainop);
+  static std::string controller_to_eos(const GENERIC_CONTROLLER* gctrl);
+  static std::string operator_parameters_to_eos(const OPERATOR* chainop);
+  static std::string audio_object_to_eos(const AUDIO_IO* aiod);
+  static std::string audio_object_format_to_eos(const AUDIO_IO* aiod);
 
   /*@}*/
 

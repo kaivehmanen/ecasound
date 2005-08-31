@@ -1,3 +1,12 @@
+2005-08-31  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-object-factory.h (*_to_eos): Added.
+	* eca-chain.cpp (chain_operator_to_string): Removed.
+	* eca-chain.cpp (controller_to_string): Removed.
+	* eca-chain.cpp (operator_params_to_string): Removed.
+	* eca-chainsetup-parser.cpp (audioio_to_string): Removed.
+        * library interface version updated to 16:0:0
+
 2005-08-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
         * library interface version 15 frozen (2.4.3 release)

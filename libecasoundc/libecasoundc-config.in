@@ -19,10 +19,6 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-#libecasound_version=@LIBECASOUND_VERSION@
-#libecasoundc_version=@LIBECASOUNDC_VERSION@
-#libkvutils_version=@LIBKVUTILS_VERSION@
-
 flags=""
 
 while test $# -gt 0

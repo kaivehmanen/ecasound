@@ -107,9 +107,6 @@ class CHAIN : public ECA_AUDIO_POSITION {
   void refresh_parameters(void);
 
   std::string to_string(void) const;
-  std::string chain_operator_to_string(CHAIN_OPERATOR* chainop) const;
-  std::string controller_to_string(GENERIC_CONTROLLER* gctrl) const;
-  std::string operator_parameters_to_string(const OPERATOR* chainop) const;
 
   /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
   /*@{*/

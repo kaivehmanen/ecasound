@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-object-factory.cpp: Abstract factory for creating libecasound 
 //                         objects.
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -641,4 +641,123 @@ std::string ECA_OBJECT_FACTORY::probe_default_output_device(void)
     }
 
     return default_output;
+}
+
+/**
+ * Makes an Ecasound Option Syntax (EOS) compatible string
+ * describing the current state of chain operator 'gctrl'.
+ */
+string ECA_OBJECT_FACTORY::chain_operator_to_eos(const CHAIN_OPERATOR* chainop)
+{
+  MESSAGE_ITEM t;
+  
+  // >--
+  // special handling for LADPSA-plugins
+#ifndef ECA_DISABLE_EFFECTS
+  const EFFECT_LADSPA* ladspa = dynamic_cast<const EFFECT_LADSPA*>(chainop);
+  if (ladspa != 0) {
+    t << "-eli:" << ladspa->unique_number();
+    if (chainop->number_of_params() > 0) t << ",";
+  }
+  else {
+    ECA_OBJECT_MAP& copmap = ECA_OBJECT_FACTORY::chain_operator_map();
+    ECA_PRESET_MAP& presetmap = ECA_OBJECT_FACTORY::preset_map();
+    
+    string idstring = copmap.object_identifier(chainop);
+    if (idstring.size() == 0) {
+      idstring = presetmap.object_identifier(chainop);
+    }
+    if (idstring.size() == 0) {
+      ECA_LOG_MSG(ECA_LOGGER::errors,
+		  "Unable to save chain operator \"" +
+		  chainop->name() + "\".");
+      return t.to_string();
+    }
+     
+    t << "-" << idstring;
+    if (chainop->number_of_params() > 0) t << ":";
+  }
+#endif
+  // --<
+
+  t << ECA_OBJECT_FACTORY::operator_parameters_to_eos(chainop);
+
+  return t.to_string();
+}
+
+/**
+ * Makes an Ecasound Option Syntax (EOS) compatible string
+ * describing the current state of controller object 'gctrl'.
+ */
+string ECA_OBJECT_FACTORY::controller_to_eos(const GENERIC_CONTROLLER* gctrl)
+{
+  MESSAGE_ITEM t;
+  ECA_OBJECT_MAP& ctrlmap = ECA_OBJECT_FACTORY::controller_map();
+  string idstring = ctrlmap.object_identifier(gctrl);
+
+  if (idstring.size() == 0) {
+    ECA_LOG_MSG(ECA_LOGGER::errors, 
+		"Unable to save controller \"" +
+		gctrl->name() + "\".");
+    return t.to_string();
+  }
+
+  t << "-" 
+    << idstring 
+    << ":"
+    << ECA_OBJECT_FACTORY::operator_parameters_to_eos(gctrl);
+
+  return t.to_string();
+}
+
+/**
+ * Makes an Ecasound Option Syntax (EOS) compatible, 
+ * comma-separated list of parameter  values for 
+ * chain operator 'chainop'.
+ */
+string ECA_OBJECT_FACTORY::operator_parameters_to_eos(const OPERATOR* chainop)
+{
+  MESSAGE_ITEM t;
+  
+  for(int n = 0; n < chainop->number_of_params(); n++) {
+    t << chainop->get_parameter(n + 1);
+    if (n + 1 < chainop->number_of_params()) t << ",";
+  }
+
+  return t.to_string();
+}
+
+/**
+ * Return a string compliant with Ecasound Option Syntax (EOS)
+ * describing the object 'aiod'.
+ */
+string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod)
+{
+  MESSAGE_ITEM t;
+  string direction ("i");
+  if (aiod->io_mode() != AUDIO_IO::io_read) {
+    direction = "o";
+  }
+  t << " -" << direction << ":";
+  for(int n = 0; n < aiod->number_of_params(); n++) {
+    // FIXME: should quote/escape possible commas and whitespace
+    t << aiod->get_parameter(n + 1);
+    if (n + 1 < aiod->number_of_params()) t << ",";
+  }
+
+  return t.to_string();
+}
+
+/**
+ * Return a string compliant with Ecasound Option Syntax (EOS)
+ * describing the audio format of object 'aiod'.
+ */
+string ECA_OBJECT_FACTORY::audio_object_format_to_eos(const AUDIO_IO* aiod)
+{
+  MESSAGE_ITEM t;
+
+  t << "-f:" << aiod->format_string() << "," <<
+    aiod->channels() << ","  << aiod->samples_per_second();
+
+  return t.to_string();
 }

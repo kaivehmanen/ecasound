@@ -1122,8 +1122,10 @@ string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const
       ++cp;
       if (cp != c.end()) t << ",";
     }
-    t << " ";
-    t << audioio_to_string(csetup_repp->inputs[p], "i");
+    t << " " 
+      << ECA_OBJECT_FACTORY::audio_object_format_to_eos(csetup_repp->inputs[p]) 
+      << " "
+      << ECA_OBJECT_FACTORY::audio_object_to_eos(csetup_repp->inputs[p]);
 
     if (csetup_repp->input_start_pos[p] != 0) {
       t << " -y:" << csetup_repp->input_start_pos[p];
@@ -1151,8 +1153,10 @@ string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const
       ++cp;
       if (cp != c.end()) t << ",";
     }
-    t << " ";
-    t << audioio_to_string(csetup_repp->outputs[p], "o");
+    t << " " 
+      << ECA_OBJECT_FACTORY::audio_object_format_to_eos(csetup_repp->outputs[p]) 
+      << " "
+      << ECA_OBJECT_FACTORY::audio_object_to_eos(csetup_repp->outputs[p]);
 
     if (csetup_repp->output_start_pos[p] != 0) {
       t << " -y:" << csetup_repp->output_start_pos[p];
@@ -1184,18 +1188,3 @@ string ECA_CHAINSETUP_PARSER::chains_to_string(void) const
   return t.to_string();
 }
 
-string ECA_CHAINSETUP_PARSER::audioio_to_string(const AUDIO_IO* aiod, const string& direction) const
-{
-  MESSAGE_ITEM t;
-
-  t << "-f:" << aiod->format_string() << "," <<
-    aiod->channels() << ","  << aiod->samples_per_second();
-  t << " -" << direction << ":";
-  for(int n = 0; n < aiod->number_of_params(); n++) {
-    // FIXME: should quote/escape possible commas and whitespace
-    t << aiod->get_parameter(n + 1);
-    if (n + 1 < aiod->number_of_params()) t << ",";
-  }
-
-  return t.to_string();
-}
