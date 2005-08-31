@@ -75,6 +75,7 @@
 #define ECI_MAX_LAST_COMMAND_SIZE  64
 
 #define ECI_READ_TIMEOUT_MS        5000
+#define ECI_READ_RETVAL_TIMEOUT_MS 30000
 
 #define ECI_STATE_INIT             0
 #define ECI_STATE_LOGLEVEL         1
@@ -436,7 +437,7 @@ void eci_command(const char* command) { eci_command_r(static_eci_rep, command); 
 void eci_command_r(eci_handle_t ptr, const char* command)
 {
   struct eci_internal* eci_rep = (struct eci_internal*)ptr;
-  int timeout = ECI_READ_TIMEOUT_MS;
+  int timeout = ECI_READ_RETVAL_TIMEOUT_MS;
 
   eci_impl_check_handle(eci_rep);
 
