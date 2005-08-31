@@ -17,9 +17,17 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
 	- changed: minor changes to ecaplay console output
+	- changed: ECI C impl. - increased the time engine has
+		   for processing ECI commands; fixes problems
+		   with the 'cs-disconnect' command with complex
+		   setups involving connections to external 
+		   resources such as jackd
+	- changed: error is raised if one tries to add chainops or 
+		   controllers when multiple (or zero) chains are 
+		   selected
 	- fixed: compile-time bug in ecasignalview.cpp
-	- fixed: saving chainsetups where a ctrl is connected to
-	         a effect preset 
+	- fixed: saving chainsetups in cases where a ctrl is 
+		 connected to a effect preset 
 	- fixed: DBC_CHECK failure from eca-chainsetup.cpp when
 	         running cs-edit on a non-connected chainsetup
 21082005 (v2.4.3)  -** stable release **-
