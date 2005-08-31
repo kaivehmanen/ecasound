@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "10\&.07\&.2005" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "31\&.08\&.2005" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -286,6 +286,11 @@ a default output device is added (see ecasoundrc(5))\&. \fI[-]\fP
 .IP "ao-add-default" 
 Adds the default output device (see ecasoundrc(5))\&. \fI[-]\fP
 .PP 
+.IP "ai-describe, ao-describe" 
+Returns a Ecasound Option Syntax (EOS) compliant string
+describing the input/output\&. See the Ecasound User\&'s Guide
+for more information about EOS\&. \fI[s]\fP
+.PP 
 .IP "ai-select \&'aobject_name\&', ao-select \&'aobject_name\&'" 
 Selects an audio object\&. \&'aobject_name\&' refers to the string
 used when creating the object (see above)\&. Note! All input
@@ -373,6 +378,11 @@ chains at once\&. In other words only one chain should be selected
 when issuing \&'cop-add\&'\&. See ecasound(1) man page for more 
 info\&. \fI[-]\fP
 .PP 
+.IP "cop-describe" 
+Returns a Ecasound Option Syntax (EOS) compliant string
+describing the chain operator\&. See the Ecasound User\&'s Guide
+for more information about EOS\&. \fI[s]\fP
+.PP 
 .IP "cop-remove" 
 Removes the selected chain operator\&. \fI[-]\fP
 .PP 
@@ -428,6 +438,11 @@ Adds a new controller and attach it to currently selected chain
 operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,\&.\&.\&.,parN"\&.  See ecasound(1) man page for more 
 info\&. \fI[-]\fP
+.IP 
+.IP "ctrl-describe" 
+Returns a Ecasound Option Syntax (EOS) compliant string
+describing the controller\&. See the Ecasound User\&'s Guide
+for more information about EOS\&. \fI[s]\fP
 .IP 
 .IP "ctrl-remove" 
 Removes the selected controller\&. \fI[-]\fP

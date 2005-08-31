@@ -68,6 +68,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_aio_status,
     // --
     ec_ai_add,
+    ec_ai_describe,
     ec_ai_remove,
     ec_ai_list,
     ec_ai_select,
@@ -88,6 +89,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     // --
     ec_ao_add,
     ec_ao_add_default,
+    ec_ao_describe,
     ec_ao_remove,
     ec_ao_list,
     ec_ao_select,
@@ -107,6 +109,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_ao_wave_edit,
     // --
     ec_cop_add,
+    ec_cop_describe,
     ec_cop_remove,
     ec_cop_list,
     ec_cop_select,
@@ -124,6 +127,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_preset_register,
     // --
     ec_ctrl_add,
+    ec_ctrl_describe,
     ec_ctrl_remove,
     ec_ctrl_list,
     ec_ctrl_select,

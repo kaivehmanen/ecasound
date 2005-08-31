@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -455,6 +455,7 @@ void ECA_CONTROL::action(int action_id)
     // Audio input objects
     // ---
   case ec_ai_add: { add_audio_input(action_args_rep); break; }
+  case ec_ai_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_input_repp)); break; }
   case ec_ai_remove: { remove_audio_input(); break; }
   case ec_ai_list: { set_last_string_list(audio_input_names()); break; }
   case ec_ai_select: { select_audio_input(action_args_rep); break; }
@@ -499,6 +500,7 @@ void ECA_CONTROL::action(int action_id)
     // ---
   case ec_ao_add: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep); break; }
   case ec_ao_add_default: { add_default_output(); break; }
+  case ec_ao_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_output_repp)); break; }
   case ec_ao_remove: { remove_audio_output(); break; }
   case ec_ao_list: { set_last_string_list(audio_output_names()); break; }
   case ec_ao_select: { select_audio_output(action_args_rep); break; }
@@ -540,6 +542,12 @@ void ECA_CONTROL::action(int action_id)
     // Chain operators
     // ---
   case ec_cop_add: { add_chain_operator(action_args_rep); break; }
+  case ec_cop_describe: 
+    { 
+      const CHAIN_OPERATOR *t = get_chain_operator();
+      set_last_string(t == 0 ? "" : ECA_OBJECT_FACTORY::chain_operator_to_eos(t)); 
+      break;
+    }
   case ec_cop_remove: { remove_chain_operator(); break; }
   case ec_cop_list: { set_last_string_list(chain_operator_names()); break; }
   case ec_cop_select: { select_chain_operator(atoi((action_args_rep).c_str())); break; }
@@ -583,6 +591,12 @@ void ECA_CONTROL::action(int action_id)
     // Controllers
     // ---
   case ec_ctrl_add: { add_controller(action_args_rep); break; }
+  case ec_ctrl_describe: 
+    { 
+      const GENERIC_CONTROLLER *t = get_controller();
+      set_last_string(t == 0 ? "" : ECA_OBJECT_FACTORY::controller_to_eos(t)); 
+      break;
+    }
   case ec_ctrl_remove: { remove_controller(); break; }
   case ec_ctrl_list: { set_last_string_list(controller_names()); break; }
   case ec_ctrl_select: { select_controller(atoi((action_args_rep).c_str())); break; }

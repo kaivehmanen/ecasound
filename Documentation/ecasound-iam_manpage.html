@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>10.07.2005</h2>
+<h2>31.08.2005</h2>
 
 
     
@@ -249,6 +249,10 @@ the argument format ('-o' option). If argument is omitted,
 a default output device is added (see ecasoundrc(5)). <em>[-]</em>
 <p><p></p><dt><strong>ao-add-default</strong><dd>
 Adds the default output device (see ecasoundrc(5)). <em>[-]</em>
+<p><p></p><dt><strong>ai-describe, ao-describe</strong><dd>
+Returns a Ecasound Option Syntax (EOS) compliant string
+describing the input/output. See the Ecasound User's Guide
+for more information about EOS. <em>[s]</em>
 <p><p></p><dt><strong>ai-select 'aobject_name', ao-select 'aobject_name'</strong><dd>
 Selects an audio object. 'aobject_name' refers to the string
 used when creating the object (see above). Note! All input
@@ -318,6 +322,10 @@ plugins. Note; it is not possible to add operators to multiple
 chains at once. In other words only one chain should be selected
 when issuing 'cop-add'. See ecasound(1) man page for more 
 info. <em>[-]</em>
+<p><p></p><dt><strong>cop-describe</strong><dd>
+Returns a Ecasound Option Syntax (EOS) compliant string
+describing the chain operator. See the Ecasound User's Guide
+for more information about EOS. <em>[s]</em>
 <p><p></p><dt><strong>cop-remove</strong><dd> 
 Removes the selected chain operator. <em>[-]</em>
 <p><p></p><dt><strong>cop-list</strong><dd>
@@ -359,6 +367,10 @@ Adds a new controller and attach it to currently selected chain
 operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
 &lt;range_high&gt;,par1,...,parN".  See ecasound(1) man page for more 
 info. <em>[-]</em>
+<p><p></p><dt><strong>ctrl-describe</strong><dd>
+Returns a Ecasound Option Syntax (EOS) compliant string
+describing the controller. See the Ecasound User's Guide
+for more information about EOS. <em>[s]</em>
 <p><p></p><dt><strong>ctrl-remove</strong><dd>
 Removes the selected controller. <em>[-]</em>
 <p><p></p><dt><strong>ctrl-list</strong><dd>

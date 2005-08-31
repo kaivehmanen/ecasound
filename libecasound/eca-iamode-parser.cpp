@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // This program is free software; you can redistribute it and/or modify
@@ -204,6 +204,7 @@ void ECA_IAMODE_PARSER::register_commands_aio(void)
 void ECA_IAMODE_PARSER::register_commands_ai(void)
 {
   (*cmd_map_repp)["ai-add"] = ec_ai_add;
+  (*cmd_map_repp)["ai-describe"] = ec_ai_describe;
   (*cmd_map_repp)["ai-remove"] = ec_ai_remove;
   (*cmd_map_repp)["ai-list"] = ec_ai_list;
   (*cmd_map_repp)["ai-select"] = ec_ai_select;
@@ -230,6 +231,7 @@ void ECA_IAMODE_PARSER::register_commands_ao(void)
 {
   (*cmd_map_repp)["ao-add"] = ec_ao_add;
   (*cmd_map_repp)["ao-add-default"] = ec_ao_add_default;
+  (*cmd_map_repp)["ao-describe"] = ec_ao_describe;
   (*cmd_map_repp)["ao-list"] = ec_ao_list;
   (*cmd_map_repp)["ao-select"] = ec_ao_select;
   (*cmd_map_repp)["ao-index-select"] = ec_ao_index_select;
@@ -255,6 +257,7 @@ void ECA_IAMODE_PARSER::register_commands_ao(void)
 void ECA_IAMODE_PARSER::register_commands_cop(void)
 {
   (*cmd_map_repp)["cop-add"] = ec_cop_add;
+  (*cmd_map_repp)["cop-describe"] = ec_cop_describe;
   (*cmd_map_repp)["cop-remove"] = ec_cop_remove;
   (*cmd_map_repp)["cop-list"] = ec_cop_list;
   (*cmd_map_repp)["cop-select"] = ec_cop_select;
@@ -280,6 +283,7 @@ void ECA_IAMODE_PARSER::register_commands_copp(void)
 void ECA_IAMODE_PARSER::register_commands_ctrl(void)
 {
   (*cmd_map_repp)["ctrl-add"] = ec_ctrl_add;
+  (*cmd_map_repp)["ctrl-describe"] = ec_ctrl_describe;
   (*cmd_map_repp)["ctrl-remove"] = ec_ctrl_remove;
   (*cmd_map_repp)["ctrl-list"] = ec_ctrl_list;
   (*cmd_map_repp)["ctrl-select"] = ec_ctrl_select;
@@ -550,6 +554,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id)
 bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id)
 {
   switch(id) {
+  case ec_ai_describe:
   case ec_ai_remove:
   case ec_ai_attach:
   case ec_ai_forward:
@@ -575,6 +580,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id)
 bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id)
 {
   switch(id) {
+  case ec_ao_describe:
   case ec_ao_remove:
   case ec_ao_attach:
   case ec_ao_forward:
