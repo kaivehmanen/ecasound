@@ -88,7 +88,7 @@ static void signal_handler(int signum);
  * Global variables
  */
 
-static const char* ecaplay_version = "20050831-41";
+static const char* ecaplay_version = "20050901-42";
 static char ecaplay_next[PATH_MAX];
 static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN];
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
@@ -209,7 +209,13 @@ static void initialize_check_output(eci_handle_t* eci)
   else {
     static int once = 1;
     if (once) {
-      printf("(ecaplay) Output device: '%s'\n", eci_last_string_list_item_r(eci, 0));
+      eci_command_r(eci, "ao-iselect 1");
+      eci_command_r(eci, "ao-describe");
+      char *tmpstr = (char*)eci_last_string_r(eci);
+      /* skip the "-x:" prefix where x is one of [io] */
+      while(*tmpstr && *tmpstr++ != ':') 
+	;
+      printf("(ecaplay) Output device: '%s'\n", tmpstr);
       once = 0;
     }
   }
