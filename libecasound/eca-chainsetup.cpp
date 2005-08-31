@@ -2013,22 +2013,18 @@ void ECA_CHAINSETUP::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_valu
 
 /**
  * Reimplemented from ECA_AUDIO_POSITION.
- *
- * @pre is_enabled() == true
  */
 void ECA_CHAINSETUP::seek_position(void)
 {
-  // --------
-  DBC_REQUIRE(is_enabled() == true);
-  // --------
-
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"seek position, chainsetup '" +
 		name() +
 		"' to pos in sec " + 
 		kvu_numtostr(position_in_seconds()) + ".");
 
-  if (double_buffering() == true) pserver_repp->flush();
+  if (is_enabled() == true) {
+    if (double_buffering() == true) pserver_repp->flush();
+  }
 
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     (*q)->seek_position_in_samples(position_in_samples());
