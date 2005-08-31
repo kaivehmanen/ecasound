@@ -56,7 +56,8 @@ static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_han
 static char* get_playlist_path(void);
 static const char* get_track_cmdline(int n, int argc, char *argv[]);
 static const char* get_track_playlist(int n);
-static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack);
+static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack, int tracknum);
+static void initialize_check_output(eci_handle_t* eci);
 static int list_tracks(void);
 static int play_tracks(int argc, char *argv[]);
 static void print_usage(FILE* stream);
@@ -87,7 +88,7 @@ static void signal_handler(int signum);
  * Global variables
  */
 
-static const char* ecaplay_version = "20050407-40";
+static const char* ecaplay_version = "20050831-41";
 static char ecaplay_next[PATH_MAX];
 static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN];
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
@@ -172,8 +173,6 @@ static void add_input_to_chainsetup(eci_handle_t eci, const char* nexttrack)
 	  ECAPLAY_AFMT_MAXLEN);
   ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN - 1] = 0;
 
-  printf("(ecaplay) Using audio format: %s.\n", ecaplay_audio_format);
-
   /* disconnect and remove the null output */
   eci_command_r(eci, "cs-disconnect");
   eci_command_r(eci, "ao-iselect 1");
@@ -197,7 +196,26 @@ static int flush_tracks(void)
   return 0;
 }
 
-static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack)
+/**
+ * Checks that current chainsetup has exactly one
+ * output.
+ */ 
+static void initialize_check_output(eci_handle_t* eci)
+{
+  eci_command_r(eci, "ao-list");
+  if (eci_last_string_list_count_r(eci) != 1) {
+    fprintf(stderr, "(ecaplay) Warning! Failed to add output device.\n");
+  }
+  else {
+    static int once = 1;
+    if (once) {
+      printf("(ecaplay) Output device: '%s'\n", eci_last_string_list_item_r(eci, 0));
+      once = 0;
+    }
+  }
+}
+
+static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack, int tracknum)
 {
   const char* ret = NULL;
 
@@ -228,16 +246,14 @@ static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* ne
     eci_command_r(*eci, "ao-add-default");
 
     /* check that add succeeded */
-    eci_command_r(*eci, "ao-list");
-    if (eci_last_string_list_count_r(*eci) != 1) {
-      fprintf(stderr, "(ecaplay) Warning! Failed to add default output.\n");
-    }
+    initialize_check_output(*eci);
   }
   else {
     int len = strlen("ao-add ") + strlen(ecaplay_output) + 1;
     char* tmpbuf = (char*)malloc(len);
     snprintf(tmpbuf, len, "ao-add %s", ecaplay_output);
     eci_command_r(*eci, tmpbuf);
+    initialize_check_output(*eci);
     free(tmpbuf);
   }
 
@@ -254,7 +270,8 @@ static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* ne
       fprintf(stderr, "(ecaplay) Error while playing file '%s' . Skipping...\n", nexttrack);
     }
     else {
-      printf("(ecaplay) Playing file '%s'.\n", nexttrack);
+      /* note: audio format set separately for each input file */
+      printf("(ecaplay) Playing %d: '%s' (%s).\n", tracknum, nexttrack, ecaplay_audio_format);
       eci_command_r(*eci, "start");
     }
   }
@@ -274,7 +291,7 @@ static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_han
     if (ecaplay_initialized) {
       eci_cleanup_r(*eci);
     }
-    initialize_chainsetup_for_playback(eci, nexttrack);
+    initialize_chainsetup_for_playback(eci, nexttrack, *tracknum);
   }
   else {
     /* reached end of playlist */
@@ -302,7 +319,7 @@ static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_han
 	if (ecaplay_initialized) {
 	  eci_cleanup_r(*eci);
 	}
-	initialize_chainsetup_for_playback(eci, nexttrack);
+	initialize_chainsetup_for_playback(eci, nexttrack, *tracknum);
       }
       else {
 	/* get_next_track() failed two times, stopping processing */
@@ -591,7 +608,7 @@ static int process_option(const char* option)
 	  const char* output = &option[3];
 	  if (option[2] != 0 && option[3] != 0) {
 	    ecaplay_output = output;
-	    printf("(ecaplay) Using device '%s' for output.\n", ecaplay_output);
+	    printf("(ecaplay) Output device: '%s'\n", ecaplay_output);
 	  }
 	  break;
 	}
