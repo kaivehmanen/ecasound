@@ -23,6 +23,7 @@
 #include <string>
 #include <iostream>
 
+#include <kvu_dbc.h>
 #include <kvu_message_item.h>
 
 //  #include "eca-midi.h"
@@ -34,32 +35,35 @@
 
 CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
 {
-  if (trace_request_rep == true) {
-    if (server() != 0) {
+  DBC_CHECK(server() != 0);
+  parameter_t value_rep = init_value_rep;
+  if (server() != 0) {
+    if (trace_request_rep == true) {
       server()->add_controller_trace(channel_rep, 
 				     controller_rep,
 				     static_cast<int>(value_rep * 127.0));
+      trace_request_rep = false;
     }
-    else {
-      std::cerr << "(midi-cc) WARNING: No MIDI-server found!" << std::endl;
-    }
-    trace_request_rep = false;
-  }
-  if (server() != 0)
+
     value_rep =
       static_cast<double>(server()->last_controller_value(channel_rep, controller_rep));
-      
-  value_rep /= 127.0;
+    value_rep /= 127.0;
+  }
+
   return value_rep;
 }
 
 void MIDI_CONTROLLER::set_initial_value(parameter_t arg)
 {
-  value_rep = arg;
+  init_value_rep = arg;
   if (server() != 0) {
     server()->add_controller_trace(channel_rep, 
 				   controller_rep,
-				   static_cast<int>(value_rep * 127.0));
+				   static_cast<int>(init_value_rep * 127.0));
+  }
+  else {
+    /* add controller trace when server is available */
+    trace_request_rep = true;
   }
 }
 
@@ -67,7 +71,7 @@ MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number,
 				 int midi_channel) 
   : controller_rep(controller_number), 
     channel_rep(midi_channel),
-    value_rep(0.0),
+    init_value_rep(0.0),
     trace_request_rep(false) 
 {
 }
@@ -83,6 +87,7 @@ void MIDI_CONTROLLER::init(void)
 
 void MIDI_CONTROLLER::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
 {
+  /* FIXME: we should really remove unused ctrl+channel traces */
   switch (param) {
   case 1: 
     controller_rep = static_cast<int>(value);

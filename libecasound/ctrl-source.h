@@ -26,10 +26,13 @@ class CONTROLLER_SOURCE : public OPERATOR,
   virtual parameter_t value(void) = 0; 
 
   /**
-   * Sets an initial value for the controller. Controllers that
-   * are driven by external sources, can use the initial value
-   * if there is an initial gap in control data. The standard value 
-   * range ofs [0,1] should be used.
+   * Sets an initial value for the controller. 
+   * 
+   * Controllers that are driven by external sources, can use the 
+   * initial value if there is an initial gap in control data. The 
+   * standard value range ofs [0,1] should be used.
+   *
+   * Should be set before the first call to value().
    */
   virtual void set_initial_value(parameter_t arg) = 0; 
 

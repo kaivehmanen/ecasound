@@ -141,8 +141,7 @@ void GENERIC_CONTROLLER::seek_position(void)
 {
   /* Note! called on each iteration from CHAIN::controller_update() */
 
-  DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " 
-		       << kvu_numtostr(position_in_seconds()) << ".\n");
+  // DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " << kvu_numtostr(position_in_seconds(), 3) << ".\n");
 
   if (source != 0) {
     source->seek_position_in_samples(position_in_samples());

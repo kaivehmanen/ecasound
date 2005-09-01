@@ -485,6 +485,8 @@ void MIDI_SERVER::remove_controller_trace(int channel, int controller)
 /**
  * Returns the latest traced value of controller 'ctrl' on 
  * channel 'channel'.
+ *
+ * @return -1 is returned on error
  */
 int MIDI_SERVER::last_controller_value(int channel, int ctrl) const
 {
@@ -492,7 +494,7 @@ int MIDI_SERVER::last_controller_value(int channel, int ctrl) const
   if (p != controller_values_rep.end()) {
     return controller_values_rep[std::pair<int,int>(channel,ctrl)];
   }
-  return 0;
+  return -1;
 }
 
 /**

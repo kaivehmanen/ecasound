@@ -14,24 +14,40 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
     
  public:
 
+  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
   virtual void init(void);
   virtual parameter_t value(void);
   virtual void set_initial_value(parameter_t arg);
+
+  /*@}*/
+
+  /** @name Functions implemented from DYNAMIC_PARAMETERS<string> */
+  /*@{*/
 
   std::string parameter_names(void) const { return("controller,channel"); }
   void set_parameter(int param, parameter_t value);
   parameter_t get_parameter(int param) const;
 
   std::string name(void) const {  return("MIDI-Controller"); }
+
+  /*@}*/
+
+  /** @name Functions implemented from ECA_OBJECT */
+  /*@{*/
  
   MIDI_CONTROLLER* clone(void) const { return new MIDI_CONTROLLER(*this); }
   MIDI_CONTROLLER* new_expr(void) const { return new MIDI_CONTROLLER(); }
+
+  /*@}*/
+
   MIDI_CONTROLLER(int controller_number = 0, int midi_channel = 0);
 
   private:
 
   int controller_rep, channel_rep;
-  parameter_t value_rep;
+  parameter_t init_value_rep;
   bool trace_request_rep;
 
 };
