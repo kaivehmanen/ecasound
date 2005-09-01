@@ -19,6 +19,8 @@ class MIDI_HANDLER {
  public:
   
   virtual void insert(unsigned char byte) = 0;
+
+  virtual ~MIDI_HANDLER(void) {}
 };
 
 /**
@@ -67,7 +69,7 @@ class MIDI_SERVER {
 
   void send_midi_bytes(int dev_id, unsigned char* buf, int bytes);
 
-  void add_controller_trace(int channel, int ctrl);
+  void add_controller_trace(int channel, int ctrl, int initial_value = 0);
   void remove_controller_trace(int channel, int ctrl);
   int last_controller_value(int channel, int ctrl) const;
 

@@ -14,6 +14,7 @@ class TWO_STAGE_LINEAR_ENVELOPE : public CONTROLLER_SOURCE {
 
   std::string name(void) const { return("Two-stage linear envelope"); }
   virtual parameter_t value(void);
+  virtual void set_initial_value(parameter_t arg) {}
   virtual void init(void);
 
   std::string parameter_names(void) const { return("1st-stage-sec,2nd-stage-sec"); }

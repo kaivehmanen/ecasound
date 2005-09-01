@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // midi-cc.cpp: Interface to MIDI continuous controllers
-// Copyright (C) 1999,2001-2002 Kai Vehmanen
+// Copyright (C) 1999,2001-2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +37,8 @@ CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
   if (trace_request_rep == true) {
     if (server() != 0) {
       server()->add_controller_trace(channel_rep, 
-				     controller_rep);
+				     controller_rep,
+				     static_cast<int>(value_rep * 127.0));
     }
     else {
       std::cerr << "(midi-cc) WARNING: No MIDI-server found!" << std::endl;
@@ -46,7 +50,17 @@ CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
       static_cast<double>(server()->last_controller_value(channel_rep, controller_rep));
       
   value_rep /= 127.0;
-  return(value_rep);
+  return value_rep;
+}
+
+void MIDI_CONTROLLER::set_initial_value(parameter_t arg)
+{
+  value_rep = arg;
+  if (server() != 0) {
+    server()->add_controller_trace(channel_rep, 
+				   controller_rep,
+				   static_cast<int>(value_rep * 127.0));
+  }
 }
 
 MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number, 
@@ -97,10 +111,10 @@ CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(static_cast<parameter_t>(controller_rep));
+    return static_cast<parameter_t>(controller_rep);
   case 2: 
     /* map from 0...15 -> 1...16 */
-    return(static_cast<parameter_t>(channel_rep + 1));
+    return static_cast<parameter_t>(channel_rep + 1);
   }
-  return(0.0);
+  return 0.0;
 }

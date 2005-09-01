@@ -1,3 +1,8 @@
+2005-09-01  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* midi-server.h (add_controller_trace): Added optional 3rd argument.
+	* ctrl-source.h (set_initial_value): Added.
+
 2005-08-31  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-object-factory.h (*_to_eos): Added.

@@ -465,9 +465,9 @@ void MIDI_SERVER::send_midi_stop(void)
  * Requests that server will follow the latest value of 
  * controller 'ctrl' on channel 'channel'.
  */
-void MIDI_SERVER::add_controller_trace(int channel, int ctrl)
+void MIDI_SERVER::add_controller_trace(int channel, int ctrl, int initial_value)
 {
-  controller_values_rep[std::pair<int,int>(channel,ctrl)] = 0;
+  controller_values_rep[std::pair<int,int>(channel,ctrl)] = initial_value;
 }
 
 /**

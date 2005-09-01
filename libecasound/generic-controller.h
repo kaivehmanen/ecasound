@@ -43,6 +43,8 @@ class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
    */
   virtual parameter_t value(void);
 
+  virtual void set_initial_value(parameter_t arg) { }
+
   /*@}*/
 
   /** @name Public functions reimplemented from ECA_OBJECT */

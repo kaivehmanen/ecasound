@@ -23,6 +23,7 @@ public:
   
   virtual void init(void);
   virtual parameter_t value(void);
+  virtual void set_initial_value(parameter_t arg) {}
   
   virtual std::string parameter_names(void) const;
   virtual void set_parameter(int param, parameter_t value);

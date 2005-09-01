@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // generic_controller.cpp: General sources for control signals
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2005 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,6 +53,18 @@ GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, OPERATOR* dobj, i
 void GENERIC_CONTROLLER::init(void)
 { 
   source->init();
+
+  double init_value = target->get_parameter(param_id_rep);
+  init_value = (init_value - rangelow_rep) / (rangehigh_rep - rangelow_rep);
+  source->set_initial_value(init_value);
+
+  DEBUG_CTRL_STATEMENT(std::cerr << "generic-controller: type '"
+		       << source->name() << "', pos_sec " 
+		       << position_in_seconds_exact() 
+		       << ", source_value " << source->value() 
+		       << ", target_value " << target->get_parameter(param_id_rep)
+		       << ", init_value " << init_value 
+		       << "." << std::endl);
 }
 
 CONTROLLER_SOURCE::parameter_t GENERIC_CONTROLLER::value(void)
@@ -69,7 +84,7 @@ CONTROLLER_SOURCE::parameter_t GENERIC_CONTROLLER::value(void)
 
   target->set_parameter(param_id_rep, new_value);
 
-  return(new_value);
+  return new_value;
 }
 
 string GENERIC_CONTROLLER::status(void) const
@@ -83,16 +98,16 @@ string GENERIC_CONTROLLER::status(void) const
       value = source->value();
     }
 
-    return("Source \"" + source->name() + 
+    return "Source \"" + source->name() + 
 	   "\" connected to target \"" +
 	   target->name() + "\"." +
 	   " Current source value is " + 
 	   kvu_numtostr(value) + 
 	   " and target " + 
-	   kvu_numtostr(target->get_parameter(param_id_rep)) + ".");
+	   kvu_numtostr(target->get_parameter(param_id_rep)) + ".";
   }
   else {
-    return("Controller not valid.");
+    return "Controller not valid.";
   }
 }
 
@@ -155,13 +170,13 @@ CHAIN_OPERATOR::parameter_t GENERIC_CONTROLLER::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(static_cast<parameter_t>(param_id_rep));
+    return static_cast<parameter_t>(param_id_rep);
   case 2: 
-    return(rangelow_rep);
+    return rangelow_rep;
   case 3: 
-    return(rangehigh_rep);
+    return rangehigh_rep;
   default:
-    return(source->get_parameter(param - 3));
+    return source->get_parameter(param - 3);
   }
-  return(0.0);
+  return 0.0;
 }

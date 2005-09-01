@@ -63,6 +63,8 @@ class ECA_ENGINE_DRIVER {
 
   /*@}*/
 
+  virtual ~ECA_ENGINE_DRIVER(void) {}
+
 };
 
 #endif /* INCLUDED_ECA_ENGINE_DRIVER_H */
