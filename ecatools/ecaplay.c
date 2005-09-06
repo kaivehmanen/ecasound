@@ -88,7 +88,7 @@ static void signal_handler(int signum);
  * Global variables
  */
 
-static const char* ecaplay_version = "20050901-42";
+static const char* ecaplay_version = "20050903-43";
 static char ecaplay_next[PATH_MAX];
 static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN];
 static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
@@ -614,7 +614,7 @@ static int process_option(const char* option)
 	  const char* output = &option[3];
 	  if (option[2] != 0 && option[3] != 0) {
 	    ecaplay_output = output;
-	    printf("(ecaplay) Output device: '%s'\n", ecaplay_output);
+	    /* printf("(ecaplay) Output device: '%s'\n", ecaplay_output); */
 	  }
 	  break;
 	}
