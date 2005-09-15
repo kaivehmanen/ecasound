@@ -393,7 +393,10 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples)
     finished_rep = true;
     triggered_rep = false;
   }
-  else finished_rep = false;
+  else
+    finished_rep = false;
+
+  last_position_rep += (bytes_rep / frame_size());
   
   return bytes_rep / frame_size();
 }
