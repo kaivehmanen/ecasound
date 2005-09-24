@@ -1161,7 +1161,8 @@ int ECA_CHAINSETUP::number_of_non_realtime_outputs(void) const
 AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const
 {
   for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
-    if ((*q)->get_object_id(aio) != -1) {
+    if ((*q)->is_managed_type(aio) && 
+	(*q)->get_object_id(aio) != -1) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		    "Found object manager '" +
 		    (*q)->name() + 
