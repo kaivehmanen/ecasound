@@ -443,6 +443,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id)
   case ec_c_bypass:
   case ec_c_status:
   case ec_c_list:
+  case ec_c_select:
 
   case ec_aio_status:
 
