@@ -46,10 +46,9 @@ using std::string;
 
 int ecicpp_add_input(ECA_CONTROL_INTERFACE* eci, const string& filename, string* format)
 {
-  if (filename.find(',') != string::npos) {
-    cerr << "Error: Unable to handle filenames with commas. Exiting...\n";
-    return -1;
-  }
+  // if (filename.find(',') != string::npos) {
+  //  FIXME: how to handle...?
+  // }
 
   eci->command("ai-add " + filename);
   bool error = eci->error();
