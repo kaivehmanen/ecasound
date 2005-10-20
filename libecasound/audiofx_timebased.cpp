@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_timebased.cpp: Routines for time-based effects.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2005 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -495,7 +495,7 @@ void EFFECT_FAKE_STEREO::process(void)
   while(!l.end() && !r.end()) {
     SAMPLE_SPECS::sample_t temp_left = 0;
     SAMPLE_SPECS::sample_t temp_right = 0;
-    if (buffer[SAMPLE_SPECS::ch_left].size() >= dtime) {
+    if (buffer[SAMPLE_SPECS::ch_left].size() >= dtime && dtime > 0) {
       temp_left = buffer[SAMPLE_SPECS::ch_left].front();
       temp_right = buffer[SAMPLE_SPECS::ch_right].front();
 
