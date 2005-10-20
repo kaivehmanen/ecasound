@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230905) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 211005) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -33,6 +33,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: bug in seeking mp3 files
 	- fixed: eiam - 'c-select' caused a segfault if no chainsetup
 		 was selected
+	- fixed: -etf:0 caused a segfault
 21082005 (v2.4.3)  -** stable release **-
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
