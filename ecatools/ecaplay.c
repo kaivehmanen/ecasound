@@ -20,6 +20,7 @@
 
 /**
  * TODO:
+ * - show playlist length during runtime
  * - random start switch (both for cmdline and playlist modes)
  * - handle filenames that contain commas (backslash-escape 
  *   automatically, but avoid double-espaces -> user already
@@ -55,7 +56,7 @@ static int flush_tracks(void);
 static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_handle_t *eci);
 static char* get_playlist_path(void);
 static const char* get_track_cmdline(int n, int argc, char *argv[]);
-static const char* get_track_playlist(int n);
+static const char* get_track_playlist(int* next_track);
 static void initialize_chainsetup_for_playback(eci_handle_t* eci, const char* nexttrack, int tracknum);
 static void initialize_check_output(eci_handle_t* eci);
 static int list_tracks(void);
@@ -88,15 +89,16 @@ static void signal_handler(int signum);
  * Global variables
  */
 
-static const char* ecaplay_version = "20050903-43";
-static char ecaplay_next[PATH_MAX];
-static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN];
-static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL;
-static int ecaplay_skip = 0;
-static int ecaplay_mode = ECAPLAY_MODE_NORMAL;
-static int ecaplay_initialized = 0;
-static const char* ecaplay_output = NULL;
-static sig_atomic_t ecaplay_skip_flag = 0;
+static const char* ecaplay_version = "20051002-44";    /* ecaplay version */
+static char ecaplay_next[PATH_MAX];                    /* file to play next */
+static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN]; /* audio format to use */
+static const char* ecaplay_output = NULL;              /* output device to use */
+static int ecaplay_debuglevel = ECAPLAY_EIAM_LOGLEVEL; /* debug level to use */
+static int ecaplay_skip = 0;                           /* how many playlist items to skip */
+static int ecaplay_mode = ECAPLAY_MODE_NORMAL;         /* playlist mode */
+/* FIX: static int ecaplay_list_len = -1;                   playlist length */
+static int ecaplay_initialized = 0;                    /* playlist mode */
+static sig_atomic_t ecaplay_skip_flag = 0;             /* signal flag for ctrl-c */
 
 /**
  * Function definitions
@@ -288,7 +290,7 @@ static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_han
   const char *nexttrack = NULL;
 
   if (ecaplay_mode == ECAPLAY_MODE_PL_PLAY)
-    nexttrack = get_track_playlist(*tracknum);
+    nexttrack = get_track_playlist(tracknum);
   else
     nexttrack = get_track_cmdline(*tracknum, argc, argv);
   
@@ -314,7 +316,7 @@ static const char* get_next_track(int *tracknum, int argc, char *argv[], eci_han
        *        playlist and set 'tracknum = (tracknum % pllen)' */
 
       if (ecaplay_mode == ECAPLAY_MODE_PL_PLAY)
-	nexttrack = get_track_playlist(*tracknum);
+	nexttrack = get_track_playlist(tracknum);
       else
 	nexttrack = get_track_cmdline(*tracknum, argc, argv);
 
@@ -399,21 +401,25 @@ static char* get_playlist_path(void)
 }
 
 /**
- * Returns the track from playlist matching number 'n'.
+ * Returns the track from playlist matching number 'next_track'.
  * 
- * In case 'n' is larger than the playlist length, 
- * track 'n mod playlist_len' will be selected.
+ * In case 'next_track' is larger than the playlist length, 
+ * track 'next_track mod playlist_len' will be selected, and
+ * the modified playlist item number stored to 'next_track'.
+ * 
+ * Note: modifies global variable 'ecaplay_next'.
  *
  * @return track name or NULL on error
  */
-static const char* get_track_playlist(int n)
+static const char* get_track_playlist(int* next_track)
 {
 
   const char *res = NULL;
   char *path;
   FILE *f1;
+  int next = *next_track;
 
-  assert(n > 0);
+  assert(next > 0);
 
   path = get_playlist_path();
   if (path == NULL) {
@@ -427,10 +433,21 @@ static const char* get_track_playlist(int n)
     /* iterate through all data octet at a time */
     for(w = 0;;) {
       c = fgetc(f1);
-      if (c == EOF) 
+      if (c == EOF) {
+	if (next > cur_item) {
+	  /* next_track beyond playlist length, reset to valid track number */
+	  next = next % cur_item;
+	  *next_track = next;
+	  /* seek back to start and look again */
+	  fseek(f1, 0, SEEK_SET);
+	  cur_item = 1;
+	  w = 0;
+	  continue;
+	}
 	break;
+      }
 
-      if (cur_item == n) {
+      if (cur_item == next) {
 	if (c == '\n') {
       	  ecaplay_next[w] = 0;
 	  res = ecaplay_next;
