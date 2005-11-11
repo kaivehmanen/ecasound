@@ -88,7 +88,7 @@ struct ecasv_channel_stats {
  */
 
 int main(int argc, char *argv[]);
-void ecasv_parse_command_line(int argc, char *argv[]);
+void ecasv_parse_command_line(ECA_CONTROL_INTERFACE* cop, int argc, char *argv[]);
 void ecasv_fill_defaults(void);
 std::string ecasv_cop_to_string(ECA_CONTROL_INTERFACE* cop);
 void ecasv_output_init(void);
@@ -110,7 +110,7 @@ int ecasv_kbhit();
  * Static global variables
  */
 
-static const string ecatools_signalview_version = "20050807-9";
+static const string ecatools_signalview_version = "20051112-10";
 static bool  ecasv_log_display_mode = false; // jkc: addition
 static const double ecasv_clipped_threshold_const = 1.0f - 1.0f / 16384.0f;
 static const int ecasv_bar_length_const = 32;
@@ -160,8 +160,6 @@ int main(int argc, char *argv[])
   sigaction(SIGPIPE, &ign_handler, 0);
   sigaction(SIGFPE, &ign_handler, 0);
 
-  ecasv_parse_command_line(argc,argv);
-
   ECA_CONTROL_INTERFACE eci;
 
   eci.command("cs-add default");
@@ -169,8 +167,11 @@ int main(int argc, char *argv[])
 
   /* set engine buffersize */
   eci.command("cs-set-param -b:" + kvu_numtostr(ecasv_buffersize));
-  /* in case JACK is used, do send nor receive transport events */
+  /* in case JACK is used, do not send nor receive transport events */
   eci.command("cs-set-param -G:jack,ecasignalview,notransport");
+
+  /* note: might change the cs options (-G, -z, etc) */
+  ecasv_parse_command_line(&eci,argc,argv);
 
   if (ecasv_format_string.size() > 0) {
     eci.command("cs-set-audio-format " + ecasv_format_string);
@@ -245,7 +246,7 @@ int main(int argc, char *argv[])
   return rv;
 }
 
-void ecasv_parse_command_line(int argc, char *argv[])
+void ecasv_parse_command_line(ECA_CONTROL_INTERFACE *eci, int argc, char *argv[])
 {
   COMMAND_LINE cline = COMMAND_LINE (argc, argv);
   if (cline.size() == 0 ||
@@ -285,6 +286,13 @@ void ecasv_parse_command_line(int argc, char *argv[])
 	if (prefix == "L") ecasv_log_display_mode = true; // jkc: addition
 	if (prefix == "r") 
 	  ecasv_rate_msec = atol(kvu_get_argument_number(1, arg).c_str());
+	if (prefix == "G" ||
+	    prefix == "B" ||
+	    (prefix.size() > 0 && prefix[0] == 'M') ||
+	    prefix == "r" ||
+	    prefix == "z") {
+	  eci->command("cs-option " + arg);
+	}
       }
     }
     cline.next();
