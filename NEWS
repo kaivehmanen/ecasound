@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 211005) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 121105) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,6 +16,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 ????2005 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
+	- added: ecasignalview - ability to pass ecasound options
+		 -G, -B, -M*, -r and -z
 	- changed: minor changes to ecaplay console output
 	- changed: ECI C impl. - increased the time engine has
 		   for processing ECI commands; fixes problems
