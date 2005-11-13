@@ -8,14 +8,20 @@ Status: OPEN/CLOSED/FROZEN
 ------------------------------------------------------------------------
 Details:
 
-- rationale; why should this item be implemented?
-- list of goals/requirements that should be reached
-- description of problem/idea with background info
-- solution ideas 
-- list of critical points (possibly problems, difficult use cases)
-- todo-lists (work left to be done)
-- this section should be edited to match the current 
-  situation
+[background: what]
+- item background
+- description of current solutions to the problem
+
+[rationale: why]
+- why this item should be implemented, why is it
+  important
+
+[description: how]
+- how the edi aims to solve the problem
+
+[todo-list]
+- list of practical steps on implementing the item (can
+  be updated during development)
 
 ------------------------------------------------------------------------
 
