@@ -1,0 +1,40 @@
+------------------------------------------------------------------------
+Status: OPEN/CLOSED/FROZEN
+
+(edi-41): Addition of "bus" concept.
+         - submitted: kaiv, 13.11.2005
+
+------------------------------------------------------------------------
+Details:
+
+[background: what]
+- problem of "loop" objects
+    - currently "loop" objects can be used to route audio
+      between chains
+    - loops however add delay to the processing chain
+
+[rationale: why]
+- make it easier to create more complex configurations
+- avoid unnecessary processing delays in complex
+  configurations due to loop objects
+- concept of "buses" is familiar to many users (something
+  to which you mix multiple sources of audio)
+
+[description: how]
+- list of goals/requirements that should be reached
+    - a new bus audio object type, based on current loop
+      object code
+    - changes to engine allowing to process the busses
+      without additional delay
+
+[todo-list]
+- add the "bus" object type
+- engine optimizations
+
+------------------------------------------------------------------------
+
+- rest of the sections are reserverd for quotes from ecasound-list, 
+  comments, etc
+- each section should contain information about who wrote the comment 
+  and when
+- sections not edited
