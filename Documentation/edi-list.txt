@@ -63,6 +63,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
          - submitted: kaiv, 13.05.2004
 (edi-41): Addition of "bus" concept.
          - submitted: kaiv, 13.11.2005
+(edi-42): Ability to split recording output into multiple files.
+	 - submitted: aolrich, 30.12.2005
 
 -----------------------------------------------------------------------
 [ Section: Frozen ]
