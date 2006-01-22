@@ -86,6 +86,8 @@ Eure, Ian [ieure]
 	Work on the Ecasound debian packages.
 Fischer, Hans-Georg [hgfischer]
 	Bug fix that solved edi-1.
+Grabner Markus [grabner]
+	Updated RPM spec-file for x86_64 platforms.
 Harris, Steve [swharris]
 	gcc 2.96 (RH7.0) testing and fixes.
 Lavallée, Marc

@@ -87,7 +87,7 @@ Python bindings to Ecasound Control Interface (ECI).
 %prep
 %setup -n ecasound-@VERSION@
 %build
-./configure --prefix=%{_prefix} --mandir=%{_mandir} $extra_params
+./configure --prefix=%{_prefix} --libdir=%{_libdir} --mandir=%{_mandir} --with-pic $extra_params
 make
 
 %install
@@ -131,11 +131,12 @@ strip --strip-unneeded \
 %{_bindir}/ecasound
 %{_bindir}/ecaconvert
 %{_bindir}/ecafixdc
+%{_bindir}/ecalength
 %{_bindir}/ecamonitor
 %{_bindir}/ecanormalize
 %{_bindir}/ecaplay
 %{_bindir}/ecasignalview
-%{_datadir}/ecasound
+%dir %{_datadir}/ecasound
 %{_datadir}/ecasound/ecasound.el
 %config %{_datadir}/ecasound/ecasoundrc
 %config %{_datadir}/ecasound/generic_oscillators
@@ -178,6 +179,14 @@ strip --strip-unneeded \
 # changelog
 
 %changelog
+* Sun Jan 22 2006 Markus Grabner <grabner -at- icg -dot- tu-graz -dot- ac -dot- at>
+- Updated to work on x86_64 platforms.
+- The "--libdir=%{_libdir}" switch is required on x86_64 to select "lib64"
+  for installation instead of "lib".
+- "--with-pic" added to avoid compile errors on x86_64.
+- "%{_bindir}/ecalength" added
+- "%dir" keyword added to remove errors about files listed twice.
+
 * Mon Apr 25 2005 Kai Vehmanen <kvehmanen -at- eca -dot- cx>
 - fixed problems using ecasound.spec with recent versions of rpm
   by removing macro-statements from the changelog entries
