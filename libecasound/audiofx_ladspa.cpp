@@ -57,8 +57,10 @@ EFFECT_LADSPA::~EFFECT_LADSPA (void)
   
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
-      if (plugin_desc->deactivate != 0) plugin_desc->deactivate(plugins_rep[n]);
-      plugin_desc->cleanup(plugins_rep[n]);
+      if (plugin_desc->deactivate != 0) 
+	plugin_desc->deactivate(plugins_rep[n]);
+      if (plugin_desc->cleanup != 0)
+	plugin_desc->cleanup(plugins_rep[n]);
     }
   }
 }
