@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2006 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -158,6 +158,8 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
  *  J = originates from driver callback
  *  E = ----- " ------- engine thread (exec())
  *  C = ----- " ------- control thread (external)
+ *
+ *  X-level-Y -> Y = steps from originating functions
  */
 
 /**
@@ -1531,14 +1533,25 @@ void ECA_ENGINE::dump_profile_info(void)
  **********************************************************************/
 
 /**
- * context: J-level-1
+ * Reads audio data from input objects.
+ *
+ * context: J-level-1 (see 
  */
 void ECA_ENGINE::inputs_to_chains(void)
 {
+  /**
+   * - go through all inputs
+   * - depending on connectivity, read either to a mixdown slot, or 
+   *   directly to a per-chain slot
+   */
+
   for(size_t inputnum = 0; inputnum < inputs_repp->size(); inputnum++) {
 
     if (input_chain_count_rep[inputnum] > 1) {
-      /* case-1a: read buffer from input 'inputnum' to 'mixslot' */
+      /* case-1a: read buffer from input 'inputnum' to 'mixslot';
+       *          later (1b) the data is copied to each per-chain slow
+       *          to which input is connected to */
+
       mixslot_repp->length_in_samples(buffersize());
 
       if ((*inputs_repp)[inputnum]->finished() != true) {
@@ -1546,6 +1559,9 @@ void ECA_ENGINE::inputs_to_chains(void)
 	if ((*inputs_repp)[inputnum]->finished() != true) {
 	  inputs_not_finished_rep++;
 	}
+      }
+      else {
+	mixslot_repp->make_silent();
       }
     }
     for (size_t c = 0; c != chains_repp->size(); c++) {
@@ -1564,10 +1580,13 @@ void ECA_ENGINE::inputs_to_chains(void)
 	    cslots_rep[c]->make_silent();
 	  }
 
-	  break;
+	  /* note: input connected to only one chain, so no need to
+	           iterate through the other chains */
+	  break; 
 	}
 	else {
-	  /* case-1b: copy 'mixslot' to chain 'n' */
+	  /* case-1b: input connected to chain 'n', copy 'mixslot' to 
+	   *          the matching per-chain slot */
 	  cslots_rep[c]->number_of_channels(mixslot_repp->number_of_channels());
 	  cslots_rep[c]->copy(*mixslot_repp);
 	}

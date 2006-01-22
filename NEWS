@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 121105) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 220106) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-????2005 (v2.4.4)  -** stable release **-
+????2006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
 	- added: ecasignalview - ability to pass ecasound options
@@ -36,6 +36,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: eiam - 'c-select' caused a segfault if no chainsetup
 		 was selected
 	- fixed: -etf:0 caused a segfault
+	- fixed: severe bug in mixdown code - in cases where an input 
+                 is connected to multiple chains, and one or more inputs 
+                 have reached end of stream, the resulting mix is not
+		 handled properly
 21082005 (v2.4.3)  -** stable release **-
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
