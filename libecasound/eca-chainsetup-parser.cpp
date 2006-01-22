@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-parser.cpp: Functionality for parsing chainsetup 
 //                            option syntax.
-// Copyright (C) 2001-2005 Kai Vehmanen
+// Copyright (C) 2001-2006 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -346,13 +346,13 @@ void ECA_CHAINSETUP_PARSER::interpret_general_option (const string& argu)
     {
       int prio = ::atoi(kvu_get_argument_number(1, argu).c_str());
       if (prio < 0) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Raised-priority mode disabled.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Raised-priority mode disabled.");
 	csetup_repp->toggle_raised_priority(false);
       }
       else {
 	if (prio == 0) prio = 50;
 	csetup_repp->set_sched_priority(prio);
-	ECA_LOG_MSG(ECA_LOGGER::info, "(eca-chainsetup) Raised-priority mode enabled. (prio:" + 
+	ECA_LOG_MSG(ECA_LOGGER::info, "Raised-priority mode enabled. (prio:" + 
 		      kvu_numtostr(prio) + ")");
 	csetup_repp->toggle_raised_priority(true);
       }

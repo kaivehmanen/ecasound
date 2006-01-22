@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2006 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1915,7 +1915,7 @@ void ECA_CHAINSETUP::calculate_processing_length(void)
 	max_input_length > 0) {
       /* looping but length not set */
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(eca-chainsetup-parser) Setting loop point to "
+		  "Setting loop point to "
 		   + kvu_numtostr(length_in_seconds_exact()) + ".");
       set_max_length_in_samples(max_input_length);
     }
