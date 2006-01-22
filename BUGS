@@ -2,16 +2,38 @@
 *** Ecasound - Known Bugs/Features                                  ***
 -----------------------------------------------------------------------
 
+Reporting bugs
 -----------------------------------------------------------------------
-[ Ecasound Development Items - (edi-x) codes ]
+
+Please send your bug reports to the ecasound-list mailing list (see
+README or http://eca.cx/mlists.php for list contact information).
+
+To get the best results, see for example Simon Tatham's excellent 
+article on 'How to Report Bugs Effectively' (if you are in a hurry, 
+skip to the summary at the end of the article :)):
+
+  http://www.chiark.greenend.org.uk/~sgtatham/bugs.html
+
+Ecasound Development Items - (edi-x) codes
+-----------------------------------------------------------------------
 
 The Ecasound Development Item concept is used for keeping track of 
 bugs, open issues, enhancement proposals, and other similar issues.
 For a full list of EDI items, see 'Documentation/edi-list.txt' or
 on the web at http://www.eca.cx/ecasound -> 'EDIs' menu item.
 
+Ecasound bug tracker at sourceforge.net
 -----------------------------------------------------------------------
-[ Known Bugs and Features ]
+
+Ecasound has used the sourceforge.net bug tracker since Jan/2006:
+
+  https://sourceforge.net/tracker/?group_id=4605&atid=104605
+
+This tracker is used to monitor longstanding bugs and 
+feature/improvement items.
+
+Known Bugs and Features (not in other issue trackers)
+-----------------------------------------------------------------------
 
 - commas in filenames given as arguments to -i and -o options are 
   not handled correctly
