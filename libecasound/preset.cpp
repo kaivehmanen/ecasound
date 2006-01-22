@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000-2002,2004-2005 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2006 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
 //
 // Attributes:
@@ -58,18 +58,18 @@ PRESET::PRESET(const string& formatted_string)
 
 PRESET::~PRESET(void)
 {
+  vector<CHAIN*>::iterator q = chains.begin();
+  while(q != chains.end()) {
+    delete *q;
+    ++q;
+  }
+
   vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
     if (p != buffers.begin()) delete *p; // first buffer points to an
                                          // outside buffer -> not
                                          // deleted here
     ++p;
-  }
-
-  vector<CHAIN*>::iterator q = chains.begin();
-  while(q != chains.end()) {
-    delete *q;
-    ++q;
   }
 
   for(size_t n = 0; n < impl_repp->pardesclist_rep.size(); n++) {
@@ -546,6 +546,19 @@ void PRESET::init(SAMPLE_BUFFER *insample)
     impl_repp->gctrls_rep[n]->init();
     impl_repp->gctrls_rep[n]->set_samples_per_second(samples_per_second());
   }
+}
+
+void PRESET::release(void)
+{
+  /* reimplemented from CHAIN_OPERATOR base class; 
+   * see init() */
+  vector<CHAIN*>::iterator q = chains.begin();
+  while(q != chains.end()) {
+    (*q)->release();
+    ++q;
+  }
+
+  first_buffer = 0;
 }
 
 void PRESET::process(void)

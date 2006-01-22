@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2006 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -62,7 +62,7 @@
 
 CHAIN::CHAIN (void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "constuctor: CHAIN");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "constructor: CHAIN");
   muted_rep = false;
   sfx_rep = false;
   initialized_rep = false;
@@ -82,12 +82,17 @@ CHAIN::~CHAIN (void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "CHAIN destructor!");
 
+  if (is_initialized())
+    release();
+
   for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
 	chainops_rep.end(); p++) {
+
     string tmp = (*p)->status();
     if (tmp.size() > 0) {
       ECA_LOG_MSG(ECA_LOGGER::info, tmp);
     }
+
     delete *p;
   }
 
