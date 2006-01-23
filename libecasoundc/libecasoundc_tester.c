@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------
  * libecasound_tester.c: Runs a set of ECI C unit tests.
- * Copyright (C) 2002 Kai Vehmanen
+ * Copyright (C) 2002,2006 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,8 @@ static int eci_test_2(void);
 static int eci_test_3(void);
 static int eci_test_4(void);
 static int eci_test_5(void);
-/* static int eci_test_6(void); */
+static int eci_test_6(void);
+static int eci_test_7(void);
 
 static eci_test_t eci_funcs[] = { 
   eci_test_1, 
@@ -71,7 +72,8 @@ static eci_test_t eci_funcs[] = {
   eci_test_3, 
   eci_test_4, 
   eci_test_5, 
-  /* eci_test_6,  */
+  eci_test_6,
+  eci_test_7, 
   NULL 
 };
 
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
   if (argc > 1) {
     /* run just a single test */
     size_t m = atoi(argv[1]);
-    if (m > 0 && m < (sizeof(eci_funcs) / sizeof(eci_test_t))) {
+    if (m > 0 && m <= (sizeof(eci_funcs) / sizeof(eci_test_t))) {
       if (eci_funcs[m - 1]() != 0) {
 	++failed;
       }
@@ -259,9 +261,9 @@ static int eci_test_5(void)
   ECA_TEST_SUCCESS();
 }
 
-#if 0
 static int eci_test_6(void)
 {
+#if 0
   ECA_CONTROL_INTERFACE handle;
   int count;
 
@@ -285,5 +287,35 @@ static int eci_test_6(void)
   }
 
   ECA_TEST_SUCCESS();
-}
+#else
+  return 0;
 #endif
+}
+
+
+/**
+ * Tests parsing long string lists.
+ */
+static int eci_test_7(void)
+{
+  eci_handle_t handle;
+  int count;
+
+  ECA_TEST_ENTRY();
+
+  handle = eci_init_r();
+  if (handle == NULL) { ECA_TEST_FAIL(1, "init failed"); }
+
+  eci_command_r(handle, "map-ladspa-list");
+  if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(1, "error in parsing map-ladspa-list"); }
+
+  eci_command_r(handle, "int-cmd-list");
+  if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(2, "error in parsing int-cmd-list"); }
+
+  count = eci_last_string_list_count_r(handle);
+  if (count == 0) { ECA_TEST_FAIL(3, "no entries found"); }
+
+  eci_cleanup_r(handle);
+  
+  ECA_TEST_SUCCESS();
+}
