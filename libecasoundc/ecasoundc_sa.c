@@ -13,7 +13,7 @@
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
- * Copyright (C) 2000-2005 Kai Vehmanen
+ * Copyright (C) 2000-2006 Kai Vehmanen
  * Copyright (C) 2001 Aymeric Jeanneau
  *
  * This library is free software; you can redistribute it and/or
@@ -67,10 +67,10 @@
  * Definitions and constants
  */
 
-#define ECI_MAX_PARSER_BUF_SIZE    65536
+#define ECI_MAX_PARSER_BUF_SIZE    524288 /* XXX: wasting memory, should be fixed */
 #define ECI_MAX_FLOAT_BUF_SIZE     32
 #define ECI_MAX_RETURN_TYPE_SIZE   4
-#define ECI_MAX_STRING_SIZE        ECI_MAX_PARSER_BUF_SIZE
+#define ECI_MAX_STRING_SIZE        65536  /* XXX: see above */
 #define ECI_MAX_RESYNC_ATTEMPTS    9
 #define ECI_MAX_LAST_COMMAND_SIZE  64
 
@@ -219,9 +219,9 @@ void eci_impl_clean_last_values(struct eci_parser* parser);
 void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message);
 ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout);
 const char* eci_impl_get_ecasound_path(void);
-void eci_impl_los_list_add_item(struct eci_los_list** i, char* stmp, int len);
-void eci_impl_los_list_alloc_item(struct eci_los_list **ptr);
-void eci_impl_los_list_clear(struct eci_los_list **ptr);
+struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* headptr, char* stmp, int len);
+struct eci_los_list *eci_impl_los_list_alloc_item(void);
+void eci_impl_los_list_clear(struct eci_los_list *ptr);
 void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout);
 void eci_impl_set_last_los_value(struct eci_parser* parser);
 void eci_impl_set_last_values(struct eci_parser* parser);
@@ -243,8 +243,8 @@ void eci_init(void)
 }
 
 /**
- * Initializes session. This call creates a new ecasoundinstance and
- * prepares ecasound for processing. 
+ * Initializes session. This call creates a new ecasound
+ * instance and prepares it for processing. 
  */
 eci_handle_t eci_init_r(void)
 {
@@ -252,22 +252,13 @@ eci_handle_t eci_init_r(void)
   int cmd_send_pipe[2], cmd_receive_pipe[2];
   const char* ecasound_exec = eci_impl_get_ecasound_path();
 
-  /* fork ecasound and setup two-way communication */
+  /* step: launch ecasound process and setup two-way communication */
   if (ecasound_exec != NULL &&
       (pipe(cmd_receive_pipe) == 0 && pipe(cmd_send_pipe) == 0)) {
-    eci_rep = (struct eci_internal*)calloc(1, sizeof(struct eci_internal));
-    eci_rep->parser_repp = (struct eci_parser*)calloc(1, sizeof(struct eci_parser));
-
-    /* initialize variables */
-    eci_rep->commands_counter_rep = 0;
-    eci_rep->parser_repp->last_counter_rep = 0;
-    eci_rep->parser_repp->token_phase_rep = ECI_TOKEN_PHASE_NONE;
-    eci_rep->parser_repp->buffer_current_rep = 0;
-    eci_impl_clean_last_values(eci_rep->parser_repp);
-
-    eci_rep->pid_of_child_rep = fork();
-    if (eci_rep->pid_of_child_rep == 0) { 
-      /* first child */
+    int fork_pid = fork();
+    /* step: 1st fork */
+    if (fork_pid == 0) { 
+      /* first child (phase-1) */
 
       /* -c = interactive mode, -D = direct prompts and banners to stderr */
       const char* args[4] = { NULL, "-c", "-D", NULL };
@@ -280,14 +271,16 @@ eci_handle_t eci_init_r(void)
       sa.sa_flags=0;
       sigaction(SIGHUP, &sa, NULL);
       setsid();
-      if (fork() != 0)
-	  exit(0);    /* first child terminates here */
 
-      /* second child continues */
+      /* step: 2nd fork (to detach from parent) */
+      if (fork() != 0)
+	  _exit(0);    /* first child terminates here (phase-2) */
+
+      /* second child continues (phase-2) */
      
       args[0] = ecasound_exec;
 
-      /* close all unused descriptors */
+      /* close all unused descriptors and resources */
 
       close(0);
       close(1);
@@ -302,11 +295,11 @@ eci_handle_t eci_init_r(void)
 
       freopen("/dev/null", "w", stderr);
 
-      /* write second child's pid to the (grand) parent */
+      /* step: write second child's pid to the (grand) parent */
       pid = getpid();
       write(1, &pid, sizeof(pid));
       
-      /* notify the parent that we're up */
+      /* step: notify the parent that we're up */
       res = write(1, args, 1); 
 
       res = execvp(args[0], (char**)args);
@@ -315,15 +308,26 @@ eci_handle_t eci_init_r(void)
       close(0);
       close(1);
 
-      exit(res);
+      _exit(res);
       ECI_DEBUG("(ecasoundc_sa) You shouldn't see this!\n");
     }
     else { 
-      /* parent */
+      /* step: parent (phase-1) */
       int res;
       char buf[1];
       int status;
       int pid;
+
+      eci_rep = (struct eci_internal*)calloc(1, sizeof(struct eci_internal));
+      eci_rep->parser_repp = (struct eci_parser*)calloc(1, sizeof(struct eci_parser));
+
+      /* step: initialize variables */
+      eci_rep->pid_of_child_rep = fork_pid;
+      eci_rep->commands_counter_rep = 0;
+      eci_rep->parser_repp->last_counter_rep = 0;
+      eci_rep->parser_repp->token_phase_rep = ECI_TOKEN_PHASE_NONE;
+      eci_rep->parser_repp->buffer_current_rep = 0;
+      eci_impl_clean_last_values(eci_rep->parser_repp);
 
       /*
 	waits for first child to prevent the zombie
@@ -345,10 +349,10 @@ eci_handle_t eci_init_r(void)
       eci_rep->cmd_write_fd_rep = cmd_send_pipe[1];
       close(cmd_send_pipe[0]);
 
-      /* switch to non-blocking mode for read */
+      /* step: switch to non-blocking mode for read */
       fcntl(eci_rep->cmd_read_fd_rep, F_SETFL, O_NONBLOCK);
 
-      /* check that fork succeeded() */
+      /* step: check that fork succeeded() */
       res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, buf, 1, ECI_READ_TIMEOUT_MS);
       if (res != 1) {
 	ECI_DEBUG_1("(ecasoundc_sa) fork() of %s FAILED!\n", ecasound_exec);
@@ -362,7 +366,7 @@ eci_handle_t eci_init_r(void)
 	write(eci_rep->cmd_write_fd_rep, "int-output-mode-wellformed\n", strlen("int-output-mode-wellformed\n"));
 	eci_rep->commands_counter_rep ++;
       
-	/* check that exec() succeeded */
+	/* step: check that exec() succeeded */
 	eci_impl_read_return_value(eci_rep, ECI_READ_TIMEOUT_MS);
 	if (eci_rep->commands_counter_rep != eci_rep->parser_repp->last_counter_rep) {
 	  ECI_DEBUG_3("(ecasoundc_sa) exec() of %s FAILED (%d=%d)!\n", ecasound_exec, eci_rep->commands_counter_rep, eci_rep->parser_repp->last_counter_rep);
@@ -408,10 +412,13 @@ void eci_cleanup_r(eci_handle_t ptr)
 
   ECI_DEBUG("(ecasoundc_sa) child exit signalled\n");
 
-  if(eci_rep != 0) {
+  if (eci_rep != 0) {
     /* close descriptors */
     close(eci_rep->cmd_read_fd_rep);
     close(eci_rep->cmd_write_fd_rep);
+
+    /* free lists of strings, if any */
+    eci_impl_clean_last_values(eci_rep->parser_repp);
 
     /* if (eci_rep->eci != 0) {} */
     /* delete eci_rep->eci; */
@@ -641,11 +648,15 @@ const char* eci_last_type_r(eci_handle_t ptr)
 
 /**
  * Whether an error has occured?
+ *
+ * @return zero if not in error state
  */
 int eci_error(void) { return(eci_error_r(static_eci_rep)); }
 
 /**
  * Whether an error has occured?
+ *
+ * @return zero if not in error state
  */
 int eci_error_r(eci_handle_t ptr)
 { 
@@ -688,8 +699,8 @@ void eci_impl_clean_last_values(struct eci_parser* parser)
   DBC_CHECK(parser != 0);
 
   memset(parser->last_s_repp, 0, ECI_MAX_STRING_SIZE);
-  eci_impl_los_list_clear(&parser->last_los_repp);
-  DBC_CHECK(parser->last_los_repp == NULL);
+  eci_impl_los_list_clear(parser->last_los_repp);
+  parser->last_los_repp = NULL;
   parser->last_i_rep = 0;
   parser->last_li_rep = 0;
   parser->last_f_rep = 0.0f;
@@ -753,73 +764,66 @@ const char* eci_impl_get_ecasound_path(void)
 }
 
 
-void eci_impl_los_list_add_item(struct eci_los_list** headptr, char* stmp, int len)
+struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* head, char* stmp, int len)
 {
-  struct eci_los_list* i = *headptr;
-  struct eci_los_list* prev = NULL;
+  struct eci_los_list* i = head;
+  struct eci_los_list* last = NULL;
   
   if (len >= ECI_MAX_STRING_SIZE) {
     fprintf(stderr, "(ecasoundc_sa) WARNING! String list buffer overflowed!\n\n");
     len = ECI_MAX_STRING_SIZE - 1;
   }
 
-  stmp[len] = 0;
-  /* ECI_DEBUG_1("(ecasoundc_sa) adding item '%s' to los list\n", stmp); */
-
-  while(1) {
-    if (i == NULL) {
-      eci_impl_los_list_alloc_item(&i);
-      if (prev != NULL) prev->next_repp = i;
-      if (*headptr == NULL) *headptr = i;
-
-      memcpy(i->data_repp, stmp, len + 1);
-      /* ECI_DEBUG_1("(ecasoundc_sa) copied %d bytes to %p.\n", len, i->data_repp); */
-
-      break;
-    }
-
-    prev = i;
+  /* find end of list */
+  while(i != NULL) {
+    last = i;
     i = i->next_repp;
   }
+
+  /* add to the end, copy data */
+  i = eci_impl_los_list_alloc_item();
+  memcpy(i->data_repp, stmp, len + 1);
+  stmp[len] = 0;
+  if (last != NULL) last->next_repp = i;
+  
+  /* ECI_DEBUG_3("(ecasoundc_sa) adding item '%s' to los list; head=%p, i=%p\n", stmp, (void*)head, (void*)i); */
+
+  /* created a new list, return the new item */
+  if (head == NULL) 
+    return i;
+
+  /* return the old head */
+  return head;
 }
 
-void eci_impl_los_list_alloc_item(struct eci_los_list **ptr)
+struct eci_los_list *eci_impl_los_list_alloc_item(void)
 {
+  struct eci_los_list *item;
   /* ECI_DEBUG("(ecasoundc_sa) list alloc item\n"); */
-  *ptr = (struct eci_los_list*)malloc(sizeof(struct eci_los_list*));
-  DBC_CHECK(*ptr != NULL);
-  (*ptr)->data_repp = (char*)malloc(ECI_MAX_STRING_SIZE);
-  DBC_CHECK((*ptr)->data_repp != NULL);
-  (*ptr)->next_repp = NULL;
+  item = (struct eci_los_list*)malloc(sizeof(struct eci_los_list));
+  DBC_CHECK(item != NULL);
+  item->next_repp = item->prev_repp = NULL;
+  item->data_repp = (char*)malloc(ECI_MAX_STRING_SIZE);
+  DBC_CHECK(item->data_repp != NULL);
+
+  return item;
 }
 
-void eci_impl_los_list_clear(struct eci_los_list **ptr)
+void eci_impl_los_list_clear(struct eci_los_list *ptr)
 {
-  struct eci_los_list *i = *ptr;
+  struct eci_los_list *i = ptr;
 
   ECI_DEBUG_1("(ecasoundc_sa) clearing list, i=%p\n", (void*)i);
 
   while(i != NULL) {
     /* ECI_DEBUG_1("(ecasoundc_sa) freeing list item %p\n", (void*)i); */
     struct eci_los_list* next = i->next_repp;
-
     if (i->data_repp) {
-      {
-	  if ( next != NULL ) {
-	      if (next->data_repp != NULL) {
-		  /* ECI_DEBUG_1("(ecasoundc_sa) removing item '%s' from los list\n", i->data_repp); */
-	      }
-	  }
-      }
-      /* ECI_DEBUG("(ecasoundc_sa) freeing list item\n"); */
-      free(i->data_repp);
+      free(i->data_repp), i->data_repp = NULL;
     }
     free(i);
-
     i = next;
   }
-
-  *ptr = NULL;
 }
 
 void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
@@ -872,7 +876,7 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
  */
 void eci_impl_set_last_los_value(struct eci_parser* parser)
 {
-  struct eci_los_list** i = &parser->last_los_repp;
+  struct eci_los_list* i = parser->last_los_repp;
   int quoteflag = 0, m = 0, n;
   char* stmp = malloc(ECI_MAX_STRING_SIZE);
 
@@ -883,7 +887,7 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
   ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_repp, parser->buffer_current_rep);
 
   eci_impl_los_list_clear(i);
-  /* eci_impl_los_list_clear(&parser->last_los_repp); */
+  parser->last_los_repp = NULL;
 
   for(n = 0; n < parser->buffer_current_rep && n < parser->msgsize_rep; n++) {
     char c = parser->buffer_repp[n];
@@ -901,13 +905,15 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
     }
     else {
       if (m == 0) continue;
-      eci_impl_los_list_add_item(i, stmp, m);
+      i = eci_impl_los_list_add_item(i, stmp, m);
       m = 0;
     }
   }
   if (m > 0) {
-    eci_impl_los_list_add_item(i, stmp, m);
+    i = eci_impl_los_list_add_item(i, stmp, m);
   }
+
+  parser->last_los_repp = i;
 
   /* delete tmp char-buffer */
   free(stmp);
