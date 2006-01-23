@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 220106) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 230106) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -18,6 +18,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	         ctrl-describe commands; see ecasound-iam(1)
 	- added: ecasignalview - ability to pass ecasound options
 		 -G, -B, -M*, -r and -z
+	- added: BUGS file - added 'Reporting bugs' section
+	- added: updated RPM spec-file for x86_64 support [grabner]
 	- changed: minor changes to ecaplay console output
 	- changed: ECI C impl. - increased the time engine has
 		   for processing ECI commands; fixes problems
@@ -27,6 +29,10 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- changed: error is raised if one tries to add chainops or 
 		   controllers when multiple (or zero) chains are 
 		   selected
+	- changed: increased size of buffers used by the ECI-C 
+		   parser (sfbug:1412409) [allies]
+	- changed: it's now possible to set initial values for
+		   operator parameters controlled by MIDI-CCs
 	- fixed: compile-time bug in ecasignalview.cpp
 	- fixed: saving chainsetups in cases where a ctrl is 
 		 connected to a effect preset 
@@ -40,6 +46,12 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
                  is connected to multiple chains, and one or more inputs 
                  have reached end of stream, the resulting mix is not
 		 handled properly
+	- fixed: bug in freeing references to buffers in effect preset
+		 code; triggered by externally terminating an ecasound
+		 session containing preset objects (sfbug:1412200)
+	- fixed: ECI-C memory access errors reported by valgrind
+	- fixed: allow commas in ecasignalview input/output params;
+		 makes it again possible to specify ALSA devices, etc
 21082005 (v2.4.3)  -** stable release **-
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
@@ -59,6 +71,8 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 	- fixed: bug in detecting finished-state with .ewf files when
 		 used with -z:db mode enabled -> caused flood of underrun
 		 warnings with multi .ewf file sessions
+	- fixed: externally terminating, e.g. via JACK transport system, 
+                 a batch chainsetup would cause a segfault
 07082005 (v2.4.2)  -** stable release **-
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
