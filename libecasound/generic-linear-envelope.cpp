@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // generic-linear-envelope.cpp: Generic linear envelope
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2002,2006 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +40,8 @@ GENERIC_LINEAR_ENVELOPE::GENERIC_LINEAR_ENVELOPE(void)
 {
   pos_rep.resize(1);
   val_rep.resize(1);
-  pos_rep[0] = 1;
+  curstage = -2; /* processing not yet started */
+  pos_rep[0] = 0;
   val_rep[0] = 0;
   set_param_count(0);
 } 
@@ -49,7 +53,9 @@ GENERIC_LINEAR_ENVELOPE::~GENERIC_LINEAR_ENVELOPE(void)
 CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void)
 {
   parameter_t curpos = position_in_seconds_exact();
-  if (curpos < pos_rep[0]) {
+  if (curpos < pos_rep[0] || curstage == -2) {
+    /* not reached the first position yet, or processing not 
+       started yet */
     curval = val_rep[0];
   } else if (curstage < static_cast<int>(pos_rep.size())-1) {
     if (curpos >= pos_rep[curstage+1]) {
@@ -76,33 +82,33 @@ CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void)
 		       << ", curval " << curval
 		       << ", curstage " << curstage << "." << std::endl);
   
-  return(curval);
+  return curval;
 } 
 
 void GENERIC_LINEAR_ENVELOPE::init(void)
 {
   curval = 0.0f;
-  curstage = -1;
+  curstage = -1; /* processing started */
   
-  ECA_LOG_MSG(ECA_LOGGER::info, "(generic-linear-envelope) Envelope created.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Envelope created.");
 }
 
 void GENERIC_LINEAR_ENVELOPE::set_param_count(int params)
 {
-    param_names_rep = "point_count";
-    if (params > 0) {
-        for(int n = 0; n < params; ++n) {
-            param_names_rep += ",pos";
-            param_names_rep += kvu_numtostr(n + 1);
-            param_names_rep += ",val";
-            param_names_rep += kvu_numtostr(n + 1);
-        }
+  param_names_rep = "point_count";
+  if (params > 0) {
+    for(int n = 0; n < params; ++n) {
+      param_names_rep += ",pos";
+      param_names_rep += kvu_numtostr(n + 1);
+      param_names_rep += ",val";
+      param_names_rep += kvu_numtostr(n + 1);
     }
+  }
 }
 
 std::string GENERIC_LINEAR_ENVELOPE::parameter_names(void) const 
 {
-    return(param_names_rep);
+  return param_names_rep;
 }
 
 void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_t value)
@@ -126,7 +132,7 @@ CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::get_parameter(int param)
 {
   switch(param) {
   case 1:
-    return(static_cast<parameter_t>(pos_rep.size()));
+    return static_cast<parameter_t>(pos_rep.size());
     break;
   default:
     int pointnum = param/2 - 1;
