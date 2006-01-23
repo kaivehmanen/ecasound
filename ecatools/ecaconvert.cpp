@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecaconvert.cpp: A simple command-line tool for converting
 //                 audio files.
-// Copyright (C) 2000,2002,2005 Kai Vehmanen
+// Copyright (C) 2000,2002,2005-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     eci.command("c-add default");
 
     string format;
-    if (ecicpp_add_input(&eci, filename, &format) < 0) break;
+    if (ecicpp_add_file_input(&eci, filename, &format) < 0) break;
     
     cout << "Using audio format -f:" << format << "\n";
 

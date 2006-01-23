@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecicpp_helper.cpp: Helper routines for C++ ECI programming.
-// Copyright (C) 2002-2005 Kai Vehmanen
+// Copyright (C) 2002-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,19 +43,24 @@ using std::string;
  * Function declarations
  */
 
-
-int ecicpp_add_input(ECA_CONTROL_INTERFACE* eci, const string& filename, string* format)
+int ecicpp_add_file_input(ECA_CONTROL_INTERFACE* eci, const string& filename, string* format)
 {
-  // if (filename.find(',') != string::npos) {
-  //  FIXME: how to handle...?
-  // }
+  if (filename.find(',') != string::npos) {
+    cerr << "Error: Unable to handle filenames with commas. Exiting...\n";
+    return -1;
+  }
 
-  eci->command("ai-add " + filename);
+  return ecicpp_add_input(eci, filename, format);
+}
+
+int ecicpp_add_input(ECA_CONTROL_INTERFACE* eci, const string& input, string* format)
+{
+  eci->command("ai-add " + input);
   bool error = eci->error();
   eci->command("ai-list");
   if (error == true || eci->last_string_list().size() != 1) {
     cerr << eci->last_error() << endl;
-    cerr << "---\nError while processing file " << filename << ". Exiting...\n";
+    cerr << "---\nError while processing input " << input << ". Exiting...\n";
     return -1;
   }
   
@@ -75,16 +80,16 @@ int ecicpp_add_input(ECA_CONTROL_INTERFACE* eci, const string& filename, string*
   return 0;
 }
 
-int ecicpp_add_output(ECA_CONTROL_INTERFACE* eci, const string& filename , const string& format)
+int ecicpp_add_output(ECA_CONTROL_INTERFACE* eci, const string& output, const string& format)
 {
   eci->command("cs-set-audio-format " +  format);
 
-  eci->command("ao-add " + filename);
+  eci->command("ao-add " + output);
   bool error = eci->error();
   eci->command("ao-list");
   if (error == true || eci->last_string_list().size() != 1) {
     cerr << eci->last_error() << endl;
-    cerr << "---\nError while processing output " << filename << ". Exiting...\n";
+    cerr << "---\nError while processing output " << output << ". Exiting...\n";
     return -1;
   }
 

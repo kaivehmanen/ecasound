@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecatools-fixdc.cpp: A simple command-line tools for fixing DC-offset.
-// Copyright (C) 1999-2003,2005 Kai Vehmanen
+// Copyright (C) 1999-2003,2005-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 	cout << "Calculating DC-offset for file \"" << filename << "\".\n";
 	
 	string format;
-	if (ecicpp_add_input(&eci, filename, &format) < 0) break;
+	if (ecicpp_add_file_input(&eci, filename, &format) < 0) break;
 
 	cout << "Using audio format -f:" << format << "\n";
 
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 	cout << "Fixing DC-offset \"" << filename << ".\n";
 
 	string format;
-	if (ecicpp_add_input(&eci, ecatools_fixdc_tempfile, &format) < 0) break;
+	if (ecicpp_add_file_input(&eci, ecatools_fixdc_tempfile, &format) < 0) break;
  
 	cout << "Using audio format -f:" << format << "\n";
 

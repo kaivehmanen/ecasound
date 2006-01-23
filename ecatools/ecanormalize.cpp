@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecanormalize.cpp: A simple command-line tools for normalizing
 //                   sample volume.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 	  cout << "Analyzing file \"" << filename << "\".\n";
 
 	  string format;
-	  if (ecicpp_add_input(&eci, filename, &format) < 0) break;
+	  if (ecicpp_add_file_input(&eci, filename, &format) < 0) break;
 	  cout << "Using audio format -f:" << format << "\n";
 
 	  cout << "Opening temp file \"" << ecatools_normalize_tempfile << "\".\n";
@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
 	}
 	else {
 	  string format;
-	  if (ecicpp_add_input(&eci, ecatools_normalize_tempfile, &format) < 0) break;
+	  if (ecicpp_add_file_input(&eci, ecatools_normalize_tempfile, &format) < 0) break;
 	  cout << "Using audio format -f:" << format << "\n";
 
 	  if (ecicpp_add_output(&eci, filename, format) < 0) break;
