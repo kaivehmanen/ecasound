@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230106) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 270106) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-????2006 (v2.4.4)  -** stable release **-
+27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
 	- added: ecasignalview - ability to pass ecasound options
