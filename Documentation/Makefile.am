@@ -10,35 +10,33 @@ SUBDIRS = users_guide programmers_guide
 
 # ---------------------------------------------------------------------
 # Files going into distribution:
-DISTFILES = 	Makefile.am \
-		Makefile.in \
-		ecasound.1 \
-		ecasound_manpage.html \
-	    	ecasound_manpage.yo \
-		ecasoundrc.5 \
-		ecasoundrc_manpage.html \
-	    	ecasoundrc_manpage.yo \
-	    	ecasound-iam.1 \
-	    	ecasound-iam_manpage.html \
-	    	ecasound-iam_manpage.yo \
-	    	ecatools.1 \
-	    	ecatools_manpage.html \
-		ecatools_manpage.yo \
-	    	ecaconvert.1 \
-	    	ecafixdc.1 \
-	    	ecalength.1 \
-	    	ecalength_manpage.html \
-	    	ecalength_manpage.yo \
-	    	ecaplay.1 \
-	    	ecamonitor.1 \
-	    	ecanormalize.1 \
-	    	ecasignalview.1 \
-		index.html \
-	    	examples.html \
-		manpages.html \
-		tutorials.html \
-		style_ecasound.css \
-		edi-list.txt
+EXTRA_DIST = 	$(srcdir)/ecasound.1 \
+		$(srcdir)/ecasound_manpage.html \
+	    	$(srcdir)/ecasound_manpage.yo \
+		$(srcdir)/ecasoundrc.5 \
+		$(srcdir)/ecasoundrc_manpage.html \
+	    	$(srcdir)/ecasoundrc_manpage.yo \
+	    	$(srcdir)/ecasound-iam.1 \
+	    	$(srcdir)/ecasound-iam_manpage.html \
+	    	$(srcdir)/ecasound-iam_manpage.yo \
+	    	$(srcdir)/ecatools.1 \
+	    	$(srcdir)/ecatools_manpage.html \
+		$(srcdir)/ecatools_manpage.yo \
+	    	$(srcdir)/ecaconvert.1 \
+	    	$(srcdir)/ecafixdc.1 \
+	    	$(srcdir)/ecalength.1 \
+	    	$(srcdir)/ecalength_manpage.html \
+	    	$(srcdir)/ecalength_manpage.yo \
+	    	$(srcdir)/ecaplay.1 \
+	    	$(srcdir)/ecamonitor.1 \
+	    	$(srcdir)/ecanormalize.1 \
+	    	$(srcdir)/ecasignalview.1 \
+		$(srcdir)/index.html \
+	    	$(srcdir)/examples.html \
+		$(srcdir)/manpages.html \
+		$(srcdir)/tutorials.html \
+		$(srcdir)/style_ecasound.css \
+		$(srcdir)/edi-list.txt
 
 # ---------------------------------------------------------------------
 # local targets for generating docs from latex and yodl sources
@@ -90,11 +88,11 @@ ecasound-iam.1: ecasound-iam_manpage.man
 ecasoundrc.5: ecasoundrc_manpage.man
 	cp ecasoundrc_manpage.man ecasoundrc.5
 
-%.man: %.yo
-	yodl2man $<
+%.man: $(srcdir)/%.yo
+	yodl2man -o $@ $<
 
-%.html: %.yo
-	yodl2html $<
+%.html: $(srcdir)/%.yo
+	yodl2html -o $@ $<
 
 # ---------------------------------------------------------------------
 # doxygen

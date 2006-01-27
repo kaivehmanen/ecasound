@@ -3,9 +3,7 @@
 #
 # ---------------------------------------------------------------------
 # Files going into distribution:
-DISTFILES = 	Makefile.am \
-		Makefile.in \
-		ecasound_programmers_guide.txt \
+EXTRA_DIST =	ecasound_programmers_guide.txt \
 		eci_doc.latex
 
 all:
@@ -29,5 +27,3 @@ clean-docs:
 	rm -fv ecasound_programmers_guide.html
 	rm -fv eci_doc.log eci_doc.toc eci_doc.dvi eci_doc.aux eci_doc.ps eci_doc.dvi
 	rm -fv html_ecidoc/*
-
-distclean:

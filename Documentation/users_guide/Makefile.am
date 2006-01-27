@@ -3,7 +3,7 @@
 #
 # ---------------------------------------------------------------------
 # Files going into distribution:
-DISTFILES = Makefile.am Makefile.in users_guide.latex
+EXTRA_DIST = users_guide.latex
 
 all:
 
@@ -25,4 +25,3 @@ clean-docs:
 	rm -fv users_guide.log users_guide.toc users_guide.dvi users_guide.aux users_guide.ps users_guide.dvi
 	rm -fv html_uguide/*
 
-distclean:

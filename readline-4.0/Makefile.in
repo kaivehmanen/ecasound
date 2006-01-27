@@ -19,7 +19,7 @@
 # ------
 # Notice! This Makefile.in is edited so it is compatible with 
 #         ecasound's Makefile arrangements.
-#	  Kai Vehmanen, 04.11.1999	 
+#	  Kai Vehmanen, 04.11.1999,27.01.2006
 # ------
 
 RL_LIBRARY_VERSION = @LIBVERSION@
@@ -120,9 +120,9 @@ CREATED_TAGS = TAGS tags
 INSTALLED_HEADERS = readline.h chardefs.h keymaps.h history.h tilde.h \
 		    rlstdc.h rlconf.h
 
-DISTFILES = CHANGELOG CHANGES COPYING INSTALL MANIFEST Makefile.in \
-	    README acconfig.h aclocal.m4 \
-	    $(HSOURCES) $(CSOURCES) config.h.in configure configure.in
+DISTFILES = $(srcdir)/CHANGELOG $(srcdir)/CHANGES $(srcdir)/COPYING $(srcdir)/INSTALL $(srcdir)/MANIFEST $(srcdir)/Makefile.in \
+	    $(srcdir)/README $(srcdir)/acconfig.h $(srcdir)/aclocal.m4 \
+	    $(HSOURCES) $(CSOURCES) $(srcdir)/config.h.in $(srcdir)/configure $(srcdir)/configure.in
 
 ##########################################################################
 
@@ -242,8 +242,33 @@ dist:   force
 	@echo tar cf $(RL_LIBRARY_NAME)-${RL_LIBRARY_VERSION}.tar ${RL_LIBRARY_NAME}-$(RL_LIBRARY_VERSION)
 	@echo gzip $(RL_LIBRARY_NAME)-$(RL_LIBRARY_VERSION).tar
 
-distdir:
-	cp -apv $(DISTFILES) $(distdir)/ 
+distdir: $(DISTFILES)
+	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
+	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
+	list='$(DISTFILES)'; for file in $$list; do \
+	  case $$file in \
+	    $(srcdir)/*) file=`echo "$$file" | sed "s|^$$srcdirstrip/||"`;; \
+	    $(top_srcdir)/*) file=`echo "$$file" | sed "s|^$$topsrcdirstrip/|$(top_builddir)/|"`;; \
+	  esac; \
+	  if test -f $$file || test -d $$file; then d=.; else d=$(srcdir); fi; \
+	  dir=`echo "$$file" | sed -e 's,/[^/]*$$,,'`; \
+	  if test "$$dir" != "$$file" && test "$$dir" != "."; then \
+	    dir="/$$dir"; \
+	    $(mkdir_p) "$(distdir)$$dir"; \
+	  else \
+	    dir=''; \
+	  fi; \
+	  if test -d $$d/$$file; then \
+	    if test -d $(srcdir)/$$file && test $$d != $(srcdir); then \
+	      cp -pR $(srcdir)/$$file $(distdir)$$dir || exit 1; \
+	    fi; \
+	    cp -pR $$d/$$file $(distdir)$$dir || exit 1; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || cp -p $$d/$$file $(distdir)/$$file \
+	    || exit 1; \
+	  fi; \
+	done
 
 # Tell versions [3.59,3.63) of GNU make not to export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

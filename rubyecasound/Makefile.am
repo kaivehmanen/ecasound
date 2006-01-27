@@ -20,6 +20,10 @@ endif
 # hooks
 # ----------------------------------------------------------------------
 
+# unit test requires "ecasound.rb" in the build directory
+$(builddir)/ecasound.rb stresstest.rb: ecasound.rb
+	if test ! -e ecasound.rb ; then ln -s $(srcdir)/ecasound.rb . ; fi
+
 if ECA_AM_RUBYECASOUND_INSTALL
 install-exec-hook: $(rubyecasound_install_list1) $(rubyecasound_install_list2)
 	$(INSTALL) -d $(DESTDIR)$(ECA_S_RUBY_SITEDIR)
