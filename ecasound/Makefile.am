@@ -1,8 +1,4 @@
-if ECA_AM_SYSTEM_READLINE
 INCLUDES = -I$(ECA_S_READLINE_INCLUDES) -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
-else
-INCLUDES = -I$(top_srcdir)/readline-4.0 -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/libecasound -I$(top_srcdir)/kvutils
-endif
 
 if ECA_AM_USE_NCURSES
 termcap_library_ncurses = -lncurses
@@ -34,37 +30,18 @@ ecasound_SOURCES = 	ecasound.cpp \
 			textdebug.cpp \
 			textdebug.h
 
-#			eca-text.cpp \
-#			eca-text.h \
-#			eca-iam.cpp \
-#			eca-iam.h
-
 ecasound_debug_SOURCES = $(ecasound_SOURCES)
 
-if ECA_AM_SYSTEM_READLINE
 ecasound_LDFLAGS = -export-dynamic
 ecasound_LDADD = $(termcap_library) \
-		$(ECA_S_READLINE_LIBS) -lreadline -lhistory \
+		$(ECA_S_READLINE_LIBS) \
 		$(top_builddir)/libecasound/libecasound.la \
 		$(top_builddir)/kvutils/libkvutils.la
 ecasound_debug_LDFLAGS = $(ecasound_LDFLAGS)
 ecasound_debug_LDADD = $(termcap_library) \
-		$(ECA_S_READLINE_LIBS) -lreadline -lhistory \
+		$(ECA_S_READLINE_LIBS) \
 	 	$(top_builddir)/libecasound/libecasound_debug.la \
 		$(top_builddir)/kvutils/libkvutils_debug.la
-
-else
-ecasound_LDFLAGS = -export-dynamic
-ecasound_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
-		$(top_builddir)/readline-4.0/libhistory.a $(termcap_library) \
-		$(top_builddir)/libecasound/libecasound.la \
-		$(top_builddir)/kvutils/libkvutils.la
-ecasound_debug_LDADD = $(top_builddir)/readline-4.0/libreadline.a \
-		$(top_builddir)/readline-4.0/libhistory.a $(termcap_library) \
-	 	$(top_builddir)/libecasound/libecasound_debug.la \
-		$(top_builddir)/kvutils/libkvutils_debug.la
-ecasound_debug_LDFLAGS = $(ecasound_LDFLAGS)
-endif
 
 # --
 
