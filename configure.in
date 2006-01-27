@@ -1039,7 +1039,7 @@ if test x$enable_sysreadline = xyes; then
       enable_sysreadline=no
     ], ${readline_extra_libs})
 
-  AC_CHECK_LIB(history, main, ECA_S_READLINE_LIBS="${readline_library} -lhistory", 
+  AC_CHECK_LIB(history, main, ECA_S_READLINE_LIBS="${ECA_S_READLINE_LIBS} -lhistory", 
     [
       AC_MSG_WARN([*** readline support not installed ***])
       enable_sysreadline=no
