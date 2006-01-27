@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
   /* 3. create console interface */
   if (state->retval == 0) {
 
-#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
+#if defined(ECA_PLATFORM_CURSES) 
     if (state->quiet_mode != true &&
 	state->cerr_output_only_mode != true) {
       state->console = new ECA_CURSES();

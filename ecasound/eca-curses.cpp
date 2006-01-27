@@ -28,7 +28,7 @@
 #include <map>
 #include <string>
 
-#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
+#if defined(ECA_PLATFORM_CURSES) 
 
 #ifdef ECA_USE_NCURSES_H
 #include <ncurses.h>
@@ -215,4 +215,4 @@ void ECA_CURSES::read_command(const std::string& prompt) {}
 const std::string& ECA_CURSES::last_command(void) const { static std::string empty; return empty; }
 void ECA_CURSES::init_readline_support(void) {}
 
-#endif /* defined ECA_USE_NCURSES || defined ECA_USE_TERMCAP */
+#endif /* ECA_PLATFORM_CURSES */

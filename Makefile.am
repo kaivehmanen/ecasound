@@ -1,10 +1,7 @@
 EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasoundrc.in ecasound.spec effect_presets generic_oscillators
 
-if ECA_AM_SYSTEM_READLINE
 SUBDIRS = kvutils libecasound ecasound libecasoundc pyecasound rubyecasound ecatools Documentation examples
-else
-SUBDIRS = kvutils readline-4.0 libecasound ecasound libecasoundc pyecasound rubyecasound ecatools Documentation examples
-endif
+
 AUTOMAKE_OPTIONS = foreign
 
 PACKAGE = @PACKAGE@
