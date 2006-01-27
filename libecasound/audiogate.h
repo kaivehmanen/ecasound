@@ -63,13 +63,13 @@ public:
   TIME_CROP_GATE* clone(void) const { return new TIME_CROP_GATE(*this); }
   TIME_CROP_GATE* new_expr(void) const { return new TIME_CROP_GATE(); }
   TIME_CROP_GATE (parameter_t open_at, parameter_t duration);
-  TIME_CROP_GATE (void) : curtime(0.0) {
+  TIME_CROP_GATE (void) : curtime_rep(0.0), begtime_rep(0.0), durtime_rep(0.0) {
     close_gate();
   }
 
 private:
 
-  parameter_t curtime, btime, etime; 
+  parameter_t curtime_rep, begtime_rep, durtime_rep; 
 };
 
 /**
@@ -102,13 +102,13 @@ public:
   THRESHOLD_GATE (parameter_t threshold_openlevel, parameter_t
 		  threshold_closelevel,  bool use_rms = false);
   THRESHOLD_GATE (void) 
-    : rms(false), is_opened(false), is_closed(false) { }
+    : openlevel_rep(0.0), closelevel_rep(0.0), rms_rep(false), is_opened_rep(false), is_closed_rep(false) { }
   
 private:
   
-  parameter_t openlevel, closelevel, avolume;
-  bool rms;
-  bool is_opened, is_closed;
+  parameter_t openlevel_rep, closelevel_rep, avolume_rep;
+  bool rms_rep;
+  bool is_opened_rep, is_closed_rep;
 };
 
 #endif

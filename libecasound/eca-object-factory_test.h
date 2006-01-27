@@ -131,15 +131,18 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
 	    }
 	    else {
 	      if (operator_source != 0 && operator_target != 0) {
-		/* AUDIO_IO binds parameter type to 'SAMPLE_SPECS::sample_t' (float) */
+		/* OPERATOR binds parameter type to 'SAMPLE_SPECS::sample_t' (float) */
 		
-		if (std::fabs(operator_source->get_parameter(n + 1) -
-			      operator_target->get_parameter(n + 1)) > 0.1f) {
+		SAMPLE_SPECS::sample_t diffval = 
+		    std::fabs(operator_source->get_parameter(n + 1) -
+			      operator_target->get_parameter(n + 1));
+		if (diffval > 0.1f) {
 		  ECA_TEST_FAILURE("Cloned object has different parameter value \"" + 
 				   kvu_numtostr(operator_target->get_parameter(n + 1)) + 
 				   "\" than that of the original object \"" + 
 				   kvu_numtostr(operator_source->get_parameter(n + 1)) + 
-				   "\"; type name \"" + 
+				   "\", diff " +
+				   kvu_numtostr(diffval) + "; type name \"" + 
 				   operator_source->name() + "\".");
 		}
 	      }

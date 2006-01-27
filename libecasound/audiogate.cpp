@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999-2002,2005 Kai Vehmanen
+// Copyright (C) 1999-2002,2005-2006 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,47 +46,52 @@ void GATE_BASE::init(SAMPLE_BUFFER* sbuf)
 
 void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf)
 {
-  if (curtime >= btime) {
-    if (btime == etime) open_gate();
-    else if (curtime < etime) open_gate();
-    else close_gate();
+  parameter_t etime = begtime_rep + durtime_rep;
+  if (curtime_rep >= begtime_rep) {
+    if (begtime_rep == etime) 
+      open_gate();
+    else if (curtime_rep < etime) 
+      open_gate();
+    else 
+      close_gate();
   }
   else 
     close_gate();
 
-  curtime += static_cast<double>(sbuf->length_in_samples()) / samples_per_second();
+  curtime_rep += static_cast<double>(sbuf->length_in_samples()) / samples_per_second();
 }
 
-TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERATOR::parameter_t duration) {
-  btime = open_at;
-  etime = btime + duration;
-  curtime = 0.0;
+TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERATOR::parameter_t duration)
+{
+  begtime_rep = open_at;
+  durtime_rep = duration;
+  curtime_rep = 0.0;
   
   ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Time crop gate created; opens at " +
-	      kvu_numtostr(btime) + " seconds and stays open for " +
-	      kvu_numtostr(duration) + " seconds.\n");
+	      kvu_numtostr(begtime_rep) + " seconds and stays open for " +
+	      kvu_numtostr(durtime_rep) + " seconds.\n");
 }
 
 CHAIN_OPERATOR::parameter_t TIME_CROP_GATE::get_parameter(int param) const 
 { 
   switch (param) {
   case 1: 
-    return(btime);
+    return begtime_rep;
   case 2: 
-    return(etime - btime);
+    return durtime_rep;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
 {
   switch (param) {
   case 1: 
-    btime = value;
-    curtime = 0.0;
+    begtime_rep = value;
+    curtime_rep = 0.0;
     break;
   case 2: 
-    etime = btime + value;
+    durtime_rep = value;
     break;
   }
 }
@@ -92,42 +100,43 @@ THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel,
 				CHAIN_OPERATOR::parameter_t threshold_closelevel,
 				bool use_rms) 
 {
-  openlevel = threshold_openlevel / 100.0;
-  closelevel = threshold_closelevel / 100.0;
-  rms = use_rms;
+  openlevel_rep = threshold_openlevel / 100.0;
+  closelevel_rep = threshold_closelevel / 100.0;
+  rms_rep = use_rms;
 
-  is_opened = is_closed = false;
+  is_opened_rep = is_closed_rep = false;
 
-  if (rms) {
+  if (rms_rep) {
     ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Threshold gate created; open threshold " +
-		kvu_numtostr(openlevel * 100) + "%, close threshold " +
-		kvu_numtostr(closelevel * 100) + "%, using RMS volume.");
+		kvu_numtostr(openlevel_rep * 100) + "%, close threshold " +
+		kvu_numtostr(closelevel_rep * 100) + "%, using RMS volume.");
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Threshold gate created; open threshold " +
-		kvu_numtostr(openlevel * 100) + "%, close threshold " +
-		kvu_numtostr(closelevel * 100) + "%, using peak volume.");
+		kvu_numtostr(openlevel_rep * 100) + "%, close threshold " +
+		kvu_numtostr(closelevel_rep * 100) + "%, using peak volume.");
   }
 }
 
 void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
 {
-  if (rms == true) avolume = SAMPLE_BUFFER_FUNCTIONS::RMS_volume(*sbuf) /
-		     SAMPLE_SPECS::max_amplitude;
-  else avolume = SAMPLE_BUFFER_FUNCTIONS::average_amplitude(*sbuf) / SAMPLE_SPECS::max_amplitude;
+  if (rms_rep == true)
+    avolume_rep = SAMPLE_BUFFER_FUNCTIONS::RMS_volume(*sbuf) / SAMPLE_SPECS::max_amplitude;
+  else 
+    avolume_rep = SAMPLE_BUFFER_FUNCTIONS::average_amplitude(*sbuf) / SAMPLE_SPECS::max_amplitude;
 
-  if (is_opened == false) {
-    if (avolume > openlevel) { 
+  if (is_opened_rep == false) {
+    if (avolume_rep > openlevel_rep) { 
       open_gate();
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiogate) Threshold gate opened.");
-      is_opened = true;
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate opened.");
+      is_opened_rep = true;
     }
   }
-  else if (is_closed == false) {
-    if (avolume < closelevel) { 
+  else if (is_closed_rep == false) {
+    if (avolume_rep < closelevel_rep) { 
       close_gate();
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audiogate) Threshold gate closed.");
-      is_closed = true;
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate closed.");
+      is_closed_rep = true;
     }
   }
 }
@@ -136,29 +145,32 @@ CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const
 { 
   switch (param) {
   case 1: 
-    return(openlevel * 100.0);
+    return openlevel_rep * 100.0;
   case 2: 
-    return(closelevel * 100.0);
+    return closelevel_rep * 100.0;
   case 3: 
-    if (rms) return(1.0);
-    else return(0.0);
+    if (rms_rep) 
+      return 1.0;
+    else 
+      return 0.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
 {
-
   switch (param) {
   case 1: 
-    openlevel = value / 100.0;
+    openlevel_rep = value / 100.0;
     break;
   case 2: 
-    closelevel = value / 100.0;
+    closelevel_rep = value / 100.0;
     break;
   case 3: 
-    if (value != 0) rms = true;
-    else rms = false;
+    if (value != 0) 
+      rms_rep = true;
+    else 
+      rms_rep = false;
     break;
   }
 }

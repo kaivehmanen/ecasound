@@ -78,7 +78,7 @@ void ECA_CONTROL_TEST::do_run_chainsetup_creation(void)
     ectrl->connect_chainsetup();
     if (ectrl->is_connected() != true) ECA_TEST_FAILURE("Chainsetup connection failed.");
     ectrl->start();
-    kvu_sleep(0, 100000000); /* 100ms */
+    kvu_sleep(0, 500000000); /* 500ms */
     if (ectrl->is_running() != true) ECA_TEST_FAILURE("Chainsetup start failed.");
     ectrl->stop_on_condition();
     if (ectrl->is_running() == true) ECA_TEST_FAILURE("Chainsetup stop failed.");
