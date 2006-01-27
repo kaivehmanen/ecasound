@@ -76,11 +76,11 @@ always something to improve.
 
 To run Ecasound, you need...:
 
-- operating system that provides standard POSIX interfaces; has been 
+- operating system that provides standard POSIX/SUS interfaces; has been 
   tested with various combinations of GNU/Linux (Linux 2.2-2.6 and 
   glibc 2.1-2.3 combinations), FreeBSD 4.x, Solaris 2.6-2.8,
   Mac OS X 10.3-10.4.2 and Cygwin 1.3.20
-- POSIX threads support; has been tested with glibc linuxthreads 
+- POSIX/SUS threads support; has been tested with glibc linuxthreads 
   and the Native POSIX Thread Library (NPTL)
   
 Optional when running Ecasound:
@@ -101,9 +101,9 @@ Optional when running Ecasound:
 To compile Ecasound, you also need...:
 
 - standard C++ build environment (with support for STL and 
-  exceptions); tested with egcs 1.1.2, gcc 2.91.66, gcc 2.95.X, 
-  gcc 3.0-3.4, and Sun Workshop 6 C5.2 C++ (STL and exceptions 
-  need to be supported)
+  exceptions); tested with egcs 1.1.2, gcc versions 2.91.66, 
+  2.95.X, 3.0-3.4, 4.0, and Sun Workshop 6 C5.2 C++ (STL and 
+  exceptions need to be supported)
 - GNU make, automake and autoconf packages
 
 Optional when compiling Ecasound:
