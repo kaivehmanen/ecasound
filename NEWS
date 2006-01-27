@@ -13,6 +13,11 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
+xx062006 (v2.4.5)  -** stable release **-
+	- added: ability to compile without a readline library (will
+	         disable the curses based console user-interface)
+	- removed: readline-4.0 subdir from the dist package; system
+	           readline library is now the only option
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)

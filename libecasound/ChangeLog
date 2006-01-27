@@ -1,3 +1,7 @@
+2006-01-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+        * library interface version 16 frozen (2.4.4 release)
+
 2005-09-01  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* midi-server.h (add_controller_trace): Added optional 3rd argument.
