@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2006 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -340,11 +340,11 @@ void ECA_CONTROL_BASE::close_engine(void)
 
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
 
- // --
-  // wait until run_engine() is finished
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Waiting for engine thread to exit.");
   pthread_join(th_cqueue_rep,NULL);
 
   if (engine_exited_rep.get() == 1) {
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine thread has exited succesfully.");
     delete engine_repp;
     engine_repp = 0;
     engine_exited_rep.set(0);
