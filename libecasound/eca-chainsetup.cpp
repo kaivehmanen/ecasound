@@ -89,6 +89,8 @@ const string ECA_CHAINSETUP::default_bmode_nonrt_const = "1024,true,50,true,1000
 const string ECA_CHAINSETUP::default_bmode_rt_const = "1024,true,50,true,100000,true";
 const string ECA_CHAINSETUP::default_bmode_rtlowlatency_const = "256,true,50,true,100000,false";
 
+static void priv_erase_object(std::vector<AUDIO_IO*>* vec, const AUDIO_IO* obj);
+
 /**
  * Construct from a vector of options.
  * 
@@ -1308,16 +1310,42 @@ AUDIO_IO* ECA_CHAINSETUP::add_audio_object_helper(AUDIO_IO* aio)
 }
 
 /** 
- * Helper function used by remove_audio_input() and remove_audio_output().
+ * Helper function used by remove_audio_object().
  */
-void ECA_CHAINSETUP::remove_audio_object_helper(AUDIO_IO* aio)
+void ECA_CHAINSETUP::remove_audio_object_proxy(AUDIO_IO* aio)
 {
   AUDIO_IO_DB_CLIENT* p = dynamic_cast<AUDIO_IO_DB_CLIENT*>(aio);
   if (p != 0) {
     /* a proxied object */
-    //  aobj_garbage_rep.push_back(aio);
     delete aio;
     --db_clients_rep;
+  }
+}
+
+/** 
+ * Helper function used bu remove_audio_object() to remove input 
+ * and output loop devices.
+ */
+void ECA_CHAINSETUP::remove_audio_object_loop(const string& label, AUDIO_IO* aio, int dir)
+{
+  int rdir = (dir == cs_dir_input ? cs_dir_output : cs_dir_input);
+
+  /* loop devices are registered simultaneously to both input
+   * and output object vectors, so they have to be removed
+   * from both, but deleted only once */
+
+  remove_audio_object_impl(label, rdir, false);
+
+  /* we also need to remove the loop device from 
+   * the loop_map table */
+
+  map<int,LOOP_DEVICE*>::iterator iter = loop_map.begin();
+  while(iter != loop_map.end()) {
+    if (iter->second == aio) {
+      loop_map.erase(iter);
+      break;
+    }
+    ++iter;
   }
 }
 
@@ -1405,6 +1433,100 @@ void ECA_CHAINSETUP::add_output(AUDIO_IO* aio, bool truncate)
   DBC_ENSURE(outputs.size() == outputs_direct_rep.size());
   // ---
 }
+/**
+ * Erases an element matching 'obj' from 'vec'. At most one element
+ * is removed. The function does not delete the referred object, just
+ * removes it from the vector.
+ */ 
+static void priv_erase_object(std::vector<AUDIO_IO*>* vec, const AUDIO_IO* obj)
+{
+  vector<AUDIO_IO*>::iterator p = vec->begin();
+  while(p != vec->end()) {
+    if (*p == obj) {
+      vec->erase(p);
+      break;
+    }
+    ++p;
+  }
+}
+
+/**
+ * Removes the labeled audio object from this chainsetup.
+ *
+ * @pre is_enabled() != true
+ */
+void ECA_CHAINSETUP::remove_audio_object_impl(const string& label, int dir, bool destroy)
+{
+  // ---
+  DBC_REQUIRE(is_enabled() != true);
+  // ---
+
+  vector<AUDIO_IO*> *objs = (dir == cs_dir_input ? &inputs : &outputs);
+  vector<AUDIO_IO*> *objs_dir = (dir == cs_dir_input ? &inputs_direct_rep : &outputs_direct_rep);
+  DBC_DECLARE(size_t oldsize = objs->size());
+  AUDIO_IO *obj_to_remove = 0, *obj_dir_to_remove = NULL;
+  int remove_index = -1;
+
+  /* Notes
+   *  - objs and objs_dir vectors are always of the same size
+   *  - for non-proxied objects 'objs[n] == objs_dir[n]' for all n
+   */
+
+  for(size_t n = 0; n < objs->size(); n++) {
+    if ((*objs)[n]->label() == label) {
+      obj_to_remove = (*objs)[n];
+      obj_dir_to_remove = (*objs_dir)[n];
+      remove_index = static_cast<int>(n);
+    }
+  }
+
+  if (obj_to_remove) {
+    DBC_CHECK(remove_index >= 0);
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Removing object " + obj_to_remove->label() + ".");
+
+    /* disconnect object from chains */
+    vector<CHAIN*>::iterator q = chains.begin();
+    while(q != chains.end()) {
+      if (dir == cs_dir_input) {
+	if ((*q)->connected_input() == remove_index) {
+	  (*q)->disconnect_input();
+	}
+      }
+      else {
+	if ((*q)->connected_output() == remove_index) {
+	  (*q)->disconnect_output();
+	}
+      }
+      ++q;
+    }
+
+    /* unregister from manager (always the objs_dir object) */
+    unregister_audio_object_from_manager((*objs_dir)[remove_index]);
+
+    /* delete proxy object if any */ 
+    if (obj_to_remove != obj_dir_to_remove) {
+      remove_audio_object_proxy(obj_dir_to_remove);
+    }
+   
+    priv_erase_object(objs, obj_to_remove);
+    priv_erase_object(objs_dir, obj_dir_to_remove);
+
+    LOOP_DEVICE* loop_dev = dynamic_cast<LOOP_DEVICE*>(obj_dir_to_remove);
+    if (loop_dev != 0 && destroy == true) {
+      /* note: destroy must be true to limit recursion */
+      remove_audio_object_loop(label, obj_dir_to_remove, dir);
+    }
+
+    /* finally actually delete the object */
+    if (destroy == true) 
+      delete obj_dir_to_remove;
+  }
+
+  // ---
+  DBC_ENSURE(objs->size() == objs_dir->size());
+  DBC_ENSURE(oldsize == objs->size() + 1);
+  // ---
+}
 
 /**
  * Removes the labeled audio input from this chainsetup.
@@ -1418,43 +1540,7 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label)
   DBC_DECLARE(size_t oldsize = inputs.size());
   // ---
 
-  for(size_t n = 0; n < inputs.size(); n++) {
-    if (inputs[n]->label() == label) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Removing input " + label + ".");
-
-      remove_audio_object_helper(inputs[n]);
-
-      vector<CHAIN*>::iterator q = chains.begin();
-      while(q != chains.end()) {
-	if ((*q)->connected_input() == static_cast<int>(n)) (*q)->disconnect_input();
-	++q;
-      }
-
-      unregister_audio_object_from_manager(inputs_direct_rep[n]);
-
-      vector<AUDIO_IO*>::iterator p = inputs.begin();
-      while(p != inputs.end()) {
-	if (*p == inputs[n]) {
-	  inputs.erase(p);
-	  break;
-	}
-	++p;
-      }
-      
-      p = inputs_direct_rep.begin();
-      while(p != inputs_direct_rep.end()) {
-	if (*p == inputs_direct_rep[n]) {
-	  delete *p;
-	  inputs_direct_rep.erase(p);
-	  break;
-	}
-	++p;
-      }
-      
-      /* vectors changed; can't continue iteration */
-      break;
-    }
-  }
+  remove_audio_object_impl(label, cs_dir_input, true);
 
   // ---
   DBC_ENSURE(inputs.size() == inputs_direct_rep.size());
@@ -1474,43 +1560,7 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label)
   DBC_DECLARE(size_t oldsize = outputs.size());
   // --------
 
-  for(size_t n = 0; n < outputs.size(); n++) {
-    if (outputs[n]->label() == label) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Removing output " + label + ".");
-
-      remove_audio_object_helper(outputs[n]);
-
-      vector<CHAIN*>::iterator q = chains.begin();
-      while(q != chains.end()) {
-	if ((*q)->connected_output() == static_cast<int>(n)) (*q)->disconnect_output();
-	++q;
-      }
-
-      unregister_audio_object_from_manager(outputs_direct_rep[n]);
-
-      vector<AUDIO_IO*>::iterator p = outputs.begin();
-      while(p != outputs.end()) {
-	if (*p == outputs[n]) {
-	  outputs.erase(p);
-	  break;
-	}
-	++p;
-      }
-
-      p = outputs_direct_rep.begin();
-      while(p != outputs_direct_rep.end()) {
-	if (*p == outputs_direct_rep[n]) {
-	  delete *p;
-	  outputs_direct_rep.erase(p);
-	  break;
-	}
-	++p;
-      }
-
-      /* vectors changed; can't continue iteration */
-      break;
-    }
-  }
+  remove_audio_object_impl(label, cs_dir_output, true);
 
   // ---
   DBC_ENSURE(outputs.size() == outputs_direct_rep.size());

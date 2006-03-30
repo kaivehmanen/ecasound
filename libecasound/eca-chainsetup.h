@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.h: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2006 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -83,6 +83,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   enum Buffering_mode { cs_bmode_auto, cs_bmode_nonrt, cs_bmode_rt, cs_bmode_rtlowlatency, cs_bmode_none };
   enum Mix_mode { cs_mmode_avg, cs_mmode_sum };
+
+  enum Audio_dir { cs_dir_input, cs_dir_output };
 
   typedef enum Buffering_mode Buffering_mode_t;
   typedef enum Mix_mode Mix_mode_t;
@@ -354,7 +356,9 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void unregister_audio_object_from_manager(AUDIO_IO* aio);
   void propagate_audio_io_manager_options(void);
   AUDIO_IO* add_audio_object_helper(AUDIO_IO* aio);
-  void remove_audio_object_helper(AUDIO_IO* aio);
+  void remove_audio_object_proxy(AUDIO_IO* aio);
+  void remove_audio_object_loop(const string& label, AUDIO_IO* aio, int dir);
+  void remove_audio_object_impl(const string& label, int dir, bool destroy);
 
   /** @name Functions for state<->string conversions */
   /*@{*/

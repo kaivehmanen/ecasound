@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 270106) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300306) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -18,6 +18,7 @@ xx062006 (v2.4.5)  -** stable release **-
 	         disable the curses based console user-interface)
 	- removed: readline-4.0 subdir from the dist package; system
 	           readline library is now the only option
+	- fixed: segfault when removing loop devices with a[io]-remove
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)

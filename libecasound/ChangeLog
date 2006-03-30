@@ -1,3 +1,11 @@
+2006-03-31  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-chainsetup.h: Added enum 'Audio_dir'.
+	* eca-chainsetup.h (remove_audio_object_impl): Added.
+	* library interface version updated to 17:0:0
+	* eca-chainsetup.h: Renamed remove_audio_object_helper() to 
+	remove_audio_object_proxy().
+	
 2006-01-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
         * library interface version 16 frozen (2.4.4 release)
