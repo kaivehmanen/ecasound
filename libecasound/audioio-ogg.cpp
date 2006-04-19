@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-ogg.cpp: Interface for ogg vorbis decoders and encoders.
-// Copyright (C) 2000-2002,2004-2005 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2006 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,6 +48,7 @@ OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const std::string& name)
 
 OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void)
 {
+  clean_child(true);
   if (is_open() == true) {
     close();
   }
@@ -88,7 +92,7 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void OGG_VORBIS_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
   }
@@ -119,7 +123,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
   else 
     finished_rep = false;
 
-  return(bytes_rep / frame_size());
+  return bytes_rep / frame_size();
 }
 
 void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
@@ -148,7 +152,8 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
   }
 }
 
-void OGG_VORBIS_INTERFACE::seek_position(void) {
+void OGG_VORBIS_INTERFACE::seek_position(void)
+{
   if (pid_of_child() > 0) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ogg) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
@@ -178,12 +183,12 @@ string OGG_VORBIS_INTERFACE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(kvu_numtostr(bitrate_rep));
+    return kvu_numtostr(bitrate_rep);
   }
-  return("");
+  return "";
 }
 
 void OGG_VORBIS_INTERFACE::fork_input_process(void)
