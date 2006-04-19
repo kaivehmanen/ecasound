@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-flac.cpp: Interface to FLAC decoders and encoders using UNIX 
 //                   pipe i/o.
-// Copyright (C) 2004-2005 Kai Vehmanen
+// Copyright (C) 2004-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
  */
 
 string FLAC_FORKED_INTERFACE::default_input_cmd = "flac -d -c %f";
-string FLAC_FORKED_INTERFACE::default_output_cmd = "flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -";
+string FLAC_FORKED_INTERFACE::default_output_cmd = "flac -o %f -f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -";
 
 void FLAC_FORKED_INTERFACE::set_input_cmd(const std::string& value) { FLAC_FORKED_INTERFACE::default_input_cmd = value; }
 void FLAC_FORKED_INTERFACE::set_output_cmd(const std::string& value) { FLAC_FORKED_INTERFACE::default_output_cmd = value; }
@@ -50,6 +50,7 @@ FLAC_FORKED_INTERFACE::FLAC_FORKED_INTERFACE(const std::string& name)
 
 FLAC_FORKED_INTERFACE::~FLAC_FORKED_INTERFACE(void)
 {
+  clean_child(true);
   if (is_open() == true) {
     close();
   }
@@ -109,7 +110,7 @@ void FLAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void FLAC_FORKED_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-mp3) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process (" + kvu_numtostr(pid_of_child()) + ").");
       clean_child();
       triggered_rep = false;
   }

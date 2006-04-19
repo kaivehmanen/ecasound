@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-mikmod.cpp: Interface class for MikMod input. Uses FIFO pipes.
-// Copyright (C) 1999-2000,2004-2005 Kai Vehmanen
+// Copyright (C) 1999-2000,2004-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ MIKMOD_INTERFACE::MIKMOD_INTERFACE(const std::string& name)
 
 MIKMOD_INTERFACE::~MIKMOD_INTERFACE(void) 
 {
+  clean_child(true);
   if (is_open() == true) {
     close();
   }

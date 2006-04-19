@@ -45,7 +45,7 @@ class AUDIO_IO_FORKED_STREAM {
   
   void fork_child_for_read(void);
   void fork_child_for_write(void);
-  void clean_child(void);
+  void clean_child(bool force = false);
 
   const std::string& fork_command(void) const { return(command_rep); }
 

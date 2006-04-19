@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-faad.cpp: Interface class for FAAC/FAAD AAC encoder/decoder.
-// Copyright (C) 2004-2005 Kai Vehmanen
+// Copyright (C) 2004-2006 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -51,6 +51,7 @@ AAC_FORKED_INTERFACE::AAC_FORKED_INTERFACE(const std::string& name)
 
 AAC_FORKED_INTERFACE::~AAC_FORKED_INTERFACE(void)
 {
+  clean_child(true);
   if (is_open() == true) {
     close();
   }
@@ -98,7 +99,7 @@ void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void AAC_FORKED_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process (" + kvu_numtostr(pid_of_child()) + ").");
       clean_child();
       triggered_rep = false;
   }

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-timidity.cpp: Interface class for Timidity++ input.
-// Copyright (C) 2000,2002,2004-2005 Kai Vehmanen
+// Copyright (C) 2000,2002,2004-2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name)
 
 TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void)
 {
+  clean_child(true);
   if (is_open() == true) {
     close();
   }

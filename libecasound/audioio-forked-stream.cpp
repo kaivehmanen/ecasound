@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-forked-streams.cpp: Helper class providing routines for
 //                             forking for piped input/output.
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2004,2006 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -39,6 +39,7 @@
 #include <signal.h>
 #include <unistd.h>
 
+#include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 #include <kvu_utils.h>
 
@@ -319,22 +320,43 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
  * function must be called from the same thread as 
  * fork_child_for_read/write() was called.
  */
-void AUDIO_IO_FORKED_STREAM::clean_child(void)
+void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
 {
-  if (fd_rep > 0) ::close(fd_rep);
+  if (fd_rep > 0) {
+    ::close(fd_rep);
+    fd_rep = -1;
+  }
 
   if (pid_of_child_rep > 0) {
-    kill(pid_of_child_rep, SIGTERM);
-    if (::getpid() == pid_of_parent_rep) {
-      waitpid(pid_of_child_rep, 0, 0);
+    int flags = 0;
+#ifdef __WALL
+    /* Linux-specific flag to waitpid() for to wait for
+     * childs created by other threads */
+    flags += __WALL;
+#endif
+    /* wait until child process has exited */
+    int status = 0;
+    int res = waitpid(pid_of_child_rep, &status, flags);
+    if (WIFEXITED(status)) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child process exit ok");
       pid_of_child_rep = 0;
     }
-    else {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "WARNING: Parent-pid changed!");
+    else if (res < 0) {
+      perror("waitpid");
+      force = true;
     }
   }
+
+  if (force == true && pid_of_child_rep > 0) {
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "WARNING: sending SIGTERM to child process");
+    /* close did not trigger exit, send SIGTERM */
+    kill(pid_of_child_rep, SIGTERM);
+    pid_of_child_rep = 0;
+  }
+  
   if (tmp_file_created_rep == true) {
     ::remove(tmpfile_repp.c_str());
+    tmp_file_created_rep = false;
   }
 }
 
