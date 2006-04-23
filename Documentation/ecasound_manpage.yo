@@ -246,9 +246,9 @@ SGI audiofile library: AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio
 files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
 .it, etc). MIDI files (.mid) are supported using Timidity++. Similarly
 Ogg Vorbis (.ogg) can be read and written if ogg123 and vorbize tools
-are installed, FLAC files (.flac) with flac command-line tools, 
-and AAC files (.aac/.m4a/.mp4) with faad2/faac tools. Supported realtime 
-devices are OSS audio devices (/dev/dsp*), ALSA audio and loopback 
+are installed, FLAC files (.flac) with flac command-line tools or using
+libsndfile, and AAC files (.aac/.m4a/.mp4) with faad2/faac tools. Supported 
+realtime devices are OSS audio devices (/dev/dsp*), ALSA audio and loopback 
 devices and JACK audio subsystem. If no inputs are specified, the first 
 non-option (doesn't start with '-') command line argument is considered 
 to be an input.
