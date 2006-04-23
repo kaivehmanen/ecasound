@@ -317,7 +317,11 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
 
     if (ctrl->is_connected() == true) {
-      ctrl->run(!state->keep_running_mode);
+      int res = ctrl->run(!state->keep_running_mode);
+      if (res < 0) {
+	state->retval = -1;
+	cerr << "ecasound: Warning! Errors detected during processing." << endl;
+      }
     }
     else {
       ctrl->print_last_value();
