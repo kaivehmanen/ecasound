@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2004,2006 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -119,6 +119,7 @@ using std::cerr;
 using std::endl;
 using std::find;
 using std::string;
+using std::list;
 using std::vector;
 
 /**
@@ -193,6 +194,8 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_audio_io_nonrt_objects()");
 
+  bool native_flac = false;
+
   objmap->register_object("wav", "wav$", new WAVEFILE());
   objmap->register_object("ewf", "ewf$", new EWFFILE());
   objmap->register_object("cdr", "cdr$", new CDRFILE());
@@ -216,8 +219,6 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   AUDIO_IO* timidity = new TIMIDITY_INTERFACE();
   objmap->register_object("mid", "(mid$)|(midi$)", timidity);
 
-  AUDIO_IO* forkedflac = new FLAC_FORKED_INTERFACE();
-  objmap->register_object("flac", "flac$", forkedflac);
 
   AUDIO_IO* forkedaac = new AAC_FORKED_INTERFACE();
   objmap->register_object("aac", "aac$", forkedaac);
@@ -232,23 +233,58 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   /* ---------------------------------------------------------*/
   /* register file types to plugins handling audio file types */
 
-  const string common_types ("(aif*$)|(au$)|(snd$)");
+#if defined(ECA_COMPILE_SNDFILE) || defined(ECA_COMPILE_AUDIOFILE)
+  string common_types ("(aif*$)|(au$)|(snd$)");
+#endif
 
 #ifdef ECA_COMPILE_SNDFILE
-  AUDIO_IO* sndfile = new SNDFILE_INTERFACE();
+  SNDFILE_INTERFACE* sndfile = new SNDFILE_INTERFACE();
   /* 1. register types supported by libsndfile */
-  string sf_types ("(^sndfile$)|(w64$)|(voc$)|(paf$)|(iff$)|(nist$)|($mat[45])|(nist$)|(xi$)|(htk$)");
-  string af_types ("(^audiofile$)");
-  sf_types += string("|") + common_types;
+  string sf_types ("(^sndfile$)");
+  list<string> el = sndfile->supported_extensions();
 
-  objmap->register_object("sndfile", sf_types.c_str(), sndfile);
-#else
-  /* 2. sndfile not available, register common types libaudiofile */
-  string af_types ("(^audiofile$)");
-  af_types += string("|") + common_types;
+  list<string>::const_iterator i = el.begin();
+  string sf_all_types;
+  while(i != el.end()) {
+    sf_all_types += *i + ",";
+    ++i;
+  }
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "All libsndfile supported extensions: " + sf_all_types);
+
+  if (find(el.begin(), el.end(), "flac") != el.end()) {
+    sf_types += "|(flac$)";
+    native_flac = true;
+  }
+  if (find(el.begin(), el.end(), "avr") != el.end()) sf_types += "|(avr$)";
+  if (find(el.begin(), el.end(), "caf") != el.end()) sf_types += "|(caf$)";
+  if (find(el.begin(), el.end(), "htk") != el.end()) sf_types += "|(htk$)";
+  if (find(el.begin(), el.end(), "iff") != el.end()) sf_types += "|(iff$)";
+  if (find(el.begin(), el.end(), "mat") != el.end()) sf_types += "|(mat$)";
+  if (find(el.begin(), el.end(), "paf") != el.end()) sf_types += "|(paf$)";
+  if (find(el.begin(), el.end(), "pvf") != el.end()) sf_types += "|(pvf$)";
+  if (find(el.begin(), el.end(), "nist") != el.end()) sf_types += "|(nist$)";
+  if (find(el.begin(), el.end(), "sf") != el.end()) sf_types += "|(sf$)";
+  if (find(el.begin(), el.end(), "sd2") != el.end()) sf_types += "|(sd2$)";
+  if (find(el.begin(), el.end(), "sds") != el.end()) sf_types += "|(sds$)";
+  if (find(el.begin(), el.end(), "voc") != el.end()) sf_types += "|(voc$)";
+  if (find(el.begin(), el.end(), "w64") != el.end()) sf_types += "|(w64$)";
+  if (find(el.begin(), el.end(), "xi") != el.end()) sf_types += "|(xi$)";
+
+  /* add formats supported by both libaudiofile and libsndfile */
+  sf_types += string("|") + common_types;
+  common_types.clear();
+  
+  objmap->register_object("sndfile", sf_types.c_str(), dynamic_cast<AUDIO_IO*>(sndfile));
 #endif
 
 #ifdef ECA_COMPILE_AUDIOFILE
+  /* 2. register types for libaudiofile */
+  string af_types ("(^audiofile$)");
+  /* note, if sndfile not available, common_types are registered
+   *       to libaudiofile */
+  if (common_types.size() > 0)
+    af_types += string("|") + common_types;
   AUDIO_IO* af = new AUDIOFILE_INTERFACE();
   objmap->register_object("audiofile", af_types.c_str(), af);
 #endif
@@ -266,6 +302,11 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("resample-hq", "^resample-hq$", new AUDIO_IO_RESAMPLE());
   objmap->register_object("resample-lq", "^resample-lq$", new AUDIO_IO_RESAMPLE());
   objmap->register_object("reverse", "^reverse$", new AUDIO_IO_REVERSE());
+
+  if (native_flac != true) {
+    AUDIO_IO* forkedflac = new FLAC_FORKED_INTERFACE();
+    objmap->register_object("flac", "flac$", forkedflac);
+  }
 }
 
 void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* objmap)
@@ -369,6 +410,9 @@ void ECA_STATIC_OBJECT_MAPS::register_midi_device_objects(ECA_OBJECT_MAP* objmap
  */
 
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS
+/**
+ * Load ecasound's internal plugins. Not used since 2.2.0.
+ */ 
 static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
 					       const string& filename)
 {
@@ -377,7 +421,7 @@ static void eca_import_internal_audioio_plugin(ECA_OBJECT_MAP* objmap,
 
   struct stat fbuf;
   if (stat(libdir.c_str(), &fbuf) < 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(eca-static-object-maps) Internal-plugin directory not found. Check your ~/.ecasoundrc!");
+    ECA_LOG_MSG(ECA_LOGGER::info, "Internal-plugin directory not found. Check your ~/.ecasoundrc!");
     return;
   }
 
@@ -460,7 +504,7 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
   vector<string> more_dir_names = kvu_string_to_vector(add_file, ':');
   vector<string>::const_iterator di = more_dir_names.begin();
   while(di != more_dir_names.end()) {
-    if (std::find(dir_names.begin(), dir_names.end(), *di) == dir_names.end()) {
+    if (find(dir_names.begin(), dir_names.end(), *di) == dir_names.end()) {
       dir_names.push_back(*di);
     }
     ++di;
