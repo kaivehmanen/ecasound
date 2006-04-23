@@ -18,6 +18,11 @@ class ECA_SESSION;
 #define ECASOUND_BANNER_ASTERISK_BAR "********************************************************************************\n"
 #define ECASOUND_COPYRIGHT           " (C) 1997-2006 Kai Vehmanen and others    "
 
+#define ECASOUND_RETVAL_SUCCESS         0    /**< Succesful run */
+#define ECASOUND_RETVAL_INIT_FAILURE    1    /**< Unable to initialize */
+#define ECASOUND_RETVAL_START_ERROR     2    /**< Unable to start processing */
+#define ECASOUND_RETVAL_RUNTIME_ERROR   3    /**< Error during processing */
+
 /**
  * Type definitions
  */

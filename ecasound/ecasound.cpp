@@ -79,7 +79,7 @@ static struct ecasound_state ecasound_state_global =
     0,        /* pthread_mutex_t - lock */
     0,        /* sig_wait_t - exit_request */
     0,        /* sigset_t */
-    0,        /* int - return value */
+    ECASOUND_RETVAL_SUCCESS, /* int - return value */
     2868,     /* int - default daemon mode TCP-port */
     false,    /* daemon mode */
     false,    /* keep_running mode */
@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
   delete cline; cline = 0;
 
   /* 3. create console interface */
-  if (state->retval == 0) {
+  if (state->retval == ECASOUND_RETVAL_SUCCESS) {
 
 #if defined(ECA_PLATFORM_CURSES) 
     if (state->quiet_mode != true &&
@@ -145,14 +145,14 @@ int main(int argc, char *argv[])
     delete clineout; clineout = 0;
 
     /* 7. start ecasound daemon */
-    if (state->retval == 0) {
+    if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       if (state->daemon_mode == true) {
 	ecasound_launch_daemon(state);
       }
     }
 
     /* 8. start processing */
-    if (state->retval == 0) {
+    if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       ecasound_main_loop(state);
     }
   }
@@ -231,7 +231,7 @@ void ecasound_create_eca_objects(struct ecasound_state* state,
   }
   catch(ECA_ERROR& e) {
     state->console->print("---\necasound: ERROR: [" + e.error_section() + "] : \"" + e.error_message() + "\"\n");
-    state->retval = -1;
+    state->retval = ECASOUND_RETVAL_INIT_FAILURE;
   }
 }
 
@@ -319,12 +319,13 @@ void ecasound_main_loop(struct ecasound_state* state)
     if (ctrl->is_connected() == true) {
       int res = ctrl->run(!state->keep_running_mode);
       if (res < 0) {
-	state->retval = -1;
+	state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
 	cerr << "ecasound: Warning! Errors detected during processing." << endl;
       }
     }
     else {
       ctrl->print_last_value();
+      state->retval = ECASOUND_RETVAL_START_ERROR;
     }
 
     if (state->daemon_mode == true) {
@@ -344,7 +345,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 {
   if (cline.size() < 2) {
     ecasound_print_usage();
-    state->retval = -1;
+    state->retval = ECASOUND_RETVAL_INIT_FAILURE;
   }
   else {
    cline.begin();
@@ -391,7 +392,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
       else if (cline.current() == "-h" ||
 	       cline.current() == "--help") {
 	ecasound_print_usage();
-	state->retval = -1;
+	state->retval = ECASOUND_RETVAL_INIT_FAILURE;
 	break;
       }
 
@@ -402,7 +403,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 
       else if (cline.current() == "--version") {
 	ecasound_print_version_banner();
-	state->retval = -1;
+	state->retval = ECASOUND_RETVAL_INIT_FAILURE;
 	break;
       }
       
@@ -528,6 +529,11 @@ void* ecasound_watchdog_thread(void* arg)
 #endif
 
   state->exit_request = 1;
+  
+  DBC_CHECK(state->retval == ECASOUND_RETVAL_SUCCESS ||
+	    state->retval == ECASOUND_RETVAL_INIT_FAILURE ||
+	    state->retval == ECASOUND_RETVAL_START_ERROR ||
+	    state->retval == ECASOUND_RETVAL_RUNTIME_ERROR);
   
   exit(state->retval);
 
