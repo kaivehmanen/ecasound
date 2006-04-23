@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "31\&.08\&.2005" "" "Multimedia software" 
+.TH "ecasound-iam" "1" "23\&.04\&.2006" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound-iam \- ecasound interactive mode
@@ -44,13 +44,16 @@ Quit ecasound session\&. What this means in practice depends on the
 client (library throws an exception)\&. \fI[-]\fP
 .IP 
 .IP "start, t" 
-Processing is started (play)\&. \fI[-]\fP
+Processing is started (play)\&. Error string is return if any errors upon 
+startup are encountered\&. \fI[e]\fP
 .IP 
 .IP "stop, s" 
 Stop processing\&. \fI[-]\fP
 .IP 
 .IP "run" 
-Like \&'start\&' but blocks until processing is finished\&. \fI[-]\fP
+Like \&'start\&' but blocks until processing is finished\&. Error string
+is return if any errors upon startup, or during process, are 
+encountered\&. \fI[e]\fP
 .IP 
 .IP "debug \&'debug-level\&'" 
 Set debug level to \&'debug-level\&'\&. Notice that client programs can
@@ -129,7 +132,8 @@ Whether currently selected chainsetup is valid (=can be connected)? \fI[i]\fP
 .PP 
 .IP "cs-connect" 
 Connect currently selected chainsetup to engine\&. Only one chainsetup
-can be connected at a time\&. \fI[-]\fP
+can be connected at a time\&. Error string is returned if connection 
+fails\&. \fI[e]\fP
 .PP 
 .IP "cs-disconnect" 
 Disconnect currently connected chainsetup\&. \fI[-]\fP

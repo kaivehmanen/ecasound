@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "19\&.08\&.2005" "" "Multimedia software" 
+.TH "ecasound" "1" "24\&.04\&.2006" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -748,37 +748,56 @@ If defined, some utility programs and scripts will use
 the \fIECASOUND\fP environment as the default path to
 ecasound executable\&.
 .PP 
-.SH "FILES" 
+.SH "RETURN VALUES" 
 .PP 
+In interactive mode, ecasound always returns zero\&.
+.PP 
+In non-interactive (batch) mode, a non-zero value is returned
+for the following errors: 
+.PP 
+.IP "1" 
+Unable to create a valid chainsetup with the given parameters\&. Can be 
+caused by invalid option syntax, etc\&.
+.IP 
+.IP "2" 
+Unable to start processing\&. This can be caused by insufficient file 
+permissions, inability to access some system resources, etc\&.
+.IP 
+.IP "3" 
+Error during processing\&. Possible causes: output object has run
+out of free disk space, etc\&.
+.IP 
+.SH "FILES" 
+.IP 
 \fI~/\&.ecasound\fP
 The default directory for ecasound user resource files\&. 
 See the ecasoundrc(5) man page\&.
-.PP 
+.IP 
 \fI*\&.ecs\fP 
 Ecasound Chainsetup files\&. Syntax is more or less the
 same as with command-line arguments\&.
-.PP 
+.IP 
 \fI*\&.ecp\fP 
 Ecasound Chain Preset files\&. Used for storing effect
 and chain operator presets\&. See ecasound user\&'s guide for
 more better documentation\&.
-.PP 
+.IP 
 \fI*\&.ews\fP 
 Ecasound Wave Stats\&. These files are used to cache
 waveform data\&.
-.PP 
+.IP 
 .SH "SEE ALSO" 
-.PP 
+.IP 
 ecatools(1), 
 ecasound-iam(1)
 ecasoundrc(5), 
 "HTML docs in the Documentation subdirectory"
-.PP 
+.IP 
 .SH "BUGS" 
-.PP 
+.IP 
 See file BUGS\&. If ecasound behaves weirdly, try to
 increase the debug level to see what\&'s going on\&.
-.PP 
+.IP 
 .SH "AUTHOR" 
-.PP 
+.IP 
 Kai Vehmanen, <kvehmanen -at- eca -dot- cx>

@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>19.08.2005</h2>
+<h2>24.04.2006</h2>
 
 
     
@@ -658,6 +658,21 @@ another controller as usual.
 	If defined, some utility programs and scripts will use 
 	the <em>ECASOUND</em> environment as the default path to
 	ecasound executable.
+<p><h2>RETURN VALUES</h2>
+    
+<p>In interactive mode, ecasound always returns zero.
+<p>In non-interactive (batch) mode, a non-zero value is returned
+	for the following errors: 
+<p><dl>
+	<p></p><dt><strong>1</strong><dd>
+	Unable to create a valid chainsetup with the given parameters. Can be 
+	caused by invalid option syntax, etc.
+<p><p></p><dt><strong>2</strong><dd>
+	Unable to start processing. This can be caused by insufficient file 
+	permissions, inability to access some system resources, etc.
+<p><p></p><dt><strong>3</strong><dd>
+	Error during processing. Possible causes: output object has run
+	out of free disk space, etc.
 <p><h2>FILES</h2>
     
 <p><em>~/.ecasound</em>

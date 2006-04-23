@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>31.08.2005</h2>
+<h2>23.04.2006</h2>
 
 
     
@@ -59,11 +59,14 @@ connected setups.
 Quit ecasound session. What this means in practice depends on the 
 client (library throws an exception). <em>[-]</em>
 <p><p></p><dt><strong>start, t</strong><dd>
-Processing is started (play). <em>[-]</em>
+Processing is started (play). Error string is return if any errors upon 
+startup are encountered. <em>[e]</em>
 <p><p></p><dt><strong>stop, s</strong><dd>
 Stop processing. <em>[-]</em>
 <p><p></p><dt><strong>run</strong><dd>
-Like 'start' but blocks until processing is finished. <em>[-]</em>
+Like 'start' but blocks until processing is finished. Error string
+is return if any errors upon startup, or during process, are 
+encountered. <em>[e]</em>
 <p><p></p><dt><strong>debug 'debug-level'</strong><dd>
 Set debug level to 'debug-level'. Notice that client programs can
 reimplement the debug routines. <em>[-]</em>
@@ -127,7 +130,8 @@ editing, the chainsetup is loaded back to ecasound. <em>[-]</em>
 Whether currently selected chainsetup is valid (=can be connected)? <em>[i]</em>
 <p><p></p><dt><strong>cs-connect</strong><dd>
 Connect currently selected chainsetup to engine. Only one chainsetup
-can be connected at a time. <em>[-]</em>
+can be connected at a time. Error string is returned if connection 
+fails. <em>[e]</em>
 <p><p></p><dt><strong>cs-disconnect</strong><dd>
 Disconnect currently connected chainsetup. <em>[-]</em>
 <p><p></p><dt><strong>cs-connected</strong><dd>

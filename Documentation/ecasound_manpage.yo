@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (19.08.2005)
+       (24.04.2006)
        ()
        (Multimedia software)
 
@@ -794,6 +794,26 @@ manpagesection(ENVIRONMENT)
 	If defined, some utility programs and scripts will use 
 	the em(ECASOUND) environment as the default path to
 	ecasound executable.
+
+manpagesection(RETURN VALUES)
+
+	In interactive mode, ecasound always returns zero.
+	
+	In non-interactive (batch) mode, a non-zero value is returned
+	for the following errors: 
+
+        startdit()
+	dit(1)
+	Unable to create a valid chainsetup with the given parameters. Can be 
+	caused by invalid option syntax, etc.
+	
+	dit(2)
+	Unable to start processing. This can be caused by insufficient file 
+	permissions, inability to access some system resources, etc.
+
+	dit(3)
+	Error during processing. Possible causes: output object has run
+	out of free disk space, etc.
 
 manpagefiles()
 

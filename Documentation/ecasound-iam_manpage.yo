@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (31.08.2005)
+       (23.04.2006)
        ()
        (Multimedia software)
 
@@ -51,13 +51,16 @@ Quit ecasound session. What this means in practice depends on the
 client (library throws an exception). em([-])
 
 dit(start, t)
-Processing is started (play). em([-])
+Processing is started (play). Error string is return if any errors upon 
+startup are encountered. em([e])
 
 dit(stop, s)
 Stop processing. em([-])
 
 dit(run)
-Like 'start' but blocks until processing is finished. em([-])
+Like 'start' but blocks until processing is finished. Error string
+is return if any errors upon startup, or during process, are 
+encountered. em([e])
 
 dit(debug 'debug-level')
 Set debug level to 'debug-level'. Notice that client programs can
@@ -141,7 +144,8 @@ Whether currently selected chainsetup is valid (=can be connected)? em([i])
 
 dit(cs-connect)
 Connect currently selected chainsetup to engine. Only one chainsetup
-can be connected at a time. em([-])
+can be connected at a time. Error string is returned if connection 
+fails. em([e])
 
 dit(cs-disconnect)
 Disconnect currently connected chainsetup. em([-])
