@@ -220,6 +220,8 @@ static int eci_test_4(void)
   eci_command_r(handle, "ai-remove");
   eci_command_r(handle, "ai-iselect 2");
   eci_command_r(handle, "ai-remove");
+  eci_command_r(handle, "ai-iselect 1");
+  eci_command_r(handle, "ai-attach");
   eci_command_r(handle, "cs-connect");
   if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(3, "cs-connect failed (3)"); }
 
