@@ -313,12 +313,24 @@ void ECA_CONTROL::action(int action_id)
   case ec_exit: { quit(); break; }
   case ec_start: 
     { 
-      if (is_running() != true) start();
+      if (is_running() != true) {
+	int result = start();
+	if (result < 0) {
+	  set_last_error("Error, unable to start processing");
+	}
+      }
       // ECA_LOG_MSG(ECA_LOGGER::info, "Can't perform requested action; no chainsetup connected.");
       break; 
     }
   case ec_stop: { if (is_running() == true) stop(); break; }
-  case ec_run: { run(); break; }
+  case ec_run: 
+    { 
+      int result = run(); 
+      if (result < 0) {
+	set_last_error("Errors during processing");
+      }
+      break; 
+    }
   case ec_debug:
     {
       int level = atoi(action_args_rep.c_str());

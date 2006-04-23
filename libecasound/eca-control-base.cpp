@@ -106,13 +106,17 @@ void ECA_CONTROL_BASE::engine_start(void)
  * @pre is_connected() == true
  * @pre is_running() != true
  * @post is_engine_started() == true
+ *
+ * @return negative on error, zero on success 
  */
-void ECA_CONTROL_BASE::start(void)
+int ECA_CONTROL_BASE::start(void)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
   DBC_REQUIRE(is_running() != true);
   // --------
+  
+  int result = 0;
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing started");
 
@@ -123,14 +127,17 @@ void ECA_CONTROL_BASE::start(void)
 
   if (is_engine_started() != true) {
     ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: couldn't start engine.");
-    return;
+    result = -1;
   }  
-
-  engine_repp->command(ECA_ENGINE::ep_start, 0.0);
+  else {
+    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
+  }
 
   // --------
-  DBC_ENSURE(is_engine_started() == true);
+  DBC_ENSURE(result != 0 || is_engine_started() == true);
   // --------
+
+  return result;
 }
 
 /**
@@ -148,8 +155,10 @@ void ECA_CONTROL_BASE::start(void)
  *       (is_engine_started() != true ||
  *        is_engine_started() == true &&
  * 	  engine_repp->status() != ECA_ENGINE::engine_status_stopped))
+ *
+ * @return negative on error, zero on success 
  */
-void ECA_CONTROL_BASE::run(bool batchmode)
+int ECA_CONTROL_BASE::run(bool batchmode)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
@@ -159,6 +168,7 @@ void ECA_CONTROL_BASE::run(bool batchmode)
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Starting batch processing");
 
   bool processing_started = false;
+  int result = -1;
 
   if (is_engine_started() != true) {
     /* request_batchmode=true */
@@ -172,6 +182,8 @@ void ECA_CONTROL_BASE::run(bool batchmode)
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
 
     DBC_CHECK(is_finished() != true);
+    
+    result = 0;
 
     /* run until processing is finished; in batchmode run forever (or
      * until error occurs) */
@@ -191,6 +203,7 @@ void ECA_CONTROL_BASE::run(bool batchmode)
 	  if (engine_repp->status() == ECA_ENGINE::engine_status_error) {
 	    /* not running, so status() is either 'not_ready' or 'error' */
 	    ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: engine startup failed. (3)");
+	    result = -2;
 	    break;
 	  }
 	  /* other valid state alternatives: */
@@ -199,7 +212,7 @@ void ECA_CONTROL_BASE::run(bool batchmode)
 	}
 	else {
 	  /* ECA_CONTROL_BASE destructor has been run and 
-	   * engine_repp is now 0 (--> is_engine_start() != true) */
+	   * engine_repp is now 0 (--> is_engine_started() != true) */
 	  break;
 	}
       }
@@ -214,8 +227,15 @@ void ECA_CONTROL_BASE::run(bool batchmode)
     }
   }    
 
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Batch processing finished");
+  if (last_exec_res_rep < 0) {
+    /* error occured during processing */
+    result = -3;
+  }
 
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, 
+	      std::string("Controller/Batch processing finished (")
+	      + kvu_numtostr(result) + ")");
+  
   // --------
   DBC_ENSURE(is_finished() == true ||
 	     processing_started == true && is_running() != true ||
@@ -224,6 +244,8 @@ void ECA_CONTROL_BASE::run(bool batchmode)
 	      is_engine_started() == true &&
 	      engine_repp->status() != ECA_ENGINE::engine_status_stopped));
   // --------
+
+  return result;
 }
 
 /**
@@ -324,7 +346,8 @@ void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
  */
 void ECA_CONTROL_BASE::run_engine(void)
 {
-  engine_repp->exec(req_batchmode_rep);
+  last_exec_res_rep = 0;
+  last_exec_res_rep = engine_repp->exec(req_batchmode_rep);
   engine_exited_rep.set(1); 
 }
 

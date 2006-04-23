@@ -55,10 +55,10 @@ class ECA_CONTROL_BASE {
   // -------------------------------------------------------------------
 
   void engine_start(void);
-  void start(void);
+  int start(void);
   void stop(void);
   void stop_on_condition(void);
-  void run(bool batchmode = true);
+  int run(bool batchmode = true);
   void quit(void);
 
   // -------------------------------------------------------------------
@@ -74,6 +74,7 @@ class ECA_CONTROL_BASE {
   double last_f_rep;
   std::string last_error_rep;
   std::string last_type_rep;
+  int last_exec_res_rep;
 
  protected:
 

@@ -258,12 +258,14 @@ ECA_ENGINE::~ECA_ENGINE(void)
  * @post status() == ECA_ENGINE::engine_status_notready
  * @post is_valid() != true
  */
-void ECA_ENGINE::exec(bool batch_mode)
+int ECA_ENGINE::exec(bool batch_mode)
 {
   // --
   DBC_REQUIRE(csetup_repp != 0);
   DBC_REQUIRE(csetup_repp->is_enabled() == true);
   // --
+
+  int result = 0;
 
   csetup_repp->toggle_locked_state(true);
 
@@ -284,14 +286,19 @@ void ECA_ENGINE::exec(bool batch_mode)
 
   signal_exit();
 
-  if (outputs_finished_rep > 0) 
+  if (outputs_finished_rep > 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: An output object has raised an error! "
 		"Possible causes: Out of disk space, permission denied, unable to launch external "
-		"applications needed in procesing, etc.");
+		"applications needed in processing, etc.");
+  }
 
   DBC_CHECK(status() == ECA_ENGINE::engine_status_stopped ||
 	    status() == ECA_ENGINE::engine_status_finished ||
 	    status() == ECA_ENGINE::engine_status_error);
+
+  if (status() == ECA_ENGINE::engine_status_error) {
+    result = -1;
+  }
 
   cleanup();
 
@@ -302,6 +309,8 @@ void ECA_ENGINE::exec(bool batch_mode)
   // --
   DBC_ENSURE(status() == ECA_ENGINE::engine_status_notready);
   // --
+
+  return result;
 }
 
 /**

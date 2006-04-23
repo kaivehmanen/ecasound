@@ -121,7 +121,7 @@ class ECA_ENGINE {
   ECA_ENGINE(ECA_CHAINSETUP* eparam);
   ~ECA_ENGINE(void);
 
-  void exec(bool batch_mode);
+  int exec(bool batch_mode);
   void command(Engine_command_t cmd, double arg);
   void wait_for_stop(int timeout);
   void wait_for_exit(int timeout);

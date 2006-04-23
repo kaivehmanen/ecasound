@@ -1,3 +1,14 @@
+2006-04-24  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-control-base.cpp (start): Added non-void return value to
+	report errors.
+
+2006-04-20  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* audioio-forked-stream.h (clean_child): Added force argument.
+	* eca-engine.h (exec): Added non-void return value to report exit status.
+	* eca-control-base.h (run): Added non-void return value to report exit status.
+
 2006-03-31  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-chainsetup.h: Added enum 'Audio_dir'.
