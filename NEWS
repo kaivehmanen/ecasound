@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 300306) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 240406) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -16,9 +16,30 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 xx062006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
+	- added: if libsndfile is found and supports flac (sndfile
+	         1.0.12 or newer), it will be used as the default
+	  	 handler for flac files; use of sndfile makes random 
+		 access for flac files possible (for example seeking 
+		 in interactive mode)
+	- added: section on 'RETURN VALUES' to ecasound(1) man page
+	- added: ecasound-iam(1) - added documentation for error 
+		 return values for 'run', 'start' and 'cs-connect'
 	- removed: readline-4.0 subdir from the dist package; system
 	           readline library is now the only option
+	- changed: ecasoundrc - added "-f" to the default flac 
+		   output cmd
+	- changed: improved libsndfile integration, any libsndfile
+		   supported file format can be used as output for
+	           'sndfile,foo.ext' (format selected based on filename
+		   extension)
 	- fixed: segfault when removing loop devices with a[io]-remove
+	- fixed: incorrect headers in created flac files (not related
+		 to sndfile/flac); fix can possibly affect other file 
+		 formats handled by external apps (aac, midi, mikmod, 
+		 mp3 and ogg files)
+	- fixed: errors during batch processing (running out of file
+	         space, etc) were not reported as a non-zero process
+	         return value
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
