@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/kvutils/Makefile.am
+# Description: Misc. utility routines (library created by Kai Vehmanen)
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 AUTOMAKE_OPTIONS = foreign
 
 # ---

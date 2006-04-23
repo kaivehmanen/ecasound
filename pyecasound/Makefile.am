@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/pyecasound/Makefile.am
+# Description: Python implmentation of the Ecasound Control Interface
+# License: LGPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 AUTOMAKE_OPTIONS 		= foreign
 EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py \
 				  test1_stresstest.py \

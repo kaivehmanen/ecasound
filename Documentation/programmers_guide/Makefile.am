@@ -1,6 +1,9 @@
-#
-# Makefile for Documentation/programmers_guide subdir 
-#
+# ----------------------------------------------------------------------
+# File: ecasound/Documentation/programmers_guide/Makefile.am
+# Description: Ecasound documentation - programmer's guide
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 # ---------------------------------------------------------------------
 # Files going into distribution:
 EXTRA_DIST =	ecasound_programmers_guide.txt \

@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/pyecasound/Makefile.am
+# Description: Ruby implmentation of the Ecasound Control Interface
+# License: LGPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 AUTOMAKE_OPTIONS 		= foreign
 EXTRA_DIST 			= README \
 				  ecasound.rb \

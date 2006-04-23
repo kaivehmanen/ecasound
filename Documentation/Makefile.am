@@ -1,7 +1,9 @@
-#
-# Makefile for Documentation/ subdir 
-#
-# ---------------------------------------------------------------------
+# ----------------------------------------------------------------------
+# File: ecasound/Documentation/Makefile.am
+# Description: Ecasound documentation files
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 prefix = @prefix@
 mandir = @mandir@
 PACKAGE = @PACKAGE@

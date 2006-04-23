@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------
+# File: ecasound/libecasound/plugins/Makefile.am
+# Description: Audio I/O implementations that depend on external 
+#              libraries
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 AUTOMAKE_OPTIONS = foreign
 
 # ----------------------------------------------------------------------

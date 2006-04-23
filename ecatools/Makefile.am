@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/ecatools/Makefile.am
+# Description: Utility applications built on Ecasound libraries
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 EXTRA_DIST = ecasound.el ecamonitor
 
 if ECA_AM_DEBUG_MODE

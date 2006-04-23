@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/Makefile.am
+# Description: Ecasound multitrack audio processing tool
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 EXTRA_DIST = AUTHORS BUGS COPYING.GPL COPYING.LGPL NEWS TODO ecasoundrc.in ecasound.spec effect_presets generic_oscillators
 
 SUBDIRS = kvutils libecasound ecasound libecasoundc pyecasound rubyecasound ecatools Documentation examples

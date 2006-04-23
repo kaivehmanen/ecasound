@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/libecasound/Makefile.am
+# Description: Ecasound main library
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 EXTRA_DIST = ChangeLog
 AUTOMAKE_OPTIONS = foreign
 SUBDIRS = plugins

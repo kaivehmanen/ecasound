@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------
+# File: ecasound/libecasoundc/Makefile.am
+# Description: Ecasound Control Interface C implementation.
+# License: LGPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 EXTRA_DIST = ChangeLog
 AUTOMAKE_OPTIONS = foreign
 

@@ -1,6 +1,9 @@
-#
-# Makefile for Documentation/users_guide subdir 
-#
+# ----------------------------------------------------------------------
+# File: ecasound/Documentation/users_guide/Makefile.am
+# Description: Ecasound documentation - user's guide
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
 # ---------------------------------------------------------------------
 # Files going into distribution:
 EXTRA_DIST = users_guide.latex
