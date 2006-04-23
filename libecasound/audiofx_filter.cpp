@@ -207,6 +207,13 @@ CHAIN_OPERATOR::parameter_t EFFECT_HIGHPASS::get_parameter(int param) const
   return 0.0;
 }
 
+EFFECT_ALLPASS_FILTER::EFFECT_ALLPASS_FILTER (void)
+  : feedback_gain(0.0),
+    D(0.0)
+{
+
+}
+
 void EFFECT_ALLPASS_FILTER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
   switch (param) {

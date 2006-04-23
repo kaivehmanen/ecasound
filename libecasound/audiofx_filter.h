@@ -164,7 +164,7 @@ public:
 
   EFFECT_ALLPASS_FILTER* clone(void) const { return new EFFECT_ALLPASS_FILTER(*this); }  
   EFFECT_ALLPASS_FILTER* new_expr(void) const { return new EFFECT_ALLPASS_FILTER(); }
-  EFFECT_ALLPASS_FILTER (void) { }
+  EFFECT_ALLPASS_FILTER (void);
 };
 
 
