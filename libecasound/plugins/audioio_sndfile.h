@@ -1,6 +1,7 @@
 #ifndef INCLUDED_AUDIOIO_SNDFILE_H
 #define INCLUDED_AUDIOIO_SNDFILE_H
 
+#include <list>
 #include <string>
 #include <sndfile.h>
 #include "samplebuffer.h"
@@ -83,6 +84,13 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   virtual bool finished(void) const;
 
   /*@}*/
+
+  /** @name Non-virtual functions  */
+  /*@{*/
+
+  std::list<std::string> supported_extensions(void) const;
+
+  /*@}*/
     
 private:
 
@@ -94,17 +102,9 @@ private:
   bool closing_rep;
 
   void open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&);
+  int find_file_format(const std::string& filename);
 
   SNDFILE_INTERFACE& operator=(const SNDFILE_INTERFACE& x) { return *this; }
 };
-
-#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
-extern "C" {
-AUDIO_IO* audio_io_descriptor(void) { return(new SNDFILE_INTERFACE()); }
-int audio_io_interface_version(void);
-const char* audio_io_keyword(void);
-const char* audio_io_keyword_regex(void);
-};
-#endif
 
 #endif

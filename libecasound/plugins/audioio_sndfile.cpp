@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003-2004 Kai Vehmanen
+// Copyright (C) 2003-2004,2006 Kai Vehmanen
 // Copyright (C) 2004 Jesse Chappell
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // References:
 //     http://www.mega-nerd.com/libsndfile/
@@ -42,15 +45,6 @@
 #include "eca-error.h"
 #include "eca-logger.h"
 
-#ifdef ECA_ENABLE_AUDIOIO_PLUGINS
-static const char* audio_io_keyword_const = "sndfile";
-static const char* audio_io_keyword_regex_const = "(^sndfile$)|(w64$)";
-
-const char* audio_io_keyword(void){return(audio_io_keyword_const); }
-const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
-int audio_io_interface_version(void) { return(ecasound_library_version_current); }
-#endif
-
 #ifdef WORDS_BIGENDIAN
 static const ECA_AUDIO_FORMAT::Sample_format audioio_sndfile_sfmt = ECA_AUDIO_FORMAT::sfmt_f32_be;
 #else
@@ -80,7 +74,7 @@ SNDFILE_INTERFACE* SNDFILE_INTERFACE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 /**
@@ -88,7 +82,7 @@ SNDFILE_INTERFACE* SNDFILE_INTERFACE::clone(void) const
  */ 
 void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-sndfile) audio file format: " + kvu_numtostr(sfinfo->format & SF_FORMAT_SUBMASK)); 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "audio file format: " + kvu_numtostr(sfinfo->format & SF_FORMAT_SUBMASK)); 
 
   string format;
 
@@ -119,6 +113,71 @@ void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::S
   set_length_in_samples(sfinfo->frames);
 }
 
+/**
+ * Returns a list of support file extensions in lower-case.
+ */
+std::list<std::string> SNDFILE_INTERFACE::supported_extensions(void) const
+{
+  list<string> exts;
+  int i, count;
+  SF_FORMAT_INFO format_info;
+
+  sf_command (0, SFC_GET_FORMAT_MAJOR_COUNT, &count, sizeof (int));
+  
+  for (i = 0 ; i < count ; i++) {
+    format_info.format = i;
+    sf_command (0, SFC_GET_FORMAT_MAJOR, &format_info, sizeof (format_info)) ;
+    exts.push_back(string(format_info.extension));
+  } 
+
+  return exts;
+}
+
+/**
+ * Discovers a matching libsndfile file format for the filename
+ * 'fname'. The filename extension is used to find a matching
+ * format.
+ *
+ * @return sndfile major format identifier
+ */
+int SNDFILE_INTERFACE::find_file_format(const std::string& fname)
+{
+  int file_format = -1, i, count;
+  SF_FORMAT_INFO format_info;
+  size_t pos = fname.rfind(".");
+  string fext;
+  if (pos != string::npos) {
+    fext = string(fname, pos + 1);
+  }
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      string("Searching for fileformat matching extension '") +
+	      fext + "'.");
+
+  sf_command (0, SFC_GET_FORMAT_MAJOR_COUNT, &count, sizeof (int));
+  
+  for (i = 0 ; i < count ; i++) {
+    format_info.format = i;
+    sf_command (0, SFC_GET_FORMAT_MAJOR, &format_info, sizeof (format_info)) ;
+    if (fext == string(format_info.extension)) {
+      file_format = format_info.format;
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		  string("Found matching file format: ") +
+		  format_info.name + " (ext=." + fext + ")");
+      break;
+    }
+  } 
+
+  if (file_format < 0) {
+    ECA_LOG_MSG(ECA_LOGGER::info,
+		string("Warning! Unknown audio format extension '")
+		+ fext + "', using WAV format instead.");
+    file_format = SF_FORMAT_WAV;
+  }
+
+  return file_format;
+}
+
 void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
   AUDIO_IO::open();
@@ -130,22 +189,21 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     real_filename = opt_filename_rep;
   }
 
-  string teksti = real_filename;
+  string mod_filename = real_filename;
   if (!opt_format_rep.empty()) {
-    teksti = opt_format_rep;
+    mod_filename = opt_format_rep;
   }
-  kvu_to_lowercase(teksti);
+  kvu_to_lowercase(mod_filename);
 
   // need to treat raw specially for read-only opening
   bool is_raw = false;
-  if (strstr(teksti.c_str(),".raw") != 0) {
+  if (strstr(mod_filename.c_str(),".raw") != 0) {
 	  is_raw = true;
   }
   
   if (io_mode() == io_read && !is_raw) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
-		real_filename + "\" for reading.");
-
+    ECA_LOG_MSG(ECA_LOGGER::info,
+		"Using libsndfile to open file \"" + real_filename + "\" for reading.");
 
     snd_repp = sf_open(real_filename.c_str(), SFM_READ, &sfinfo);
     if (snd_repp == NULL) {
@@ -161,32 +219,10 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
     int file_format = -1;
 
-    // FIXME: add support for more output types
-    
-    if (strstr(teksti.c_str(),".wav") != 0) { file_format = SF_FORMAT_WAV; }
-    else if (strstr(teksti.c_str(),".w64") != 0) { file_format = SF_FORMAT_W64; }
-    else if (strstr(teksti.c_str(),".aiff") != 0) { file_format = SF_FORMAT_AIFF; }
-    else if (strstr(teksti.c_str(),".aifc") != 0) { file_format = SF_FORMAT_AIFF; }
-    else if (strstr(teksti.c_str(),".raw") != 0) { file_format = SF_FORMAT_RAW; }
-    else if (strstr(teksti.c_str(),".au") != 0) { file_format = SF_FORMAT_AU; }
-    else if (strstr(teksti.c_str(),".paf") != 0) { file_format = SF_FORMAT_PAF; }
-    else if (strstr(teksti.c_str(),".iff") != 0) { file_format = SF_FORMAT_SVX; }
-    else if (strstr(teksti.c_str(),".svx") != 0) { file_format = SF_FORMAT_SVX; }
-    else if (strstr(teksti.c_str(),".nist") != 0) { file_format = SF_FORMAT_NIST; }
-    else if (strstr(teksti.c_str(),".voc") != 0) { file_format = SF_FORMAT_VOC; }
-#ifdef SF_FORMAT_XI
-    else if (strstr(teksti.c_str(),".xi") != 0) { file_format = SF_FORMAT_XI; }
-#endif
-#ifdef SF_FORMAT_PVF
-    else if (strstr(teksti.c_str(),".pvf") != 0) { file_format = SF_FORMAT_PVF; }
-#endif
-#ifdef SF_FORMAT_HTK
-    else if (strstr(teksti.c_str(),".htk") != 0) { file_format = SF_FORMAT_HTK; }
-#endif
-    else {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Warning! Unknown audio format, using WAV format instead.");
-      file_format = SF_FORMAT_WAV;
-    }
+    // note: support 1.0.0 formats by default, and others via
+    // SF_FORMAT_GET_MAJOR
+
+    file_format = find_file_format(mod_filename);    
     
     if (format_string()[0] == 'u' && bits() == 8)
       file_format |= SF_FORMAT_PCM_S8;
@@ -222,7 +258,7 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     sfinfo.format = file_format;
   
     if (io_mode() == io_write) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
+      ECA_LOG_MSG(ECA_LOGGER::info, "Using libsndfile to open file \"" +
 		  real_filename + "\" for writing.");
 
       /* open the file */
@@ -233,7 +269,7 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       }
     }
     else if (io_mode() == io_read) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
+      ECA_LOG_MSG(ECA_LOGGER::info, "Using libsndfile to open file \"" +
 		real_filename + "\" for reading.");
 
 
@@ -247,14 +283,25 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       }
     }
     else {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-sndfile) Using libsndfile to open file \"" +
+      ECA_LOG_MSG(ECA_LOGGER::info, "Using libsndfile to open file \"" +
 		  real_filename + "\" for read/write.");
+
+      DBC_CHECK(sf_format_check(&sfinfo));
 
       /* io_readwrite */
       snd_repp = sf_open(real_filename.c_str(), SFM_RDWR, &sfinfo);
       if (snd_repp == NULL) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			  + "\" for updating (read/write)."));
+	/* if open fails, try with SFM_WRITE (formats like flac are not 
+	 * supported in RDWR mode */
+	snd_repp = sf_open(real_filename.c_str(), SFM_WRITE, &sfinfo);
+	if (snd_repp == NULL) {
+	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
+			    + "\" for updating (read/write)."));
+	}
+	else {
+	  set_io_mode(io_write);
+	  open_parse_info(&sfinfo);
+	}
       }
       else {
 	open_parse_info(&sfinfo);
@@ -296,7 +343,7 @@ long int SNDFILE_INTERFACE::read_samples(void* target_buffer,
   // samples_read /= frame_size();
   samples_read = sf_readf_float(snd_repp, (float*)target_buffer, samples);
   finished_rep = (samples_read < samples) ? true : false;
-  return(samples_read);
+  return samples_read;
 }
 
 void SNDFILE_INTERFACE::write_samples(void* target_buffer, 
@@ -380,13 +427,13 @@ string SNDFILE_INTERFACE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(opt_filename_rep);
+    return opt_filename_rep;
 
   case 3: 
-    return(opt_format_rep);
+    return opt_format_rep;
   }
-  return("");
+  return "";
 }
