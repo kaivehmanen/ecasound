@@ -2,6 +2,9 @@
 // audiofx_ladspa.cpp: Wrapper class for LADSPA plugins
 // Copyright (C) 2000-2004 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // References:
 //     http://www.ladspa.org
 //
@@ -67,7 +70,7 @@ EFFECT_LADSPA::~EFFECT_LADSPA (void)
 
 std::string EFFECT_LADSPA::description(void) const
 {
-  return(name_rep + " - Author: '" + maker_rep + "'");
+  return name_rep + " - Author: '" + maker_rep + "'";
 }
 
 EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const
@@ -76,7 +79,7 @@ EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     result->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(result);
+  return result;
 }
 
 void EFFECT_LADSPA::init_ports(void)
@@ -201,7 +204,7 @@ void EFFECT_LADSPA::parse_parameter_hint_information(int portnum, int paramnum, 
     }
     else {
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "(audiofx_ladspa) No LADSPA hint info found for plugin '" + name_rep + "'.");
+		  "No LADSPA hint info found for plugin '" + name_rep + "'.");
     }
   }
 
@@ -348,7 +351,7 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
   }
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"(audiofx_ladspa) Instantiated " +
+		"Instantiated " +
 		kvu_numtostr(plugins_rep.size()) + 
 		" LADSPA plugin(s), each with " + 
 		kvu_numtostr(in_audio_ports) + 
