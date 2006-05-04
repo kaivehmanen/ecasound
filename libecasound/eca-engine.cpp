@@ -1201,20 +1201,20 @@ void ECA_ENGINE::interpret_queue(void)
 	// ---
       case ep_ctrl_select: { 
 	csetup_repp->active_ctrl_index_rep =  static_cast<size_t>(item.second);
-	if (csetup_repp->active_ctrl_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_ctrl_index_rep]->number_of_controllers()))
-	  (*chains_repp)[csetup_repp->active_ctrl_index_rep]->select_controller(csetup_repp->active_ctrl_index_rep);
+	if (csetup_repp->active_ctrl_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_controllers()))
+	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller(csetup_repp->active_ctrl_index_rep);
 	else 
 	  csetup_repp->active_ctrl_index_rep = 0;
 	break;
       }
       case ep_ctrlp_select: { 
 	csetup_repp->active_ctrl_param_index_rep = static_cast<size_t>(item.second);
-	(*chains_repp)[csetup_repp->active_ctrl_index_rep]->select_controller_parameter(csetup_repp->active_ctrl_param_index_rep);
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller_parameter(csetup_repp->active_ctrl_param_index_rep);
 	break;
       }
       case ep_ctrlp_value: { 
 	assert(chains_repp != 0);
-	(*chains_repp)[csetup_repp->active_ctrl_index_rep]->set_controller_parameter(item.second);
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_controller_parameter(item.second);
 	break;
       }
 	// ---
