@@ -467,7 +467,7 @@ void ECA_CONTROL::action(int action_id)
     // Audio input objects
     // ---
   case ec_ai_add: { add_audio_input(action_args_rep); break; }
-  case ec_ai_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_input_repp)); break; }
+  case ec_ai_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_input_repp, "i")); break; }
   case ec_ai_remove: { remove_audio_input(); break; }
   case ec_ai_list: { set_last_string_list(audio_input_names()); break; }
   case ec_ai_select: { select_audio_input(action_args_rep); break; }
@@ -512,7 +512,7 @@ void ECA_CONTROL::action(int action_id)
     // ---
   case ec_ao_add: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep); break; }
   case ec_ao_add_default: { add_default_output(); break; }
-  case ec_ao_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_output_repp)); break; }
+  case ec_ao_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_output_repp, "o")); break; }
   case ec_ao_remove: { remove_audio_output(); break; }
   case ec_ao_list: { set_last_string_list(audio_output_names()); break; }
   case ec_ao_select: { select_audio_output(action_args_rep); break; }

@@ -730,14 +730,12 @@ string ECA_OBJECT_FACTORY::operator_parameters_to_eos(const OPERATOR* chainop)
 /**
  * Return a string compliant with Ecasound Option Syntax (EOS)
  * describing the object 'aiod'.
+ *
+ * @pre direction == "i" || direction == "o"
  */
-string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod)
+string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod, const std::string& direction)
 {
   MESSAGE_ITEM t;
-  string direction ("i");
-  if (aiod->io_mode() != AUDIO_IO::io_read) {
-    direction = "o";
-  }
   t << " -" << direction << ":";
   for(int n = 0; n < aiod->number_of_params(); n++) {
     // FIXME: should quote/escape possible commas and whitespace

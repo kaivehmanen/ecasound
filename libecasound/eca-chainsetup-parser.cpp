@@ -1144,7 +1144,7 @@ string ECA_CHAINSETUP_PARSER::inputs_to_string(void) const
     t << " " 
       << ECA_OBJECT_FACTORY::audio_object_format_to_eos(csetup_repp->inputs[p]) 
       << " "
-      << ECA_OBJECT_FACTORY::audio_object_to_eos(csetup_repp->inputs[p]);
+      << ECA_OBJECT_FACTORY::audio_object_to_eos(csetup_repp->inputs[p], "i");
 
     if (csetup_repp->input_start_pos[p] != 0) {
       t << " -y:" << csetup_repp->input_start_pos[p];
@@ -1175,7 +1175,7 @@ string ECA_CHAINSETUP_PARSER::outputs_to_string(void) const
     t << " " 
       << ECA_OBJECT_FACTORY::audio_object_format_to_eos(csetup_repp->outputs[p]) 
       << " "
-      << ECA_OBJECT_FACTORY::audio_object_to_eos(csetup_repp->outputs[p]);
+      << ECA_OBJECT_FACTORY::audio_object_to_eos(csetup_repp->outputs[p], "o");
 
     if (csetup_repp->output_start_pos[p] != 0) {
       t << " -y:" << csetup_repp->output_start_pos[p];
