@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240406) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 040506) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -40,6 +40,10 @@ xx062006 (v2.4.5)  -** stable release **-
 	- fixed: errors during batch processing (running out of file
 	         space, etc) were not reported as a non-zero process
 	         return value
+	- fixed: possible segfaults with ctrl-select, ctrlp-select
+		 and ctrlp-value [allies]
+	- fixed: loop devices were not correctly saved with cs-save
+	         and cs-save-as [allies]
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
