@@ -23,10 +23,6 @@ class ATOMIC_INTEGER {
    * Returns the stored integer value.
    *
    * Non-blocking.
-   *
-   * Atomic on most platforms. Notable exception 
-   * are Sparc/SMP, S390 and other such systems, where 
-   * even integer read/writes are not atomic.
    */
   int get(void) const;
 
@@ -35,9 +31,9 @@ class ATOMIC_INTEGER {
    *
    * Non-blocking. Atomic on most platforms.
    *
-   * Atomic on most platforms. Notable exception 
-   * are Sparc/SMP, S390 and other such systems, where 
-   * even integer read/writes are not atomic.
+   * Atomic without limitations on most platforms. On some
+   * platforms (e.g. sparc64 and armv6), writes from multiple
+   * threads are unsafe.
    */
   void set(int value);
 

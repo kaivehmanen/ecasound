@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_locks.cpp: Various lock related helper functions.
-// Copyright (C) 2000-2002 Kai Vehmanen
+// Copyright (C) 2000-2002,2006 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,27 +23,31 @@
 #include "kvu_dbc.h"
 #include "kvu_locks.h"
 
-/* NOTE: This implementation doesn't really guarantee correct
- *       operation at the moment as I wanted to avoid 
- *       maintaining primitives for dozens of different 
- *       platforms.
- *
- *       The primary reason for using this class is to 
- *       mark all code segments where atomic access 
- *       is required.
+/* NOTE: This implementation is currenly a dummy one. The primary 
+ *       reason to use ATOMIC_OINT() is to mark all code segments 
+ *       where atomic read/write access is required.
  *
  * Tested platforms:
  *   - IA32 single- and multi-processor cases
  *
- * Platforms that should work according to specs:
+ * Platforms that should be atomic w.r.t. read/writes:
  *   - Alpha
- *   - ARM
+ *   - ARM-v4 (ARM9) and older
  *   - IA64
+ *   - MIPS
  *   - PowerPC
+ *   - SH
+ *   - S390
+ *   - SPARC64
+ *   - X86-64
  * 
- * Platforms that do _NOT_ work:
- *   - multi-processor SPARC
- *   - IBM's S390
+ * Platforms that where writes from multiple threads do _NOT_ work:
+ *   - ARM-v6 (ARM11) and up 
+ *   - SPARC32
+ *
+ * References: 
+ *   - architecture manuals
+ *   - Linux kernel and glibc sources
  */
 
 ATOMIC_INTEGER::ATOMIC_INTEGER(int value)
@@ -57,7 +61,7 @@ ATOMIC_INTEGER::~ATOMIC_INTEGER(void)
 
 int ATOMIC_INTEGER::get(void) const
 {
-  return(value_rep);
+  return value_rep;
 }
 
 void ATOMIC_INTEGER::set(int value)
