@@ -7,7 +7,7 @@
 
 \title{Ecasound Control Interface Guide}
 \author{Kai Vehmanen, Brad Bowman, Tony Leake, Jan Weil, Mario Lang}
-\date{02052004}
+\date{03062006}
 \begin{document}
 
 \maketitle
@@ -32,6 +32,7 @@ a detailed EIAM documentation.
 % ----------------------------------------------------------------------
 \section{Document history}
 \begin{itemize}
+\item 04.06.2006 - Added more information to the ``Tips for debugging'' section.
 \item 21.03.2005 - Updated the ``Tips for debugging'' section.
 \item 25.09.2004 - Updated the ``Return values'' section based on feedback
                    from Adam Linson.
@@ -691,15 +692,22 @@ is not working correctly.
       ECI for the first time and after important commands
       like ``cs-connect'', you should always check for errors.
 
+\item Use the ECASOUND\_LOGFILE environment variable to write all
+      engine output to a separate logfile. See ecasound(1) manpage
+      for details on how to use this mechanism. Requires Ecasound 
+      version 2.4.5 or newer.
+
+\item Utilize the ``int-log-history'' ECI command added to
+      version 2.4.0 of Ecasound. Recent messages from the
+      engine can help to track down the problem. Before use, you
+      need to first set the history length to a non-zero value with 
+      ``int-set-log-history-length''.
+
 \item Launch Ecasound in interactive mode (``ecasound -c''), 
       and issue the commands your ECI application is using, 
       manually one-by-one and see what happens. If something
       goes wrong, increase Ecasound's debug level (for instance
       ``-ddd'') and re-run the test. 
-
-\item Utilize the ``int-log-history'' ECI command added to
-      version 2.4.0 of Ecasound. Recent messages from the
-      engine can help to track down the problem.
 
 \end{enumerate}
 
