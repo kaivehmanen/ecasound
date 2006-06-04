@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 040506) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 040606) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -24,6 +24,10 @@ xx062006 (v2.4.5)  -** stable release **-
 	- added: section on 'RETURN VALUES' to ecasound(1) man page
 	- added: ecasound-iam(1) - added documentation for error 
 		 return values for 'run', 'start' and 'cs-connect'
+	- added: ECASOUND_LOGFILE and ECASOUND_LOGLEVEL environment
+	         variables; see ecasound(1) for documentation
+	- added: more detailed description of debug levels that
+	         can be set with 'd' to ecasound(1) manpage
 	- removed: readline-4.0 subdir from the dist package; system
 	           readline library is now the only option
 	- changed: ecasoundrc - added "-f" to the default flac 
@@ -32,6 +36,7 @@ xx062006 (v2.4.5)  -** stable release **-
 		   supported file format can be used as output for
 	           'sndfile,foo.ext' (format selected based on filename
 		   extension)
+	- changed: eiam - default int-log-history length set to zero
 	- fixed: segfault when removing loop devices with a[io]-remove
 	- fixed: incorrect headers in created flac files (not related
 		 to sndfile/flac); fix can possibly affect other file 
