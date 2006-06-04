@@ -185,7 +185,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
   DBC_REQUIRE(csetup->is_enabled() == true);
   // --
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine/Initializing");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_ENGINE constructor");
 
   csetup_repp->toggle_locked_state(true);
 
@@ -209,7 +209,7 @@ ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup)
  */
 ECA_ENGINE::~ECA_ENGINE(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_ENGINE destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_ENGINE destructor");
 
   if (csetup_repp != 0) {
     command(ECA_ENGINE::ep_exit, 0.0f);
