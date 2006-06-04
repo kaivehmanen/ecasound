@@ -5,7 +5,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{25042005}
+\date{04062006}
 \begin{document}
 
 \maketitle
@@ -30,6 +30,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 04.06.2006 - Some minor improvements to the text. Updated the descriptions of
+                   realtime-lsm and rlimits-rtprio mechanisms.
 \item 25.04.2005 - From now on, only major changes are logged to this changelog
                    section. For detailed change history, refer to CVS history.
 \item 23.04.2005 - Started using the ``hevea'' style-package and converted 
@@ -155,8 +157,10 @@ the term \emph{connected} is used to describe a chainsetup that
 is in use. 
 
 Another important chainsetup concept is that of a \emph{selected}
-chainsetup. If connected chainsetup is the one in use, selected
-chainsetup is the one that is currently edited. 
+chainsetup. All editing operations are done on the currently selected
+chainsetup. It is possible to have one chainsetup connected (currently
+processing audio), while editing another, chainsetup that is selected
+for editing.
 
 Loading and saving chainsetups is the primary mechanism 
 for storing and restoring state information. When saving 
@@ -218,9 +222,9 @@ parts of libecasound. To name a few places:
       [2.1dev4 and newer])
 \item saved chainsetup-files (.ecs format)
 \item effect preset definitions (see for example 
-      ``/usr/local/share/ecasound/effect\_presets'')
+      ``{prefix}/share/ecasound/effect\_presets'')
 \item generic oscillator definitions (see for example 
-      ``/usr/local/share/ecasound/generic\_oscillators''
+      ``{prefix}/share/ecasound/generic\_oscillators''
 \end{itemize}
 
 % ----------------------------------------------------------------------
@@ -230,7 +234,7 @@ parts of libecasound. To name a few places:
 % ----------------------------------------------------------------------
 \section{Where to start?}
 
-There's no one single way to use Ecasound. You can use it as 
+There's no one single right way to use Ecasound. You can use it as 
 a simple glue component for doing tasks that aren't handled by
 other applications you are using, or because Ecasound does these tasks
 more easily (or better even :)). But Ecasound can also serve as the 
@@ -241,10 +245,10 @@ This flexibility doesn't come for free. It's difficult to describe
 Ecasound's features in a few phrases. Because of this, new users
 are encouraged to start from the \texttt{Examples page} at 
 \ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}.
-It isn't a perfect introduction, and definitely not the only way to use 
-Ecasound, but it does give an overall view of what can be done
-with Ecasound, and more importantly, it shows that most tasks are 
-actually quite easy to do.
+It isn't a perfect introduction, and definitely shows only one way to
+use the software, but it does give an overall view of what can be done,
+and more importantly, it shows that many tasks are actually quite simple
+to do.
 
 % ----------------------------------------------------------------------
 \section{Rules for editing chainsetups}
@@ -268,6 +272,9 @@ these rules always apply:
       will be written to the output file.
 \end{itemize}
 
+Note that these rules are checked only when \emph{connecting} the 
+chainsetup (when issuing commands such as ``cs-connect'', or ``start'').
+
 % ----------------------------------------------------------------------
 \section{Chain operators and controllers}
 
@@ -282,7 +289,7 @@ User preferences are stored in \emph{\textasciitilde /.ecasound/ecasoundrc}.
 See the \texttt{ecasoundrc(5)} manual page for details.
 
 By default, files for effect presets and oscillator presets are 
-in \emph{/usr/local/share/ecasound}.
+in \emph{{prefix}/share/ecasound}.
 
 % ----------------------------------------------------------------------
 \section{Common problems}
@@ -943,12 +950,14 @@ When given the -r option (raise priority), Ecasound tries to raise
 its scheduling priority (to so called SCHED\_FIFO realtime scheduling)
 and to avoid swapping, locks all its memory. To do this,
 root-privileges are required. So either Ecasound has to be run as
-root (logged in as root, or using the 'sudo' program), or it has to be
-installed with the suid-root bit set. Now is this a safe thing to do?
+root (logged in as root, or using the 'sudo' program), it has to be
+installed with the suid-root bit set, or otherwise be granted necessary
+privileges to turn on real-time schedule (see below). Now is this a safe 
+thing to do?
 
 Although there are no known vulnerabilities, setting Ecasound suid-root is
 not safe. Whether this is a real problem depends on the particular setup
-(whether connected to network or not, any untrusted users with shell
+(whether connected to a network or not, any untrusted users with shell
 access, ...).
 
 The basic problem is that Ecasound (or at least 2.0 and earlier) 
@@ -956,11 +965,11 @@ doesn't contain any code for altering privilege levels. If it is run
 with root-privileges, it does everything as root - including forking
 external programs such as mp3 and ogg utilities and editors.
  
-But all in all, this shouldn't be that big of an issue. For noncritical
-uses, just don't set the suid-bit, but run as a normal user. If you have
-an untrusted setup, and you don't want to login as root, but still need 
-to run in raised-priority mode, the following helps a bit (execute as 
-root):
+But all in all, this shouldn't be that big of an issue for many users. For
+noncritical uses, just don't set the suid-bit, but run as a normal user. If 
+you have an untrusted setup, and you don't want to login as root, but still 
+need  to run in raised-priority mode, the following can help to limit 
+the risk of suid-root use:
 
 \begin{verbatim} 
         cd /usr/local/bin
@@ -970,18 +979,23 @@ root):
 
 In other words, the ecasound binary is set as suid-root (so it is run with
 root-privileges), but only root and members of the 'ecausers' group can   
-start it. Now just add all trusted Ecasound users to the group and you are
-set.
+start it. You of course first have to create the 'ecausers' group to your
+system.
 
-The ideal solution would be that ecasound would not need to be run with
-full root-privileges, only with privileges for changing scheduling and
-locking memory. 
+The ideal solution would be that ecasound would not need full root-privileges, but 
+privileges for changing scheduling and locking memory. On recent Linux systems,
+there are couple ways to achieve this.
 
 The Realtime Linux Security Module (LSM) is one practical solution 
-(see \ahrefurl{http://sourceforge.net/projects/realtime-lsm/}).
-This module is a loadable extension for Linux 2.6 kernels. It selectively grants 
-realtime permissions to specific user groups or applications. Unfortunately Realtime
-LSM does not yet come with the standard Linux kernel, so you need to install it 
-separately.
+(see \ahrefurl{http://sourceforge.net/projects/realtime-lsm/} and 
+\ahrefurl{http://lwn.net/Articles/106009/}). This module is a loadable extension for 
+Linux 2.6 kernels. It selectively grants realtime permissions to specific user groups 
+or applications. Unfortunately Realtime LSM does not yet come with the standard Linux 
+kernel, so you need to install it separately.
+
+A more recent approach, and one that might be adopted by popular GNU/Linux distributions, 
+is the \emph{rtprio} extension to Linux resource limits. See 
+\ahrefurl{http://lwn.net/Articles/134460/} for a good overview of this approach and how 
+it compared to the LSM mechanism described above.
 
 \end{document}
