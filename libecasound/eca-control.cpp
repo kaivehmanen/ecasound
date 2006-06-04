@@ -85,16 +85,21 @@ ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession)
     wellformed_mode_rep(false),
     ctrl_dump_rep(this)
 {
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_CONTROL constructor");
 }
 
 ECA_CONTROL::~ECA_CONTROL(void)
 {
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_CONTROL destructor");
 }
 
 void ECA_CONTROL::command(const string& cmd)
 {
   clear_last_values();
   clear_action_arguments();
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "command: " + cmd);
+
   vector<string> cmds = kvu_string_to_tokens_quoted(cmd);
   vector<string>::iterator p = cmds.begin();
   if (p != cmds.end()) {
