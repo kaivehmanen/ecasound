@@ -200,7 +200,7 @@ enddit()
 COMMENT(----------------------------------------------------------------)
 bf(INPUT/OUTPUT SETUP)
 
-See url(ecasound user's guide)(users_guide/users_guide.html) for 
+See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for 
 more detailed documentation.
 
 startdit()
@@ -281,7 +281,7 @@ bf(-o:arts).
 
 dit(Ecasound Wave Files - .ewf)
 A simple wrapper class for handling other audio objects. 
-See url(ecasound user's guide)(users_guide/users_guide.html) for more 
+See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for more 
 detailed information.
 
 dit(JACK input/outputs)
@@ -426,7 +426,7 @@ em(PRESETS)
 
 Ecasound has a powerful effect preset system that allows you create
 new effects by combining basic effects and controllers. See
-url(ecasound user's guide)(users_guide/users_guide.html) for more 
+url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for more 
 detailed information.
 
 startdit()
