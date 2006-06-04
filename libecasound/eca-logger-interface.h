@@ -73,6 +73,9 @@ class ECA_LOGGER_INTERFACE {
   int debug_value_rep;
   int log_history_len_rep;
   std::list<std::string> log_history_rep;
+
+  int extlog_debug_level_rep;
+  FILE *extlog_file_repp;
 };
 
 #endif

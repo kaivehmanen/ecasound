@@ -28,16 +28,16 @@ ECA_LOGGER_INTERFACE* ECA_LOGGER::interface_impl_repp = 0;
 pthread_mutex_t ECA_LOGGER::lock_rep = PTHREAD_MUTEX_INITIALIZER;
 
 static const char *level_descs[] = {
-  "ERROR", /* 0 */
-  "INFO",
-  "SUBSYSTEM",
-  "MODULE",
-  "OBJECTS",
-  "SYSTEM",
+  "ERROR   ", /* 0 */
+  "INFO    ",
+  "SUBSYST.",
+  "MODULE  ",
+  "OBJECTS ",
+  "SYSTEM  ",
   "FUNCTION",
-  "CONTINUOUS",
-  "EIAM",
-  "UNKNOWN" /* 9 */
+  "CONTINU.",
+  "EIAM    ",
+  "UNKNOWN "  /* 9 */
 };
 
 ECA_LOGGER_INTERFACE& ECA_LOGGER::instance(void)

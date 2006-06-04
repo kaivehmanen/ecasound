@@ -3,7 +3,7 @@
 // Copyright (C) 2002-2004 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 2
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,21 +24,57 @@
 #include <list>
 #include <string>
 
-#include <kvu_dbc.h>
+#include <sys/types.h> /* for getpid() */
+#include <unistd.h>    /* --"-- */
 
+#include <cstdio>
+#include <cstdlib>
+#include <ctime>
+
+#include <kvu_dbc.h>
+#include <kvu_numtostr.h>
+
+#include "eca-version.h"
 #include "eca-logger-interface.h"
 
 using namespace std;
 
-const static int eca_l_i_default_log_history_len = 5;
+const static int eca_l_i_default_log_history_len = 0;
+const static int eca_l_i_default_extlog_level = ECA_LOGGER::errors | ECA_LOGGER::info | ECA_LOGGER::subsystems | ECA_LOGGER::module_names | ECA_LOGGER::user_objects | ECA_LOGGER::system_objects | ECA_LOGGER::eiam_return_values;
+
+static void priv_make_logmsg(std::string *logmsg, ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message);
 
 /**
  * Class constructor. Initializes log level to 'disabled'.
  */
 ECA_LOGGER_INTERFACE::ECA_LOGGER_INTERFACE(void) 
   : debug_value_rep(0),
-    log_history_len_rep(eca_l_i_default_log_history_len)
+    log_history_len_rep(eca_l_i_default_log_history_len),
+    extlog_debug_level_rep(eca_l_i_default_extlog_level),
+    extlog_file_repp(0)
 {
+  char *extlog_dest = getenv("ECASOUND_LOGFILE");
+  char *extlog_loglevel = getenv("ECASOUND_LOGLEVEL");
+  
+  if (extlog_dest) {
+    if (extlog_loglevel) {
+      extlog_debug_level_rep = atoi(extlog_loglevel);
+    }
+
+    extlog_file_repp = fopen(extlog_dest, "a");
+    if (extlog_file_repp) {
+      time_t curtime;
+      time(&curtime);
+      fprintf(extlog_file_repp, 
+	      "---------------------------------------------------------------------\n"
+	      "%sOpening logfile \"%s\" for ecasound-%s (logger=%p, pid=%d):\n", 
+	      ctime(&curtime), extlog_dest, ecasound_library_version, this, getpid());
+    }
+    else {
+      std::cerr << "*** ERROR: Error in opening \"" 
+		<< extlog_dest << "\". Check ECASOUND_LOGFILE and file permissions. ***\n";
+    }
+  }
 }
 
 /**
@@ -46,6 +82,12 @@ ECA_LOGGER_INTERFACE::ECA_LOGGER_INTERFACE(void)
  */
 ECA_LOGGER_INTERFACE::~ECA_LOGGER_INTERFACE(void)
 {
+  if (extlog_file_repp != 0) {
+    fprintf(extlog_file_repp, 
+	    "Closing logfile (logger=%p, pid=%d).\n", 
+	    this, getpid());
+    fclose(extlog_file_repp);
+  }
 }
 
 /**
@@ -53,11 +95,17 @@ ECA_LOGGER_INTERFACE::~ECA_LOGGER_INTERFACE(void)
  */
 void ECA_LOGGER_INTERFACE::msg(ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message)
 {
+  std::string logmsg;
+
+  /* step: output message with subclass implementation */
   do_msg(level, module_name, log_message);
-  /* note that we cannot archive EIAM return values as this 
-   * could create a loop when the backlog itself is printed */
-  if (level != ECA_LOGGER::eiam_return_values &&
-      log_history_len_rep > 0) {
+
+  /* step: store item to history 
+   *       (note that we cannot archive EIAM return values as this 
+   *        could create a loop when the backlog itself is printed) */
+  if (log_history_len_rep > 0 &&
+      level != ECA_LOGGER::eiam_return_values) {
+    priv_make_logmsg(&logmsg, level, module_name, log_message);
     log_history_rep.push_back(string("[") + ECA_LOGGER::level_to_string(level) + "] ("
 			      + std::string(module_name.begin(), 
 					    find(module_name.begin(), module_name.end(), '.'))
@@ -65,6 +113,30 @@ void ECA_LOGGER_INTERFACE::msg(ECA_LOGGER::Msg_level_t level, const std::string&
     if (static_cast<int>(log_history_rep.size()) > log_history_len_rep) {
       log_history_rep.pop_front();
       DBC_CHECK(static_cast<int>(log_history_rep.size()) == log_history_len_rep);
+    }
+  }
+
+  /* step: conditionally output to external logfile */
+  if (extlog_file_repp != 0) {
+    ECA_LOGGER::Msg_level_t extlevel = 
+      static_cast<ECA_LOGGER::Msg_level_t>(extlog_debug_level_rep > 0 ? extlog_debug_level_rep : debug_value_rep);
+
+    /* if message matches the request level mask, write it to log */
+    if (extlevel & level) {
+      static unsigned long counter = 0;
+
+      if (logmsg.size() == 0) 
+	priv_make_logmsg(&logmsg, level, module_name, log_message);
+
+      logmsg += " <" + kvu_numtostr(counter++) + ">\n";
+      
+      fwrite(logmsg.c_str(), logmsg.size(), 1, extlog_file_repp);
+      if (ferror(extlog_file_repp)) {
+	std::cerr << "*** ERROR: Error in writing to ECASOUND_LOGFILE. Check free disk space. ***\n";
+	fclose(extlog_file_repp);
+	extlog_file_repp = 0;
+      }
+      fflush(extlog_file_repp);
     }
   }
 }
@@ -107,4 +179,14 @@ void ECA_LOGGER_INTERFACE::disable(void)
 void ECA_LOGGER_INTERFACE::set_log_history_length(int len)
 {
   log_history_len_rep = len;
+}
+
+static void priv_make_logmsg(std::string *logmsg, ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message)
+{
+  *logmsg = 
+    string("[") + ECA_LOGGER::level_to_string(level)  + "] ("
+    + std::string(module_name.begin(), module_name.end() - 4) + ") " 
+    + log_message;
+/*     + std::string(module_name.begin(), find(module_name.begin(),
+       module_name.end(), '.')) */
 }
