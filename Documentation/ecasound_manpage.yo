@@ -804,7 +804,7 @@ manpagesection(ENVIRONMENT)
 	debugging ECI/EIAM scripts and applications.
 
 	dit(ECASOUND_LOGLEVEL)
-	Select which messages are written to the logfile defined in 
+	Select which messages are written to the logfile defined by 
 	em(ECASOUND_LOGFILE). The syntax for em(-d:level) is used. If not
 	defined, all messages are written. Defaults to -d:319 (everything else
 	but 'functions(64)' and 'continuous(128)' class messages).
