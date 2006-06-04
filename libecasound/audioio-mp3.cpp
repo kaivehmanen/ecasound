@@ -365,7 +365,8 @@ void MP3FILE::close(void)
 {
   if (pid_of_child() > 0) {
       ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
-      clean_child();
+      /* note: mp3 input/output can handle SIGTERM */
+      clean_child(true);
       triggered_rep = false;
   }
 

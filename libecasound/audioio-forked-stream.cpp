@@ -323,6 +323,9 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
 void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
 {
   if (fd_rep > 0) {
+    /* close the pipe between this process and the forked child
+     * process, should terminate the forked application -> see
+     * waitpid() below */
     ::close(fd_rep);
     fd_rep = -1;
   }
@@ -337,18 +340,20 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     /* wait until child process has exited */
     int status = 0;
     int res = waitpid(pid_of_child_rep, &status, flags);
-    if (WIFEXITED(status)) {
+    if (res == pid_of_child_rep && WIFEXITED(status)) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child process exit ok");
       pid_of_child_rep = 0;
     }
-    else if (res < 0) {
-      perror("waitpid");
+    else {
+      if (res < 0)
+	perror("waitpid");
       force = true;
     }
   }
 
+  /* if 'killing you softly' didn't work, next try with SIGTERM */
   if (force == true && pid_of_child_rep > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "WARNING: sending SIGTERM to child process");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "sending SIGTERM to child process");
     /* close did not trigger exit, send SIGTERM */
     kill(pid_of_child_rep, SIGTERM);
     pid_of_child_rep = 0;
