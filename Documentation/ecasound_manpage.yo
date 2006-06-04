@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (24.04.2006)
+       (04.06.2006)
        ()
        (Multimedia software)
 
@@ -46,9 +46,11 @@ some verbosity, while em(-ddd) results in very detailed
 output.
 
 dit(-d:debug_level)
-Set the debug level mask to 'debug_level'. This a bitmasked value, 
-that defaults to 271. See ECA_LOGGER class documentation for 
-more detailed info about various debug_level values.
+Set the debug level mask to 'debug_level'. This a bitmasked value with
+the following classes: errors (1), info (2), subsystems (4), module_names (8),
+user_objects (16), system_objects 32, functions (64), continuous (128) and
+eiam_return_values (256). Default is 271 (1+2+4+8+256). See sourcode 
+documentation for the ECA_LOGGER class for more detailed information.
 
 dit(-D)
 Print all debug information to stderr (unbuffered, plain output
@@ -790,10 +792,23 @@ See em(ecasound-iam(1)).
 
 manpagesection(ENVIRONMENT)
 
-        em(ECASOUND)
+        startdit()
+        dit(ECASOUND)
 	If defined, some utility programs and scripts will use 
 	the em(ECASOUND) environment as the default path to
 	ecasound executable.
+
+	dit(ECASOUND_LOGFILE)
+	Output all debugging messages to a separate log file. If defined, 
+	em(ECASOUND_LOGFILE) defines the logfile path. This is a good tool for 
+	debugging ECI/EIAM scripts and applications.
+
+	dit(ECASOUND_LOGLEVEL)
+	Select which messages are written to the logfile defined in 
+	em(ECASOUND_LOGFILE). The syntax for em(-d:level) is used. If not
+	defined, all messages are written. Defaults to -d:319 (everything else
+	but 'functions(64)' and 'continuous(128)' class messages).
+	enddit()
 
 manpagesection(RETURN VALUES)
 

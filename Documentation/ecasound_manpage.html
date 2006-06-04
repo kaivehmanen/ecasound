@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>24.04.2006</h2>
+<h2>04.06.2006</h2>
 
 
     
@@ -51,9 +51,11 @@ Increase the amount of printed debug messages. <em>-d</em> adds
 some verbosity, while <em>-ddd</em> results in very detailed 
 output.
 <p><p></p><dt><strong>-d:debug_level</strong><dd>
-Set the debug level mask to 'debug_level'. This a bitmasked value, 
-that defaults to 271. See ECA_LOGGER class documentation for 
-more detailed info about various debug_level values.
+Set the debug level mask to 'debug_level'. This a bitmasked value with
+the following classes: errors (1), info (2), subsystems (4), module_names (8),
+user_objects (16), system_objects 32, functions (64), continuous (128) and
+eiam_return_values (256). Default is 271 (1+2+4+8+256). See sourcode 
+documentation for the ECA_LOGGER class for more detailed information.
 <p><p></p><dt><strong>-D</strong><dd>
 Print all debug information to stderr (unbuffered, plain output
 without ncurses).
@@ -654,10 +656,21 @@ another controller as usual.
 <p>See <em>ecasound-iam(1)</em>.
 <p><h2>ENVIRONMENT</h2>
     
-<p><em>ECASOUND</em>
+<p><dl>
+        <p></p><dt><strong>ECASOUND</strong><dd>
 	If defined, some utility programs and scripts will use 
 	the <em>ECASOUND</em> environment as the default path to
 	ecasound executable.
+<p><p></p><dt><strong>ECASOUND_LOGFILE</strong><dd>
+	Output all debugging messages to a separate log file. If defined, 
+	<em>ECASOUND_LOGFILE</em> defines the logfile path. This is a good tool for 
+	debugging ECI/EIAM scripts and applications.
+<p><p></p><dt><strong>ECASOUND_LOGLEVEL</strong><dd>
+	Select which messages are written to the logfile defined in 
+	<em>ECASOUND_LOGFILE</em>. The syntax for <em>-d:level</em> is used. If not
+	defined, all messages are written. Defaults to -d:319 (everything else
+	but 'functions(64)' and 'continuous(128)' class messages).
+	</dl>
 <p><h2>RETURN VALUES</h2>
     
 <p>In interactive mode, ecasound always returns zero.
