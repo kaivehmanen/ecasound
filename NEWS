@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx062006 (v2.4.5)  -** stable release **-
+xx092006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
 	- added: if libsndfile is found and supports flac (sndfile
@@ -49,6 +49,7 @@ xx062006 (v2.4.5)  -** stable release **-
 		 and ctrlp-value [allies]
 	- fixed: loop devices were not correctly saved with cs-save
 	         and cs-save-as [allies]
+	- fired: bug in handling big-ending 24/32bit samples [aheller]
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)

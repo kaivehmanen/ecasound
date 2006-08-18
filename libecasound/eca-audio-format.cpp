@@ -136,7 +136,7 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format sfmt) t
 
     case sfmt_s24_be:
       sc_rep = sc_signed;
-      update_sample_endianess(se_little);
+      update_sample_endianess(se_big);
       align_rep = 3;
       break;
 
@@ -160,7 +160,7 @@ void ECA_AUDIO_FORMAT::set_sample_format(ECA_AUDIO_FORMAT::Sample_format sfmt) t
 
     case sfmt_s32_be:
       sc_rep = sc_signed;
-      update_sample_endianess(se_little);
+      update_sample_endianess(se_big);
       align_rep = 4;
       break;
 
