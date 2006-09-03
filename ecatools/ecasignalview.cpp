@@ -34,6 +34,9 @@
 #include <signal.h>
 #include <unistd.h>
 
+#include <sys/time.h>     /* POSIX: select() */
+#include <sys/select.h>   /* POSIX: timeval struct */
+
 #include <kvutils/kvu_com_line.h>
 #include <kvutils/kvu_utils.h>
 #include <kvutils/kvu_numtostr.h>
