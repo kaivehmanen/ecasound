@@ -43,7 +43,7 @@ Lang, Mario [mlang]
 Leake, Tony [tonyleake]
 	PHP ECI extension.
 Lopez-Cabanillas, Pedro [pedrolc] (pedro -dot- lopez-cabanillas -at- gmail -dot -com)
-	ALSA sequencer interfeca support.
+	ALSA sequencer interface support.
 Massy, S. [smassy]
 	Ecalength utility, extensive testing and debugging.
 Poelstra, Remco [rjpoelstra]
@@ -88,10 +88,16 @@ Fischer, Hans-Georg [hgfischer]
 	Bug fix that solved edi-1.
 Grabner Markus [grabner]
 	Updated RPM spec-file for x86_64 platforms.
+Head, Chris [hawk777]
+	Patches fixing ecasignalview build errors.
+Heller, Aaron [aheller]
+	Fixes to big-endian support.
 Harris, Steve [swharris]
 	gcc 2.96 (RH7.0) testing and fixes.
 Lavallée, Marc
 	Rpm-spec for Mandrake.
+Merino, Pedro Antonio Fructuoso [pfructuoso]
+	Bugfix pacthes.
 Morris, Steve [smorris]
 	Ewf-handling fixes.
 Petit, Bertrand

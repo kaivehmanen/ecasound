@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 040606) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 011206) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -13,7 +13,7 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
 
 -----------------------------------------------------------------------
 
-xx092006 (v2.4.5)  -** stable release **-
+xx122006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
 	- added: if libsndfile is found and supports flac (sndfile
@@ -28,6 +28,8 @@ xx092006 (v2.4.5)  -** stable release **-
 	         variables; see ecasound(1) for documentation
 	- added: more detailed description of debug levels that
 	         can be set with 'd' to ecasound(1) manpage
+	- added: examples section to ecasound(1), which points to
+	         the examples page at eca.cx/ecasound
 	- removed: readline-4.0 subdir from the dist package; system
 	           readline library is now the only option
 	- changed: ecasoundrc - added "-f" to the default flac 
@@ -37,6 +39,8 @@ xx092006 (v2.4.5)  -** stable release **-
 	           'sndfile,foo.ext' (format selected based on filename
 		   extension)
 	- changed: eiam - default int-log-history length set to zero
+	- changed: updated config.guess and config.sub to more recent
+		   versions (timestamp 2006-07-02)
 	- fixed: segfault when removing loop devices with a[io]-remove
 	- fixed: incorrect headers in created flac files (not related
 		 to sndfile/flac); fix can possibly affect other file 
@@ -49,7 +53,9 @@ xx092006 (v2.4.5)  -** stable release **-
 		 and ctrlp-value [allies]
 	- fixed: loop devices were not correctly saved with cs-save
 	         and cs-save-as [allies]
-	- fired: bug in handling big-ending 24/32bit samples [aheller]
+	- fixed: bug in handling big-ending 24/32bit samples [aheller]
+	- fixed: ecasignalview build errors on cygwin [hawk777]
+	- fixed: segfault when parsing "\" in interactive mode [pfructuoso]
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)

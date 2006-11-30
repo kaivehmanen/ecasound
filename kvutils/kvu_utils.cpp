@@ -172,6 +172,7 @@ vector<string> kvu_string_to_tokens_quoted(const string& s)
     }
     else if (*p == '\\') {
       p++;
+      if (p == s.end()) break;
       stmp += *p;
     }
     else if (isspace(*p) == 0 || quoteflag == true) {
