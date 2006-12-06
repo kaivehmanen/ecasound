@@ -42,6 +42,7 @@ using namespace std;
 
 static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& curpos, const string::value_type value);
 static void kvu_priv_strip_escapes(string* const input, const string& escaped_char);
+static void kvu_priv_strip_outer_quotes(string* const input, const string::value_type quote_char);
 
 /**
  * Returns a string where all regex metachars in 'arg'
@@ -169,6 +170,7 @@ vector<string> kvu_string_to_tokens_quoted(const string& s)
   for(string::const_iterator p = s.begin(); p != s.end(); p++) {
     if (*p == '\"') {
       quoteflag = !quoteflag;
+      stmp += *p;
     }
     else if (*p == '\\') {
       p++;
@@ -179,9 +181,15 @@ vector<string> kvu_string_to_tokens_quoted(const string& s)
       stmp += *p;
     }
     else {
-      if (stmp == "") continue;
+      /* note: token ready, add to vector if length is non-zero */
+      if (stmp.size() == 0) continue;
+
+      /* note: remove only the outermost quotes */
+      kvu_priv_strip_outer_quotes(&stmp, '"');
+
       vec.push_back(stmp);
       stmp = "";
+      DBC_CHECK(stmp.size() == 0);
     }
   }
   if (stmp.size() > 0)
@@ -434,18 +442,32 @@ void kvu_to_lowercase(string& a)
  * position.
  * 
  * All backslash escaped instances of 'value' ("\<value>")
- * are ignored in the search. Note that general backlash 
- * escaping is not supported, i.e. "\<character>" is not
- * interpreted as "<character>".
+ * are ignored in the search. Also instance of 'value' within 
+ * a pair of double quotes are ignored.
+ *
+ * Note that general backlash escaping is not supported, i.e. 
+ * "\<character>" is not interpreted as "<character>".
  *
  * @return position of next 'value' or arg.end() if not found
  */
 static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& start, const string::value_type value)
 {
-  string::const_iterator curpos = start, ret = arg.end();
+  string::const_iterator curpos = start, ret = arg.end(), nextquote = arg.end();
 
   while(curpos != arg.end()) {
     ret = find(curpos, arg.end(), value);
+
+    nextquote = find(curpos, arg.end(), '"'); 
+    if (nextquote < ret) {
+
+      /* step: ignore quoted part of the input string */
+      nextquote = find(nextquote + 1, arg.end(), '"');
+      if (nextquote != arg.end()) {
+	curpos = nextquote + 1;
+	ret = find(curpos, arg.end(), value);
+      }
+    }
+
     if (ret != arg.end() && ret != arg.begin()) {
       string::const_iterator prev = ret - 1;
       if ((*prev) == '\\') {
@@ -453,6 +475,7 @@ static string::const_iterator kvu_priv_find_next_instance(const string& arg, con
 	continue;
       }
     }
+
     break;
   }
 
@@ -492,6 +515,19 @@ static void kvu_priv_strip_escapes(string* const input, const string& escaped_ch
   }
 }
 
+/**
+ * Strips the outer quotes of type 'quote_char' from the string.
+ *
+ * @pre escaped_char.size() == 1
+ */
+static void kvu_priv_strip_outer_quotes(string* const input, const string::value_type quote_char)
+{
+  if (input->size() >= 2 &&
+      *input->begin() == quote_char &&
+      *(input->end() - 1) == quote_char)
+    *input = std::string(input->begin() + 1, input->end() - 1);
+}
+
 /** 
  * Returns number of arguments in formatted string 'arg'.
  */
@@ -526,6 +562,7 @@ vector<string> kvu_get_arguments(const string& argu)
       // strip backslash-commas (and leave the commas in place)      
       kvu_priv_strip_escapes(&target, ",");
       kvu_priv_strip_escapes(&target, ":");
+      kvu_priv_strip_outer_quotes(&target, '"');
       resvec.push_back(target);
     }
     if (e == argu.end()) break;

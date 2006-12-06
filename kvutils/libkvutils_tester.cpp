@@ -245,24 +245,29 @@ static int kvu_test_2(void)
 
   /* argument string parsing: */
 
-  const string argument ("-efoobarsouNd:arg1,arg2,arg3,long\\,arg\\:4,arg5,");
+  const string test_arg1 ("-efoobarsouNd:arg1,arg2,arg3,long\\,arg\\:4,arg5,\"arg,6,comma1,comma2\"");
 
-  if (kvu_get_argument_prefix(argument) != "efoobarsouNd") {
+  if (kvu_get_argument_prefix(test_arg1) != "efoobarsouNd") {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_prefix"); 
   }
 
-  if (kvu_get_argument_number(5, argument) != "arg5") {
-    // fprintf(stderr, "vec2: '%s'.\n", kvu_get_argument_number(5, argument).c_str());
+  if (kvu_get_argument_number(5, test_arg1) != "arg5") {
+    // fprintf(stderr, "vec2: '%s'.\n", kvu_get_argument_number(5, test_arg1).c_str());
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (1)"); 
   }
 
-  /* request for non-existant arg should return an empty string */
-  if (kvu_get_argument_number(6, argument) != "") {
+  if (kvu_get_argument_number(6, test_arg1) != "arg,6,comma1,comma2") {
+    fprintf(stderr, "vec2: '%s'.\n", kvu_get_argument_number(6, test_arg1).c_str());
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (2)"); 
   }
 
-  vec = kvu_get_arguments(argument);
-  if (vec.size() != 5) {
+  /* request for non-existant arg should return an empty string */
+  if (kvu_get_argument_number(7, test_arg1) != "") {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (3)"); 
+  }
+
+  vec = kvu_get_arguments(test_arg1);
+  if (vec.size() != 6) {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_arguments (1)"); 
   }
 
@@ -270,8 +275,19 @@ static int kvu_test_2(void)
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_arguments (2)"); 
   }
 
-  if (kvu_get_number_of_arguments(argument) != 5) {
+  if (kvu_get_number_of_arguments(test_arg1) != 6) {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments"); 
+  }
+
+  const string test_arg2 ("-e:\"\\arg1,arg2,arg3");
+
+  if (kvu_get_number_of_arguments(test_arg2) != 3) {
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments (arg2-2)"); 
+  }
+
+  if (kvu_get_argument_number(1, test_arg2) != "\"\\arg1") {
+    fprintf(stderr, "vec2: '%s'.\n", kvu_get_argument_number(1, test_arg2).c_str());
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (arg2-1)"); 
   }
 
   /* search and replace: */
