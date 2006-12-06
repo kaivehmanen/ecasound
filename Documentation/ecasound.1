@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "04\&.06\&.2006" "" "Multimedia software" 
+.TH "ecasound" "1" "06\&.12\&.2006" "" "Multimedia software" 
 .PP 
 .SH "NAME" 
 ecasound \- sample editor, multitrack recorder, fx-processor, etc\&.
@@ -81,6 +81,7 @@ Disable ecasound\&'s daemon mode\&. This is the default\&.
 .IP "--keep-running,-K" 
 Do not exit when processing is finished/stopped\&. Only affects
 non-interactive operating mode (see -c/-C)\&.
+Option added to ecasound 2\&.4\&.2\&.
 .IP 
 .IP "--help,-h" 
 Show this help\&.
@@ -131,7 +132,8 @@ offset is the amount of samples skipped when recording from
 real-time inputs\&. \&'-z:psr\&' enables the \fIprecise-sample-rates\fP mode 
 for OSS-devices\&. \&'-z:mixmode,sum\&' enables mixing mode where channels
 are mixed by summing all channels\&. The default is \&'-z:mixmode,avg\&',
-in which channels are mixed by averaging\&. 
+in which channels are mixed by averaging\&. Mixmode selection was first
+added to ecasound 2\&.4\&.0\&.
 See ecasoundrc(5)\&.
 .IP 
 .PP 
@@ -573,13 +575,30 @@ in Hz\&. Basicly just another resonating bandpass filter\&.
 .PP 
 \fICHANNEL MIXING / ROUTING\fP
 .IP 
-.IP "-erc:from-channel, to-channel" 
+.IP "-chcopy:from-channel, to-channel" 
 Copy channel \&'from_channel\&' to \&'to_channel\&'\&. If \&'to_channel\&' 
-doesn\&'t exist, it is created\&. Channel indexing is started from 1\&.
+doesn\&'t exist, it is created\&. Channel indexing starts from 1\&.
+Option added to ecasound 2\&.4\&.5\&.
+.IP 
+.IP "-chmove:from-channel, to-channel" 
+Copy channel \&'from_channel\&' to \&'to_channel\&', and mutes the source
+channel \&'from_channel\&'\&. Channel indexing starts from 1\&.
+Option added to ecasound 2\&.4\&.5\&.
+.IP 
+.IP "-chmix:to-channel" 
+Mix all channels to channel \&'to_channel\&'\&.  If \&'to_channel\&' 
+doesn\&'t exist, it is created\&. Channel indexing starts from 1\&.
+Option added to ecasound 2\&.4\&.5\&.
+.IP 
+.IP "-chmute:channel" 
+Mutes the channel \&'channel\&'\&. Channel indexing starts from 1\&.
+Option added to ecasound 2\&.4\&.5\&.
+.IP 
+dir(-erc:from-channel,to-channel)
+Deprecated, see \fI-chcopy\fP\&.
 .IP 
 .IP "-erm:to-channel" 
-Mix all channels to channel \&'to_channel\&'\&.  If \&'to_channel\&' 
-doesn\&'t exist, it is created\&. Channel indexing is started from 1\&.
+Deprecated, see \fI-chmix\fP\&.
 .IP 
 .PP 
 \fITIME-BASED EFFECTS\fP
@@ -675,8 +694,8 @@ during processing\&. All controllers are attached to the selected
 three parameters are common for all controllers\&. \&'fx_param\&' 
 specifies the parameter to be controlled\&. Value \&'1\&' means 
 the first parameter, \&'2\&' the second and so on\&. \&'start_value\&' 
-and \&'end_value\&' set the value range\&. You really should see
-\fIexamples\&.html\fP for some more info\&. 
+and \&'end_value\&' set the value range\&. For examples, look at the
+the \fBEXAMPLES\fP section\&.
 .IP 
 .IP "-kos:fx-param,start-value,end-value,freq,i-phase" 
 Sine oscillator with frequency of \&'freq\&' Hz and initial phase
@@ -798,6 +817,12 @@ more better documentation\&.
 \fI*\&.ews\fP 
 Ecasound Wave Stats\&. These files are used to cache
 waveform data\&.
+.IP 
+.SH "EXAMPLES" 
+.IP 
+Examples of how to perform common tasks with ecasound can
+be found at 
+http://eca\&.cx/ecasound/Documentation/examples\&.html\&.
 .IP 
 .SH "SEE ALSO" 
 .IP 

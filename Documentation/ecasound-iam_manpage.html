@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound-iam</h1>
-<h2>04.06.2006</h2>
+<h2>06.12.2006</h2>
 
 
     
@@ -256,13 +256,16 @@ Adds the default output device (see ecasoundrc(5)). <em>[-]</em>
 <p><p></p><dt><strong>ai-describe, ao-describe</strong><dd>
 Returns a Ecasound Option Syntax (EOS) compliant string
 describing the input/output. See the Ecasound User's Guide
-for more information about EOS. <em>[s]</em>
+for more information about EOS. This command was introduced in 
+ecasound 2.4.4. <em>[s]</em>
 <p><p></p><dt><strong>ai-select 'aobject_name', ao-select 'aobject_name'</strong><dd>
 Selects an audio object. 'aobject_name' refers to the string
-used when creating the object (see above). Note! All input
-object names are required to be unique. Similarly all output
-names need to be unique. However, it's possible that the same
-object name exists both as an input and as an output. <em>[-]</em>
+used when creating the object (see above). Note, in the case
+a chainsetup contains multiple inputs, or outputs, with 
+identical namem 'ai-select' and 'ao-select' will select 
+the first matching instance. In order to select a specific
+instance, the 'ai-iselect' and 'ao-iselect' commands need to 
+be used. <em>[-]</em>
 <p><p></p><dt><strong>ai-index-select 'aobject_index', ai-iselect 'aobject_index', ao-index-select 'aobject_index', ao-iselect 'aobject_index'</strong><dd>
 Select some audio object based on a short index string. Especially file
 names can be rather long. This command can be used to avoid typing
@@ -329,7 +332,8 @@ info. <em>[-]</em>
 <p><p></p><dt><strong>cop-describe</strong><dd>
 Returns a Ecasound Option Syntax (EOS) compliant string
 describing the chain operator. See the Ecasound User's Guide
-for more information about EOS. <em>[s]</em>
+for more information about EOS. This command was introduced in 
+ecasound 2.4.4. <em>[s]</em>
 <p><p></p><dt><strong>cop-remove</strong><dd> 
 Removes the selected chain operator. <em>[-]</em>
 <p><p></p><dt><strong>cop-list</strong><dd>
@@ -374,7 +378,8 @@ info. <em>[-]</em>
 <p><p></p><dt><strong>ctrl-describe</strong><dd>
 Returns a Ecasound Option Syntax (EOS) compliant string
 describing the controller. See the Ecasound User's Guide
-for more information about EOS. <em>[s]</em>
+for more information about EOS. This command was introduced in 
+ecasound 2.4.4. <em>[s]</em>
 <p><p></p><dt><strong>ctrl-remove</strong><dd>
 Removes the selected controller. <em>[-]</em>
 <p><p></p><dt><strong>ctrl-list</strong><dd>
@@ -393,15 +398,20 @@ Returns the index number of the chain operator that is
 connected to the selected controller. The returned index 
 refers to the currently selected chain (see 'cop-list'). <em>[i]</em>
 <p><p></p><dt><strong>ctrlp-list</strong><dd>
-Returns a list of all controller parameters. <em>[S]</em>
+Returns a list of all controller parameters. This command was introduced in 
+ecasound 2.4.2. <em>[S]</em>
 <p><p></p><dt><strong>ctrlp-select</strong><dd>
-Selects a controller parameter. <em>[-]</em>
+Selects a controller parameter. This command was introduced in 
+ecasound 2.4.2. <em>[-]</em>
 <p><p></p><dt><strong>ctrlp-selected</strong><dd>
-Returns the index number of currently selected controller parameter. <em>[i]</em>
+Returns the index number of currently selected controller parameter. This command 
+was introduced in ecasound 2.4.2. <em>[i]</em>
 <p><p></p><dt><strong>ctrlp-get</strong><dd>
-Returns the selected controller parameter value. <em>[f]</em>
+Returns the selected controller parameter value. This command was introduced in 
+ecasound 2.4.2. <em>[f]</em>
 <p><p></p><dt><strong>ctrlp-set</strong><dd>
-Sets the selected controller parameter value to 'value'. <em>[-]</em>
+Sets the selected controller parameter value to 'value'. This command was introduced in 
+ecasound 2.4.2. <em>[-]</em>
 <p></dl>
 <p><h2>INTERNAL COMMANDS</h2>
     
@@ -412,7 +422,8 @@ are primarily meant for use in scripting and frontends.
 Returns a list of all registered EIAM commands. <em>[S]</em>
 <p><p></p><dt><strong>int-log-history</strong><dd>
 Returns recent log messages sent by libecasound modules. This
-is a good tool for debugging ECI/EIAM scripts and applications. <em>[s]</em>
+is a good tool for debugging ECI/EIAM scripts and applications. This 
+command was introduced in ecasound 2.4.0. <em>[s]</em>
 <p><p></p><dt><strong>int-output-mode-wellformed</strong><dd>
 Select the well-format output format for log messages. <em>[-]</em>
 <p><p></p><dt><strong>int-set-float-to-string-precision</strong><dd>
@@ -420,7 +431,8 @@ Sets precision used in float to text conversions. Note that
 this can be used to control the precision of float return values 
 for ECI commands. <em>[-]</em>
 <p><p></p><dt><strong>int-set-log-history-length</strong><dd>
-Sets the log history length. Defaults to 0 items. <em>[-]</em>
+Sets the log history length. Defaults to 0 items. 
+This command was introduced in ecasound 2.4.0. <em>[-]</em>
 <p><p></p><dt><strong>int-cmd-version-string</strong><dd>
 Returns EIAM parser version string. <em>[s]</em>
 <p><p></p><dt><strong>int-cmd-version-lib-current</strong><dd>

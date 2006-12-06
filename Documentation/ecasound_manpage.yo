@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (04.06.2006)
+       (06.12.2006)
        ()
        (Multimedia software)
 
@@ -88,6 +88,7 @@ Disable ecasound's daemon mode. This is the default.
 dit(--keep-running,-K)
 Do not exit when processing is finished/stopped. Only affects
 non-interactive operating mode (see -c/-C).
+Option added to ecasound 2.4.2.
 
 dit(--help,-h)
 Show this help.
@@ -141,7 +142,8 @@ offset is the amount of samples skipped when recording from
 real-time inputs. '-z:psr' enables the em(precise-sample-rates) mode 
 for OSS-devices. '-z:mixmode,sum' enables mixing mode where channels
 are mixed by summing all channels. The default is '-z:mixmode,avg',
-in which channels are mixed by averaging. 
+in which channels are mixed by averaging. Mixmode selection was first
+added to ecasound 2.4.0.
 See url(ecasoundrc(5))(ecasoundrc_manpage.html).
 
 enddit()
@@ -609,13 +611,30 @@ enddit()
 em(CHANNEL MIXING / ROUTING)
 startdit()
 
-dit(-erc:from-channel, to-channel)
+dit(-chcopy:from-channel, to-channel)
 Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
-doesn't exist, it is created. Channel indexing is started from 1.
+doesn't exist, it is created. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+
+dit(-chmove:from-channel, to-channel)
+Copy channel 'from_channel' to 'to_channel', and mutes the source
+channel 'from_channel'. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+
+dit(-chmix:to-channel)
+Mix all channels to channel 'to_channel'.  If 'to_channel' 
+doesn't exist, it is created. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+
+dit(-chmute:channel)
+Mutes the channel 'channel'. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+
+dir(-erc:from-channel,to-channel)
+Deprecated, see em(-chcopy).
 
 dit(-erm:to-channel)
-Mix all channels to channel 'to_channel'.  If 'to_channel' 
-doesn't exist, it is created. Channel indexing is started from 1.
+Deprecated, see em(-chmix).
 
 enddit()
 
@@ -720,8 +739,8 @@ during processing. All controllers are attached to the selected
 three parameters are common for all controllers. 'fx_param' 
 specifies the parameter to be controlled. Value '1' means 
 the first parameter, '2' the second and so on. 'start_value' 
-and 'end_value' set the value range. You really should see
-em(examples.html) for some more info. 
+and 'end_value' set the value range. For examples, look at the
+the bf(EXAMPLES) section.
 
 dit(-kos:fx-param,start-value,end-value,freq,i-phase)
 Sine oscillator with frequency of 'freq' Hz and initial phase
@@ -849,6 +868,12 @@ manpagefiles()
 	Ecasound Wave Stats. These files are used to cache
 	waveform data.
 
+
+manpagesection(EXAMPLES)
+
+ 	Examples of how to perform common tasks with ecasound can
+	be found at 
+	url(http://eca.cx/ecasound/Documentation/examples.html)(http://eca.cx/ecasound/Documentation/examples.html).
 
 manpageseealso()
 

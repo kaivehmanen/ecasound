@@ -13,7 +13,7 @@
 <hr>
 
 <h1>ecasound</h1>
-<h2>04.06.2006</h2>
+<h2>06.12.2006</h2>
 
 
     
@@ -85,6 +85,7 @@ Disable ecasound's daemon mode. This is the default.
 <p><p></p><dt><strong>--keep-running,-K</strong><dd>
 Do not exit when processing is finished/stopped. Only affects
 non-interactive operating mode (see -c/-C).
+Option added to ecasound 2.4.2.
 <p><p></p><dt><strong>--help,-h</strong><dd>
 Show this help.
 <p><p></p><dt><strong>--version</strong><dd>
@@ -129,7 +130,8 @@ offset is the amount of samples skipped when recording from
 real-time inputs. '-z:psr' enables the <em>precise-sample-rates</em> mode 
 for OSS-devices. '-z:mixmode,sum' enables mixing mode where channels
 are mixed by summing all channels. The default is '-z:mixmode,avg',
-in which channels are mixed by averaging. 
+in which channels are mixed by averaging. Mixmode selection was first
+added to ecasound 2.4.0.
 See <a href="ecasoundrc_manpage.html">ecasoundrc(5)</a>.
 <p></dl>
 <p>
@@ -507,12 +509,25 @@ in Hz. Basicly just another resonating bandpass filter.
 <p></dl>
 <p><em>CHANNEL MIXING / ROUTING</em>
 <dl>
-<p><p></p><dt><strong>-erc:from-channel, to-channel</strong><dd>
+<p><p></p><dt><strong>-chcopy:from-channel, to-channel</strong><dd>
 Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
-doesn't exist, it is created. Channel indexing is started from 1.
-<p><p></p><dt><strong>-erm:to-channel</strong><dd>
+doesn't exist, it is created. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+<p><p></p><dt><strong>-chmove:from-channel, to-channel</strong><dd>
+Copy channel 'from_channel' to 'to_channel', and mutes the source
+channel 'from_channel'. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+<p><p></p><dt><strong>-chmix:to-channel</strong><dd>
 Mix all channels to channel 'to_channel'.  If 'to_channel' 
-doesn't exist, it is created. Channel indexing is started from 1.
+doesn't exist, it is created. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+<p><p></p><dt><strong>-chmute:channel</strong><dd>
+Mutes the channel 'channel'. Channel indexing starts from 1.
+Option added to ecasound 2.4.5.
+<p>dir(-erc:from-channel,to-channel)
+Deprecated, see <em>-chcopy</em>.
+<p><p></p><dt><strong>-erm:to-channel</strong><dd>
+Deprecated, see <em>-chmix</em>.
 <p></dl>
 <p><em>TIME-BASED EFFECTS</em>
 <dl>
@@ -596,8 +611,8 @@ during processing. All controllers are attached to the selected
 three parameters are common for all controllers. 'fx_param' 
 specifies the parameter to be controlled. Value '1' means 
 the first parameter, '2' the second and so on. 'start_value' 
-and 'end_value' set the value range. You really should see
-<em>examples.html</em> for some more info. 
+and 'end_value' set the value range. For examples, look at the
+the <strong>EXAMPLES</strong> section.
 <p><p></p><dt><strong>-kos:fx-param,start-value,end-value,freq,i-phase</strong><dd>
 Sine oscillator with frequency of 'freq' Hz and initial phase
 of 'i_phase' times pi.
@@ -701,6 +716,11 @@ another controller as usual.
 <p><em>*.ews</em> 
 	Ecasound Wave Stats. These files are used to cache
 	waveform data.
+<p><h2>EXAMPLES</h2>
+    
+<p>Examples of how to perform common tasks with ecasound can
+	be found at 
+	<a href="http://eca.cx/ecasound/Documentation/examples.html">http://eca.cx/ecasound/Documentation/examples.html</a>.
 <p><h2>SEE ALSO</h2>
     
 <p><a href="ecatools_manpage.html">ecatools(1)</a>, 
