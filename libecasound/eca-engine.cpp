@@ -4,7 +4,7 @@
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1057,8 +1057,9 @@ void ECA_ENGINE::set_position_samples_live(SAMPLE_SPECS::sample_pos_t samples)
  */
 void ECA_ENGINE::change_position(double seconds)
 {
+  double curpos = csetup_repp->position_in_seconds_exact();
   conditional_stop();
-  csetup_repp->seek_position_in_seconds(csetup_repp->position_in_seconds() + seconds);
+  csetup_repp->seek_position_in_seconds(curpos + seconds);
   conditional_start();
 }
 
