@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_mixing.cpp: Effects for channel mixing and routing
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2006 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +40,7 @@ int EFFECT_CHANNEL_COPY::output_channels(int i_channels) const
 {
   int c = static_cast<int>(to_channel > from_channel ? to_channel : from_channel);
   ++c;
-  return(c > i_channels ? c : i_channels);
+  return c > i_channels ? c : i_channels;
 }
 
 void EFFECT_CHANNEL_COPY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -74,14 +77,15 @@ CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_COPY::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(from_channel + 1);
+    return from_channel + 1;
   case 2: 
-    return(to_channel + 1);
+    return to_channel + 1;
   }
-  return(0.0);
+  return 0.0f;
 }
 
-void EFFECT_CHANNEL_COPY::init(SAMPLE_BUFFER *insample) { 
+void EFFECT_CHANNEL_COPY::init(SAMPLE_BUFFER *insample)
+{
   f_iter.init(insample);
   t_iter.init(insample);
 }
@@ -95,6 +99,122 @@ void EFFECT_CHANNEL_COPY::process(void)
     f_iter.next();
     t_iter.next();
   }
+}
+
+EFFECT_CHANNEL_MOVE::EFFECT_CHANNEL_MOVE (parameter_t from, 
+					  parameter_t to)
+{
+  set_parameter(1, from);
+  set_parameter(2, to);
+}
+
+int EFFECT_CHANNEL_MOVE::output_channels(int i_channels) const
+{
+  int c = static_cast<int>(to_channel > from_channel ? to_channel : from_channel);
+  ++c;
+  return c > i_channels ? c : i_channels;
+}
+
+void EFFECT_CHANNEL_MOVE::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  pd->default_value = 1;
+  pd->description = get_parameter_name(param);
+  pd->bounded_above = false;
+  pd->upper_bound = 0.0f;
+  pd->bounded_below = true;
+  pd->lower_bound = 1.0f;
+  pd->toggled = false;
+  pd->integer = true;
+  pd->logarithmic = false;
+  pd->output = false;
+}
+
+void EFFECT_CHANNEL_MOVE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
+  switch (param) {
+  case 1: 
+    from_channel = static_cast<ch_type>(value);
+    DBC_CHECK(from_channel > 0);
+    from_channel--;
+    break;
+  case 2: 
+    to_channel = static_cast<ch_type>(value);
+    DBC_CHECK(to_channel > 0);
+    to_channel--;
+    break;
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_MOVE::get_parameter(int param) const
+{
+  switch (param) {
+  case 1: 
+    return from_channel + 1;
+  case 2: 
+    return to_channel + 1;
+  }
+  return 0.0;
+}
+
+void EFFECT_CHANNEL_MOVE::init(SAMPLE_BUFFER *insample)
+{
+  f_iter.init(insample);
+  t_iter.init(insample);
+}
+
+void EFFECT_CHANNEL_MOVE::process(void)
+{
+  f_iter.begin(from_channel);
+  t_iter.begin(to_channel);
+  while(!f_iter.end() && !t_iter.end()) {
+    *t_iter.current() = *f_iter.current();
+    if (from_channel != to_channel)
+      *f_iter.current() = SAMPLE_SPECS::silent_value;
+    f_iter.next();
+    t_iter.next();
+  }
+}
+
+EFFECT_CHANNEL_MUTE::EFFECT_CHANNEL_MUTE (parameter_t channel)
+  : EFFECT_AMPLIFY_CHANNEL(0, static_cast<int>(channel))
+{
+  set_parameter(1, channel);
+}
+
+void EFFECT_CHANNEL_MUTE::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  pd->default_value = 1;
+  pd->description = get_parameter_name(param);
+  pd->bounded_above = false;
+  pd->upper_bound = 0.0f;
+  pd->bounded_below = true;
+  pd->lower_bound = 1.0f;
+  pd->toggled = false;
+  pd->integer = true;
+  pd->logarithmic = false;
+  pd->output = false;
+}
+
+void EFFECT_CHANNEL_MUTE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
+  EFFECT_MIXING::ch_type from_channel;
+
+  switch (param) {
+  case 1: 
+    from_channel = static_cast<EFFECT_MIXING::ch_type>(value);
+    DBC_CHECK(from_channel > 0);
+    EFFECT_AMPLIFY_CHANNEL::set_parameter(2, from_channel);
+    break;
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_MUTE::get_parameter(int param) const
+{
+  switch (param) {
+  case 1: 
+    return EFFECT_AMPLIFY_CHANNEL::get_parameter(2);
+  }
+  return 0.0;
 }
 
 EFFECT_MIX_TO_CHANNEL::EFFECT_MIX_TO_CHANNEL (parameter_t to)
@@ -137,9 +257,9 @@ CHAIN_OPERATOR::parameter_t EFFECT_MIX_TO_CHANNEL::get_parameter(int param) cons
 { 
   switch (param) {
   case 1: 
-    return(to_channel + 1);
+    return to_channel + 1;
   }
-  return(0.0);
+  return 0.0f;
 }
 
 void EFFECT_MIX_TO_CHANNEL::init(SAMPLE_BUFFER *insample)

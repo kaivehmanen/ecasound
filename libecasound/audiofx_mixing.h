@@ -5,6 +5,7 @@
 
 #include "samplebuffer_iterators.h"
 #include "audiofx.h"
+#include "audiofx_amplitude.h"
 
 /**
  * Virtual base class for channel mixing and routing effects
@@ -45,6 +46,56 @@ public:
   EFFECT_CHANNEL_COPY* clone(void) const { return new EFFECT_CHANNEL_COPY(*this); }
   EFFECT_CHANNEL_COPY* new_expr(void) const { return new EFFECT_CHANNEL_COPY(); }
   EFFECT_CHANNEL_COPY (parameter_t from_channel = 1.0, parameter_t to_channel = 1.0);
+};
+
+/**
+ * Channel move (copy one channel and mute the source)
+ * @author Kai Vehmanen
+ */
+class EFFECT_CHANNEL_MOVE : public EFFECT_MIXING {
+
+private:
+
+  ch_type from_channel, to_channel;
+  SAMPLE_ITERATOR_CHANNEL f_iter, t_iter;
+
+public:
+
+  virtual std::string name(void) const { return("Channel move"); }
+  virtual std::string parameter_names(void) const { return("from-channel,to-channel"); }
+
+  int output_channels(int i_channels) const;
+
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  void init(SAMPLE_BUFFER *insample);
+  void process(void);
+
+  EFFECT_CHANNEL_MOVE* clone(void) const { return new EFFECT_CHANNEL_MOVE(*this); }
+  EFFECT_CHANNEL_MOVE* new_expr(void) const { return new EFFECT_CHANNEL_MOVE(); }
+  EFFECT_CHANNEL_MOVE (parameter_t from_channel = 1.0, parameter_t to_channel = 1.0);
+};
+
+/**
+ * Channel mute (mutes one channel)
+ * @author Kai Vehmanen
+ */
+class EFFECT_CHANNEL_MUTE : public EFFECT_AMPLIFY_CHANNEL {
+
+public:
+
+  virtual std::string name(void) const { return("Channel mute"); }
+  virtual std::string parameter_names(void) const { return("channel"); }
+
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  EFFECT_CHANNEL_MUTE* clone(void) const { return new EFFECT_CHANNEL_MUTE(*this); }
+  EFFECT_CHANNEL_MUTE* new_expr(void) const { return new EFFECT_CHANNEL_MUTE(); }
+  EFFECT_CHANNEL_MUTE (parameter_t channel = 1.0);
 };
 
 /**
