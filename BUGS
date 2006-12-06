@@ -35,8 +35,9 @@ feature/improvement items.
 Known Bugs and Features (not in other issue trackers)
 -----------------------------------------------------------------------
 
-- commas in filenames given as arguments to -i and -o options are 
-  not handled correctly
+- commas in filenames given as arguments to -i and -o options need
+  to be either escaped with backslashes (-i foo\\,bar.wav) or quoted
+  with doublequotes (-i "foo,bar.wav")
 - certain combinations of glibc and linux-2.6 kernels cause the 'cs-edit' 
   EIAM command to fail (ecasound exits back to shell after the command); 
   as a workaround, set the LD_ASSUME_KERNEL=2.2.5 environment variable
