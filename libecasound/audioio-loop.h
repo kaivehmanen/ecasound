@@ -30,7 +30,7 @@ class LOOP_DEVICE : public AUDIO_IO {
   virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
   virtual bool finished(void) const;
-  virtual void seek_position(void) { } 
+  virtual void seek_position(void);
 
   virtual std::string parameter_names(void) const { return("label,id_number"); }
   virtual void set_parameter(int param, std::string value);

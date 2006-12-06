@@ -69,6 +69,13 @@ bool LOOP_DEVICE::finished(void) const
   return finished_rep;
 }
 
+void LOOP_DEVICE::seek_position(void)
+{
+  writes_rep = 0;
+  filled_rep = 0;
+  empty_rounds_rep = 0;
+} 
+
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer)
 {
   buffer->number_of_channels(channels());
