@@ -1,6 +1,6 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20060903-51
+dnl last modified: 20061207-52
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-licensed packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -12,7 +12,7 @@ dnl ------------------------------------------------------------------
 dnl ---
 dnl Initialize autoconf and automake
 dnl ---
-AC_INIT(ecasound, 2.4.5-cvs)
+AC_INIT(ecasound, 2.4.5)
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR(libecasound/audiofx.h)
 AM_INIT_AUTOMAKE(1.6.1)
@@ -36,8 +36,8 @@ LIBECASOUND_VERSION=16
 LIBECASOUND_VERSION_AGE=0
 LIBECASOUNDC_VERSION=1
 LIBECASOUNDC_VERSION_AGE=0
-LIBKVUTILS_VERSION=7
-LIBKVUTILS_VERSION_AGE=3
+LIBKVUTILS_VERSION=8
+LIBKVUTILS_VERSION_AGE=4
 
 AC_SUBST(LIBECASOUND_VERSION)
 AC_SUBST(LIBECASOUND_VERSION_AGE)
@@ -738,7 +738,8 @@ dnl --
 dnl Autotools and libtool
 dnl --
 AC_LANG_C
-AC_DISABLE_SHARED
+dnl do not add 'AC_DISABLE_SHARED' as pyecasound needs shared
+5~dnl objects at link time (note that all the major libs are static)
 AC_PROG_LIBTOOL
 AC_LANG_CPLUSPLUS
 
