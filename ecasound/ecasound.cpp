@@ -3,7 +3,7 @@
 // Copyright (C) 2002-2006 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -201,9 +201,13 @@ void ecasound_atexit_cleanup(void)
       }
     }
 
+    if (state->interactive_mode == true) {
+      /* note: in batch mode, let ECA_CONTROL::run() exit cleanly */
+      if (state->control != 0) { delete state->control; state->control = 0; }
+      if (state->session != 0) { delete state->session; state->session = 0; }
+    }
+
     if (state->eciserver != 0) { delete state->eciserver; state->eciserver = 0; }
-    if (state->control != 0) { delete state->control; state->control = 0; }
-    if (state->session != 0) { delete state->session; state->session = 0; }
     if (state->console != 0) { delete state->console; state->console = 0; }
     if (state->daemon_thread != 0) { delete state->daemon_thread; state->daemon_thread = 0; }
     if (state->lock != 0) { delete state->lock; state->lock = 0; }
