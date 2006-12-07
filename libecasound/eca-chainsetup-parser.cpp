@@ -567,18 +567,27 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const string& argu)
   case 'f':
     {
       ECA_AUDIO_FORMAT active_sinfo;
+      int channels = atoi(kvu_get_argument_number(2, argu).c_str());
+      long int srate = atol(kvu_get_argument_number(3, argu).c_str());
+
+      /* initialize to current defaults */
+      active_sinfo.set_audio_format(csetup_repp->default_audio_format());
+
       active_sinfo.set_sample_format_string(kvu_get_argument_number(1, argu));
-      active_sinfo.set_channels(atoi(kvu_get_argument_number(2, argu).c_str()));
-      active_sinfo.set_samples_per_second(atol(kvu_get_argument_number(3, argu).c_str()));
+      if (channels > 0)
+	active_sinfo.set_channels(channels);
+      if (srate > 0)
+	active_sinfo.set_samples_per_second(srate);
       if (kvu_get_argument_number(4, argu) == "n")
 	active_sinfo.toggle_interleaved_channels(false);
       else
 	active_sinfo.toggle_interleaved_channels(true);
 
+      /* modify the defaults */
       csetup_repp->set_default_audio_format(active_sinfo);
       
       MESSAGE_ITEM ftemp;
-      ftemp << "Set active format to (bits/channels/srate/interleave): ";
+      ftemp << "Changed active format to (bits/channels/srate/interleave): ";
       ftemp << csetup_repp->default_audio_format().format_string() 
 	    << "/" << csetup_repp->default_audio_format().channels() 
 	    << "/" << csetup_repp->default_audio_format().samples_per_second();
@@ -755,21 +764,30 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
       }
       else {
 	AUDIO_IO* last_object = (*last_audio_add_vector_repp).back();
+	double newpos = atof(kvu_get_argument_number(1, argu).c_str());
 
-	last_object->seek_position_in_seconds(atof(kvu_get_argument_number(1, argu).c_str()));
-
-	if (last_object->io_mode() == AUDIO_IO::io_read) {
-	  csetup_repp->input_start_pos[csetup_repp->input_start_pos.size() - 1] = last_object->position_in_seconds_exact();
+	if (newpos > 0.0f &&
+	    last_object &&
+	    last_object->supports_seeking() != true) {
+	  interpret_set_result(false, string("Audio object does not support seeking, unable to set a non-zero starting offset. Object generating the error is '") + last_object->name() + "'.");
 	}
 	else {
-	  csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_object->position_in_seconds_exact();
-	}
 
-	ECA_LOG_MSG(ECA_LOGGER::info, "Setting starting position for audio object \""
-		    + last_object->label() 
-		    + "\": "
-		    + kvu_numtostr(last_object->position_in_seconds_exact()) 
-		    + " seconds.");
+	  last_object->seek_position_in_seconds(newpos);
+
+	  if (last_object->io_mode() == AUDIO_IO::io_read) {
+	    csetup_repp->input_start_pos[csetup_repp->input_start_pos.size() - 1] = last_object->position_in_seconds_exact();
+	  }
+	  else {
+	    csetup_repp->output_start_pos[csetup_repp->output_start_pos.size() - 1] = last_object->position_in_seconds_exact();
+	  }
+
+	  ECA_LOG_MSG(ECA_LOGGER::info, "Setting starting position for audio object \""
+		      + last_object->label() 
+		      + "\": "
+		      + kvu_numtostr(last_object->position_in_seconds_exact()) 
+		      + " seconds.");
+	}
 	break;
       }
     }
@@ -1064,7 +1082,7 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
       }
   }
 
-  t << " -n:" << csetup_repp->name();
+  t << " -n:\"" << csetup_repp->name() << "\"";
 
   if (csetup_repp->output_openmode() == AUDIO_IO::io_write) 
     t << " -x";
