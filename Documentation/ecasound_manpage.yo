@@ -238,16 +238,17 @@ Sets starting position for last specified input/output. If
 you need more flexible control over audio objects, you should
 use the em(.ewf) format.
 
-dit(-i[:]input-file-or-device)
+dit(-i[:]input-file-or-device[,params])
 Specifies a new input source that is connected to all selected chains.
 Connecting multiple inputs to the same chain isn't possible. Input
 can be a a file, device or some other audio object (see below). 
 If the input is a file, its type is determined using the file name 
-extension. Currently supported formats are RIFF WAVE files (.wav), 
-audio-cd tracks (.cdr), ecasound ewf-files (.ewf), RAW audio data
-(.raw) and MPEG files (.mp2,.mp3). Also, formats supported by the
-SGI audiofile library: AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio 
-files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
+extension. If the object name contains any commas, the name must be 
+enclosed in backquotes to avoid confusing the parser. Currently supported 
+formats are RIFF WAVE files (.wav), audio-cd tracks (.cdr), ecasound 
+ewf-files (.ewf), RAW audio data (.raw) and MPEG files (.mp2,.mp3). Also, 
+formats supported by the SGI audiofile library: AIFF (.aiff, .aifc, .aif) and 
+Sun/NeXT audio files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
 .it, etc). MIDI files (.mid) are supported using Timidity++. Similarly
 Ogg Vorbis (.ogg) can be read and written if ogg123 and vorbize tools
 are installed, FLAC files (.flac) with flac command-line tools or using
@@ -257,11 +258,12 @@ devices and JACK audio subsystem. If no inputs are specified, the first
 non-option (doesn't start with '-') command line argument is considered 
 to be an input.
 
-dit(-o[:]output-file-or-device)
+dit(-o[:]output-file-or-device[,params])
 Works in the same way as the -i option. If no outputs are specified,
-the default output device is used (see ~/.ecasoundrc). Note! 
-you can't output to module formats supported by MikMod (this should
-be obvious).
+the default output device is used (see ~/.ecasoundrc). If the object 
+name contains any commas, the name must be enclosed in backquotes to 
+avoid confusing the parser. Note, you can't output to module formats 
+supported by MikMod (this should be obvious).
 
 em(OBJECT TYPE SPECIFIC NOTES)
 dit(ALSA devices)

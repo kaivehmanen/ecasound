@@ -5,7 +5,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{04062006}
+\date{06122006}
 \begin{document}
 
 \maketitle
@@ -30,6 +30,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 06.12.2006 - Added notes concerning quoting EOS arguments containing
+                   commas.
 \item 04.06.2006 - Some minor improvements to the text. Updated the descriptions of
                    realtime-lsm and rlimits-rtprio mechanisms.
 \item 25.04.2005 - From now on, only major changes are logged to this changelog
@@ -214,7 +216,12 @@ to the interactive mode.
 
 As a result, the same syntax (tokens that look like
 ``-prefix:arg1,arg2,...,argN''), is used in various
-parts of libecasound. To name a few places:
+parts of libecasound. Note that if any of the arguments
+contain commas, those arguments need to be enclosed in 
+double-quotes (for example ``-prefix:\"ar,g1\",arg2'').
+
+Following is a partial list of the places where EOS syntax 
+has been used:
 
 \begin{itemize}
 \item parsing command-line options

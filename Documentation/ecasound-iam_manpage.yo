@@ -296,12 +296,16 @@ startdit()
 
 dit(ai-add 'input_format_string')
 Adds a new input object. See ecasound(1) man page for more info about 
-the argument format ('-i' option). em([-])
+the argument format ('-i' option). Note on syntax: if any of 
+the parameters (such as a filename) contains commas, the parameter 
+should be enclosed in double-quotes. em([-])
 
 dit(ao-add 'output_format_string')
 Adds a new output object. See ecasound(1) man page for more info about 
 the argument format ('-o' option). If argument is omitted, 
-a default output device is added (see ecasoundrc(5)). em([-])
+a default output device is added (see ecasoundrc(5)). Note on syntax: if any 
+of the parameters (such as a filename) contains commas, the parameter 
+should be enclosed in double-quotes. em([-])
 
 dit(ao-add-default)
 Adds the default output device (see ecasoundrc(5)). em([-])
@@ -314,9 +318,11 @@ ecasound 2.4.4. em([s])
 
 dit(ai-select 'aobject_name', ao-select 'aobject_name')
 Selects an audio object. 'aobject_name' refers to the string
-used when creating the object (see above). Note, in the case
-a chainsetup contains multiple inputs, or outputs, with 
-identical namem 'ai-select' and 'ao-select' will select 
+used when creating the object (the first argument given to ai-add/ao-add). 
+Note that as a important difference to ai-add/ao-add, one should not 
+enclose the object name in double quotes for ai-select/ao-select. In the 
+case a chainsetup contains multiple inputs, or outputs, with 
+identical name, 'ai-select' and 'ao-select' will select 
 the first matching instance. In order to select a specific
 instance, the 'ai-iselect' and 'ao-iselect' commands need to 
 be used. em([-])
@@ -395,13 +401,14 @@ is 1.
 
 startdit()
 dit(cop-add 'cop_format_string')
-Adds a new chain operator. Argument format is
-"-<id_string>:par1,...,parN". In addition to normal chain operators, 
+Adds a new chain operator. In addition to normal chain operators, 
 this commmand can also be used to add effect presets and various 
 plugins. Note; it is not possible to add operators to multiple
 chains at once. In other words only one chain should be selected
-when issuing 'cop-add'. See ecasound(1) man page for more 
-info. em([-])
+when issuing 'cop-add'. Argument format is 
+"-<id_string>:par1,...,parN" (if parameter itself contains commas,
+the parameter should be enclosed in double-quotes). See 
+ecasound(1) man page for more info. em([-])
 
 dit(cop-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string
@@ -463,8 +470,9 @@ selected chainsetup and chains are used.
 dit(ctrl-add 'copc_format_string')
 Adds a new controller and attach it to currently selected chain 
 operator. Argument format is "-<id_string>:<param_id>,<range_low>,
-<range_high>,par1,...,parN".  See ecasound(1) man page for more 
-info. em([-])
+<range_high>,par1,...,parN" (if parameter itself contains commas,
+the parameter should be enclosed in double-quotes).  See ecasound(1) 
+man page for more info. em([-])
 
 dit(ctrl-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string
