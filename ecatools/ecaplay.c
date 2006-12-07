@@ -1,7 +1,7 @@
 /**
  * ecaplay.c: A simple command-line tool for playing audio files.
  *
- * Copyright (C) 1999-2002,2004-2005 Kai Vehmanen
+ * Copyright (C) 1999-2002,2004-2006 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,6 @@
  * TODO:
  * - show playlist length during runtime
  * - random start switch (both for cmdline and playlist modes)
- * - handle filenames that contain commas (backslash-escape 
- *   automatically, but avoid double-espaces -> user already
- *   escaped the commas)
  * - write some notes about locking issues
  */
 
@@ -89,7 +86,7 @@ static void signal_handler(int signum);
  * Global variables
  */
 
-static const char* ecaplay_version = "20051002-44";    /* ecaplay version */
+static const char* ecaplay_version = "20061206-45";    /* ecaplay version */
 static char ecaplay_next[PATH_MAX];                    /* file to play next */
 static char ecaplay_audio_format[ECAPLAY_AFMT_MAXLEN]; /* audio format to use */
 static const char* ecaplay_output = NULL;              /* output device to use */

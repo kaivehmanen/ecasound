@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
       eci_command(cmd); 
       eci_command("cs-connect"); 
       if (strlen(eci_last_error()) == 0) {
-        sprintf(cmd, "ai-select \"%s\"", argv[curarg]); 
+        sprintf(cmd, "ai-select %s", argv[curarg]); 
         eci_command(cmd); 
         eci_command("ai-get-length"); 
         curfilelength = eci_last_float(); 
