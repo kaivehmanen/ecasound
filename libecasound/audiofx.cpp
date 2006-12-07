@@ -1,9 +1,9 @@
 // ------------------------------------------------------------------------
-// audiofx.cpp: Generel effect processing routines.
-// Copyright (C) 1999-2002,2004 Kai Vehmanen
+// audiofx.cpp: General effect processing routines.
+// Copyright (C) 1999-2002,2004,2006 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
