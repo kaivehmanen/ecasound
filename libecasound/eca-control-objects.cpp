@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2004,2006 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -322,40 +322,49 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
   else {
     /* 6. reload the edited chainsetup and reset runtime state */
     load_chainsetup(filename);
-    remove(filename.c_str());
-    if (origfilename.empty() != true) {
-      set_chainsetup_filename(origfilename);
-    }
-    selected_chainsetup_repp->seek_position_in_samples(origpos);
-    
-    if (hot_swap == true) {
-      /* 6.1 disconnect the chainsetup to be replaced */
-      disconnect_chainsetup();
 
-      /* 6.2 try to connect the edited chainsetup */
-      select_chainsetup("cs-edit-temp");
-      if (is_valid() == true) {
-	connect_chainsetup();
-	/* should succeed as is_valid() is true */
-	DBC_CHECK(is_connected() == true);
-	if (is_connected() == true) {
-	  if (restart == true) {
-	    DBC_CHECK(is_running() != true);
-	    start();
+    if (is_selected() != true) {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  std::string("Unable to parse chainsetup, keeping the temporary file ") + filename);
+    }
+    else {
+      remove(filename.c_str());
+      if (origfilename.empty() != true) {
+	set_chainsetup_filename(origfilename);
+      }
+
+      if (selected_chainsetup_repp)
+	selected_chainsetup_repp->seek_position_in_samples(origpos);
+
+      if (hot_swap == true) {
+	/* 6.1 disconnect the chainsetup to be replaced */
+	disconnect_chainsetup();
+	
+	/* 6.2 try to connect the edited chainsetup */
+	select_chainsetup("cs-edit-temp");
+	if (is_valid() == true) {
+	  connect_chainsetup();
+	  /* should succeed as is_valid() is true */
+	  DBC_CHECK(is_connected() == true);
+	  if (is_connected() == true) {
+	    if (restart == true) {
+	      DBC_CHECK(is_running() != true);
+	      start();
+	    }
 	  }
 	}
-      }
 
-      /* 6.3 if connecting the modified chainsetup fails */
-      if (is_connected() != true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "Can't connect; edited chainsetup is not valid.");
-      }
+	/* 6.3 if connecting the modified chainsetup fails */
+	if (is_connected() != true) {
+	  ECA_LOG_MSG(ECA_LOGGER::info, "Can't connect; edited chainsetup is not valid.");
+	}
       
-      /* 6.4 remove the old chainsetup */
-      select_chainsetup(origname);
-      remove_chainsetup();
-      select_chainsetup("cs-edit-temp");
-      selected_chainsetup_repp->set_name(origname);
+	/* 6.4 remove the old chainsetup */
+	select_chainsetup(origname);
+	remove_chainsetup();
+	select_chainsetup("cs-edit-temp");
+	selected_chainsetup_repp->set_name(origname);
+      }
     }
   }
 }
@@ -1002,7 +1011,8 @@ void ECA_CONTROL_OBJECTS::select_all_chains(void)
  * require:
  *  is_selected() == true
  */
-const std::vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const {
+const std::vector<string>& ECA_CONTROL_OBJECTS::selected_chains(void) const
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
@@ -1090,7 +1100,8 @@ void ECA_CONTROL_OBJECTS::rename_chain(const string& name)
   selected_chainsetup_repp->rename_chain(name);     
 }
 
-void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double value) {
+void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double value)
+{
   // --------
   DBC_CHECK(is_engine_started() == true);
   // --------
@@ -1155,7 +1166,8 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void)
   }
 }
 
-void ECA_CONTROL_OBJECTS::audio_input_as_selected(void) {
+void ECA_CONTROL_OBJECTS::audio_input_as_selected(void)
+{
   /* note, here we check that the pointer is still a valid one */
   if (selected_chainsetup_repp->ok_audio_object(selected_audio_input_repp) != true)
     selected_audio_input_repp = 0;
@@ -1239,6 +1251,33 @@ void ECA_CONTROL_OBJECTS::set_default_audio_format(const ECA_AUDIO_FORMAT& forma
 			   format.interleaved_channels());
 }
 
+static AUDIO_IO* priv_select_audio_object(const std::vector<AUDIO_IO*>& objects, const std::string& name)
+{
+  AUDIO_IO* result = 0;
+
+  /* NOTE: ugly, but needed to maintain compability with older 2.4.x 
+   *       releases that allowed double-quoted filenames to ai/ao-select */
+  std::string stripped_name;
+  if (name.size() > 0 &&
+      name[0] == '"') {
+    stripped_name = name;
+    kvu_string_strip_outer_quotes(&stripped_name, '"');
+  }
+
+  std::vector<AUDIO_IO*>::size_type p = 0;  
+  for(p = 0; p != objects.size(); p++) {
+    if (objects[p]->label() == name ||
+	objects[p]->label() == stripped_name) {
+      result = objects[p];
+      /* note: in case 'name' is not unique, the first matching
+       *       instance is selected */
+      break;
+    }
+  }
+
+  return result;
+}
+
 /**
  * Selects an audio input
  *
@@ -1251,13 +1290,8 @@ void ECA_CONTROL_OBJECTS::select_audio_input(const string& name)
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  selected_audio_input_repp = 0;
-  std::vector<AUDIO_IO*>::size_type p = 0;  
-  for(p = 0; p != selected_chainsetup_repp->inputs.size(); p++) {
-    if (selected_chainsetup_repp->inputs[p]->label() == name) {
-      selected_audio_input_repp = selected_chainsetup_repp->inputs[p];
-    }
-  }
+  selected_audio_input_repp = 
+    priv_select_audio_object(selected_chainsetup_repp->inputs, name);
 }
 
 /**
@@ -1266,18 +1300,14 @@ void ECA_CONTROL_OBJECTS::select_audio_input(const string& name)
  * require:
  *  is_selected() == true
  */
-void ECA_CONTROL_OBJECTS::select_audio_output(const string& name) { 
+void ECA_CONTROL_OBJECTS::select_audio_output(const string& name)
+{
   // --------
   DBC_REQUIRE(is_selected() == true);
   // --------
 
-  selected_audio_output_repp = 0;
-  std::vector<AUDIO_IO*>::size_type p = 0;  
-  for(p = 0; p != selected_chainsetup_repp->outputs.size(); p++) {
-    if (selected_chainsetup_repp->outputs[p]->label() == name) {
-      selected_audio_output_repp = selected_chainsetup_repp->outputs[p];
-    }
-  }
+  selected_audio_output_repp = 
+    priv_select_audio_object(selected_chainsetup_repp->outputs, name);
 }
 
 /**
