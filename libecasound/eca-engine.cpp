@@ -1290,10 +1290,11 @@ void ECA_ENGINE::init_driver(void)
  */
 void ECA_ENGINE::init_prefill(void)
 {
+  int channels = (max_channels() > 0 ? max_channels() : 1);
   prefill_threshold_rep = 0;
 
   if (csetup_repp->max_buffers() == true) 
-    prefill_threshold_rep = ECA_ENGINE::prefill_threshold_constant / buffersize() / max_channels();
+    prefill_threshold_rep = ECA_ENGINE::prefill_threshold_constant / buffersize() / channels;
 
   if (prefill_threshold_rep < ECA_ENGINE::prefill_blocks_constant)
     prefill_threshold_rep = ECA_ENGINE::prefill_blocks_constant;
