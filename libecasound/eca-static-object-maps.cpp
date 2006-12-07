@@ -3,7 +3,7 @@
 // Copyright (C) 2000-2004,2006 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -338,8 +338,14 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("ei", "^ei$", new EFFECT_PITCH_SHIFT());
   objmap->register_object("enm", "^enm$", new EFFECT_NOISEGATE());
   objmap->register_object("epp", "^epp$", new EFFECT_NORMAL_PAN());
-  objmap->register_object("erc", "^erc$", new EFFECT_CHANNEL_COPY());
-  objmap->register_object("erm", "^erm$", new EFFECT_MIX_TO_CHANNEL());
+  EFFECT_CHANNEL_COPY *op_cp = new EFFECT_CHANNEL_COPY();
+  objmap->register_object("chcopy", "^chcopy$", op_cp);
+  objmap->register_object("erc", "^erc$", op_cp);
+  objmap->register_object("chmove", "^chmove$", new EFFECT_CHANNEL_MOVE());
+  objmap->register_object("chmute", "^chmute$", new EFFECT_CHANNEL_MUTE());
+  EFFECT_MIX_TO_CHANNEL *op_mix = new EFFECT_MIX_TO_CHANNEL();
+  objmap->register_object("erm", "^erm$", op_mix);
+  objmap->register_object("chmix", "^chmix$", op_mix);
   objmap->register_object("etc", "^etc$", new EFFECT_CHORUS());
   objmap->register_object("etd", "^etd$", new EFFECT_DELAY());
   objmap->register_object("ete", "^ete$", new ADVANCED_REVERB());
