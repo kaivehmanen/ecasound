@@ -7,13 +7,14 @@
  *        died so better to give an error */
 /* FIXME: add some mechanism to detect failed eci_init(); */
 /* FIXME: add check for msgsize errors */
-/* FIXME: get rid of the static string lengths (C... blaah ;)) */
+/* FIXME: get rid of the all static string lengths (C... blaah ;)) */
 /* FIXME: add proper signal handling */
 
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
  * Copyright (C) 2000-2006 Kai Vehmanen
+ * Copyright (C) 2003 Michael Ewe
  * Copyright (C) 2001 Aymeric Jeanneau
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +34,14 @@
  * -------------------------------------------------------------------------
  * History of major changes:
  *
+ * 2006-12-06 Kai Vehmanen 
+ *     - Fixed severe string termination bug in handling lists of
+ *       strings.
+ *     - Fixed mechanism for waiting on grandchild ecasound process to exit.
+ * 2003-12-24 Michael Ewe
+ *     - Fixed signaling issues on FreeBSD. Modified to perform a
+ *       double-fork to better decouple ECI stack and the ecasound
+ *       engine process.
  * 2002-10-04 Kai Vehmanen
  *     - Rewritten as a standalone implementation.
  * 2001-06-04 Aymeric Jeanneau
@@ -46,6 +55,7 @@
 #include <stdio.h>        /* ANSI-C: printf(), ... */
 #include <stdlib.h>       /* ANSI-C: calloc(), free() */
 #include <string.h>       /* ANSI-C: strlen() */
+#include <errno.h>        /* ANSI-C: errno */
 
 #include <fcntl.h>        /* POSIX: fcntl() */
 #include <sys/poll.h>     /* XPG4-UNIX: poll() */
@@ -304,7 +314,7 @@ eci_handle_t eci_init_r(void)
 
       res = execvp(args[0], (char**)args);
       if (res < 0) printf("(ecasoundc_sa) launcing ecasound FAILED!\n");
-      
+
       close(0);
       close(1);
 
@@ -398,19 +408,37 @@ void eci_cleanup(void)
 void eci_cleanup_r(eci_handle_t ptr)
 {
   struct eci_internal* eci_rep = (struct eci_internal*)ptr;
+  ssize_t resread = 1, respoll;
+  char buf[1];
+  struct pollfd fds[1];;
 
   eci_impl_check_handle(eci_rep);
 
   write(eci_rep->cmd_write_fd_rep, "quit\n", strlen("quit\n"));
   eci_rep->commands_counter_rep++;
   
-  /* kill((pid_t)eci_rep->pid_of_child_rep, SIGKILL); */
+  /* as we use double-fork, we cannot use waitpid() --
+   * to block until ecasound grandchild has exited, we 
+   * use a combination of poll+read(), 
+   * ref:  http://www.greenend.org.uk/rjk/2001/06/poll.html
+   */
 
-  ECI_DEBUG("\n(ecasoundc_sa) cleaning up. waiting for children.\n");
-
-  waitpid((pid_t)eci_rep->pid_of_child_rep, NULL, 0);
-
-  ECI_DEBUG("(ecasoundc_sa) child exit signalled\n");
+  ECI_DEBUG_1("\n(ecasoundc_sa) cleaning up. waiting for grandchild ecasound process %d.\n", eci_rep->pid_of_child_rep);
+  
+  while (resread > 0) {
+    fds[0].fd = eci_rep->cmd_read_fd_rep;
+    fds[0].events = POLLIN;
+    fds[0].revents = 0;
+    respoll = poll(fds, 1, ECI_READ_RETVAL_TIMEOUT_MS);
+    if (fds[0].revents & (POLLIN | POLLHUP))
+      resread = read(eci_rep->cmd_read_fd_rep, buf, 1);
+    else if (fds[0].revents & POLLERR)
+      resread = -2;
+    
+    ECI_DEBUG_3("(ecasoundc_sa) waiting for ecasound, poll=%d, read=%d, revents=0x%02x)\n", respoll, resread, fds[0].revents);
+  }
+  
+  ECI_DEBUG("(ecasoundc_sa) child exited\n");
 
   if (eci_rep != 0) {
     /* close descriptors */
@@ -769,7 +797,7 @@ struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* head, char*
   struct eci_los_list* i = head;
   struct eci_los_list* last = NULL;
   
-  if (len >= ECI_MAX_STRING_SIZE) {
+  if (len + 1 >= ECI_MAX_STRING_SIZE) {
     fprintf(stderr, "(ecasoundc_sa) WARNING! String list buffer overflowed!\n\n");
     len = ECI_MAX_STRING_SIZE - 1;
   }
@@ -782,8 +810,8 @@ struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* head, char*
 
   /* add to the end, copy data */
   i = eci_impl_los_list_alloc_item();
-  memcpy(i->data_repp, stmp, len + 1);
-  stmp[len] = 0;
+  memcpy(i->data_repp, stmp, len);
+  i->data_repp[len] = 0;
   if (last != NULL) last->next_repp = i;
   
   /* ECI_DEBUG_3("(ecasoundc_sa) adding item '%s' to los list; head=%p, i=%p\n", stmp, (void*)head, (void*)i); */
@@ -937,10 +965,9 @@ void eci_impl_set_last_values(struct eci_parser* parser)
       memcpy(parser->last_s_repp, parser->buffer_repp, parser->buffer_current_rep);
       break;
 
-    case 'S': {
+    case 'S':
       eci_impl_set_last_los_value(parser);
       break;
-    }
 
     case 'i':
       parser->last_i_rep = atoi(parser->buffer_repp);
