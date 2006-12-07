@@ -42,7 +42,6 @@ using namespace std;
 
 static string::const_iterator kvu_priv_find_next_instance(const string& arg, const string::const_iterator& curpos, const string::value_type value);
 static void kvu_priv_strip_escapes(string* const input, const string& escaped_char);
-static void kvu_priv_strip_outer_quotes(string* const input, const string::value_type quote_char);
 
 /**
  * Returns a string where all regex metachars in 'arg'
@@ -154,6 +153,7 @@ vector<string> kvu_string_to_tokens(const string& s)
  *
  * Unlike string_to_tokens(), quotes can be used to mark 
  * groups of words as tokens (e.g. "this is one token").
+ * The tokens are not removed from the string. 
  * Single-quotes (') are not supported.
  *
  * It's also possible to add individual whitespace
@@ -183,9 +183,6 @@ vector<string> kvu_string_to_tokens_quoted(const string& s)
     else {
       /* note: token ready, add to vector if length is non-zero */
       if (stmp.size() == 0) continue;
-
-      /* note: remove only the outermost quotes */
-      kvu_priv_strip_outer_quotes(&stmp, '"');
 
       vec.push_back(stmp);
       stmp = "";
@@ -517,10 +514,12 @@ static void kvu_priv_strip_escapes(string* const input, const string& escaped_ch
 
 /**
  * Strips the outer quotes of type 'quote_char' from the string.
+ * The string is only modified if the the string starts with,
+ * and ends to, a character matching 'quote_char'.
  *
  * @pre escaped_char.size() == 1
  */
-static void kvu_priv_strip_outer_quotes(string* const input, const string::value_type quote_char)
+void kvu_string_strip_outer_quotes(string* input, const std::string::value_type quote_char)
 {
   if (input->size() >= 2 &&
       *input->begin() == quote_char &&
@@ -562,7 +561,7 @@ vector<string> kvu_get_arguments(const string& argu)
       // strip backslash-commas (and leave the commas in place)      
       kvu_priv_strip_escapes(&target, ",");
       kvu_priv_strip_escapes(&target, ":");
-      kvu_priv_strip_outer_quotes(&target, '"');
+      kvu_string_strip_outer_quotes(&target, '"');
       resvec.push_back(target);
     }
     if (e == argu.end()) break;

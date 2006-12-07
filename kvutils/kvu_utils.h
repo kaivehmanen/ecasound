@@ -9,6 +9,7 @@ bool kvu_string_icmp(const std::string& a, const std::string& b);
 
 std::string kvu_string_regex_meta_escape(const std::string& arg);
 std::string kvu_string_shell_meta_escape(const std::string& arg);
+void kvu_string_strip_outer_quotes(std::string* input, const std::string::value_type quote_char);
 std::vector<std::string> kvu_string_to_tokens(const std::string& s);
 std::vector<std::string> kvu_string_to_tokens_quoted(const std::string& s);
 std::vector<std::string> kvu_string_to_vector(const std::string& str, const std::string::value_type separator);

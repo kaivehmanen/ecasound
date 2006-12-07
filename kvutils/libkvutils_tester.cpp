@@ -228,7 +228,7 @@ static int kvu_test_2(void)
   if (vec.size() != 3) {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (3)");
   }
-  if (vec[1] != "with substring") {
+  if (vec[1] != "\"with substring\"") {
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_string_to_tokens_quoted (4)"); 
   }
   if (vec[2] != "\\slashes") {
