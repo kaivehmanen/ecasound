@@ -233,7 +233,7 @@ on the ecasound-list mailing list.
 -----------------------------------------------------------------------
 
 Although publically released versions are called stable, this is not 
-a guarantee of any kind. Before releases a small set of test cases is
+a guarantee of any kind. Before releases, a small set of test cases is
 run to verify that all basic features are working. The developers 
 also use the very latest versions themselves, so hopefully at least 
 all obvious bugs are found before stable releases are made. But 

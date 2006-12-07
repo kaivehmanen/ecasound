@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 011206) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 071206) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -11,9 +11,19 @@ About the version numbers... "vX.Y[.Z][-extraT]" :
   extraT             - beta, pre and rc releases that are in 
                        preparation of major releases (optional)
 
+Howto for reading the entries:
+
+  added/removed = a new/removed feature, interfaces, or new 
+                  implementation of some feature
+  changed       = changed behaviour, modified implementation, APIs, etc
+  fixed         = fixed bugs, "features" and other sources of problems
+  [foobar]      = tag identifying the author of the change author, see 
+	          README for a complete list contributor tags; entries 
+		  with no tags are from the main author(s)
+
 -----------------------------------------------------------------------
 
-xx122006 (v2.4.5)  -** stable release **-
+07122006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
 	- added: if libsndfile is found and supports flac (sndfile
@@ -30,10 +40,19 @@ xx122006 (v2.4.5)  -** stable release **-
 	         can be set with 'd' to ecasound(1) manpage
 	- added: examples section to ecasound(1), which points to
 	         the examples page at eca.cx/ecasound
+	- added: new chain operators '-chmove' and '-chmute'
+ 	- added: new aliases for chain operators: '-chmix' for '-erm',
+		 and '-chcopy' for '-erc'
+	- added: ability to protect EOS arguments, like filenames, with 
+	         double quotes, closes bug #1456510; see also the related 
+	         BUGS entry about handling commas in filenames, and 
+		 updated documentation in ecasound(1), ecasond-iam(1)
+		 and the User's Guide
 	- removed: readline-4.0 subdir from the dist package; system
-	           readline library is now the only option
+	           readline library is now the only build option
 	- changed: ecasoundrc - added "-f" to the default flac 
-		   output cmd
+		   output exec command (although now libsndfile's 
+	           flac support is the default)
 	- changed: improved libsndfile integration, any libsndfile
 		   supported file format can be used as output for
 	           'sndfile,foo.ext' (format selected based on filename
@@ -41,21 +60,46 @@ xx122006 (v2.4.5)  -** stable release **-
 	- changed: eiam - default int-log-history length set to zero
 	- changed: updated config.guess and config.sub to more recent
 		   versions (timestamp 2006-07-02)
-	- fixed: segfault when removing loop devices with a[io]-remove
+	- changed: updated the documentation for 'ai-select/ao-select',
+		   it is no longer required that input/outputs have
+	 	   a unique name within one chainsetup; problem reported 
+                   by Kurt Konolige
+        - changed: replaced the ECI C implementation's (libecasoundc) 
+                   engine cleanup mechanism with a much more robust one
+        - changed: the engine will now refuse to start if a start offset
+		   is given with '-y:secs' for an object not supporting
+		   seeking; this has been a very common source of 
+		   end-user confusion
+	- fixed: segfault when removing loop devices with a[io]-remove,
+	 	 reported by Pedro Antonio Fructuoso Merino
 	- fixed: incorrect headers in created flac files (not related
 		 to sndfile/flac); fix can possibly affect other file 
 		 formats handled by external apps (aac, midi, mikmod, 
-		 mp3 and ogg files)
+		 mp3 and ogg files), problem reported by Florian Ladstaedter
 	- fixed: errors during batch processing (running out of file
 	         space, etc) were not reported as a non-zero process
-	         return value
+	         return value, problem reported by Zrajm Akfohg
 	- fixed: possible segfaults with ctrl-select, ctrlp-select
 		 and ctrlp-value [allies]
 	- fixed: loop devices were not correctly saved with cs-save
 	         and cs-save-as [allies]
 	- fixed: bug in handling big-ending 24/32bit samples [aheller]
 	- fixed: ecasignalview build errors on cygwin [hawk777]
-	- fixed: segfault when parsing "\" in interactive mode [pfructuoso]
+	- fixed: segfault when parsing "\" in interactive mode, reported
+	         by Koen [pfructuoso]
+	- fixed: a subtle race-condition in the cleanup routines leading
+	         to segfaults when breaking a batch run with ctrl-c
+	- fixed: bug causing audible glitching when seeking with 
+	         chainsetups containing loop devices [pfructuoso]
+	- fixed: "rw 0" caused the engine to skip ahead multiple
+	         seconds (reported by Kurt Konolige)
+	- fixed: segfaults from invalid params to -f option, for 
+	         example "-f:16" or "-f:16,2", reported by peppo on
+		 #lad at freenode.org
+	- fixed: a severe string termination bug in libecasoundc
+	         that led to garbled output from ECI commands 
+	         returning lists of strings, reported by Brad Bowman,
+	         Joel Roth and Stuart Allie
 27012006 (v2.4.4)  -** stable release **-
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)

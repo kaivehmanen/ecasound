@@ -2,8 +2,8 @@
 *** Ecasound - To do list / Plans                                   ***
 -----------------------------------------------------------------------
 
------------------------------------------------------------------------
 [ Ecasound Development Items - (edi-x) codes ]
+-----------------------------------------------------------------------
 
 The Ecasound Development Item concept is used for keeping track of 
 bugs, open issues, enhancement proposals, and other similar issues.
@@ -14,8 +14,8 @@ discussions, changelogs, etc.
 To submit a new EDI-item, send a mail the 'ecasound-list' mailing
 list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
------------------------------------------------------------------------
 [ Active development areas ]
+-----------------------------------------------------------------------
 
 2.4:
 
@@ -24,12 +24,31 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
 2.5: 
 
-- improvements to the .ewf file format
-- improve support for use-scenarios involving audio file sequencing 
-- if time permits: dithering, OSC support
+- improvements to JACK usage; some candidate features to implement:
+    - jack_multi object 
+    - interactive mode commands like jack-connect, jack-disconnect, 
+      see 'edi-35'
+- tools for robustness
+    - components that help in testing like an internal test
+      tone generator
+- streamline the ECI C implementation
+    - get rid of the ugly static parsing buffers
+    - bugfixing and robustness
 
------------------------------------------------------------------------
+not roadmapped, but if time permits
+
+- improve support for use-scenarios involving audio file sequencing 
+    - improvements to the .ewf file format
+- integration with other audio apps
+    - LADSPA: RDF plugin metadata, LV2 
+    - LASH session management
+    - OSC
+- core sound processing
+    - dithering 
+    - logarithmic envelopes
+
 [ Help - developer in trouble ]
+-----------------------------------------------------------------------
 
 - Please report if Ecasound does not compile out-of-the-box on your 
   system!
