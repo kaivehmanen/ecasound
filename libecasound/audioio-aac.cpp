@@ -85,7 +85,8 @@ void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
     /* decoder supports: fixed channel count and sample format, 
                          sample rate unknown and must be set manually  */
     set_channels(2); /* 5.1 downmixed to stereo if needed by faad2 */
-    set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
+    /* do not commit: */
+    set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   }
   else {
     /* encoder supports: coding, channel-count and srate configurable;
@@ -99,7 +100,7 @@ void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void AAC_FORKED_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process (" + kvu_numtostr(pid_of_child()) + ").");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ").");
       clean_child();
       triggered_rep = false;
   }
@@ -163,7 +164,7 @@ void AAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
 void AAC_FORKED_INTERFACE::seek_position(void)
 {
   if (pid_of_child() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-aac) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-aac) Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
     triggered_rep = false;
   }

@@ -37,11 +37,11 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
 
   virtual std::string name(void) const { return("Mp3 stream"); }
   virtual std::string description(void) const { return("Interface for mp3 decoders and encoders that support input/output using standard streams."); }
-  virtual std::string parameter_names(void) const { return("label,birate"); }
+  virtual std::string parameter_names(void) const { return("label,bitrate"); }
   virtual bool locked_audio_format(void) const { return(true); }
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
-  virtual bool supports_seeking(void) const { return(true); }
+  virtual bool supports_seeking(void) const { return io_mode() == io_read; }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
@@ -49,7 +49,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);
 
-  virtual bool finished(void) const { return(finished_rep); }
+  virtual bool finished(void) const { return finished_rep; }
   virtual void seek_position(void);
 
   virtual void set_parameter(int param, std::string value);

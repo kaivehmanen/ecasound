@@ -8,7 +8,7 @@
 //       contributed by Julian Dobson.
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // References:
 //     http://www.mp3-tech.org/programmer/frame_header.html
@@ -364,7 +364,7 @@ void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 void MP3FILE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
       /* note: mp3 input/output can handle SIGTERM */
       clean_child(true);
       triggered_rep = false;
@@ -431,7 +431,7 @@ void MP3FILE::seek_position(void)
   if (triggered_rep == true &&
       last_position_rep != position_in_samples()) {
     if (is_open() == true) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
     }

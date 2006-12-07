@@ -347,7 +347,6 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     else {
       if (res < 0)
 	perror("waitpid");
-      force = true;
     }
   }
 

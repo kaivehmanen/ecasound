@@ -110,7 +110,7 @@ void FLAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void FLAC_FORKED_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process (" + kvu_numtostr(pid_of_child()) + ").");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
       /* note: flac output must not be sent a SIGTERM upon close(), or
 	 otherwise the generated header is invalid */
       clean_child();
@@ -174,7 +174,7 @@ void FLAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
 
 void FLAC_FORKED_INTERFACE::seek_position(void) {
   if (pid_of_child() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-flac) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-flac) Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
     triggered_rep = false;
   }

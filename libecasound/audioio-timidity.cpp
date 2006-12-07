@@ -111,7 +111,7 @@ void TIMIDITY_INTERFACE::seek_position(void)
 
 void TIMIDITY_INTERFACE::kill_timidity(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-timidity) Cleaning Timidity++-child with pid " + kvu_numtostr(pid_of_child()) + ".");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-timidity) Cleaning Timidity++-child with pid=" + kvu_numtostr(pid_of_child()) + ".");
   clean_child();
   triggered_rep = false;
 }

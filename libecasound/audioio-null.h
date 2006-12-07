@@ -21,8 +21,8 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
   }
   virtual void write_samples(void* target_buffer, long int samples) { }
 
-  virtual bool finished(void) const { return(false); }
-  virtual bool supports_seeking(void) const { return(false); }
+  virtual bool finished(void) const { return false; }
+  virtual bool supports_seeking(void) const { return true; }
   virtual void seek_position(void) { } 
 
   NULLFILE(const std::string& name = "null");

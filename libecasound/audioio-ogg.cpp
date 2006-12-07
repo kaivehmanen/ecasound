@@ -3,7 +3,7 @@
 // Copyright (C) 2000-2002,2004-2006 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
       }
       else {
 	urlprefix = std::string(label(), 0, offset);
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ogg) Found url; protocol '" + urlprefix + "'.");
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, "Found url; protocol '" + urlprefix + "'.");
       }
     }
 
@@ -92,7 +92,7 @@ void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 void OGG_VORBIS_INTERFACE::close(void)
 {
   if (pid_of_child() > 0) {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
       clean_child();
       triggered_rep = false;
   }
@@ -116,7 +116,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Can't start process \"" + fork_command() + "\". Please check your ~/.ecasound/ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Can't start process \"" + fork_command() + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -155,7 +155,7 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
 void OGG_VORBIS_INTERFACE::seek_position(void)
 {
   if (pid_of_child() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-ogg) Cleaning child process." + kvu_numtostr(pid_of_child()) + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
     clean_child();
     triggered_rep = false;
   }
@@ -222,7 +222,7 @@ void OGG_VORBIS_INTERFACE::fork_input_process(void)
 
 void OGG_VORBIS_INTERFACE::fork_output_process(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-ogg) Starting to encode " + label() + " with vorbize.");
+  ECA_LOG_MSG(ECA_LOGGER::info, "Starting to encode " + label() + " with vorbize.");
   string command = OGG_VORBIS_INTERFACE::default_output_cmd;
 
   // replace with bitrate
