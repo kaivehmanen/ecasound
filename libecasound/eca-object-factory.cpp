@@ -738,8 +738,16 @@ string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod, const std::
   MESSAGE_ITEM t;
   t << " -" << direction << ":";
   for(int n = 0; n < aiod->number_of_params(); n++) {
-    // FIXME: should quote/escape possible commas and whitespace
-    t << aiod->get_parameter(n + 1);
+    /* step: if parameter has commas, or whitespace, quote the whole parameter */
+    std::string param = aiod->get_parameter(n + 1);
+    if (find(param.begin(), param.end(), ',') != param.end() ||
+	find(param.begin(), param.end(), ' ') != param.end() ||
+	find(param.begin(), param.end(), '\t') != param.end()) {
+      param = std::string("\"") + param + std::string("\"");
+    }
+
+    /* step´: add processed parameter to the EOS string */
+    t << param;
     if (n + 1 < aiod->number_of_params()) t << ",";
   }
 
