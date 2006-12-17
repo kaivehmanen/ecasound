@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 071206) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 171206) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -23,6 +23,8 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
+????2007 (v2.4.6)  -** stable release **-
+	- ...
 07122006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
