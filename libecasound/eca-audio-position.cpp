@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-audio-position.cpp: Base class for representing position and length
 //                         of a audio stream.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2007 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,20 +41,20 @@ ECA_AUDIO_POSITION::~ECA_AUDIO_POSITION(void)
 
 SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::length_in_samples(void) const
 {
-  return(length_in_samples_rep); 
+  return length_in_samples_rep; 
 }
 
 int ECA_AUDIO_POSITION::length_in_seconds(void) const
 {
   DBC_CHECK(samples_per_second() != 0);
-  return((int)ceil((double)length_in_samples() /
-		   (double)samples_per_second()));  
+  return (int)ceil((double)length_in_samples() /
+		   (double)samples_per_second());
 }
 
 double ECA_AUDIO_POSITION::length_in_seconds_exact(void) const
 { 
   DBC_CHECK(samples_per_second() != 0);
-  return((double)length_in_samples() / (double)samples_per_second());  
+  return (double)length_in_samples() / (double)samples_per_second();
 }
 
 void ECA_AUDIO_POSITION::set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos)
@@ -74,20 +77,20 @@ void ECA_AUDIO_POSITION::set_length_in_seconds(double pos_in_seconds)
 
 SAMPLE_SPECS::sample_pos_t ECA_AUDIO_POSITION::position_in_samples(void) const
 {
-  return(position_in_samples_rep);
+  return position_in_samples_rep;
 }
 
 int ECA_AUDIO_POSITION::position_in_seconds(void) const
 {
   DBC_CHECK(samples_per_second() != 0);
-  return((int)ceil((double)position_in_samples() /
-		   (double)samples_per_second())); 
+  return (int)ceil((double)position_in_samples() /
+		   (double)samples_per_second());
 }
 
 double ECA_AUDIO_POSITION::position_in_seconds_exact(void) const
 {
   DBC_CHECK(samples_per_second() != 0);
-  return((double)position_in_samples() / (double)samples_per_second()); 
+  return (double)position_in_samples() / (double)samples_per_second();
 }
 
 void ECA_AUDIO_POSITION::set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos)
@@ -126,7 +129,8 @@ void ECA_AUDIO_POSITION::seek_first(void)
   seek_position_in_samples(0);
 }
 
-void ECA_AUDIO_POSITION::seek_last(void) {
+void ECA_AUDIO_POSITION::seek_last(void)
+{
   seek_position_in_samples(length_in_samples());
 }
 
