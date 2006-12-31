@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003-2004,2006 Kai Vehmanen
+// Copyright (C) 2003-2004,2006-2007 Kai Vehmanen
 // Copyright (C) 2004 Jesse Chappell
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // References:
 //     http://www.mega-nerd.com/libsndfile/
@@ -110,7 +110,18 @@ void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::S
     format += "_be";
   
   set_sample_format_string(format);
-  set_length_in_samples(sfinfo->frames);
+  
+  /* note: we have no way to find out whether frame count of 
+   *       zero means an empty file, or that that the audio
+   *       format does not provide this information, so we 
+   *       lean towards being cautious; see also finished() */
+  if (sfinfo->frames > 0)
+    set_length_in_samples(sfinfo->frames);
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      string("file length (frames): ") +
+	      kvu_numtostr(sfinfo->frames));
+
 }
 
 /**
@@ -331,7 +342,8 @@ void SNDFILE_INTERFACE::close(void)
 bool SNDFILE_INTERFACE::finished(void) const
 {
   if (finished_rep == true || 
-      (io_mode() == io_read && out_position())) return(true);
+      (length_set() == true &&
+       (io_mode() == io_read && out_position()))) return true;
 
   return false;
 }
