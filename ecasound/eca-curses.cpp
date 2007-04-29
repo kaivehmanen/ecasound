@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-curses.cpp: Curses implementation of the console user interface.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <cstdlib>
 #include <iostream>
 #include <map>
 #include <string>

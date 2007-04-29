@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecasound.cpp: Console mode user interface to ecasound.
-// Copyright (C) 2002-2006 Kai Vehmanen
+// Copyright (C) 2002-2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>

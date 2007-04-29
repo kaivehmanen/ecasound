@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000-2002,2004-2006 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2007 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
 //
 // Attributes:
@@ -21,6 +21,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <iostream>
 #include <vector>
 #include <string>

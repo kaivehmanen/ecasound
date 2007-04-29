@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen-file.cpp: Generic oscillator using envelope presets
-// Copyright (C) 1999-2002,2004 Kai Vehmanen
+// Copyright (C) 1999-2002,2004,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -20,6 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <vector>
 #include <string>
 

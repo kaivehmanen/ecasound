@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-audio-time.cpp: Generic class for representing time in audio 
 //                     environment.
-// Copyright (C) 2000 Kai Vehmanen
+// Copyright (C) 2000,2007 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +21,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <cstdio>
 #include <cmath>
 
@@ -73,7 +77,10 @@ void ECA_AUDIO_TIME::set_seconds(double seconds)
  *
  * Note, this can change the value of seconds().
  */
-void ECA_AUDIO_TIME::set_samples(SAMPLE_SPECS::sample_pos_t samples) { samples_rep = samples; } 
+void ECA_AUDIO_TIME::set_samples(SAMPLE_SPECS::sample_pos_t samples)
+{
+  samples_rep = samples;
+}
 
 /**
  * Sets samples per second.
@@ -107,24 +114,32 @@ std::string ECA_AUDIO_TIME::to_string(format_type type) const
     {
     case format_hour_min_sec: 
       { 
-	return("");
+	return "";
       }
     case format_min_sec: 
       {
-	return("");
+	return "";
       }
     case format_seconds: { return(kvu_numtostr(seconds(), 3)); }
     case format_samples: { return(kvu_numtostr(samples_rep)); }
 
     default: { }
     }
-  return("");
+
+  return "";
 }
 
 double ECA_AUDIO_TIME::seconds(void) const
 {
-  return(static_cast<double>(samples_rep) / sample_rate_rep);
+  return static_cast<double>(samples_rep) / sample_rate_rep;
 }
 
-SAMPLE_SPECS::sample_rate_t ECA_AUDIO_TIME::samples_per_second(void) const  { return(sample_rate_rep); }
-SAMPLE_SPECS::sample_pos_t ECA_AUDIO_TIME::samples(void) const { return(samples_rep); }
+SAMPLE_SPECS::sample_rate_t ECA_AUDIO_TIME::samples_per_second(void) const
+{
+  return sample_rate_rep;
+}
+
+SAMPLE_SPECS::sample_pos_t ECA_AUDIO_TIME::samples(void) const
+{
+  return samples_rep;
+}

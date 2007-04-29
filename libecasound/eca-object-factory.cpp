@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-object-factory.cpp: Abstract factory for creating libecasound 
 //                         objects.
-// Copyright (C) 2000-2005 Kai Vehmanen
+// Copyright (C) 2000-2005,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -25,6 +25,7 @@
 #include <config.h>
 #endif
 
+#include <algorithm> /* ANSI-C++: find() */
 #include <list>
 #include <map>
 #include <string>

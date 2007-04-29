@@ -363,9 +363,9 @@ static int kvu_test_4(void)
     // sleep(1);
   }
 
-  int *res = 0;
-  pthread_join(thread, (void**)&res);
-  if (*res != 0) {
+  void *res_ptr = 0;
+  pthread_join(thread, (void**)&res_ptr);
+  if (*(int*)res_ptr != 0) {
     ECA_TEST_FAIL(1, "kvu_test_4 slave-thread-failed"); 
   }
 

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecasignalview.cpp: A simple command-line tools for monitoring
 //                    signal amplitude.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2005,2007 Kai Vehmanen
 // Copyright (C) 2005 Jeffrey Cunningham
 //
 // This program is free software; you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 #include <config.h>
 #endif
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>

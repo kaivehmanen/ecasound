@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_dummy.cpp: Place-holder for libecasound_plugins.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2007 Kai Vehmanen
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -16,4 +16,4 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-static int audioio_dummy_integer = 0;
+int audioio_dummy_integer = 0;

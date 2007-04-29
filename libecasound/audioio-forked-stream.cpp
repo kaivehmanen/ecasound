@@ -25,6 +25,7 @@
 #include <config.h>
 #endif
 
+#include <cstdlib>
 #include <vector>
 #include <string>
 #include <cstring>
