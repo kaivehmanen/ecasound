@@ -201,6 +201,12 @@ them as bugs.
    environment variables), or at make time (specify new
    values on the make command-line). Note that these 
    mechanisms are exclusive to each other.
+
+   To specify extra preprocessing and compile flags that are
+   applied when building libecasound components, but not when 
+   building the test programs run by 'configure' script, one can 
+   use the environment variables ECA_S_EXTRA_CPPFLAGS and 
+   ECA_S_EXTRA_CFLAGS (define before running 'configure').
  
 General references:
 
