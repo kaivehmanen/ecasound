@@ -34,7 +34,6 @@ class CHAIN : public ECA_AUDIO_POSITION {
    * will be skipped during processing. 
    */
   bool is_processing(void) const { return sfx_rep; }
-  bool is_finished(void) const { return finished_rep; }
 
   void toggle_muting(bool v) { muted_rep = v; }
   void toggle_processing(bool v) { sfx_rep = v; }
