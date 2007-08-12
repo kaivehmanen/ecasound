@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2006 Kai Vehmanen
+// Copyright (C) 1999-2007 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -64,7 +64,7 @@ CHAIN::CHAIN (void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "constructor: CHAIN");
   muted_rep = false;
-  sfx_rep = false;
+  sfx_rep = true;
   initialized_rep = false;
   input_id_rep = output_id_rep = -1;
 
@@ -164,7 +164,6 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
   chainops_rep.push_back(chainop);
   selected_chainop_repp = chainop;
   selected_chainop_number_rep = chainops_rep.size();
-  sfx_rep = true;
   initialized_rep = false;
 
   // --------
@@ -212,9 +211,6 @@ void CHAIN::remove_chain_operator(void)
       select_chain_operator(0);
       break;
     }
-  }
-  if (chainops_rep.size() == 0) {
-    sfx_rep = false;
   }
   initialized_rep = false; 
 
@@ -421,7 +417,6 @@ void CHAIN::clear(void)
   gcontrollers_rep.resize(0);
 
   initialized_rep = false;
-  sfx_rep = false;
 }
 
 /**
@@ -665,13 +660,14 @@ void CHAIN::process(void)
   // --------
 
   controller_update();
-  if (muted_rep == false) {
+  /* note: if muted, don't bother running the chainops */
+  if (muted_rep != true) {
+    /* note: check if in bypass mode */
     if (sfx_rep == true) {
       for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
 	audioslot_repp->number_of_channels(chainops_rep[p]->output_channels(audioslot_repp->number_of_channels()));
 	chainops_rep[p]->process();
       }
-      //    audioslot_repp.limit_values();
     }
   }
   else {
