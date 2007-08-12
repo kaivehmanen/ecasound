@@ -1,3 +1,9 @@
+2007-08-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* samplebuffer.h: Added make_empty() and is_empty() public methods.
+	* eca-chain.h: Added is_finished() and toggle_finished() methods. 
+	* library interface version to 18:0:0.
+	
 2006-12-07  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 17 frozen (2.4.5 release)
