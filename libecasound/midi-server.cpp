@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // midi-server.cpp: MIDI i/o engine serving generic clients.
-// Copyright (C) 2001-2002,2005 Kai Vehmanen
+// Copyright (C) 2001-2002,2005,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <cstdlib>
 #include <iostream>
 
 #include <unistd.h>
