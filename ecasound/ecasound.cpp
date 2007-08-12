@@ -90,6 +90,7 @@ static struct ecasound_state ecasound_state_global =
   };
 
 static sig_atomic_t ecasound_cleanup_done = 0;
+static sig_atomic_t ecasound_normal_exit = 0;
 
 /**
  * Namespace imports
@@ -174,6 +175,7 @@ int main(int argc, char *argv[])
    *       dynamic libraries and libecasound cleanup routines
    *       when run from atexit handler
    */
+  ecasound_normal_exit = 1;
   ecasound_atexit_cleanup();
 
   // cerr << endl << "ecasound: main() exiting..." << endl << endl;
@@ -202,8 +204,12 @@ void ecasound_atexit_cleanup(void)
       }
     }
 
-    if (state->interactive_mode == true) {
-      /* note: in batch mode, let ECA_CONTROL::run() exit cleanly */
+    if (ecasound_normal_exit == 1 ||
+	state->interactive_mode == true) {
+      /* note: do not call destructors in the case ECA_CONTROL::run()
+       * could still be running (in non-interactive mode, atexit
+       * called due to a signal)	
+       */
       if (state->control != 0) { delete state->control; state->control = 0; }
       if (state->session != 0) { delete state->session; state->session = 0; }
     }
@@ -430,7 +436,7 @@ void ecasound_print_usage(void)
 void ecasound_print_version_banner(void)
 {
   cout << "ecasound v" << ecasound_library_version << endl;
-  cout << "Copyright (C) 1997-2006 Kai Vehmanen and others." << endl;
+  cout << "Copyright (C) 1997-2007 Kai Vehmanen and others." << endl;
   cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
   cout << "General Public License. For more information about these matters, see" << endl; 
