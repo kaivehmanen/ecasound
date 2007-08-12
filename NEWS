@@ -39,6 +39,12 @@ Howto for reading the entries:
         - fixed: printing chain operator (e.g. the '-ev' operator) status 
 	         at end of sessions was broken in 2.4.5; reported by
 	 	 Julien Claassen
+	- fixed: bugs that led to infinitely running chainsetups when
+		 loop input/outputs were used; reported by Aaron Heller
+	  	 and Etienne Deleflie
+	- fixed: incorrect page numbers in table of contents of 
+	  	 the Ecasound Programmer's and User's Guides; patch 
+	 	 from Junichi Uekawa
 07122006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
