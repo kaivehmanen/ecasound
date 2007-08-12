@@ -30,6 +30,10 @@
 #include <string>
 #include <vector>
 
+#if HAVE_LOCALE_H
+#include <locale.h> /* setlocale */
+#endif
+
 #include <time.h> /* nanosleep() */
 #include <sys/time.h> /* gettimeofday() */
 #include <unistd.h> /* usleep() */
@@ -538,6 +542,9 @@ int kvu_get_number_of_arguments(const string& arg)
 /**
  * Returns a vector of all arguments from a formatted string
  *
+ * Note: forces locale to "POSIX" as decimal separate must be
+ *       be period (.) in order to argument separation to work
+ *
  * @param argu a formatted string: "something:arg1,arg2,...,argn"
  */
 vector<string> kvu_get_arguments(const string& argu)
@@ -553,6 +560,10 @@ vector<string> kvu_get_arguments(const string& argu)
   }
   else 
     ++b;
+
+#if HAVE_SETLOCALE
+  setlocale (LC_NUMERIC, "POSIX");
+#endif
 
   for(; b != argu.end(); b++) {
     e = kvu_priv_find_next_instance(argu, b, ',');
