@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 300407) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 120807) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z][-extraT]" :
@@ -27,7 +27,18 @@ Howto for reading the entries:
         - changed: license of rubyecasound, the Ruby ECI API 
                  implementation, has been changed from GPL to LGPL
 	- fixed: build errors caused by missing #includes, reported
-		 by GCC 4.3
+		 by GCC 4.3; bug report from Debian, bug #417178
+	- fixed: rounding errors with small buffersizes caused time crop 
+                 gate (-gc) to function incorrectly; reported by Joe 
+		 Planisky
+        - fixed: force localization of decimal numbers to "POSIX" (i.e.
+	         use period as the separator) to avoid bugs with 
+	         e.g. LADSPA plugins that call setlocale and break 
+		 the ecasound option parser; for instance all swh-plugins
+	  	 call setlocale; reported by Rémi Rouaud
+        - fixed: printing chain operator (e.g. the '-ev' operator) status 
+	         at end of sessions was broken in 2.4.5; reported by
+	 	 Julien Claassen
 07122006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
