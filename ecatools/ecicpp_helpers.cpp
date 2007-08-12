@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecicpp_helper.cpp: Helper routines for C++ ECI programming.
-// Copyright (C) 2002-2006 Kai Vehmanen
+// Copyright (C) 2002-2007 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
