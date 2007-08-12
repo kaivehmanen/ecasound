@@ -328,6 +328,15 @@ void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_t dvalue)
 }
 
 /**
+ * Clears the buffer to zero length. Note that this is
+ * different from a silent buffer.
+ */
+void SAMPLE_BUFFER::make_empty(void)
+{
+  SAMPLE_BUFFER::length_in_samples(0);
+}
+
+/**
  * Mutes the whole buffer.
  */
 void SAMPLE_BUFFER::make_silent(void)

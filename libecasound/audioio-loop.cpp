@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-loop.cpp: Audio object that routes data between reads and writes
-// Copyright (C) 2000-2001,2004 Kai Vehmanen
+// Copyright (C) 2000-2001,2004,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -111,7 +111,7 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
   }
 
   /* store data from 'buffer' */
-  if (buffer->length_in_samples() > 0) {
+  if (buffer->is_empty() != true) {
     empty_rounds_rep = 0;
     sbuf.add_with_weight(*buffer, registered_outputs_rep);
     filled_rep = true;

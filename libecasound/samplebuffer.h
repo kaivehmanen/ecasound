@@ -75,6 +75,8 @@ class SAMPLE_BUFFER {
 
   void divide_by(sample_t dvalue);
   void limit_values(void);
+  void make_empty(void);
+  bool is_empty(void) const { return buffersize_rep == 0; }
   void make_silent(void);
   void make_silent_range(buf_size_t start_pos, buf_size_t end_pos);
   void resample(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);

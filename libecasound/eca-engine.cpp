@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2006 Kai Vehmanen
+// Copyright (C) 1999-2007 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -45,6 +45,7 @@
 #include "audioio-buffered.h"
 #include "audioio-device.h"
 #include "audioio-db-client.h"
+#include "audioio-loop.h"
 #include "midi-server.h"
 #include "eca-chain.h"
 #include "eca-chainop.h"
@@ -1572,7 +1573,8 @@ void ECA_ENGINE::inputs_to_chains(void)
 	}
       }
       else {
-	mixslot_repp->make_silent();
+	/* note: no more input data for this change (N:1 input-chain case) */
+	mixslot_repp->make_empty();
       }
     }
     for (size_t c = 0; c != chains_repp->size(); c++) {
@@ -1588,7 +1590,8 @@ void ECA_ENGINE::inputs_to_chains(void)
 	    }
 	  }
 	  else {
-	    cslots_rep[c]->make_silent();
+	    /* note: no more input data for this change (1:1 input-chain case) */
+	    cslots_rep[c]->make_empty();
 	  }
 
 	  /* note: input connected to only one chain, so no need to
@@ -1688,7 +1691,12 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
 	  // so we don't need to mix anything
 	  // --
 	  (*outputs_repp)[outputnum]->write_buffer(cslots_rep[n]);
-	  if ((*outputs_repp)[outputnum]->finished() == true) outputs_finished_rep++;
+	  if ((*outputs_repp)[outputnum]->finished() == true) 
+	    /* note: loop devices always connected both as inputs as
+	     *       outputs, so their finished status must not be
+	     *       counted as an error (like for other output types) */
+	    if (dynamic_cast<LOOP_DEVICE*>((*outputs_repp)[outputnum]) == 0)
+	      outputs_finished_rep++;
 	  break;
 	}
 	else {
@@ -1701,7 +1709,12 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
 
 	  if (count == output_chain_count_rep[outputnum]) {
 	    (*outputs_repp)[outputnum]->write_buffer(mixslot_repp);
-	    if ((*outputs_repp)[outputnum]->finished() == true) outputs_finished_rep++;
+	    if ((*outputs_repp)[outputnum]->finished() == true) 
+	      /* note: loop devices always connected both as inputs as
+	       *       outputs, so their finished status must not be
+	       *       counted as an error (like for other output types) */
+	      if (dynamic_cast<LOOP_DEVICE*>((*outputs_repp)[outputnum]) == 0)
+		outputs_finished_rep++;
 	  }
 	}
       }
