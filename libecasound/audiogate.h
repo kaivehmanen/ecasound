@@ -60,16 +60,24 @@ public:
 
   void analyze(SAMPLE_BUFFER* insample);
 
+  /** @name Functions reimplemented from ECA_SAMPLERATE_AWARE */
+  /*@{*/
+
+  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value);
+
+  /*@}*/
+
   TIME_CROP_GATE* clone(void) const { return new TIME_CROP_GATE(*this); }
   TIME_CROP_GATE* new_expr(void) const { return new TIME_CROP_GATE(); }
   TIME_CROP_GATE (parameter_t open_at, parameter_t duration);
-  TIME_CROP_GATE (void) : curtime_rep(0.0), begtime_rep(0.0), durtime_rep(0.0) {
+  TIME_CROP_GATE (void) : position_in_samples_rep(0), begtime_rep(0.0), durtime_rep(0.0) {
     close_gate();
   }
 
 private:
 
-  parameter_t curtime_rep, begtime_rep, durtime_rep; 
+  SAMPLE_SPECS::sample_pos_t position_in_samples_rep;
+  parameter_t begtime_rep, durtime_rep; 
 };
 
 /**

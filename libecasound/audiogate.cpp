@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999-2002,2005-2006 Kai Vehmanen
+// Copyright (C) 1999-2002,2005-2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -47,25 +47,29 @@ void GATE_BASE::init(SAMPLE_BUFFER* sbuf)
 void TIME_CROP_GATE::analyze(SAMPLE_BUFFER* sbuf)
 {
   parameter_t etime = begtime_rep + durtime_rep;
-  if (curtime_rep >= begtime_rep) {
+  parameter_t curtime = static_cast<parameter_t>(position_in_samples_rep) / samples_per_second();
+
+  if (curtime >= begtime_rep) {
+    /* note: handle the special case where a zero open time
+     *       has been requested */
     if (begtime_rep == etime) 
       open_gate();
-    else if (curtime_rep < etime) 
+    else if (curtime < etime)
       open_gate();
-    else 
+    else
       close_gate();
   }
-  else 
+  else
     close_gate();
 
-  curtime_rep += static_cast<double>(sbuf->length_in_samples()) / samples_per_second();
+  position_in_samples_rep += sbuf->length_in_samples();
 }
 
 TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERATOR::parameter_t duration)
 {
   begtime_rep = open_at;
   durtime_rep = duration;
-  curtime_rep = 0.0;
+  position_in_samples_rep = 0;
   
   ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Time crop gate created; opens at " +
 	      kvu_numtostr(begtime_rep) + " seconds and stays open for " +
@@ -88,12 +92,22 @@ void TIME_CROP_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
   switch (param) {
   case 1: 
     begtime_rep = value;
-    curtime_rep = 0.0;
+    position_in_samples_rep = 0;
     break;
   case 2: 
     durtime_rep = value;
     break;
   }
+}
+
+void TIME_CROP_GATE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_value)
+{
+  double ratio (new_value);
+  ratio /= samples_per_second();
+  /* note: as we store position as samples, changes in sampling rate
+   *       require recalculation of position */
+  position_in_samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(position_in_samples_rep * ratio);
+  ECA_SAMPLERATE_AWARE::set_samples_per_second(new_value);
 }
 
 THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel, 
