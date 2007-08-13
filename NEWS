@@ -24,6 +24,11 @@ Howto for reading the entries:
 -----------------------------------------------------------------------
 
 ????2007 (v2.4.6)  -** stable release **-
+	- added: new option '-R:path-to-resource-file' to use a custom
+		 resource file and disable querying of global and user
+		 resource files; as a special case, by setting this 
+		 to '/dev/null', one can limit file accesses requested by Klaus Schulz and Keith 
+	 	 Creasy
         - changed: license of rubyecasound, the Ruby ECI API 
                  implementation, has been changed from GPL to LGPL
 	- fixed: build errors caused by missing #includes, reported
@@ -45,6 +50,8 @@ Howto for reading the entries:
 	- fixed: incorrect page numbers in table of contents of 
 	  	 the Ecasound Programmer's and User's Guides; patch 
 	 	 from Junichi Uekawa
+	- fixed: segfault when removing a chain operator with multiple
+		 associated controllers; reported by Adam Linson
 07122006 (v2.4.5)  -** stable release **-
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)

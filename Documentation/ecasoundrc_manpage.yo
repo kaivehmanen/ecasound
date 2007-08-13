@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasoundrc)
        (5)
-       (22.12.2004)
+       (13.08.2007)
        ()
        (Multimedia software)
 
@@ -17,7 +17,9 @@ manpagedescription()
 
 	bf(ecasoundrc) is the main configuration file for ecasound. 
 	Any user-specific modification should be done to 
-	$HOME/.ecasound/ecasoundrc, not to the global resource file.
+	$HOME/.ecasound/ecasoundrc, not to the global resource file. Ecasound 
+	also allows to disable the normal policy and only read from a specific
+	resource file (see ecasound (1) and documentation for the bf(-R) option).
 
 	The format is quite simple. One line consists of 
 	a configuration variable and its value. Variable and value 
@@ -33,7 +35,7 @@ startdit()
 	format, OSS/Linux or OSS/Lite drivers are used. 
 	Device em(rawmidi,/dev/snd/midiCxDy) opens an ALSA raw-MIDI 
 	device with card number 'x' and device number 'y'. 
-	See ecasound(5) man page (the '-Md option) for more info.
+	See ecasound (1) man page (the '-Md option) for more info.
 	Defaults to em(rawmidi,/dev/midi).
 
   	dit(default-output)
@@ -47,7 +49,7 @@ startdit()
   	dit(default-audio-format)
   	Default values for sample format, channel count, sampling rate
   	and channel interleaving. Syntax is the same as used by
-  	ecasound's em(-f) option (see ecasound(1)). 
+  	ecasound's em(-f) option (see ecasound (1)). 
 	Defaults to em(s16_le,2,44100,i).
 
 	dit(default-to-precise-sample-rates) 
@@ -212,7 +214,7 @@ enddit()
 
 manpageseealso()
 
-	ecasound(1), ecatools (1), ecasound-iam(1)
+	ecasound (1), ecatools (1), ecasound-iam (1)
 
 manpageauthor()
 

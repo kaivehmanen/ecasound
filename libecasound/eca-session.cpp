@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session.cpp: Ecasound runtime setup and parameters.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -62,7 +62,9 @@ using std::vector;
 ECA_SESSION::ECA_SESSION(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created (empty)");
-  set_defaults();
+  connected_chainsetup_repp = 0;
+  selected_chainsetup_repp = 0;
+  cs_defaults_set_rep = false;
 }
 
 ECA_SESSION::~ECA_SESSION(void)
@@ -78,7 +80,9 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
 {
   int errors = 0;
 
-  set_defaults();
+  connected_chainsetup_repp = 0;
+  selected_chainsetup_repp = 0;
+  cs_defaults_set_rep = false;
 
   cline.combine();
 
@@ -94,6 +98,8 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
   if (errors > 0) {
     throw(ECA_ERROR("ECA-SESSION", "Errors parsing session-level options. Unable to create session."));
   }
+
+  set_cs_param_defaults();
 
   if (chainsetups_rep.size() == 0) {
     /* Try to create a valid chainsetup from the options given
@@ -120,26 +126,31 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
   }
 }
 
-void ECA_SESSION::set_defaults(void)
+/**
+ * Sets defaults values for various chainsetup parameters 
+ * using ECA_RESOURCES class services.
+ */
+void ECA_SESSION::set_cs_param_defaults(void)
 {
-  connected_chainsetup_repp = 0;
-  selected_chainsetup_repp = 0;
+  if (cs_defaults_set_rep != true) {
+    // ---
+    // Interpret resources 
 
-  // ---
-  // Interpret resources 
+    ECA_RESOURCES ecaresources;
+    
+    MP3FILE::set_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
+    MP3FILE::set_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
+    MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-cmd-mikmod"));
+    TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-cmd-timidity"));
+    OGG_VORBIS_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
+    OGG_VORBIS_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
+    FLAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-flac-input"));
+    FLAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-flac-output"));
+    AAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-aac-input"));
+    AAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-aac-output"));
 
-  ECA_RESOURCES ecaresources;
-
-  MP3FILE::set_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
-  MP3FILE::set_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
-  MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-cmd-mikmod"));
-  TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-cmd-timidity"));
-  OGG_VORBIS_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
-  OGG_VORBIS_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
-  FLAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-flac-input"));
-  FLAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-flac-output"));
-  AAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-aac-input"));
-  AAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-aac-output"));
+    cs_defaults_set_rep = true;
+  }
 }
 
 
@@ -158,6 +169,8 @@ void ECA_SESSION::add_chainsetup(const std::string& name)
   // --------
   DBC_REQUIRE(name != "");
   // --------
+
+  set_cs_param_defaults();
 
   ECA_CHAINSETUP* newsetup = new ECA_CHAINSETUP;
   newsetup->set_name(name);
@@ -197,7 +210,9 @@ void ECA_SESSION::add_chainsetup(ECA_CHAINSETUP* comline_setup)
   // --------
 
   selected_chainsetup_repp = comline_setup;
-  
+
+  set_cs_param_defaults();  
+
   std::vector<ECA_CHAINSETUP*>::const_iterator p = chainsetups_rep.begin();
   while(p != chainsetups_rep.end()) {
     if ((*p)->name() == comline_setup->name()) {
@@ -312,6 +327,8 @@ void ECA_SESSION::load_chainsetup(const std::string& filename)
   DBC_REQUIRE(filename.empty() != true);
   // --------
 
+  set_cs_param_defaults();
+
   ECA_CHAINSETUP* new_setup = new ECA_CHAINSETUP(filename);
   if (new_setup->interpret_result() != true) {
     string temp = new_setup->interpret_result_verbose();
@@ -411,6 +428,7 @@ bool ECA_SESSION::is_session_option(const std::string& arg) const
       arg[0] != '-') return false;
 
   switch(arg[1]) {
+  case 'R':
   case 'd':
   case 'q':
     return true;
@@ -485,6 +503,8 @@ int ECA_SESSION::interpret_general_options(const std::vector<std::string>& inopt
 /**
  * Parses session option 'argu'.
  *
+ * See also is_session_parameter()
+ *
  * @return number of parsing errors
  */
 int ECA_SESSION::interpret_general_option (const std::string& argu)
@@ -527,6 +547,21 @@ int ECA_SESSION::interpret_general_option (const std::string& argu)
       ECA_LOG_MSG(ECA_LOGGER::info, mtempd.to_string());
       break;
     }
+
+  case 'R':
+    {
+      string tname = kvu_get_argument_number(1, argu);
+      /* note: options are normalized, so ':' is always present 
+       *       if there are any argument to an option */
+      if (argu.size() > 2 && argu[2] == ':') {
+	ECA_RESOURCES::rc_override_file = tname;
+	ECA_LOG_MSG(ECA_LOGGER::info, 
+		    "Using resource file \"" +
+		    tname + 
+		    "\". Disabling use of global/user resource files.");
+      }
+    }
+    break;
 
   case 'q':
     ECA_LOGGER::instance().disable();

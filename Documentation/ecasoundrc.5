@@ -1,62 +1,66 @@
-.TH "ecasoundrc" "5" "22\&.12\&.2004" "" "Multimedia software" 
+.TH "ecasoundrc" "5" "13\&.08\&.2007" "" "Multimedia software"
+
 .PP 
-.SH "NAME" 
+.SH "NAME"
 ecasoundrc \- ecasound rcfile
 .PP 
-.SH "SYNOPSIS" 
-{prefix}/share/ecasound/ecasoundrc (for instance \'/usr/local/share/ecasound/ecasoundrc\')
+.SH "SYNOPSIS"
+{prefix}/share/ecasound/ecasoundrc (for instance \&'/usr/local/share/ecasound/ecasoundrc\&')
 $HOME/\&.ecasound/ecasoundrc
 .PP 
-.SH "DESCRIPTION" 
+.SH "DESCRIPTION"
+
 .PP 
 \fBecasoundrc\fP is the main configuration file for ecasound\&. 
 Any user-specific modification should be done to 
-$HOME/\&.ecasound/ecasoundrc, not to the global resource file\&.
+$HOME/\&.ecasound/ecasoundrc, not to the global resource file\&. Ecasound 
+also allows to disable the normal policy and only read from a specific
+resource file (see ecasound (1) and documentation for the \fB-R\fP option)\&.
 .PP 
 The format is quite simple\&. One line consists of 
 a configuration variable and its value\&. Variable and value 
-are separated with either \'=\' or \' \'\&. Lines beginning with a
+are separated with either \&'=\&' or \&' \&'\&. Lines beginning with a
 "#" are ignored (comment lines)\&. 
 .PP 
-.SH "VARIABLES" 
+.SH "VARIABLES"
+
 .PP 
-.IP 
-.IP "midi-device" 
+.IP "midi-device"
 MIDI-device\&. If the device name is given in \fIrawmidi,/dev/midi*\fP 
 format, OSS/Linux or OSS/Lite drivers are used\&. 
 Device \fIrawmidi,/dev/snd/midiCxDy\fP opens an ALSA raw-MIDI 
-device with card number \'x\' and device number \'y\'\&. 
-See ecasound(5) man page (the \'-Md option) for more info\&.
+device with card number \&'x\&' and device number \&'y\&'\&. 
+See ecasound (1) man page (the \&'-Md option) for more info\&.
 Defaults to \fIrawmidi,/dev/midi\fP\&.
 .IP 
-.IP "default-output" 
+.IP "default-output"
 Output device to use by default\&. If a chainsetup with zero
 outputs, but with one or more inputs, is connected, a default output
 is added and all the chains are connected to it\&. If the special-case
-value \'autodetect\' is specified, ecasound will try to auto-detect 
+value \&'autodetect\&' is specified, ecasound will try to auto-detect 
 a suitable device (JACK -> ALSA -> OSS -> rtnull)\&. 
 Defaults to \fIautodetect\fP\&.
 .IP 
-.IP "default-audio-format" 
+.IP "default-audio-format"
 Default values for sample format, channel count, sampling rate
 and channel interleaving\&. Syntax is the same as used by
-ecasound\'s \fI-f\fP option (see ecasound(1))\&. 
+ecasound\&'s \fI-f\fP option (see ecasound (1))\&. 
 Defaults to \fIs16_le,2,44100,i\fP\&.
 .IP 
-.IP "default-to-precise-sample-rates" 
+.IP "default-to-precise-sample-rates"
 Whether to ignore sample rate differences (and possibly avoid 
 resampling)\&. Currently only affects OSS-devices\&. Defaults to \fIfalse\fP\&.
 .IP 
-.IP "default-mix-mode" 
+.IP "default-mix-mode"
 If \fIdefault-mix-mode\fP is \fIsum\fP, engine will mix multiple channels into
 one output channel by summing all input channels\&. In mode \fIavg\fP, 
 mixing is done by taking the average of all input channels\&. The
 \fIavg\fP mode is safe from clipping, while \fIsum\fP is closer
 to the way analog mixers work\&. Defaults to \fIavg\fP\&.
 .IP 
-.IP "bmode-defaults-nonrt" 
+.IP "bmode-defaults-nonrt"
 Selects the default parameters to use with buffering 
-mode \'nonrt\' (other modes are \'rt\' and \'rtlowlatency)\&. 
+mode \&'nonrt\&' (other modes are \&'rt\&' and \&'rtlowlatency)\&. 
 Parameters are given as a comma-separated tuple of values:
 1) buffersize (number,-b), 2) raised priority (true/false,-r), 
 3) sched_priority (number,-r:X), 4) double buffering
@@ -64,51 +68,51 @@ Parameters are given as a comma-separated tuple of values:
 6) max intbuf (true/false,-z:intbuf)\&. Defaults to
 \fI1024,false,50,false,100000,true\fP\&.
 .IP 
-.IP "bmode-defaults-rt" 
-See \'bmode-defaults-nonrt\'\&. Defaults to 
+.IP "bmode-defaults-rt"
+See \&'bmode-defaults-nonrt\&'\&. Defaults to 
 \fI1024,true,50,true,100000,true\fP\&.
 .IP 
-.IP "bmode-defaults-rtlowlatency" 
-See \'bmode-defaults-nonrt\'\&. Defaults to 
+.IP "bmode-defaults-rtlowlatency"
+See \&'bmode-defaults-nonrt\&'\&. Defaults to 
 \fI256,true,50,true,100000,false\fP\&.
 .IP 
-.IP "resource-directory" 
+.IP "resource-directory"
 Directory for global ecasound configuration files\&. 
 Defaults to \fI{prefix-dir}/share/ecasound\fP\&.
 Note! User-specific resource files can be be stored 
-to \'$(HOME)/\&.ecasound/\'\&. For instance you can 
+to \&'$(HOME)/\&.ecasound/\&'\&. For instance you can 
 add your own presets definitions to 
-\'$(HOME)/\&.ecasound/effect_presets\'\&.
+\&'$(HOME)/\&.ecasound/effect_presets\&'\&.
 .IP 
-.IP "resource-file-genosc-envelopes" 
+.IP "resource-file-genosc-envelopes"
 Configuration file for generic oscillators\&. Is located in the 
 resource directory\&. Defaults to \fIgeneric_oscillators\fP\&.
 .IP 
-.IP "resource-file-effect-presets" 
+.IP "resource-file-effect-presets"
 Configuration file for effect presets\&. Is located in the 
 resource directory\&. Defaults to \fIeffect_presets\fP\&.
 .IP 
-.IP "ladspa-plugin-directory" 
+.IP "ladspa-plugin-directory"
 Directory containing LADSPA effect plugins\&. Defaults to \fI{prefix-dir}/lib/ladspa\fP\&.
 If environment variable \fILADSPA_PATH\fP exists, directories
 specified in it are automatically searched for plugins\&.
 Note! To match the syntax of the \fILADSPA_PATH\fP environment 
-variable, \'ladspa-plugin-directory\' can contain multiple
-directories, separated by \':\' characters\&.
+variable, \&'ladspa-plugin-directory\&' can contain multiple
+directories, separated by \&':\&' characters\&.
 .IP 
-.IP "ext-cmd-text-editor" 
+.IP "ext-cmd-text-editor"
 If \fIext-cmd-text-editor-use-getenv\fP is \fIfalse\fP or "EDITOR" 
 is null, value of this field is used\&. Defaults to \fIpico\fP\&.
 .IP 
-.IP "ext-cmd-text-editor-use-getenv" 
+.IP "ext-cmd-text-editor-use-getenv"
 Should ecasound try to query environment variable "EDITOR"\&.
 Defaults to \fItrue\fP\&.
 .IP 
-.IP "ext-cmd-wave-editor" 
+.IP "ext-cmd-wave-editor"
 Command line for executing an external wave editor\&. Defaults
 to \fIsnd\fP\&.
 .IP 
-.IP "ext-cmd-mp3-input" 
+.IP "ext-cmd-mp3-input"
 Command for starting mp3 input\&. Ecasound expects that signed,
 16bit, stereo audio samples are written to standard output\&.
 Ecasound will query other audio	format parameters by parsing 
@@ -118,7 +122,7 @@ start offset in mp3 frames\&. Double-quotes and backslash-espacing
 can be used to include white-space to individual parameters\&.
 Defaults to \fImpg123 --stereo -r -b 0 -q -s -k %o %f\fP\&.
 .IP 
-.IP "ext-cmd-mp3-output" 
+.IP "ext-cmd-mp3-output"
 Command for starting mp3 output\&. Ecasound will write stereo, 
 signed, 16bit, little-endian samples to standard output\&. Sample
 rate is configurable\&. Before execution, %f is replaced with 
@@ -127,7 +131,7 @@ path to the output mp3, %S with sample rate in kHz, and
 backslash-espacing can be used to include white-space to 
 individual parameters\&.Defaults to \fIlame -b %B -s %S -x -S - %f\fP\&.
 .IP 
-.IP "ext-cmd-ogg-input" 
+.IP "ext-cmd-ogg-input"
 Command for starting Ogg Vorbis input\&. Ecasound expects that audio samples
 are written to standard output\&. It should be noted that
 Ecasound is not able to query the audio format parameters from
@@ -137,7 +141,7 @@ Double-quotes and backslash-espacing can be used to include white-space
 to individual parameters\&. Defaults to 
 \fIogg123 -d raw -o byteorder:%E --file=- %f\fP\&.
 .IP 
-.IP "ext-cmd-ogg-output" 
+.IP "ext-cmd-ogg-output"
 Command for starting Ogg Vorbis output\&. Ecasound will write
 samples in little-endian format to standard output\&. Other 
 audio parameters are configurable\&. Before execution, %f is
@@ -147,7 +151,7 @@ Double-quotes and backslash-espacing can be used to include white-space to
 individual parameters\&. Defaults to 
 \fIoggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --raw-endianness 0 --output=%f -\fP\&.
 .IP 
-.IP "ext-cmd-mikmod" 
+.IP "ext-cmd-mikmod"
 Command for starting mikmod input\&. Ecasound expects that 
 signed, 16bit, stereo audio samples are written to standard 
 output\&. Before execution, %f is replaced with 
@@ -155,7 +159,7 @@ file path, and %s with selected sample rate\&. Double-quotes
 and backslash-espacing can be used to include white-space to 
 individual parameters\&. Defaults to \fImikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f\fP\&.
 .IP 
-.IP "ext-cmd-timidity" 
+.IP "ext-cmd-timidity"
 Command for starting timidity++ input\&. Ecasound expects that
 signed, 16bit, stereo audio samples are written to standard
 output\&. Before execution, %f is replaced with file path, and
@@ -163,7 +167,7 @@ output\&. Before execution, %f is replaced with file path, and
 be used to include white-space to individual parameters\&.
 Defaults to \fItimidity -Or1S -id -s %s -o - %f\fP\&.
 .IP 
-.IP "ext-cmd-flac-input" 
+.IP "ext-cmd-flac-input"
 Command for starting FLAC input\&. Ecasound expects that audio samples
 are written to standard output\&. It should be noted that
 Ecasound is not able to query the audio format parameters from
@@ -172,17 +176,17 @@ Before execution, %f is replaced with path to the input FLAC
 file\&. Double-quotes and backslash-espacing can be used to include 
 white-space to individual parameters\&.Defaults to \fIflac -d -c %f\fP\&.
 .IP 
-.IP "ext-cmd-flac-output" 
+.IP "ext-cmd-flac-output"
 Command for starting FLAC output\&. Ecasound will write
 samples to standard output\&. All audio parameters are
 configurable\&. Before execution, %f is replaced with path to
 the output flac, %c, %b and %s with matching audio
-format parameters, %I with either \'signed\' or \'unsigned\', and
-%E with either \'little\' or \'big\'\&. Double-quotes and backslash-espacing 
+format parameters, %I with either \&'signed\&' or \&'unsigned\&', and
+%E with either \&'little\&' or \&'big\&'\&. Double-quotes and backslash-espacing 
 can be used to include white-space to individual parameters\&. Defaults 
 to \fIflac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -\fP\&.
 .IP 
-.IP "ext-cmd-aac-input" 
+.IP "ext-cmd-aac-input"
 Command for starting AAC input\&. Ecasound expects that signed,
 16bit, stereo, big-endian audio samplesare written to standard 
 output\&. It should be noted that	Ecasound is not able to query 
@@ -192,7 +196,7 @@ file\&. Note! FAAC must be compiled with MP4 support\&. Double-quotes
 and backslash-espacing can be used to include white-space to 
 individual parameters\&. Defaults to \fIfaad -w -b 1 -f 2 -d %f\fP\&.
 .IP 
-.IP "ext-cmd-aac-output" 
+.IP "ext-cmd-aac-output"
 Command for starting AAC output\&. Ecasound will write big-endian
 audio samples to standard output\&. All other audio parameters are
 configurable\&. Before execution, %f is replaced with path to
@@ -201,11 +205,12 @@ parameters\&. Note! FAAC must be compiled with MP4 support\&. Double-quotes
 and backslash-espacing can be used to include white-space to 
 individual parameters\&. Defaults to \fIfaac -P -o %f -R %s -B %b -C %c -\fP\&.
 .IP 
+.SH "SEE ALSO"
+
 .PP 
-.SH "SEE ALSO" 
+ecasound (1), ecatools (1), ecasound-iam (1)
 .PP 
-ecasound(1), ecatools (1), ecasound-iam(1)
+.SH "AUTHOR"
+
 .PP 
-.SH "AUTHOR" 
-.PP 
-Kai Vehmanen, <kvehmanen -at- eca -dot- cx>
+Kai Vehmanen, <kvehmanen -at- eca -dot- cx <kvehmanen -at- eca -dot- cx>>

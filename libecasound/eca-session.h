@@ -59,10 +59,12 @@ class ECA_SESSION {
   ECA_CHAINSETUP* connected_chainsetup_repp;
   ECA_CHAINSETUP* selected_chainsetup_repp;
 
+  bool cs_defaults_set_rep;
+
   // ---
   // Setup interpretation
   // ---
-  void set_defaults(void);
+  void set_cs_param_defaults(void);
 
   void preprocess_options(std::vector<std::string>* opts);
   void create_chainsetup_options(COMMAND_LINE& cline, std::vector<std::string>* options);

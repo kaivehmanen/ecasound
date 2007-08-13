@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (06.12.2006)
+       (13.08.2007)
        ()
        (Multimedia software)
 
@@ -35,7 +35,7 @@ startdit()
 dit(-c)
 Starts ecasound in interactive mode. In interactive mode you can
 control ecasound with simple commands ("start", "stop", "pause",
-etc.). See url(ecasound-iam(1))(ecasound-iam_manpage.html).
+etc.). See url(ecasound-iam )(ecasound-iam_manpage.html).
 
 dit(-C)
 Disables ecasound's interactive mode (see '-c' and '-K').
@@ -55,6 +55,12 @@ documentation for the ECA_LOGGER class for more detailed information.
 dit(-D)
 Print all debug information to stderr (unbuffered, plain output
 without ncurses).
+
+dit(-R[:]path-to-file)
+Use ecasound resource file (see ecasoundrc man page) 'path-to-file' as 
+the only source of setting resource value. Specifying this option
+will disable the normal policy of querying both global and user (if exists)
+resource files.
 
 dit(-q)
 Quiet mode, no output. Same as em(-d:0).
@@ -144,7 +150,7 @@ for OSS-devices. '-z:mixmode,sum' enables mixing mode where channels
 are mixed by summing all channels. The default is '-z:mixmode,avg',
 in which channels are mixed by averaging. Mixmode selection was first
 added to ecasound 2.4.0.
-See url(ecasoundrc(5))(ecasoundrc_manpage.html).
+See url(ecasoundrc man page)(ecasoundrc_manpage.html).
 
 enddit()
 
@@ -214,7 +220,7 @@ dit(-f:sample_format,channel,sample-rate,interleaving)
 Sets default sampling parameters. These are used for all following
 input and output files or until another -f is specified. If no -f
 option is present, ecasound will use the default audio parameters (see
-ecasoundrc(5) man page). Notice that when opening existing audio objects, 
+ecasoundrc man page). Notice that when opening existing audio objects, 
 either for input or output, the default audio parameters set with -f are
 ignored if objects provide sufficient header information (as
 is the case for wav, aiff, etc formats). For output objects, the
@@ -400,14 +406,14 @@ bf(MIDI SETUP)
 startdit()
 dit(MIDI I/O devices - general)
 If no MIDI-device is specified, the default MIDI-device is 
-used (see ecasoundrc(5)).
+used (see ecasoundrc ).
 
 dit(-Md:rawmidi,device_name)
 Add a rawmidi MIDI I/O device to the setup. 'device_name' can be anything 
 that can be accessed using the normal UNIX file operations and 
 produces raw MIDI bytes. Valid devices are for example OSS rawmidi 
 devices (/dev/midi00), ALSA rawmidi devices (/dev/snd/midiC2D0), named 
-pipes (see mkfifo(1) man page), and normal files. 
+pipes (see mkfifo man page), and normal files. 
 
 dit(-Md:alsaseq,sequencer-port)
 Adds a ALSA MIDI sequencer port to the setup. 'sequencer-port' identifies
@@ -441,7 +447,7 @@ a chain operator.
 
 dit(-pn:preset_name)
 Find preset 'preset_name' from global preset database and use
-it as a chain operator. See ecasoundrc(5) for info about the 
+it as a chain operator. See ecasoundrc man page for info about the 
 preset database.
 
 enddit()
@@ -632,7 +638,7 @@ dit(-chmute:channel)
 Mutes the channel 'channel'. Channel indexing starts from 1.
 Option added to ecasound 2.4.5.
 
-dir(-erc:from-channel,to-channel)
+dit(-erc:from-channel,to-channel)
 Deprecated, see em(-chcopy).
 
 dit(-erm:to-channel)
@@ -697,7 +703,7 @@ startdit()
 dit(-el:plugin_unique_name,param-1,...,param-N)
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
 Plugin API). Plugins are located in shared library (.so) files in 
-/usr/local/share/ladspa (configured in ecasoundrc(5)). One shared
+/usr/local/share/ladspa (configured in ecasoundrc man page). One shared
 library file can contain multiple plugin objects, but every plugin 
 has a unique plugin name. This name is used for selecting plugins. 
 See url(LAD mailing list web site)(http://www.linuxdj.com/audio/lad) for
@@ -760,7 +766,7 @@ dit(-kf:fx-param,start-value,end-value,freq,mode,genosc-number)
 Generic oscillator. 'genosc_number' is the number of the 
 oscillator preset to be loaded. Mode is either '0' for
 static values or '1' for linear interpolation. The location for 
-the preset file is taken from ./ecasoundrc (see em(ecasoundrc(5))).
+the preset file is taken from ./ecasoundrc (see em(ecasoundrc man page)).
 
 dit(-kl:fx-param,start-value,end-value,time-seconds)
 Linear envelope that starts from 'start_value' and linearly 
@@ -788,7 +794,7 @@ numbering goes from 1 to 16. Possible controller numbers
 are values from 0 to 127. The MIDI-device where bytes
 are read from can be specified using em(-Md) option. 
 Otherwise the default MIDI-device is used as specified in 
-em(~ecasound/ecasoundrc) (see em(ecasoundrc(5))). 
+em(~ecasound/ecasoundrc) (see em(ecasoundrc man page)). 
 Defaults to em(/dev/midi).
 
 dit(-ksv:fx-param,start-value,end-value,stamp-id,rms-toggle)
@@ -809,7 +815,7 @@ enddit()
 COMMENT(----------------------------------------------------------------)
 bf(INTERACTIVE MODE)
 
-See em(ecasound-iam(1)).
+See em(ecasound-iam man page).
 
 manpagesection(ENVIRONMENT)
 
@@ -828,7 +834,7 @@ manpagesection(ENVIRONMENT)
 	Select which messages are written to the logfile defined by 
 	em(ECASOUND_LOGFILE). The syntax for em(-d:level) is used. If not
 	defined, all messages are written. Defaults to -d:319 (everything else
-	but 'functions(64)' and 'continuous(128)' class messages).
+	but 'functions (64)' and 'continuous (128)' class messages).
 	enddit()
 
 manpagesection(RETURN VALUES)
@@ -855,7 +861,7 @@ manpagefiles()
 
 	em(~/.ecasound)
 	The default directory for ecasound user resource files. 
-	See the url(ecasoundrc(5))(ecasoundrc_manpage.html) man page.
+	See the url(ecasoundrc (5) man page)(ecasoundrc_manpage.html) man page.
 
 	em(*.ecs) 
 	Ecasound Chainsetup files. Syntax is more or less the
@@ -879,9 +885,9 @@ manpagesection(EXAMPLES)
 
 manpageseealso()
 
-	url(ecatools(1))(ecatools_manpage.html), 
-	url(ecasound-iam(1))(ecasound-iam_manpage.html)
-	url(ecasoundrc(5))(ecasoundrc_manpage.html), 
+	url(ecatools (1) man page)(ecatools_manpage.html), 
+	url(ecasound-iam (1) man page)(ecasound-iam_manpage.html)
+	url(ecasoundrc (5) man page)(ecasoundrc_manpage.html), 
 	url("HTML docs in the Documentation subdirectory")(index.html)
 
 manpagebugs()

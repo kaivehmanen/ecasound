@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca_resources.cpp: User settings (ecasoundrc)
-// Copyright (C) 1999-2002,2004,2005 Kai Vehmanen
+// Copyright (C) 1999-2002,2004,2005,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -36,48 +36,66 @@
 
 using std::string;
 
+std::string ECA_RESOURCES::rc_override_file;
+
 ECA_RESOURCES::ECA_RESOURCES(void) 
   : resources_found_rep(true)
 {
-  string ecasound_resource_path (ECA_PKGDATADIR);
 
-  globalrc_repp = new RESOURCE_FILE();
-  globalrc_repp->resource_file(ecasound_resource_path + "/ecasoundrc");
-  globalrc_repp->load();
-  if (globalrc_repp->keywords().size() == 0) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
-    resources_found_rep = false;
+  if (ECA_RESOURCES::rc_override_file.size() == 0) {
+    /* case: load global and user resource files normally */
+    string ecasound_resource_path (ECA_PKGDATADIR);
+
+    globalrc_repp = new RESOURCE_FILE(ecasound_resource_path + "/ecasoundrc");
+    if (globalrc_repp->keywords().size() == 0) {
+      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
+      resources_found_rep = false;
+    }
+    
+    char* home_dir = getenv("HOME");
+    if (home_dir != NULL) {
+      string user_ecasoundrc_path = string(home_dir) + "/.ecasound";
+
+      user_resource_directory_rep = user_ecasoundrc_path;
+
+      userrc_repp = new RESOURCE_FILE(user_ecasoundrc_path + "/ecasoundrc");
+      if (userrc_repp && userrc_repp->has("user-resource-directory") == true) {
+	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
+      }
+    }
+    else
+      userrc_repp = 0;
+
+    overriderc_repp = 0;
   }
+  else {
+    /* case: override, do not use global/user resource files */
 
-  userrc_repp = new RESOURCE_FILE();
-  char* home_dir = getenv("HOME");
-  if (home_dir != NULL) {
-    string user_ecasoundrc_path = string(home_dir) + "/.ecasound";
+    globalrc_repp = userrc_repp = 0;
 
-    user_resource_directory_rep = user_ecasoundrc_path;
-
-    userrc_repp->resource_file(user_ecasoundrc_path + "/ecasoundrc");
-    userrc_repp->load();
-    if (userrc_repp->has("user-resource-directory") == true) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
+    overriderc_repp = new RESOURCE_FILE(ECA_RESOURCES::rc_override_file);
+    if (overriderc_repp->keywords().size() == 0) {
+      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Override resource file '" + ECA_RESOURCES::rc_override_file + "' not available! Ecasound may not function properly!");
+      resources_found_rep = false;
     }
   }
 }
 
 ECA_RESOURCES::~ECA_RESOURCES(void)
 {
-  if (userrc_repp->is_modified() == true) {
+  if (userrc_repp && userrc_repp->is_modified() == true) {
     userrc_repp->resource("ecasound-version", ecasound_library_version);
     userrc_repp->save();
   }
 
-  DBC_CHECK(globalrc_repp != 0);  
-  delete globalrc_repp;
-  globalrc_repp = 0;
+  if (globalrc_repp != 0)
+    delete globalrc_repp;
 
-  DBC_CHECK(userrc_repp != 0);
-  delete userrc_repp;
-  userrc_repp = 0;
+  if (userrc_repp != 0)
+    delete userrc_repp;
+
+  if (overriderc_repp != 0)
+    delete overriderc_repp;
 }
 
 /**
@@ -86,7 +104,8 @@ ECA_RESOURCES::~ECA_RESOURCES(void)
  */
 void ECA_RESOURCES::resource(const string& tag, const string& value)
 {
-  userrc_repp->resource(tag, value);
+  if (userrc_repp)
+    userrc_repp->resource(tag, value);
 }
 
 /**
@@ -98,13 +117,16 @@ string ECA_RESOURCES::resource(const string& tag) const
   if (tag == "user-resource-directory") 
     return user_resource_directory_rep;
   
-  if (userrc_repp->has(tag))
+  if (userrc_repp && userrc_repp->has(tag))
     return userrc_repp->resource(tag);
   
-  if (globalrc_repp->has(tag))
+  if (globalrc_repp && globalrc_repp->has(tag))
     return globalrc_repp->resource(tag);
 
-  return "";
+  if (overriderc_repp && overriderc_repp->has(tag))
+    return overriderc_repp->resource(tag);
+
+  return string();
 }
 
 /**
@@ -112,12 +134,14 @@ string ECA_RESOURCES::resource(const string& tag) const
  */
 bool ECA_RESOURCES::boolean_resource(const string& tag) const
 {
-  if (userrc_repp->has(tag)) {
+  if (userrc_repp && userrc_repp->has(tag))
     return userrc_repp->boolean_resource(tag);
-  }
-  else if (globalrc_repp->has(tag)) {
+
+  if (globalrc_repp && globalrc_repp->has(tag))
     return globalrc_repp->boolean_resource(tag);
-  }
+
+  if (overriderc_repp && overriderc_repp->has(tag))
+    return overriderc_repp->boolean_resource(tag);
 
   return false;
 }
@@ -127,7 +151,10 @@ bool ECA_RESOURCES::boolean_resource(const string& tag) const
  */
 bool ECA_RESOURCES::has(const string& tag) const
 {
-  if (globalrc_repp->has(tag) || userrc_repp->has(tag)) return true;
+  if ((globalrc_repp && globalrc_repp->has(tag)) || 
+      (userrc_repp && userrc_repp->has(tag)) ||
+      (overriderc_repp && overriderc_repp->has(tag))) return true;
+
   return false;
 }
 

@@ -25,6 +25,14 @@ class ECA_RESOURCES {
   ECA_RESOURCES(void);
   ~ECA_RESOURCES(void);
 
+public:
+
+  /**
+   * If non-empty, will override all other resource files for
+   * newly created ECA_RESOURCES instances.
+   */
+  static std::string rc_override_file;
+
  private:
 
   ECA_RESOURCES(const ECA_RESOURCES&);
@@ -32,6 +40,7 @@ class ECA_RESOURCES {
 
   RESOURCE_FILE* globalrc_repp;
   RESOURCE_FILE* userrc_repp;
+  RESOURCE_FILE* overriderc_repp;
   std::string user_resource_directory_rep;
   bool resources_found_rep;
 };

@@ -25,7 +25,7 @@ class RESOURCE_FILE {
   /**
    * Returns current resource file name.
    */
-  const std::string& resource_file(void) const { return(resfile_rep); }
+  const std::string& resource_file(void) const { return resfile_rep; }
 
   /**
    * Set resource file name.
@@ -56,7 +56,7 @@ class RESOURCE_FILE {
   /** 
    * Has any resource value been added, removed or modified?
    */
-  bool is_modified(void) const { return(modified_rep); }
+  bool is_modified(void) const { return modified_rep; }
 
   /**
    * Load/restore resources from file

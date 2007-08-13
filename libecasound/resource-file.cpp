@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // resource-file.cpp: Generic resource file class
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2007 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -31,7 +31,8 @@
 RESOURCE_FILE::RESOURCE_FILE(const std::string& resource_file) :
   resfile_rep(resource_file)
 {
-  load();
+  if (resfile_rep.size() > 0) 
+    load();
 }
 
 RESOURCE_FILE::~RESOURCE_FILE(void)
@@ -62,11 +63,13 @@ void RESOURCE_FILE::load(void)
       first = std::string(line, 0, n);
       second = std::string(line, n + 1, std::string::npos);
 
+      /* step: combine multi-line values ending with '\' into
+       *       a single value for 'first' */
       first = kvu_remove_surrounding_spaces(first);
       second = kvu_remove_surrounding_spaces(second);
       std::string::iterator p = second.end();
       --p;
-      while (*p == '\\') {
+      while (second.begin() != second.end() && *p == '\\') {
 	second.erase(p);
 	lines_rep.push_back(line);
 	if (getline(fin, line)) {
@@ -75,10 +78,12 @@ void RESOURCE_FILE::load(void)
 	  p = second.end();
 	  --p;
 	}
+	else 
+	  break;
       }
 
-      // cerr << "found key-value pair: " +
-      // first + " = \"" + second + "\"." << endl;
+      // std::cerr << "found key-value pair: " +
+      // 	first + " = \"" + second + "\"." << std::endl;
 
       resmap_rep[first] = second;
       lines_rep.push_back(line);

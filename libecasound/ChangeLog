@@ -1,3 +1,8 @@
+2007-08-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-resources.h: Added static member 'rc_override_file' of
+	type std::string.
+
 2007-08-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* samplebuffer.h: Added make_empty() and is_empty() public methods.
