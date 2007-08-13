@@ -23,7 +23,7 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-????2007 (v2.4.6)  -** stable release **-
+14082007 (v2.4.6)  -** stable release **-
 	- added: new option '-R:path-to-resource-file' to use a custom
 		 resource file and disable querying of global and user
 		 resource files; as a special case, by setting this 

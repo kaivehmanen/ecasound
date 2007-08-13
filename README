@@ -77,9 +77,9 @@ always something to improve.
 To run Ecasound, you need...:
 
 - operating system that provides standard POSIX/SUS interfaces; has been 
-  tested with various combinations of GNU/Linux (Linux 2.2-2.6 and 
-  glibc 2.1-2.3 combinations), FreeBSD 4.x, Solaris 2.6-2.8,
-  Mac OS X 10.3-10.4.2 and Cygwin 1.3.20
+  tested with various combinations of GNU/Linux (Linux 2.2+ and 
+  glibc 2.1+ combinations), FreeBSD 4.x+, Solaris 2.6+,
+  Mac OS X 10.3+ and Cygwin 1.3.20+
 - POSIX/SUS threads support; has been tested with glibc linuxthreads 
   and the Native POSIX Thread Library (NPTL)
   
