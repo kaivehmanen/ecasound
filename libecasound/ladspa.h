@@ -1,8 +1,8 @@
 /* ladspa.h
 
-   Linux Audio Developer's Simple Plugin API Version 1.1[provisional,
-   LGPL].  Copyright (C) 2000-2002 Richard W.E. Furse, Paul
-   Barton-Davis, Stefan Westerfeld.
+   Linux Audio Developer's Simple Plugin API Version 1.1[LGPL].
+   Copyright (C) 2000-2002 Richard W.E. Furse, Paul Barton-Davis,
+   Stefan Westerfeld.
    
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public License
@@ -21,6 +21,10 @@
 
 #ifndef LADSPA_INCLUDED
 #define LADSPA_INCLUDED
+
+#define LADSPA_VERSION "1.1"
+#define LADSPA_VERSION_MAJOR 1
+#define LADSPA_VERSION_MINOR 1
 
 #ifdef __cplusplus
 extern "C" {
@@ -303,32 +307,32 @@ typedef int LADSPA_PortRangeHintDescriptor;
    tuning convention, in which case it may be within a few Hz. */
 #define LADSPA_HINT_DEFAULT_440     0x2C0
 
-#define LADSPA_IS_HINT_BOUNDED_BELOW(x) ((x) & LADSPA_HINT_BOUNDED_BELOW)
-#define LADSPA_IS_HINT_BOUNDED_ABOVE(x) ((x) & LADSPA_HINT_BOUNDED_ABOVE)
-#define LADSPA_IS_HINT_TOGGLED(x)       ((x) & LADSPA_HINT_TOGGLED)
-#define LADSPA_IS_HINT_SAMPLE_RATE(x)   ((x) & LADSPA_HINT_SAMPLE_RATE)
-#define LADSPA_IS_HINT_LOGARITHMIC(x)   ((x) & LADSPA_HINT_LOGARITHMIC)
-#define LADSPA_IS_HINT_INTEGER(x)       ((x) & LADSPA_HINT_INTEGER)
+#define LADSPA_IS_HINT_BOUNDED_BELOW(x)   ((x) & LADSPA_HINT_BOUNDED_BELOW)
+#define LADSPA_IS_HINT_BOUNDED_ABOVE(x)   ((x) & LADSPA_HINT_BOUNDED_ABOVE)
+#define LADSPA_IS_HINT_TOGGLED(x)         ((x) & LADSPA_HINT_TOGGLED)
+#define LADSPA_IS_HINT_SAMPLE_RATE(x)     ((x) & LADSPA_HINT_SAMPLE_RATE)
+#define LADSPA_IS_HINT_LOGARITHMIC(x)     ((x) & LADSPA_HINT_LOGARITHMIC)
+#define LADSPA_IS_HINT_INTEGER(x)         ((x) & LADSPA_HINT_INTEGER)
 
-#define LADSPA_IS_HINT_HAS_DEFAULT(x)   ((x) & LADSPA_HINT_DEFAULT_MASK)
-#define LADSPA_IS_HINT_DEFAULT_MINIMUM(x)  (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_MINIMUM)
-#define LADSPA_IS_HINT_DEFAULT_LOW(x)      (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_LOW)
-#define LADSPA_IS_HINT_DEFAULT_MIDDLE(x)   (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_MIDDLE)
-#define LADSPA_IS_HINT_DEFAULT_HIGH(x)     (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_HIGH)
-#define LADSPA_IS_HINT_DEFAULT_MAXIMUM(x)  (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_MAXIMUM)
-#define LADSPA_IS_HINT_DEFAULT_0(x)        (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_0)
-#define LADSPA_IS_HINT_DEFAULT_1(x)        (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_1)
-#define LADSPA_IS_HINT_DEFAULT_100(x)      (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_100)
-#define LADSPA_IS_HINT_DEFAULT_440(x)      (((x) & LADSPA_HINT_DEFAULT_MASK)  \
-                                         == LADSPA_HINT_DEFAULT_440)
+#define LADSPA_IS_HINT_HAS_DEFAULT(x)     ((x) & LADSPA_HINT_DEFAULT_MASK)
+#define LADSPA_IS_HINT_DEFAULT_MINIMUM(x) (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_MINIMUM)
+#define LADSPA_IS_HINT_DEFAULT_LOW(x)     (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_LOW)
+#define LADSPA_IS_HINT_DEFAULT_MIDDLE(x)  (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_MIDDLE)
+#define LADSPA_IS_HINT_DEFAULT_HIGH(x)    (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_HIGH)
+#define LADSPA_IS_HINT_DEFAULT_MAXIMUM(x) (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_MAXIMUM)
+#define LADSPA_IS_HINT_DEFAULT_0(x)       (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_0)
+#define LADSPA_IS_HINT_DEFAULT_1(x)       (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_1)
+#define LADSPA_IS_HINT_DEFAULT_100(x)     (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                           == LADSPA_HINT_DEFAULT_100)
+#define LADSPA_IS_HINT_DEFAULT_440(x)     (((x) & LADSPA_HINT_DEFAULT_MASK)   \
+                                            == LADSPA_HINT_DEFAULT_440)
 
 typedef struct _LADSPA_PortRangeHint {
 
@@ -515,7 +519,7 @@ typedef struct _LADSPA_Descriptor {
      this function pointer must be set to NULL. When it is provided,
      the function set_run_adding_gain() must be provided also. */
   void (*run_adding)(LADSPA_Handle Instance,
-		     unsigned long SampleCount);
+                     unsigned long SampleCount);
 
   /* This method is a function pointer that sets the output gain for
      use when run_adding() is called (see above). If this function is
@@ -527,7 +531,7 @@ typedef struct _LADSPA_Descriptor {
      run_adding() function is provided. When it is absent this
      function pointer must be set to NULL. */
   void (*set_run_adding_gain)(LADSPA_Handle Instance,
-			      LADSPA_Data   Gain);
+                              LADSPA_Data   Gain);
 
   /* This is the counterpart to activate() (see above). If there is
      nothing for deactivate() to do then the plugin writer may provide
