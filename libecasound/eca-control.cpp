@@ -343,6 +343,11 @@ void ECA_CONTROL::action(int action_id)
       set_last_string("Debug level set to " + kvu_numtostr(level) + ".");
       break;
     }
+  case ec_resource_file:
+    {
+      session_repp->interpret_general_option(string("-R:") + action_args_rep);
+      break;
+    }
 
     // ---
     // Chainsetups

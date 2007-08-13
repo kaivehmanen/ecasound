@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (06.12.2006)
+       (13.08.2007)
        ()
        (Multimedia software)
 
@@ -66,6 +66,15 @@ dit(debug 'debug-level')
 Set debug level to 'debug-level'. Notice that client programs can
 reimplement the debug routines. em([-])
 enddit()
+
+dit(resource-file 'path-to-file')
+Overrides the global and user resource files. Does not affect
+already created objects. This command is equivalent to '-R' ecasound 
+option (see ecasound (1) man page). 
+
+dit(-prefix:arg1,...,argN)
+Equivalent to issuing 'cs-option -prefix:arg1,...,argN). See documentation
+for 'cs-option'.
 
 dit(help', 'h')
 Help! em([-])
@@ -136,7 +145,7 @@ Saves currently selected chainsetup to file 'filename'. em([-])
 
 dit(cs-edit) 
 Currently selected chainsetup is saved to a temporary file. This
-file is loaded to an external editor (see ecasoundrc(5)). After
+file is loaded to an external editor (see ecasoundrc (5)). After
 editing, the chainsetup is loaded back to ecasound. em([-])
 
 dit(cs-is-valid)
@@ -201,13 +210,13 @@ chainsetup length is not explicitly set with 'cs-set-length'). em([-])
 
 dit(cs-set-param)
 Interpret general chainsetup parameters like for example
-"-b" (buffersize), "-n" (name), etc. See ecasound(1) for 
+"-b" (buffersize), "-n" (name), etc. See ecasound (1) for 
 more info. em([-])
 
 dit(cs-set-audio-format 'bits,channels,sample_rate')
 Set the default sample parameters for currently selected chainsetup. 
 For example cd-quality audio would be "16,2,44100". This does the
-same as command-line argument "-f" (see ecasound(1)). em([-])
+same as command-line argument "-f" (see ecasound (1)). em([-])
 
 dit(cs-status, status, st)
 Print status info about all chainsetups. em([s])
@@ -219,6 +228,10 @@ For instance, command "cs-option -efb:400,200" means that
 a bandpass filter is added to the currently selected 
 chain, with initial parameters 400 (center frequency) 
 and 200 (width in Hz).
+
+Note that session level options (such as setting debug level)
+can not be used with 'cs-option' (i.e. only options that modify
+chainsetups).
 
 Note! EIAM implicitly interprets all strings beginning 
 with a '-' as "cs-option string".
@@ -295,20 +308,20 @@ while commands with em(ao-) operate on outputs.
 startdit()
 
 dit(ai-add 'input_format_string')
-Adds a new input object. See ecasound(1) man page for more info about 
+Adds a new input object. See ecasound (1) man page for more info about 
 the argument format ('-i' option). Note on syntax: if any of 
 the parameters (such as a filename) contains commas, the parameter 
 should be enclosed in double-quotes. em([-])
 
 dit(ao-add 'output_format_string')
-Adds a new output object. See ecasound(1) man page for more info about 
+Adds a new output object. See ecasound (1) man page for more info about 
 the argument format ('-o' option). If argument is omitted, 
-a default output device is added (see ecasoundrc(5)). Note on syntax: if any 
+a default output device is added (see ecasoundrc (5)). Note on syntax: if any 
 of the parameters (such as a filename) contains commas, the parameter 
 should be enclosed in double-quotes. em([-])
 
 dit(ao-add-default)
-Adds the default output device (see ecasoundrc(5)). em([-])
+Adds the default output device (see ecasoundrc (5)). em([-])
 
 dit(ai-describe, ao-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string
@@ -378,7 +391,7 @@ formatted string. See documentation for '-f' command-line option. em([s])
 
 dit(ai-wave-edit, ao-wave-edit) 
 The currently selected audio object is loaded into an external
-wave editor (see ecasoundrc(5)). em([-])
+wave editor (see ecasoundrc (5)). em([-])
 
 dit(ai-list, ao-list)
 Returns a list of all input/output objects. em([S])
@@ -408,7 +421,7 @@ chains at once. In other words only one chain should be selected
 when issuing 'cop-add'. Argument format is 
 "-<id_string>:par1,...,parN" (if parameter itself contains commas,
 the parameter should be enclosed in double-quotes). See 
-ecasound(1) man page for more info. em([-])
+ecasound (1) man page for more info. em([-])
 
 dit(cop-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string
@@ -471,7 +484,7 @@ dit(ctrl-add 'copc_format_string')
 Adds a new controller and attach it to currently selected chain 
 operator. Argument format is "-<id_string>:<param_id>,<range_low>,
 <range_high>,par1,...,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes).  See ecasound(1) 
+the parameter should be enclosed in double-quotes).  See ecasound (1) 
 man page for more info. em([-])
 
 dit(ctrl-describe)
@@ -682,7 +695,7 @@ the header file emph(ecasound/libecasound/eca-operator.h).
 
 manpageseealso()
 
-	ecasound(1), ecatools (1), ecasoundrc(5)
+	ecasound (1), ecatools (1), ecasoundrc (5)
 
 manpageauthor()
 

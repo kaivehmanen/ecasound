@@ -97,6 +97,7 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
   (*cmd_map_repp)["run"] = ec_run;
 
   (*cmd_map_repp)["debug"] = ec_debug;
+  (*cmd_map_repp)["resource-file"] = ec_resource_file;
 
   (*cmd_map_repp)["engine-launch"] = ec_engine_launch;
   (*cmd_map_repp)["engine-halt"] = ec_engine_halt;

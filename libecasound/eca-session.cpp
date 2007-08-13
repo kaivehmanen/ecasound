@@ -555,6 +555,7 @@ int ECA_SESSION::interpret_general_option (const std::string& argu)
        *       if there are any argument to an option */
       if (argu.size() > 2 && argu[2] == ':') {
 	ECA_RESOURCES::rc_override_file = tname;
+	cs_defaults_set_rep = false;
 	ECA_LOG_MSG(ECA_LOGGER::info, 
 		    "Using resource file \"" +
 		    tname + 

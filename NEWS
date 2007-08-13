@@ -27,8 +27,10 @@ Howto for reading the entries:
 	- added: new option '-R:path-to-resource-file' to use a custom
 		 resource file and disable querying of global and user
 		 resource files; as a special case, by setting this 
-		 to '/dev/null', one can limit file accesses requested by Klaus Schulz and Keith 
-	 	 Creasy
+		 to '/dev/null', one disable all access to resource 
+		 files; requested by Klaus Schulz and Keith Creasy
+	- added: eiam - new command 'resource-file'; see ecasoundrc(5)
+		 man page; related to previous item
         - changed: license of rubyecasound, the Ruby ECI API 
                  implementation, has been changed from GPL to LGPL
 	- fixed: build errors caused by missing #includes, reported
