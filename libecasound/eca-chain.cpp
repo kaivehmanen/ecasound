@@ -147,7 +147,6 @@ void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = fals
  *
  * ensure:
  *  selected_chain_operator() == number_of_chain_operators()
- *  is_processing()
  *  is_initialized() != true
  */
 void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
@@ -168,7 +167,6 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
 
   // --------
   DBC_ENSURE(selected_chain_operator() == number_of_chain_operators());
-  DBC_ENSURE(is_processing() == true);
   DBC_ENSURE(is_initialized() != true);
   // --------
 }
@@ -181,8 +179,6 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
  *  selected_chain_operator() > 0
  *
  * ensure:
- *  (chainsops.size() == 0 && is_processing()) ||
- *  (chainsops.size() != 0 && !is_processing()) &&
  *  is_initialized() != true
  */
 void CHAIN::remove_chain_operator(void)
@@ -193,30 +189,38 @@ void CHAIN::remove_chain_operator(void)
   // --------
 
   int n = 0;
-  for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); p !=
-	chainops_rep.end(); p++) {
+  for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); 
+      p != chainops_rep.end(); 
+      p++) {
     ++n;
     if (n == selected_chain_operator()) {
-      for(std::vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); q !=
-	    gcontrollers_rep.end(); q++) {
+      for(std::vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); 
+	  q != gcontrollers_rep.end();) {
 	if ((*p) == (*q)->target_pointer()) {
+	  /* step: if the deleted controlled is selected, unselect it */ 
+	  if (selected_controller_repp == *q)
+	    selected_controller_repp = 0;
+
+	  /* step: remove the related controller */
 	  delete *q;
 	  gcontrollers_rep.erase(q);
-	  select_controller(0);
-	  break;
+
+	  /* step: in case there are multiple controllers per chainop */
+	  q = gcontrollers_rep.begin();
 	}
+	else
+	  ++q;
       }
+      /* step: unselect, delete and remove from the list */
       delete *p;
       chainops_rep.erase(p);
-      select_chain_operator(0);
+      selected_chainop_repp = 0;
       break;
     }
   }
   initialized_rep = false; 
 
   // --------
-  DBC_ENSURE(chainops_rep.size() == 0 && !is_processing() ||
-	     chainops_rep.size() != 0 && is_processing());
   DBC_ENSURE(is_initialized() != true);
   // --------
 }
@@ -444,11 +448,12 @@ void CHAIN::select_chain_operator(int index)
 }
 
 /**
- * Selects a chain operator parameter
+ * Selects a chain operator parameter. Index of zero clears out 
+ * current selection.
  *
  * require:
- *  index > 0
- *  selected_chain_operator() != 0
+ *  index >= 0
+ *  selected_chain_operator() != 0 || index == 0
  *  index <= selected_chain_operator()->number_of_params()
  *
  * ensure:
@@ -461,10 +466,11 @@ void CHAIN::select_chain_operator_parameter(int index)
 
 
 /**
- * Selects a controller.
+ * Selects a controller. Index of zero clears out 
+ * current selection.
  *
  * require:
- *  index > 0
+ *  index >= 0
  *
  * ensure:
  *  index == selected_controller() ||
@@ -483,11 +489,12 @@ void CHAIN::select_controller(int index)
 }
 
 /**
- * Selects a controller parameter
+ * Selects a controller parameter. Index of zero clears out 
+ * current selection.
  *
  * require:
- *  index > 0
- *  selected_controller() != 0
+ *  index >= 0
+ *  selected_controller() != 0 || index == 0
  *  index <= selected_controller()->number_of_params()
  *
  * ensure:
