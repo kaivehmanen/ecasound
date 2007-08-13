@@ -82,8 +82,8 @@ void RESOURCE_FILE::load(void)
 	  break;
       }
 
-      std::cerr << "found key-value pair: " +
-       	first + " = \"" + second + "\"." << std::endl;
+      // std::cerr << "found key-value pair: " +
+      // first + " = \"" + second + "\"." << std::endl;
 
       resmap_rep[first] = second;
       lines_rep.push_back(line);
