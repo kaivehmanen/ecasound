@@ -4,16 +4,18 @@
 /**
  * Ecasound library version as a formatted std::string.
  *
- * "vX.Y[.Z][devT]" :
+ * "vX.Y[.Z[.R]][-extraT]" :
  *
- * x = major version  - the overall development status
+ * X = major version  - the overall development status
  *
- * y = minor version  - represents a set of planned features (see TODO)
+ * Y = minor version  - represents a set of planned features (see TODO)
  *
- * z = revision       - version number of the current development series
+ * Z = micro version  - small changes to major.minor version
  *
- * devT = dev-release - development releases leading to the stable
- * 		        release X.Y[.Z]
+ * R = revision       - urgent fixes to normal releases (optional)
+ *
+ * extraT             - beta, pre and rc releases that are in 
+ *                      preparation of major releases
  */
 extern const char* ecasound_library_version;
 

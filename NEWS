@@ -2,11 +2,12 @@
 ** Ecasound - User-visible changes (NEWS)      (last edited: 140807) **
 -----------------------------------------------------------------------
 
-About the version numbers... "vX.Y[.Z][-extraT]" :
+About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
 
   X = major version  - the overall development status
   Y = minor version  - represents a set of planned features (see TODO)
-  Z = revision       - small changes to major.minor version (optional)
+  Z = micro version  - small changes to major.minor version (optional)
+  R = revision       - urgent fixes to normal releases (optional)
 
   extraT             - beta, pre and rc releases that are in 
                        preparation of major releases (optional)
@@ -23,7 +24,7 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-????2007 (v2.4.7)  -** stable release **-
+14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
 14082007 (v2.4.6)  -** stable release **-
