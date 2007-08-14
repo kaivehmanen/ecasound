@@ -24,6 +24,7 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
+????2007 (v2.4.z) -** stable release **-
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
