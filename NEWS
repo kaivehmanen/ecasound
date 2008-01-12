@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 140807) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 120108) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -24,7 +24,11 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-????2007 (v2.4.z) -** stable release **-
+????2008 (v2.4.z) -** stable release **-
+	- added: ecasound.el: added missing ECI commands cs-option, 
+	         cs-set-length, cs-set-position-samples, ai-get-length,
+		 ai-set-position, and ai-set-position-samples [dto,
+	  	 mlang]
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
