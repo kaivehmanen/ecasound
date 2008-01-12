@@ -452,7 +452,7 @@ Argument LEVEL is the debug level."
       eci-engine-status " "
       ecasound-mode-string
       " %[("
-      (:eval (mode-line-mode-name))
+;      (:eval (mode-line-mode-name))
       mode-line-process
       minor-mode-alist
       "%n"
@@ -1174,119 +1174,6 @@ variable."
     (message "No help available")))
 
 
-;;; ECI --- The Ecasound Control Interface
-
-(defgroup eci nil
-  "Ecasound Control Interface."
-  :group 'ecasound)
-
-(defcustom eci-program (or (getenv "ECASOUND") "ecasound")
-  "*Program to invoke when doing `eci-init'."
-  :group 'eci
-  :type '(choice string (cons string string)))
-
-(defcustom eci-arguments '("-c" "-D" "-d:256")
-  "*Arguments used by `eci-init'."
-  :group 'eci
-  :type 'ecasound-args)
-
-(defvar eci-hide-output nil
-  "If non-nil, `eci-command' will remove the output generated.")
-
-(defmacro eci-hide-output (&rest eci-call)
-  "Hide the output of this ECI-call.
-If a daemon-channel is active, use that, otherwise set `eci-hide-output' to t.
-Argument ECI-CALL is a symbol followed by its aruments if any."
-  `(if (ecasound-daemon-p)
-       ,(append eci-call (list 'ecasound-daemon))
-     (let ((eci-hide-output t))
-       ,eci-call)))
-
-(defun eci-init ()
-  "Initialize a programmatic ECI session.
-Every call to this function results in a new sub-process being created
-according to `eci-program' and `eci-arguments'.  Returns the newly
-created buffer.
-The caller is responsible for terminating the subprocess at some point."
-  (save-excursion
-    (set-buffer
-     (apply 'make-comint
-	    "eci-ecasound"
-	    eci-program
-	    nil
-	    eci-arguments))
-    (ecasound-iam-mode)
-    (while (accept-process-output (get-buffer-process (current-buffer)) 1))
-    (if (eci-command "int-output-mode-wellformed")
-	(current-buffer))))
-
-(defun eci-interactive-startup ()
-  "Used to interactively startup a ECI session using `eci-init'.
-This will mostly be used for testing sessions and is equivalent
-to `ecasound'."
-  (interactive)
-  (switch-to-buffer (eci-init)))
-
-(defun ecasound-find-buffer (buffer-or-process)
-  (cond
-   ((bufferp buffer-or-process)
-    buffer-or-process)
-   ((processp buffer-or-process)
-    (process-buffer buffer-or-process))
-   ((and (eq major-mode 'ecasound-iam-mode)
-	 (comint-check-proc (current-buffer)))
-    (current-buffer))
-   (t (error "Could not determine suitable ecasound buffer"))))
-
-(defun ecasound-find-parent (buffer-or-process)
-  (with-current-buffer (ecasound-find-buffer buffer-or-process)
-    (if ecasound-parent
-	ecasound-parent
-      (current-buffer))))
-
-(defun eci-command (command &optional buffer-or-process)
-  "Send a ECI command to a ECI host process.
-COMMAND is the string to be sent, without a newline character.
-If BUFFER-OR-PROCESS is nil, first look for a ecasound process in the current
-buffer, then for a ecasound buffer with the name *ecasound*,
-otherwise use the buffer or process supplied.
-Return the string we received in reply to the command except
-`eci-int-output-mode-wellformed-flag' is set, which means we can parse the
-output via `eci-parse' and return a meaningful value."
-  (interactive "sECI Command: ")
-  (let* ((buf (ecasound-find-buffer buffer-or-process))
-	 (proc (get-buffer-process buf))
-	 (ecasound-sending-command t))
-    (with-current-buffer buf
-      (let ((moving (= (point) (point-max))))
-	(setq eci-result 'waiting)
-	(goto-char (process-mark proc))
-	(insert command)
-	(let (comint-eol-on-send)
-	  (comint-send-input))
-	(let ((here (point)) result)
-	  (while (eq eci-result 'waiting)
-	    (accept-process-output proc 1))
-	  (setq result
-		(if eci-int-output-mode-wellformed-flag
-		    eci-result
-		  ;; Backward compatibility.  Just return the string
-		  (buffer-substring-no-properties here (save-excursion
-					; Strange hack to avoid fields
-							 (forward-char -1)
-							 (beginning-of-line)
-							 (if (not (= here (point)))
-							     (forward-char -1))
-							 (point)))))
-	  (if moving (goto-char (point-max)))
-	  (when (and eci-hide-output result)
-	    (ecasound-delete-last-in-and-output))
-	  result)))))
-
-(defsubst eci-error-p ()
-  "Predicate which can be used to check if the last command produced an error."
-  (string= eci-return-type "e"))
-
 ;;; ECI commands implemented as lisp functions
 
 (defeci int-cmd-list ()
@@ -1300,6 +1187,10 @@ output via `eci-parse' and return a meaningful value."
 
 (defeci cs-add ((chainsetup "sChainsetup to add: " "%s"))
   "Adds a new chainsetup with name `name`."
+  :pcomplete doc)
+
+(defeci cs-option ((option "sOption string: " "%s"))
+  "Send an option command to ecasound."
   :pcomplete doc)
 
 (defeci cs-connect ()
@@ -1398,6 +1289,26 @@ FILENAME is then the selected chainsetup."
     (if (interactive-p)
 	(message "Selected chainsetup: %s" val))
     val))
+
+(defeci cs-set-length 
+  ((pos
+    (if current-prefix-arg
+	(prefix-numeric-value current-prefix-arg)
+      (read-minibuffer "Position: ")) "%f"))
+  "Sets processing time in seconds (doesn’t have to be an integer
+value).  A special-case value of -1 will set the chainsetup
+length according to the longest input object."
+  :alias (set-length))
+
+(defeci cs-set-position-samples 
+  ((pos
+    (if current-prefix-arg
+	(prefix-numeric-value current-prefix-arg)
+      (read-minibuffer "Position: ")) "%f"))
+  "Sets the chainsetup position to POS samples from the beginning.  Position
+  of all inputs and outputs attached to the selected chainsetup is also affected."
+  :pcomplete doc)
+
 
 (defeci cs-set-position
   ((pos
@@ -1537,6 +1448,22 @@ input and as an output."
 
 (defeci ai-selected ()
   "Returns the name of the currently selected audio input object."
+  :pcomplete doc)
+
+(defeci ai-get-length ()
+  "Returns the audio object length in seconds."
+  :pcomplete doc)
+
+(defeci ai-set-position 
+  ((pos
+    (if current-prefix-arg
+	(prefix-numeric-value current-prefix-arg)
+      (read-minibuffer "Position: ")) "%f"))
+  "Set audio input position to POS."
+  :pcomplete doc)
+
+(defeci ai-set-position-samples ((pos))
+  "Set audio object position to POS samples from beginning."
   :pcomplete doc)
 
 (defeci ao-add ((filename "FOutput filename: " "%s"))
@@ -1743,6 +1670,119 @@ Unlike other chain operator commands, this can also be used during processing."
     (if (and result (not (string= result "")))
 	result
       default)))
+
+;;; ECI --- The Ecasound Control Interface
+
+(defgroup eci nil
+  "Ecasound Control Interface."
+  :group 'ecasound)
+
+(defcustom eci-program (or (getenv "ECASOUND") "ecasound")
+  "*Program to invoke when doing `eci-init'."
+  :group 'eci
+  :type '(choice string (cons string string)))
+
+(defcustom eci-arguments '("-c" "-D" "-d:256")
+  "*Arguments used by `eci-init'."
+  :group 'eci
+  :type 'ecasound-args)
+
+(defvar eci-hide-output nil
+  "If non-nil, `eci-command' will remove the output generated.")
+
+(defmacro eci-hide-output (&rest eci-call)
+  "Hide the output of this ECI-call.
+If a daemon-channel is active, use that, otherwise set `eci-hide-output' to t.
+Argument ECI-CALL is a symbol followed by its aruments if any."
+  `(if (ecasound-daemon-p)
+       ,(append eci-call (list 'ecasound-daemon))
+     (let ((eci-hide-output t))
+       ,eci-call)))
+
+(defun eci-init ()
+  "Initialize a programmatic ECI session.
+Every call to this function results in a new sub-process being created
+according to `eci-program' and `eci-arguments'.  Returns the newly
+created buffer.
+The caller is responsible for terminating the subprocess at some point."
+  (save-excursion
+    (set-buffer
+     (apply 'make-comint
+	    "eci-ecasound"
+	    eci-program
+	    nil
+	    eci-arguments))
+    (ecasound-iam-mode)
+    (while (accept-process-output (get-buffer-process (current-buffer)) 1))
+    (if (eci-command "int-output-mode-wellformed")
+	(current-buffer))))
+
+(defun eci-interactive-startup ()
+  "Used to interactively startup a ECI session using `eci-init'.
+This will mostly be used for testing sessions and is equivalent
+to `ecasound'."
+  (interactive)
+  (switch-to-buffer (eci-init)))
+
+(defun ecasound-find-buffer (buffer-or-process)
+  (cond
+   ((bufferp buffer-or-process)
+    buffer-or-process)
+   ((processp buffer-or-process)
+    (process-buffer buffer-or-process))
+   ((and (eq major-mode 'ecasound-iam-mode)
+	 (comint-check-proc (current-buffer)))
+    (current-buffer))
+   (t (error "Could not determine suitable ecasound buffer"))))
+
+(defun ecasound-find-parent (buffer-or-process)
+  (with-current-buffer (ecasound-find-buffer buffer-or-process)
+    (if ecasound-parent
+	ecasound-parent
+      (current-buffer))))
+
+(defun eci-command (command &optional buffer-or-process)
+  "Send a ECI command to a ECI host process.
+COMMAND is the string to be sent, without a newline character.
+If BUFFER-OR-PROCESS is nil, first look for a ecasound process in the current
+buffer, then for a ecasound buffer with the name *ecasound*,
+otherwise use the buffer or process supplied.
+Return the string we received in reply to the command except
+`eci-int-output-mode-wellformed-flag' is set, which means we can parse the
+output via `eci-parse' and return a meaningful value."
+  (interactive "sECI Command: ")
+  (let* ((buf (ecasound-find-buffer buffer-or-process))
+	 (proc (get-buffer-process buf))
+	 (ecasound-sending-command t))
+    (with-current-buffer buf
+      (let ((moving (= (point) (point-max))))
+	(setq eci-result 'waiting)
+	(goto-char (process-mark proc))
+	(insert command)
+	(let (comint-eol-on-send)
+	  (comint-send-input))
+	(let ((here (point)) result)
+	  (while (eq eci-result 'waiting)
+	    (accept-process-output proc 1))
+	  (setq result
+		(if eci-int-output-mode-wellformed-flag
+		    eci-result
+		  ;; Backward compatibility.  Just return the string
+		  (buffer-substring-no-properties here (save-excursion
+					; Strange hack to avoid fields
+							 (forward-char -1)
+							 (beginning-of-line)
+							 (if (not (= here (point)))
+							     (forward-char -1))
+							 (point)))))
+	  (if moving (goto-char (point-max)))
+	  (when (and eci-hide-output result)
+	    (ecasound-delete-last-in-and-output))
+	  result)))))
+
+(defsubst eci-error-p ()
+  "Predicate which can be used to check if the last command produced an error."
+  (string= eci-return-type "e"))
 
 ;;; Markers
 
@@ -1962,36 +2002,38 @@ channels in INPUT based on the information given in FORMAT."
 (defun eci-process-map-list (string)
   "Parse the output of a map-xxx-list ECI command and return an alist.
 STRING is the string returned by a map-xxx-list command."
-  (mapcar
-   (lambda (elt)
-     (append
-      (list (nth 1 elt) (nth 0 elt) (nth 2 elt))
-      (let (res (count (string-to-number (nth 3 elt))))
-	(setq elt (nthcdr 4 elt))
-	(while (> count 0)
-	  (setq
-	   res
-	   (cons
-	    (list (nth 0 elt) (nth 1 elt)
-		  (string-to-number (nth 2 elt)) ;; default value
-		  (when (string= (nth 3 elt) "1")
-		    (string-to-number (nth 4 elt)))
-		  (when (string= (nth 5 elt) "1")
-		    (string-to-number (nth 6 elt)))
-		  (cond
-		   ((string= (nth 7 elt) "1")
-		    'toggle)
-		   ((string= (nth 8 elt) "1")
-		    'integer)
-		   ((string= (nth 9 elt) "1")
-		    'logarithmic)
-		   ((string= (nth 10 elt) "1")
-		    'output))) res)
-	   elt (nthcdr 11 elt)
-	   count (1- count)))
-	(reverse res))))
-   (mapcar (lambda (str) (split-string str ","))
-	   (split-string string "\n"))))
+  (delq nil
+	(mapcar
+	 (lambda (elt)
+	   (when (stringp (nth 3 elt))
+	     (append
+	      (list (nth 1 elt) (nth 0 elt) (nth 2 elt))
+	      (let (res (count (string-to-number (nth 3 elt))))
+		(setq elt (nthcdr 4 elt))
+		(while (> count 0)
+		  (setq
+		   res
+		   (cons
+		    (list (nth 0 elt) (nth 1 elt)
+			  (string-to-number (nth 2 elt)) ;; default value
+			  (when (string= (nth 3 elt) "1")
+			    (string-to-number (nth 4 elt)))
+			  (when (string= (nth 5 elt) "1")
+			    (string-to-number (nth 6 elt)))
+			  (cond
+			   ((string= (nth 7 elt) "1")
+			    'toggle)
+			   ((string= (nth 8 elt) "1")
+			    'integer)
+			   ((string= (nth 9 elt) "1")
+			    'logarithmic)
+			   ((string= (nth 10 elt) "1")
+			    'output))) res)
+		   elt (nthcdr 11 elt)
+		   count (1- count)))
+		(reverse res)))))
+	 (mapcar (lambda (str) (split-string str ","))
+		 (split-string string "\n")))))
 
 (defeci cs-set-audio-format
   ((format (ecasound-read-from-minibuffer
