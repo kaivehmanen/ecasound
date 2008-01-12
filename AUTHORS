@@ -100,6 +100,8 @@ Merino, Pedro Antonio Fructuoso [pfructuoso]
 	Various bugfix patches.
 Morris, Steve [smorris]
 	Ewf-handling fixes.
+O'Toole David [dto]
+	Patches to ecasound.el.
 Petit, Bertrand
 	Helped with POSIX-compatibility issues.
 Poulton, Ron [thok]
@@ -130,13 +132,16 @@ Wróblewski, Artur [wrobell]
 	PLD-Linux RPM-specfile, readline and destdir patches.
 
 
-Code from other Projects
-=========================
+Code from other projects
+========================
 
 Davis Paul
 	pthread_mutex_spinlock() from libpbd.
 Dyson, John S.
 	The original advanced compressor (-eca) code.
+Furse, Richard W.E.
+	Sine tone generation code from Computer Music Toolkit
+	LADSPA plugin set is used in AUDIO_IO_TONE.
 Harris, Steve and Tim Blechmann
 	Denormal handling code from swh-plugins package.
 Laydier, Antoine [SMF]
