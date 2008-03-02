@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 120108) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 010308) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -29,6 +29,9 @@ Howto for reading the entries:
 	         cs-set-length, cs-set-position-samples, ai-get-length,
 		 ai-set-position, and ai-set-position-samples [dto,
 	  	 mlang]
+        - fixed: incorrect usage of the Python C API, which leads to
+	 	 segfaults when pyecasound is used under python2.5;
+		 fixes Debian bug #468965
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
