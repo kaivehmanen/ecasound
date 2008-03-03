@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_mixing.cpp: Effects for channel mixing and routing
-// Copyright (C) 1999-2002,2006 Kai Vehmanen
+// Copyright (C) 1999-2002,2006,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -24,6 +24,20 @@
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_mixing.h"
+
+static EFFECT_MIXING::ch_type priv_make_sane(EFFECT_MIXING::ch_type channel, SAMPLE_BUFFER *insample)
+{
+  EFFECT_MIXING::ch_type channels =
+    static_cast<EFFECT_MIXING::ch_type>(insample->number_of_channels());
+
+  if (channel < 0)
+    return 0;
+
+  if (channel >= channels)
+    return channels - 1;
+
+  return channel;
+}
 
 EFFECT_MIXING::~EFFECT_MIXING(void)
 {
@@ -88,6 +102,8 @@ void EFFECT_CHANNEL_COPY::init(SAMPLE_BUFFER *insample)
 {
   f_iter.init(insample);
   t_iter.init(insample);
+  from_channel = priv_make_sane(from_channel, insample);
+  to_channel = priv_make_sane(to_channel, insample);
 }
 
 void EFFECT_CHANNEL_COPY::process(void)
@@ -156,10 +172,13 @@ CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_MOVE::get_parameter(int param) const
   return 0.0;
 }
 
+
 void EFFECT_CHANNEL_MOVE::init(SAMPLE_BUFFER *insample)
 {
   f_iter.init(insample);
   t_iter.init(insample);
+  from_channel = priv_make_sane(from_channel, insample);
+  to_channel = priv_make_sane(to_channel, insample);
 }
 
 void EFFECT_CHANNEL_MOVE::process(void)
@@ -267,6 +286,7 @@ void EFFECT_MIX_TO_CHANNEL::init(SAMPLE_BUFFER *insample)
   i.init(insample);
   t_iter.init(insample);
   channels = insample->number_of_channels();
+  to_channel = priv_make_sane(to_channel, insample);
 }
 
 void EFFECT_MIX_TO_CHANNEL::process(void)
