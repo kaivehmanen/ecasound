@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004,2006 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1784,6 +1784,10 @@ void ECA_CONTROL_OBJECTS::cond_start_after_editing(bool was_running)
 /**
  * Adds a new chain operator
  *
+ * @param gcontrol_params is an Ecasound option string describing
+ *        a controlled: syntax is either "-<id_string>:par1,...,parN",
+ *        or just "<id_string>:par1,...,parN"
+ *
  * require:
  *  is_selected() == true
  *  selected_chains().size() == 1
@@ -1797,8 +1801,11 @@ void ECA_CONTROL_OBJECTS::add_chain_operator(const string& chainop_params)
 
   bool was_running = cond_stop_for_editing();
 
-  if (chainop_params[0] == '-') {
-    selected_chainsetup_repp->interpret_object_option(chainop_params);
+  if (chainop_params.size() > 0) {
+    if (chainop_params[0] != '-')
+      selected_chainsetup_repp->interpret_object_option(string("-") + chainop_params);
+    else
+      selected_chainsetup_repp->interpret_object_option(chainop_params);
     if (selected_chainsetup_repp->interpret_result() != true) {
       set_last_error(selected_chainsetup_repp->interpret_result_verbose());
     }
@@ -2114,6 +2121,10 @@ int ECA_CONTROL_OBJECTS::selected_chain_operator_parameter(void) const
 /**
  * Adds a new controller
  *
+ * @param gcontrol_params is an Ecasound option string describing
+ *        a controlled: syntax is either "-<id_string>:par1,...,parN",
+ *        or just "<id_string>:par1,...,parN"
+ *
  * require:
  *  is_selected() == true
  *  connected_chainsetup() != selected_chainsetup()
@@ -2128,11 +2139,14 @@ void ECA_CONTROL_OBJECTS::add_controller(const string& gcontrol_params)
 
   bool was_running = cond_stop_for_editing();
 
-  if (gcontrol_params[0] == '-') {
+  if (gcontrol_params.size() > 0) {
+    if (gcontrol_params[0] != '-') 
+      selected_chainsetup_repp->interpret_object_option(string("-") + gcontrol_params);
+    else
       selected_chainsetup_repp->interpret_object_option(gcontrol_params);
-      if (selected_chainsetup_repp->interpret_result() != true) {
-	set_last_error(selected_chainsetup_repp->interpret_result_verbose());
-      }
+    if (selected_chainsetup_repp->interpret_result() != true) {
+      set_last_error(selected_chainsetup_repp->interpret_result_verbose());
+    }
   }
 
   cond_start_after_editing(was_running);
