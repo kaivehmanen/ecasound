@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecasound.cpp: Console mode user interface to ecasound.
-// Copyright (C) 2002-2007 Kai Vehmanen
+// Copyright (C) 2002-2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -436,7 +436,7 @@ void ecasound_print_usage(void)
 void ecasound_print_version_banner(void)
 {
   cout << "ecasound v" << ecasound_library_version << endl;
-  cout << "Copyright (C) 1997-2007 Kai Vehmanen and others." << endl;
+  cout << "Copyright (C) 1997-2008 Kai Vehmanen and others." << endl;
   cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
   cout << "General Public License. For more information about these matters, see" << endl; 
