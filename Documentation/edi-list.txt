@@ -59,8 +59,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
          - submitted: jhall, 17.03.2003
 (edi-39): Timestamped EIAM commands.
          - submitted: kaiv, 20.08.2003
-(edi-40): Update to error and warning reporting mechanisms.
-         - submitted: kaiv, 13.05.2004
 (edi-41): Addition of "bus" concept.
          - submitted: kaiv, 13.11.2005
 (edi-42): Ability to split recording output into multiple files.
@@ -161,10 +159,14 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-33): Libsndfile support.
 	 - submitted: kaiv, 29.10.2002
 	 - closed: kaiv, 28.11.2003
+(edi-40): Update to error and warning reporting mechanisms.
+         - submitted: kaiv, 13.05.2004
+	 - closed: kaiv, 03.03.2008
 
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+03.03.2008 - edi-40 closed
 07.07.2004 - edi-32 closed
 13.05.2004 - edi-40 added, edi-14 closed
 28.11.2003 - edi-33 closed

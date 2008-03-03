@@ -1,9 +1,9 @@
 ------------------------------------------------------------------------
-Status: OPEN
+Status: CLOSED
 
 (edi-40): Update to error and warning reporting mechanisms.
          - submitted: kaiv, 13.05.2004
-	 - last updated: kaiv, 07.12.2006
+	 - closed: kaiv, 03.03.2008
 
 ------------------------------------------------------------------------
 Details:
@@ -21,11 +21,12 @@ Details:
 	- ...when issuing EIAM commands
 
 - todo-list
-    - return explanation on why chainsetup is not considered to be valid
-	- ECA_CONTROL::chainsetup_details_to_string()
-    - ...
+    - none
 
 - done items list
+    - return explanation on why chainsetup is not considered to be valid [2008]
+	- proposal: ECA_CONTROL::chainsetup_details_to_string()
+	- implemented in: ECA_CHAINSETUP::is_valid_for_connection()
     - common errors: invalid -f:... options [12/2006]
     - common errors: trying to seek non-seekable objects [12/2006]
     - returning explanations why a csetup is not valid
