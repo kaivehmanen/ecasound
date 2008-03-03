@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-audio-time.cpp: Generic class for representing time in audio 
 //                     environment.
-// Copyright (C) 2000,2007 Kai Vehmanen
+// Copyright (C) 2000,2007,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -95,7 +95,8 @@ void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)
 /**
  * Sets samples per second.
  *
- * Note, this can change the value of seconds().
+ * Note, this does NOT change the value of seconds()
+ * like set_samples_per_second() potentially does.
  */
 void ECA_AUDIO_TIME::set_samples_per_second_keeptime(SAMPLE_SPECS::sample_rate_t srate)
 {
@@ -120,8 +121,8 @@ std::string ECA_AUDIO_TIME::to_string(format_type type) const
       {
 	return "";
       }
-    case format_seconds: { return(kvu_numtostr(seconds(), 3)); }
-    case format_samples: { return(kvu_numtostr(samples_rep)); }
+    case format_seconds: { return kvu_numtostr(seconds(), 3); }
+    case format_samples: { return kvu_numtostr(samples_rep); }
 
     default: { }
     }
