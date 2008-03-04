@@ -116,7 +116,7 @@ private:
                  child_length_rep;
   std::string child_name_rep;
   long int buffersize_rep;
-  bool child_active;
+  bool child_write_started;
   bool init_rep;
 
   RESOURCE_FILE ewf_rc;
@@ -125,6 +125,7 @@ private:
   void read_ewf_data(void) throw(ECA_ERROR&);
   void write_ewf_data(void);
   void init_default_child(void) throw(ECA_ERROR&);
+  SAMPLE_SPECS::sample_pos_t priv_public_to_child_pos(SAMPLE_SPECS::sample_pos_t pubpos) const;
   
   EWFFILE& operator=(const EWFFILE& x) { return *this; }
   EWFFILE (const EWFFILE& x) { }
