@@ -1058,7 +1058,11 @@ string ECA_CHAINSETUP_PARSER::general_options_to_string(void) const
       t << " -z:nodb";
   }
   else {
-    switch(csetup_repp->active_buffering_mode_rep) 
+    ECA_CHAINSETUP::Buffering_mode_t bmode =
+      csetup_repp->buffering_mode_rep;
+    if (csetup_repp->active_buffering_mode_rep != ECA_CHAINSETUP::cs_bmode_none)
+      bmode = csetup_repp->active_buffering_mode_rep;
+    switch(bmode)
       {
       case ECA_CHAINSETUP::cs_bmode_nonrt: 
 	{
