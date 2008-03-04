@@ -72,6 +72,8 @@ Berndtgen, Manfred [mb]
 	Bugfix to ecasignalview.
 Bolton, Sean [smbolton]
 	Patches for Mac OS X compability.
+Brulebois, Cyril [cyrilbrulebois]
+	Patches for issues reported by GCC 3.4.
 Campbell, Ross [rcampbel]
 	Tips concerning Solaris compatibility.
 Carmack, Michael [karmak]
