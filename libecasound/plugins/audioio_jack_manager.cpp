@@ -44,6 +44,8 @@
 #include "eca-chainsetup.h"
 #include "eca-logger.h"
 
+#include <cstring>
+
 /**
  * Enable and disable features
  */

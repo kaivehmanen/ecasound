@@ -23,6 +23,8 @@
 #include "kvu_numtostr.h"
 #include "kvu_procedure_timer.h"
 
+#include <cstring>
+
 PROCEDURE_TIMER::PROCEDURE_TIMER(int id) {
   reset();
   idstr_rep = "Timer-" + kvu_numtostr(id);

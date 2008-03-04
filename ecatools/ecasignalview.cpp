@@ -67,6 +67,8 @@
 
 #endif /* ECA_*CURSES_H */
 
+#include <cstring>
+
 /**
  * Import namespaces 
  */
