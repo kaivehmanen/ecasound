@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // audioio-typeselect.cpp: A proxy class for overriding default keyword
 //                         and filename associations.
-// Copyright (C) 2001,2002 Kai Vehmanen
+// Copyright (C) 2001,2002,2008 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +29,9 @@
 /**
  * Constructor.
  */
-AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) { 
-
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) constructor " + label() + ".");  
+AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void)
+{
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "constructor " + label() + ".");  
   init_rep = false;
 }
 
@@ -37,7 +40,7 @@ AUDIO_IO_TYPESELECT::AUDIO_IO_TYPESELECT (void) {
  */
 AUDIO_IO_TYPESELECT::~AUDIO_IO_TYPESELECT (void)
 {
-  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) destructor " + label() + ".");  
+  //  ECA_LOG_MSG(ECA_LOGGER::user_objects, "destructor " + label() + ".");  
 }
 
 AUDIO_IO_TYPESELECT* AUDIO_IO_TYPESELECT::clone(void) const
@@ -46,12 +49,12 @@ AUDIO_IO_TYPESELECT* AUDIO_IO_TYPESELECT::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-typeselect) open " + label() + ".");  
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
 
   if (init_rep != true) {
     AUDIO_IO* tmp = 0;
@@ -101,13 +104,13 @@ void AUDIO_IO_TYPESELECT::close(void)
 
 string AUDIO_IO_TYPESELECT::parameter_names(void) const
 { 
-  return(string("typeselect,format,") + child()->parameter_names()); 
+  return string("typeselect,format,") + child()->parameter_names(); 
 }
 
 void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
 { 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-typeselect) set_parameter "
+		"set_parameter "
 		+ label() + ".");  
 
   if (param > static_cast<int>(params_rep.size())) params_rep.resize(param);
@@ -125,7 +128,7 @@ void AUDIO_IO_TYPESELECT::set_parameter(int param, string value)
 string AUDIO_IO_TYPESELECT::get_parameter(int param) const
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"(audioio-typeselect) get_parameter "
+		"get_parameter "
 		+ label() + ".");  
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
@@ -133,8 +136,8 @@ string AUDIO_IO_TYPESELECT::get_parameter(int param) const
 	init_rep == true) {
       params_rep[param - 1] = child()->get_parameter(param - 2);
     }
-    return(params_rep[param - 1]);
+    return params_rep[param - 1];
   }
 
-  return(""); 
+  return "";
 }
