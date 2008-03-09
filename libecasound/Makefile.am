@@ -114,7 +114,9 @@ ecasound_audioio_include = 	\
 			audioio-reverse.h \
 			audioio-flac.h \
 			audioio-aac.h \
-			audioio-tone.h
+			audioio-tone.h \
+			audioio-seqbase.h \
+			audioio-acseq.h
 
 ecasound_midi_include =	\
 			midi-server.h \
@@ -259,7 +261,9 @@ ecasound_audioio1_src = audioio-cdr.cpp \
 			audioio-proxy.cpp \
 			audioio-flac.cpp \
 			audioio-aac.cpp \
-			audioio-tone.cpp
+			audioio-tone.cpp \
+			audioio-seqbase.cpp \
+			audioio-acseq.cpp
 
 if ECA_AM_COMPILE_OSS
 ecasound_audioio2_src = audioio-oss.cpp
