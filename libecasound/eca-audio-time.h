@@ -21,10 +21,12 @@ class ECA_AUDIO_TIME {
   ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, SAMPLE_SPECS::sample_rate_t sample_rate);
   ECA_AUDIO_TIME(double time_in_seconds);
   ECA_AUDIO_TIME(format_type type, const std::string& time);
+  ECA_AUDIO_TIME(const std::string& time);
   ECA_AUDIO_TIME(void);
 
   void set(format_type type, const std::string& time);
   void set_seconds(double seconds);
+  void set_time_string(const std::string& time);
   void set_samples(SAMPLE_SPECS::sample_pos_t samples);
   void set_samples_per_second(long int srate);
   void set_samples_per_second_keeptime(long int srate);

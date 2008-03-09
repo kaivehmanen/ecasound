@@ -26,6 +26,7 @@
 #include <cmath>
 
 #include <kvu_numtostr.h>
+#include <kvu_dbc.h>
 
 #include "eca-audio-time.h"
 
@@ -47,6 +48,11 @@ ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type,
   set(type, time);
 }
 
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(const std::string& time)
+{
+  set_time_string(time);
+}
+
 ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0),
 				       sample_rate_rep(44100)
 {
@@ -54,12 +60,12 @@ ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0),
 
 void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
 {
-  /* FIXME: not implemented! */
-
   switch(type) 
     {
-    case format_hour_min_sec: { }
-    case format_min_sec: { }
+      /* FIXME: not implemented! */
+    case format_hour_min_sec: { DBC_CHECK(false); }
+      /* FIXME: not implemented! */
+    case format_min_sec: { DBC_CHECK(false); }
     case format_seconds: { samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(sample_rate_rep * atof(time.c_str())); }
     case format_samples: { samples_rep = atol(time.c_str()); }
 
@@ -70,6 +76,15 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
 void ECA_AUDIO_TIME::set_seconds(double seconds)
 {
   samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * sample_rate_rep);
+}
+
+void ECA_AUDIO_TIME::set_time_string(const std::string& time)
+{
+  if (time.size() > 2 &&
+      time.find(time, time.size() - 2) != std::string::npos)
+    ECA_AUDIO_TIME::set(format_samples, std::string(time, 0, time.size() - 2));
+  else
+    ECA_AUDIO_TIME::set(format_seconds, time);
 }
 
 /**
