@@ -53,9 +53,16 @@ void ECA_AUDIO_TIME_TEST::do_run(void)
   ECA_AUDIO_TIME v ("88200sa");
   v.set_samples_per_second(44100);
   if (v.samples() != 88200)
-    ECA_TEST_FAILURE("Incorrect sample count.");
+    ECA_TEST_FAILURE("Incorrect sample count (from-samples).");
 
   if (v.seconds() != 2.0f)
-    ECA_TEST_FAILURE("Incorrect time in seconds.");
+    ECA_TEST_FAILURE("Incorrect time in seconds (from-samples).");
+
+  v.set_time_string("2.0");
+  if (v.samples() != 88200)
+    ECA_TEST_FAILURE("Incorrect sample count (from-secs).");
+
+  if (v.seconds() != 2.0f)
+    ECA_TEST_FAILURE("Incorrect time in seconds (from-secs).");
 
 }

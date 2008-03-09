@@ -30,6 +30,14 @@
 
 #include "eca-audio-time.h"
 
+/**
+ * FIXME notes  (last update 2008-03-09)
+ *
+ *  - Add varinat that allows specifying both sample position and
+ *    sampling rate to set_time_string(). E.g. "1234@44100sa" or
+ *    something similar.
+ */
+
 ECA_AUDIO_TIME::ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, 
 			       SAMPLE_SPECS::sample_rate_t sample_rate)
 {
@@ -63,12 +71,19 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
   switch(type) 
     {
       /* FIXME: not implemented! */
-    case format_hour_min_sec: { DBC_CHECK(false); }
+    case format_hour_min_sec: { DBC_CHECK(false); break; }
       /* FIXME: not implemented! */
-    case format_min_sec: { DBC_CHECK(false); }
-    case format_seconds: { samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(sample_rate_rep * atof(time.c_str())); }
-    case format_samples: { samples_rep = atol(time.c_str()); }
-
+    case format_min_sec: { DBC_CHECK(false); break; }
+    case format_seconds:
+      {
+	samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(sample_rate_rep * atof(time.c_str()));
+	break;
+      }
+    case format_samples:
+      {
+	samples_rep = atol(time.c_str());
+	break;
+      }
     default: { }
     }
 }
@@ -78,10 +93,19 @@ void ECA_AUDIO_TIME::set_seconds(double seconds)
   samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * sample_rate_rep);
 }
 
+/**
+ * Sets time based on string 'time'.
+ *
+ * The time string is by default interpreted as seconds (need not 
+ * be an integer but can be given as a decimal number, e.g. "1.05"). 
+ * However, if the string contains an integer number and has a postfix 
+ * of "sa" (e.g. "44100sa"), it is interpreted as time expressed as 
+ * samples (in case of a multichannel stream, time in sample frames).
+ */
 void ECA_AUDIO_TIME::set_time_string(const std::string& time)
 {
   if (time.size() > 2 &&
-      time.find(time, time.size() - 2) != std::string::npos)
+      time.find("sa") != std::string::npos)
     ECA_AUDIO_TIME::set(format_samples, std::string(time, 0, time.size() - 2));
   else
     ECA_AUDIO_TIME::set(format_seconds, time);
