@@ -413,12 +413,22 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
   if (wait_for_child() != true) {
     finished_rep = true;
     triggered_rep = false;
+    ECA_LOG_MSG(ECA_LOGGER::errors, "Attempt to write after child process has terminated.");
   }
   else {
     bytes_rep = ::write(filedes_rep, target_buffer, frame_size() * samples);
+
     if (bytes_rep < frame_size() * samples) {
       if (position_in_samples() == 0) 
 	ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+      else
+	ECA_LOG_MSG(ECA_LOGGER::errors, 
+		    "Error in writing to child process (to write " 
+		    + kvu_numtostr(frame_size() * samples) 
+		    + ", result "
+		    + kvu_numtostr(bytes_rep) 
+		    + ").");
+
       finished_rep = true;
     }
     else 

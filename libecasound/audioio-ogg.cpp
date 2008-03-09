@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-ogg.cpp: Interface for ogg vorbis decoders and encoders.
-// Copyright (C) 2000-2002,2004-2006 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2006,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -136,6 +136,7 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
   if (wait_for_child() != true) {
     finished_rep = true;
     triggered_rep = false;
+    ECA_LOG_MSG(ECA_LOGGER::errors, "Attempt to write after child process has terminated.");
   }
   else {
     if (filedes_rep > 0) {
@@ -144,11 +145,18 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
     else {
       bytes_rep = 0;
     }
-    if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
+    if (bytes_rep < frame_size() * samples) {
       finished_rep = true;
       triggered_rep = false;
+      ECA_LOG_MSG(ECA_LOGGER::errors, 
+		  "Error in writing to child process (to write " 
+		  + kvu_numtostr(frame_size() * samples) 
+		  + ", result "
+		  + kvu_numtostr(bytes_rep) 
+		  + ").");
     }
-    else finished_rep = false;
+    else 
+      finished_rep = false;
   }
 }
 

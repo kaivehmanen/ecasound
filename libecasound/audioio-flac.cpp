@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-flac.cpp: Interface to FLAC decoders and encoders using UNIX 
 //                   pipe i/o.
-// Copyright (C) 2004-2006 Kai Vehmanen
+// Copyright (C) 2004-2006,2008 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -156,6 +156,7 @@ void FLAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
   if (wait_for_child() != true) {
     finished_rep = true;
     triggered_rep = false;
+    ECA_LOG_MSG(ECA_LOGGER::errors, "Attempt to write after child process has terminated.");
   }
   else {
     if (filedes_rep > 0) {
@@ -164,11 +165,18 @@ void FLAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
     else {
       bytes_rep = 0;
     }
-    if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
+    if (bytes_rep < frame_size() * samples) {
       finished_rep = true;
       triggered_rep = false;
+      ECA_LOG_MSG(ECA_LOGGER::errors, 
+		  "Error in writing to child process (to write " 
+		  + kvu_numtostr(frame_size() * samples) 
+		  + ", result "
+		  + kvu_numtostr(bytes_rep) 
+		  + ").");
     }
-    else finished_rep = false;
+    else 
+      finished_rep = false;
   }
 }
 
