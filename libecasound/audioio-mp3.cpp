@@ -2,7 +2,7 @@
 // audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
 //                  input/output using standard streams. Defaults to
 //                  mpg123 and lame.
-// Copyright (C) 1999-2006 Kai Vehmanen
+// Copyright (C) 1999-2006,2008 Kai Vehmanen
 // Note! Routines for parsing mp3 header information were taken from XMMS
 //       1.2.5's mpg123 plugin. Improvements to parsing logic were
 //       contributed by Julian Dobson.
@@ -416,12 +416,13 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
   }
   else {
     bytes_rep = ::write(filedes_rep, target_buffer, frame_size() * samples);
-    if (bytes_rep < frame_size() * samples || bytes_rep == 0) {
+    if (bytes_rep < frame_size() * samples) {
       if (position_in_samples() == 0) 
 	ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
       finished_rep = true;
     }
-    else finished_rep = false;
+    else 
+      finished_rep = false;
   }
 }
 
