@@ -1,3 +1,13 @@
+2008-03-09  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-audio-time.h: Added overloaded constructor that takes a std::string
+	as parameter.
+	* eca-audio-time.h (set_time_string): Added.
+	* library interface version to 19:0:0.
+	* audioio-tone.h: File added.
+	* audioio-seqbase.h: File added.
+	* audioio-acseq.h: File added.
+		
 2007-08-14  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 18 frozen (2.4.6 release)
