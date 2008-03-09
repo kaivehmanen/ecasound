@@ -187,6 +187,25 @@ string AUDIO_IO::get_parameter(int param) const
   return "";
 }
 
+/** 
+ * Returns a debugging string for a parameter value change.
+ */
+string AUDIO_IO::parameter_get_to_string(int param) const
+{
+  return string("get_parameter of ")
+    + label() + ": " + kvu_numtostr(param) + ".";
+}
+
+/** 
+ * Returns a debugging string for a parameter value change.
+ */
+string AUDIO_IO::parameter_set_to_string(int param, string value) const
+{
+  return string("set_parameter of ")
+    + label() + ": " + kvu_numtostr(param) 
+    + " to " + value + ".";
+}
+
 // ===================================================================
 // Main functionality
 

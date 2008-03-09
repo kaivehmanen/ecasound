@@ -329,6 +329,9 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   void position(const ECA_AUDIO_TIME& v);
   void length(const ECA_AUDIO_TIME& v);
 
+  std::string parameter_get_to_string(int param) const;
+  std::string parameter_set_to_string(int param, std::string value) const;
+
   /*@{*/
 
  private:
