@@ -14,7 +14,7 @@ skip to the summary at the end of the article :)):
 
   http://www.chiark.greenend.org.uk/~sgtatham/bugs.html
 
-Ecasound Development Items - (edi-x) codes
+Ecasound Development Items - '(edi-x)' codes
 -----------------------------------------------------------------------
 
 The Ecasound Development Item concept is used for keeping track of 
@@ -35,7 +35,10 @@ feature/improvement items.
 Known Bugs and Features (not in other issue trackers)
 -----------------------------------------------------------------------
 
-- commas in filenames given as arguments to -i and -o options need
+In addition to the below items, some known missing features have been
+listed in the 'TODO' file (in same directory as this file).
+
+- commas in filenames given as arguments to '-i' and '-o' options need
   to be either escaped with backslashes (-i foo\\,bar.wav) or quoted
   with doublequotes (-i "foo,bar.wav")
 - certain combinations of glibc and linux-2.6 kernels cause the 'cs-edit' 
@@ -44,11 +47,11 @@ Known Bugs and Features (not in other issue trackers)
   before running ecasound; see http://people.redhat.com/drepper/assumekernel.html
   for background information on LD_ASSUME_KERNEL
 - ecasound cannot parse ogg and flac headers so correct audio
-  format parameters must be set manually with ecasound's -f option
+  format parameters must be set manually with ecasound's '-f' option
 - pitch shifter (-ei) doesn't work with all real-time audio object
   types (for instance JACK)
 - ecasound crashes if /dev/midi points to an invalid rawmidi device
-- MIDI-ops like -km can't be used in presets
+- MIDI-ops like '-km' cannot be used in presets
 - controller sources and big buffersizes
 	- distortion results for example if sine-oscillators
   	  are used with big buffersize (-b:X) settings

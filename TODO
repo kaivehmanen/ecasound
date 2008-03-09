@@ -17,13 +17,6 @@ list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 [ Active development areas ]
 -----------------------------------------------------------------------
 
-2.4:
-
-- better handling and reporting of errors when parsing chainsetups
-- addition of separate modes for 'sum-divide' and 'sum-only' mixing
-
-2.5: 
-
 - improvements to JACK usage; some candidate features to implement:
     - jack_multi object 
     - interactive mode commands like jack-connect, jack-disconnect, 
@@ -40,7 +33,8 @@ not roadmapped, but if time permits
 - improve support for use-scenarios involving audio file sequencing 
     - improvements to the .ewf file format
 - integration with other audio apps
-    - LADSPA: RDF plugin metadata, LV2 
+    - LADSPA: RDF plugin metadata
+    - LV2 plugin support
     - LASH session management
     - OSC
 - core sound processing
