@@ -5,7 +5,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{06122006}
+\date{09032008}
 \begin{document}
 
 \maketitle
@@ -30,6 +30,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 09.03.2008 - Updated the EWF file section. Replace uses of ``/dev/dsp''
+                   with ``alsa'' in many examples.
 \item 06.12.2006 - Added notes concerning quoting EOS arguments containing
                    commas.
 \item 04.06.2006 - Some minor improvements to the text. Updated the descriptions of
@@ -358,7 +360,7 @@ resulting stereo output to soundcard, is:
 ecasound -a:1 -i:monofile1.wav -erc:1,2 -epp:0 \
          -a:2 -i:monofile2.wav -erc:1,2 -epp:50 \
          -a:3 -i:monofile3.wav -erc:1,2 -epp:100 \
-         -a:all -f:16,2,44100 -o:/dev/dsp
+         -a:all -f:16,2,44100 -o:alsa
 \end{verbatim}
 
 The actual signal chain is something like:
@@ -367,8 +369,8 @@ The actual signal chain is something like:
 monofile1.wav |--'1'---- erc ----| epp |---\
                            \-----|     |---\\
                                             \\
-monofile2.wav |--'2'---- erc ----| epp |------- | /dev/dsp
-                           \-----|     |------- | 
+monofile2.wav |--'2'---- erc ----| epp |------- | alsa
+                           \-----|     |------- |
                                             //
 monofile3.wav |--'3'---- erc ----| epp |---//
                            \-----|     |---/
@@ -477,14 +479,14 @@ the way monitoring is done:
 
 \begin{verbatim}
 # increased refresh rate 20Hz
-ecasignalview -r:50 /dev/dsp null
+ecasignalview -r:50 alsa null
 
 # larger buffersize (1024 samples)
-ecasignalview -b:1024 /dev/dsp null
+ecasignalview -b:1024 alsa null
 
 # recording in mode 32bit/10channels/96000Hz with
 # interleaved channels 
-ecasignalview -f:s32,10,96000,i /dev/dsp null
+ecasignalview -f:s32,10,96000,i alsa null
 \end{verbatim}
 
 \subsection{Monitoring Non-realtime Sources}
@@ -528,7 +530,7 @@ to chain ``3'' which is connected to a soundcard output.
 # it is used to associate loop inputs with correct loop outputs
 ecasound -a:1 -i:some.mp3 -o:loop,1
          -a:2 -i:another.mp3 -o:loop,1
-         -a:3 -i:loop,1 -o /dev/dsp -ea:200
+         -a:3 -i:loop,1 -o alsa -ea:200
 --cut--
 
 \end{verbatim}
@@ -538,15 +540,23 @@ applied to the signal. This does have one downside, loop device
 adds latency (-b:x -> latency of x frames). 
 
 % ----------------------------------------------------------------------
-\section{Ecasound wave files - the .ewf format}
+\section{Ecasound Wave Files - the EWF (.ewf) format}
 
 \subsection{General}
 
-Ecasound wave file (.ewf) is a simple wrapper format for controlling 
+Ecasound Wave File (.ewf) is a simple wrapper format for controlling 
 other audio objects. Ewf files are useful for offsetting or time-shifting
 audio files (for instance play a short audio clip in the middle of 
 a long multitrack mix), for minimizing diskspace usage during
 multitrack recording (output offsetting ) and looping.
+
+Starting from Ecasound version 2.5.0, similar functionality is
+provided by special purpose audio object types 'audioloop', 'audioselect'
+and others. You may choose between EWF and these audio object types
+based on your specific needs.
+
+Writing to EWF file is nowadays considered to be a deprecated
+feature and it may be removed in a future release.
 
 \subsection{File format}
 
@@ -556,12 +566,18 @@ pairs. The same syntax is used with Ecasound resource files. See
 recognized ewf keywords are:
 
 \begin{itemize}
-\item  source - audio object name {[}read,write{]}
-\item  offset - insert audio object at offset (seconds) {[}read,write{]} 
-\item  start-position - start offset inside audio object (seconds) {[}read{]}
-\item  length - how much of audio object data is used (seconds) {[}read{]}
+\item  source - audio object name (string) {[}read,write{]}
+\item  offset - insert audio object at offset (time) {[}read,write{]} 
+\item  start-position - start offset inside audio object (time) {[}read{]}
+\item  length - how much of audio object data is used (time) {[}read{]}
 \item  looping - whether to loop sample data (true or false) {[}read{]}
 \end{itemize}
+
+All time values are interpreted as seconds (need not be an integer
+but can be given as a decimal number, e.g. ``1.05''). However if 
+the value is an integer number and has a postfix of ``sa'' (e.g. 
+``44100sa''), it is interpreted as time expressed as samples (in
+case of a multichannel stream, time in sample frames).
 
 \subsection{Example of ewf use}
 
@@ -577,7 +593,7 @@ looping = true
 --cut--
 \end{verbatim} 
 
-Now what happens when you issue "ecasound -i test.ewf -o /dev/dsp"? 
+Now what happens when you issue "ecasound -i test.ewf -o alsa"? 
 Because of the ``offset'' definition, the first 5 seconds will be 
 silent. After that ecasound will start to read data from ``test.wav''.
 But as ``start-position'' is not zero, ecasound will skip the 
@@ -628,7 +644,7 @@ Once defined, you can use the preset in the following way:
 --cut--
 ecasound -a:1 -i:some.mp3 -pf:bassbooster.ecp
          -a:2 -i:another.mp3 -pf:bassbooster.ecp
-         -a:1,2 -o:/dev/dsp
+         -a:1,2 -o:alsa
 --cut--
  \end{verbatim} 
 
@@ -647,7 +663,7 @@ like:
 --cut--
 ecasound -a:1 -i:some.mp3 -pn:bassbooster
          -a:2 -i:another.mp3 -pn:bassbooster
-         -a:1,2 -o:/dev/dsp
+         -a:1,2 -o:alsa
 --cut--
 \end{verbatim} 
 
@@ -669,8 +685,8 @@ following two commands will results in identical output:
 
 \begin{verbatim}
 --cut--
-ecasound -i:foo.mp3 -o:/dev/dsp -pn:f_res_lowpass,800
-ecasound -i:foo.mp3 -o:/dev/dsp -ef3:800,1.5,0.7
+ecasound -i:foo.mp3 -o:alsa -pn:f_res_lowpass,800
+ecasound -i:foo.mp3 -o:alsa -ef3:800,1.5,0.7
 --cut--
 \end{verbatim}
 
