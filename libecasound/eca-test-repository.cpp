@@ -48,6 +48,7 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
  * List of unit tests defined in libecasound.
  */
 
+#include "eca-audio-time_test.h"
 #include "eca-control_test.h"
 #include "eca-session_test.h"
 #include "eca-object-factory_test.h"
@@ -61,6 +62,7 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
  */
 ECA_TEST_REPOSITORY::ECA_TEST_REPOSITORY(void)
 {
+  test_cases_rep.push_back(new ECA_AUDIO_TIME_TEST());
   test_cases_rep.push_back(new ECA_SESSION_TEST());
   test_cases_rep.push_back(new ECA_CONTROL_TEST());
   test_cases_rep.push_back(new ECA_OBJECT_FACTORY_TEST());
