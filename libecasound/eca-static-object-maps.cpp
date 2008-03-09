@@ -82,6 +82,8 @@
 #include "audioio-typeselect.h"
 #include "audioio-resample.h"
 #include "audioio-reverse.h"
+#include "audioio-tone.h"
+#include "audioio-acseq.h"
 
 #ifndef ECA_ENABLE_AUDIOIO_PLUGINS
 #ifdef ECA_COMPILE_AUDIOFILE
@@ -302,6 +304,8 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("resample-hq", "^resample-hq$", new AUDIO_IO_RESAMPLE());
   objmap->register_object("resample-lq", "^resample-lq$", new AUDIO_IO_RESAMPLE());
   objmap->register_object("reverse", "^reverse$", new AUDIO_IO_REVERSE());
+  objmap->register_object("tone", "^tone$", new AUDIO_IO_TONE());
+  objmap->register_object("audioloop", "^audioloop$", new AUDIO_CLIP_SEQUENCER());
 
   if (native_flac != true) {
     AUDIO_IO* forkedflac = new FLAC_FORKED_INTERFACE();
