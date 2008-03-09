@@ -84,12 +84,12 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
   /**
    * Returns frame size in bytes (sample size * channels)
    */
-  int frame_size(void) const { return(align_rep * channels_rep); }
+  int frame_size(void) const { return align_rep * channels_rep; }
 
   /**
    * Returns sample size in bytes (size of individual sample value)
    */
-  int sample_size(void) const { return(align_rep); }
+  int sample_size(void) const { return align_rep; }
 
   /**
    * How many bits are used to represent one sample value. 
@@ -106,28 +106,28 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
   /**
    * Returns sample coding. See @ref Sample_coding
    */
-  Sample_coding sample_coding(void) const { return(sc_rep); }
+  Sample_coding sample_coding(void) const { return sc_rep ; }
 
   /**
    * Returns sample endianess. See @ref Sample_endianess
    */
-  Sample_endianess sample_endianess(void) const { return(se_rep); }
+  Sample_endianess sample_endianess(void) const { return se_rep; }
 
   /**
    * Returns sampling rate in bytes per second (data transfer 
    * rate).
    */
-  long int bytes_per_second(void) const { return(samples_per_second() * align_rep * channels_rep); }
+  long int bytes_per_second(void) const { return samples_per_second() * align_rep * channels_rep; }
 
   /** 
    * Returns number of channels.
    */
-  SAMPLE_SPECS::channel_t channels(void) const { return(channels_rep); }
+  SAMPLE_SPECS::channel_t channels(void) const { return channels_rep; }
 
   /**
    * Are channels interleaved?
    */
-  bool interleaved_channels(void) const { return(ileaved_rep); }
+  bool interleaved_channels(void) const { return ileaved_rep; }
 
   /** 
    * Returns an identical audio format object
