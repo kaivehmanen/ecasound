@@ -270,6 +270,9 @@ private:
   void start_realtime_objects(void);
   void reset_realtime_devices(void);
 
+  void start_forked_objects(void);
+  void stop_forked_objects(void);
+
   /*@}*/
 
   /** @name Private functions for observing and modifying position  */
