@@ -12,7 +12,7 @@
  * @author Kai Vehmanen
  */
 class FLAC_FORKED_INTERFACE : public AUDIO_IO_BUFFERED,
-			      protected AUDIO_IO_FORKED_STREAM {
+			      public AUDIO_IO_FORKED_STREAM {
 
  private:
   

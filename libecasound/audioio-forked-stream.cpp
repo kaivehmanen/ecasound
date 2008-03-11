@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-forked-streams.cpp: Helper class providing routines for
 //                             forking for piped input/output.
-// Copyright (C) 2000-2004,2006 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -78,6 +78,21 @@ static int afs_run_exec(const string& command, const string& filename)
   }
   args[p] = 0;
   return execvp(temp[0].c_str(), const_cast<char**>(args));
+}
+
+AUDIO_IO_FORKED_STREAM::~AUDIO_IO_FORKED_STREAM(void)
+{
+}
+
+void AUDIO_IO_FORKED_STREAM::start_io(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "start_io()");
+}
+
+void AUDIO_IO_FORKED_STREAM::stop_io(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "stop_io()");
+  clean_child(false);
 }
 
 /**
@@ -347,6 +362,9 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     }
     else {
       if (res < 0)
+	/* FIXME: the following is printed out even in 
+	 *        normal circumstances (like seeking with
+	 *        an mp3 input */
 	perror("waitpid");
     }
   }

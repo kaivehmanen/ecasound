@@ -14,7 +14,7 @@
  * @author Kai Vehmanen
  */
 class MP3FILE : public AUDIO_IO_BUFFERED,
-		protected AUDIO_IO_FORKED_STREAM {
+		public AUDIO_IO_FORKED_STREAM {
 
  private:
   

@@ -4,6 +4,8 @@
 #include <string>
 #include <kvu_temporary_file_directory.h>
 
+#include "audioio-barrier.h"
+
 /**
  * Helper class providing routines for forking new processes 
  * and creating read/write pipes between the child and the 
@@ -11,7 +13,7 @@
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO_FORKED_STREAM {
+class AUDIO_IO_FORKED_STREAM : public AUDIO_IO_BARRIER {
 
  private:
 
@@ -29,7 +31,25 @@ class AUDIO_IO_FORKED_STREAM {
   void init_temp_directory(void);
   void fork_child_for_fifo_read(void);
 
- public:
+public:
+
+  /**
+   * Starts I/O processing. 
+   * 
+   * The read_buffer()/write_buffer() functions will not be called
+   * before I/O started.
+   */
+  virtual void start_io(void);
+
+  /**
+   * Stops I/O processing. 
+   * 
+   * The read_buffer()/write_buffer() functions will not be called
+   * after I/O has been stopped.
+   */
+  virtual void stop_io(void);
+
+ protected:
   
   /**
    * Initializes the command string. This must be done before any other set_* 
@@ -54,12 +74,15 @@ class AUDIO_IO_FORKED_STREAM {
   int pid_of_child(void) const { return(pid_of_child_rep); }
   int file_descriptor(void) const { return(fd_rep); }
 
+public:
+
   AUDIO_IO_FORKED_STREAM(void) : 
     pid_of_child_rep(0),
     fd_rep(0),
     last_fork_rep(false),
     tmp_file_created_rep(false),
     use_named_pipe_rep(false) { }
+  virtual ~AUDIO_IO_FORKED_STREAM(void);
 };
 
 #endif

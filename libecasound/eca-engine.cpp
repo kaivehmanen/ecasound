@@ -46,6 +46,8 @@
 #include "audioio-device.h"
 #include "audioio-db-client.h"
 #include "audioio-loop.h"
+#include "audioio-barrier.h"
+#include "audioio-mp3.h"
 #include "midi-server.h"
 #include "eca-chain.h"
 #include "eca-chainop.h"
@@ -604,8 +606,9 @@ void ECA_ENGINE::prepare_operation(void)
     if ((*chains_repp)[i]->is_initialized() != true) (*chains_repp)[i]->init(0, 0, 0);
   }
 
-  /* 3. start subsystem servers */
+  /* 3. start subsystem servers and forked audio objects */
   start_servers();
+  start_forked_objects();
 
   /* 4. prepare rt objects */
   prepare_realtime_objects();
@@ -708,6 +711,7 @@ void ECA_ENGINE::stop_operation(void)
   mixslot_repp->set_rt_lock(false);
 
   stop_servers();
+  stop_forked_objects();
 
   /* lower priority back to normal */
   if (csetup_repp->raised_priority() == true) {
@@ -917,6 +921,39 @@ void ECA_ENGINE::stop_servers(void)
   if (use_midi_rep == true) {
     csetup_repp->midi_server_repp->stop();
   }
+}
+
+/**
+ * Goes through all input/outputs in 'vec', checks whether they 
+ * implement the AUDIO_IO_BARRIER interface, and if yes, 
+ * issues either 'start_io()' or 'stop_io()' on them.
+ */
+static void priv_toggle_forked_objects(bool start, std::vector<AUDIO_IO*>* vec)
+{
+  unsigned int n;
+  for(n = 0; n < vec->size(); n++) {
+    AUDIO_IO_BARRIER *barrier
+      = dynamic_cast<AUDIO_IO_BARRIER*>((*vec)[n]);
+
+    if (barrier) {
+      if (start)
+	barrier->start_io();
+      else
+	barrier->stop_io();
+    }
+  }
+}
+
+void ECA_ENGINE::start_forked_objects(void)
+{
+  priv_toggle_forked_objects(true, inputs_repp);
+  priv_toggle_forked_objects(true, outputs_repp);
+}
+
+void ECA_ENGINE::stop_forked_objects(void)
+{
+  priv_toggle_forked_objects(false, inputs_repp);
+  priv_toggle_forked_objects(false, outputs_repp);
 }
 
 void ECA_ENGINE::prepare_realtime_objects(void)
