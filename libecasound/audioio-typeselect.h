@@ -40,6 +40,7 @@ class AUDIO_IO_TYPESELECT : public AUDIO_IO_PROXY {
   /*@{*/
 
   virtual std::string parameter_names(void) const;
+  virtual bool variable_params(void) const { return true; }
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
 

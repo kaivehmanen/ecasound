@@ -57,6 +57,7 @@ class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
   /** @name Public functions reimplemented from DYNAMIC_PARAMETERS */
   /*@{*/
 
+  virtual bool variable_params(void) const { return true; }
   virtual std::string parameter_names(void) const { return("param-id,range-low,range-high," +  source->parameter_names()); }
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;

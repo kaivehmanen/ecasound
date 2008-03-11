@@ -22,6 +22,7 @@ public:
 
   virtual std::string name(void) const { return("DC-Fix"); }
   virtual std::string description(void) const { return("Adjusts DC-offset."); }
+  virtual bool variable_params(void) const { return true; }
   virtual std::string parameter_names(void) const;
   virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
 
