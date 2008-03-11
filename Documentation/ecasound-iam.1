@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "13\&.08\&.2007" "" "Multimedia software"
+.TH "ecasound-iam" "1" "03\&.03\&.2008" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -83,12 +83,19 @@ Returns a string describing the engine status (running, stopped,
 finished, error, not ready)\&. See also \fIcs-status\fP\&. \fI[s]\fP
 .PP 
 .IP "engine-launch"
-Initializes and starts the engine\&. Doesn\&'t start the actual
-processing\&. See also \fIstart\fP\&. \fI[-]\fP
+Starts the real-time engine\&. Engine will execute the currently
+connected chainsetup (see \&'cs-connect)\&. This action does not yet
+start actual processing (see \fIstart\fP and \fIstop\fP)\&. When
+ecasound is used as a JACK client, issuing \fIengine-launch\fP 
+makes ecasound an active JACK client (i\&.e\&. ecasound\&'s ports
+can be connected to other JACK clients)\&. \fI[-]\fP
 .PP 
 .IP "engine-halt"
 Stops the engine\&. Does not disconnect the chainsetup that 
-was running\&. See also \fIstop\fP\&. \fI[-]\fP
+was running\&. See also \fIcs-disconnet\fP and \fIstop\fP\&. When
+ecasound is used as a JACK client, \fIengine-halt\fP will 
+cause ecasound to become a deactivated client (all JACK
+connections are torn down)\&. \fI[-]\fP
 .PP 
 .SH "CHAINSETUPS"
 Chainsetup is the central data object\&. All other objects (inputs,
@@ -142,12 +149,15 @@ editing, the chainsetup is loaded back to ecasound\&. \fI[-]\fP
 Whether currently selected chainsetup is valid (=can be connected)? \fI[i]\fP
 .PP 
 .IP "cs-connect"
-Connect currently selected chainsetup to engine\&. Only one chainsetup
-can be connected at a time\&. Error string is returned if connection 
-fails\&. \fI[e]\fP
+Connect currently selected chainsetup to engine\&. When connecting, 
+all resources (e\&.g\&. files, soundcard devices, external programs) needed 
+to execute the chainsetup are reserved\&. Only one chainsetup can be connected 
+at a time\&. Error string is returned if connection fails (for instance
+due to error in allocating the resources)\&. \fI[e]\fP
 .PP 
 .IP "cs-disconnect"
-Disconnect currently connected chainsetup\&. \fI[-]\fP
+Disconnect currently connected chainsetup\&. This action will free
+all external resources needed by the chainsetup\&. \fI[-]\fP
 .PP 
 .IP "cs-connected"
 Returns the name of currently connected chainsetup\&. \fI[s]\fP
@@ -400,10 +410,7 @@ Adds a new chain operator\&. In addition to normal chain operators,
 this commmand can also be used to add effect presets and various 
 plugins\&. Note; it is not possible to add operators to multiple
 chains at once\&. In other words only one chain should be selected
-when issuing \&'cop-add\&'\&. Argument format is 
-"-<id_string>:par1,\&.\&.\&.,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes)\&. See 
-ecasound (1) man page for more info\&. \fI[-]\fP
+when issuing \&'cop-add\&'\&.  See ecasound (1) man page for more info\&. \fI[-]\fP
 .PP 
 .IP "cop-describe"
 Returns a Ecasound Option Syntax (EOS) compliant string
@@ -462,10 +469,10 @@ selected chainsetup and chains are used\&.
 .IP 
 .IP "ctrl-add \&'copc_format_string\&'"
 Adds a new controller and attach it to currently selected chain 
-operator\&. Argument format is "-<id_string>:<param_id>,<range_low>,
-<range_high>,par1,\&.\&.\&.,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes)\&.  See ecasound (1) 
-man page for more info\&. \fI[-]\fP
+operator\&. The argument syntax is either "-<id_string>:par1,\&.\&.\&.,parN" 
+or just "<id_string>:par1,\&.\&.\&.,parN"\&. If parameter itself contains 
+commas, the parameter should be enclosed in double-quotes\&.
+See ecasound (1) man page for more info\&. \fI[-]\fP
 .IP 
 .IP "ctrl-describe"
 Returns a Ecasound Option Syntax (EOS) compliant string

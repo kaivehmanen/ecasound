@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "13\&.08\&.2007" "" "Multimedia software"
+.TH "ecasound" "1" "26\&.08\&.2007" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -337,6 +337,14 @@ a null audio device is created\&. This is useful if you just want
 to analyze sample data without writing it to a file\&. There\&'s 
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed\&.
+.IP 
+.IP "Tone generator"
+To generate a test tone, input \fB-i:tone,freq,duration-secs,type\fP 
+can be used\&. Parameter \&'freq\&' is the frequency of the test 
+tone generated, \&'duration-secs\&' is the duration in seconds 
+(zero or negative value will produce an infinite stream), and \&'type
+a string specifying the tone type (currently only \&'sine\&' is
+supported)\&. This feature was first added to Ecasound 2\&.4\&.7\&.
 .IP 
 .IP "Resample - access object of different sample rates"
 Object type \&'resample\&' can be used to resample audio 
