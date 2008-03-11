@@ -14,7 +14,7 @@ class ECA_OBJECT {
 
  public:
 
-  virtual ~ECA_OBJECT (void) { }
+  virtual ~ECA_OBJECT (void) {}
 
   /**
    * Object name used to identify the object type. In most 

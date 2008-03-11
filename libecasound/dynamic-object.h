@@ -19,7 +19,7 @@ class DYNAMIC_OBJECT : public DYNAMIC_PARAMETERS<T>,
 
  public:
 
-  virtual ~DYNAMIC_OBJECT (void) { }
+  virtual ~DYNAMIC_OBJECT (void) {}
 
   /**
    * Virtual method that clones the current object and returns 
