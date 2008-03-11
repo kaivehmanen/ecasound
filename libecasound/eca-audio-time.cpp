@@ -38,34 +38,56 @@
  *    something similar.
  */
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(SAMPLE_SPECS::sample_pos_t samples, 
-			       SAMPLE_SPECS::sample_rate_t sample_rate)
+using SAMPLE_SPECS::sample_pos_t;
+using SAMPLE_SPECS::sample_rate_t;
+
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(sample_pos_t samples, 
+			       sample_rate_t sample_rate)
 {
   set_samples_per_second(sample_rate);
   set_samples(samples);
+  rate_set_rep = true;
 }
 
 ECA_AUDIO_TIME::ECA_AUDIO_TIME(double time_in_seconds)
+  : samples_rep(0),
+    sample_rate_rep(ECA_AUDIO_TIME::invalid_srate),
+    rate_set_rep(false)
 {
   set_seconds(time_in_seconds);
+  rate_set_rep = true;
 }
+
 
 ECA_AUDIO_TIME::ECA_AUDIO_TIME(format_type type, 
 			       const std::string& time)
+  : samples_rep(0),
+    sample_rate_rep(ECA_AUDIO_TIME::invalid_srate),
+    rate_set_rep(false)
 {
   set(type, time);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(const std::string& time)
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(const std::string& time) 
+  : samples_rep(0),
+    sample_rate_rep(ECA_AUDIO_TIME::invalid_srate),
+    rate_set_rep(false)
 {
   set_time_string(time);
 }
 
-ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) : samples_rep(0),
-				       sample_rate_rep(44100)
+ECA_AUDIO_TIME::ECA_AUDIO_TIME(void) 
+  : samples_rep(0),
+    sample_rate_rep(ECA_AUDIO_TIME::invalid_srate),
+    rate_set_rep(false)
 {
 }
 
+/**
+ * Sets time based on 'type', 'time' and 'srate'.
+ *
+ * @param sample_rate a value of zero will be ignored.
+ */
 void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
 {
   switch(type) 
@@ -76,7 +98,8 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
     case format_min_sec: { DBC_CHECK(false); break; }
     case format_seconds:
       {
-	samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(sample_rate_rep * atof(time.c_str()));
+	double seconds = atof(time.c_str());
+	set_seconds(seconds);
 	break;
       }
     case format_samples:
@@ -88,19 +111,34 @@ void ECA_AUDIO_TIME::set(format_type type, const std::string& time)
     }
 }
 
+/**
+ * Sets time expressed in seconds. Additionally sample_rate is given
+ * to express the timing accuracy.
+ *
+ * @param sample_rate a value of zero will be ignored.
+ */
 void ECA_AUDIO_TIME::set_seconds(double seconds)
 {
+  if (sample_rate_rep ==
+      ECA_AUDIO_TIME::invalid_srate) {
+    sample_rate_rep = ECA_AUDIO_TIME::default_srate;
+    rate_set_rep = true;
+  }
+
   samples_rep = static_cast<SAMPLE_SPECS::sample_pos_t>(seconds * sample_rate_rep);
 }
 
 /**
- * Sets time based on string 'time'.
+ * Sets time based on string 'time'. Additionally sample_rate is given
+ * to express the timing accuracy.
  *
  * The time string is by default interpreted as seconds (need not 
  * be an integer but can be given as a decimal number, e.g. "1.05"). 
  * However, if the string contains an integer number and has a postfix 
  * of "sa" (e.g. "44100sa"), it is interpreted as time expressed as 
  * samples (in case of a multichannel stream, time in sample frames).
+ *
+ * @param sample_rate a value of zero will be ignored.
  */
 void ECA_AUDIO_TIME::set_time_string(const std::string& time)
 {
@@ -122,27 +160,41 @@ void ECA_AUDIO_TIME::set_samples(SAMPLE_SPECS::sample_pos_t samples)
 }
 
 /**
- * Sets samples per second.
+ * Sets samples per second. Additionally sample_rate is given
+ * to express the timing accuracy.
  *
  * Note, this can change the value of seconds().
  */
 void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)
 {
-  sample_rate_rep = srate;
-} 
+  if (srate > 0) {
+    sample_rate_rep = srate;
+    rate_set_rep = true;
+  }
+  else 
+    sample_rate_rep = ECA_AUDIO_TIME::invalid_srate;
+}
 
 /**
  * Sets samples per second.
  *
- * Note, this does NOT change the value of seconds()
- * like set_samples_per_second() potentially does.
+ * Note, if sampling rate has been set earlier, this function 
+ * does NOT change the value of seconds() like 
+ * set_samples_per_second() potentially does.
  */
-void ECA_AUDIO_TIME::set_samples_per_second_keeptime(SAMPLE_SPECS::sample_rate_t srate)
+void ECA_AUDIO_TIME::set_samples_per_second_keeptime(sample_rate_t srate)
 {
-  if (sample_rate_rep != srate) {
-    double time_secs = seconds();
-    set_samples_per_second(srate);
-    set_seconds(time_secs);
+  if (srate > 0 &&
+      sample_rate_rep != srate) {
+    if (rate_set_rep == true) {
+      /* only needed if sampling rate has been set */
+      double time_secs = seconds();
+      set_samples_per_second(srate);
+      set_seconds(time_secs);
+    }
+    else {
+      set_samples_per_second(srate);
+    }
   }
 }
   
@@ -160,7 +212,7 @@ std::string ECA_AUDIO_TIME::to_string(format_type type) const
       {
 	return "";
       }
-    case format_seconds: { return kvu_numtostr(seconds(), 3); }
+    case format_seconds: { return kvu_numtostr(seconds(), 6); }
     case format_samples: { return kvu_numtostr(samples_rep); }
 
     default: { }
@@ -171,7 +223,12 @@ std::string ECA_AUDIO_TIME::to_string(format_type type) const
 
 double ECA_AUDIO_TIME::seconds(void) const
 {
-  return static_cast<double>(samples_rep) / sample_rate_rep;
+  if (rate_set_rep)
+    return static_cast<double>(samples_rep) / sample_rate_rep;
+  else {
+    sample_rate_rep = ECA_AUDIO_TIME::default_srate;
+    rate_set_rep = true;
+  }
 }
 
 SAMPLE_SPECS::sample_rate_t ECA_AUDIO_TIME::samples_per_second(void) const

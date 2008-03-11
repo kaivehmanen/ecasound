@@ -12,7 +12,11 @@ class ECA_AUDIO_TIME {
  private:
 
   SAMPLE_SPECS::sample_pos_t samples_rep;
-  SAMPLE_SPECS::sample_rate_t sample_rate_rep;
+  mutable SAMPLE_SPECS::sample_rate_t sample_rate_rep;
+  mutable bool rate_set_rep;
+
+  static const SAMPLE_SPECS::sample_rate_t default_srate = 384000;
+  static const SAMPLE_SPECS::sample_rate_t invalid_srate = -1;
 
  public:
 
