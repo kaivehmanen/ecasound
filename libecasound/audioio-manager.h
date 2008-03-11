@@ -82,6 +82,8 @@ class AUDIO_IO_MANAGER : public DYNAMIC_OBJECT<std::string> {
    */
   virtual void unregister_object(int id) = 0;
 
+  virtual ~AUDIO_IO_MANAGER(void) {}
+
   /*@}*/
 
 };
