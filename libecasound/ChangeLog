@@ -1,3 +1,18 @@
+2008-03-11  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* dynamic-parameters.h (variable_params): Added.
+
+2008-03-10  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-audio-time.h: Modified constructor variants. Added sample_rate as
+	a parameter to most setter functions.
+	* audioio-aac.h, audioio-flac.h, audioio-mikmod.h, audioio-ogg.h, audioio-timidity.h: 
+	Inheritance of AUDIO_IO_FORKED_STREAM changed from protected to public.
+	* audioio-forked-stream.h (start_io,stop_io): Added new functions. Most
+	of the other public functions moved to protected status.
+	* audioio-forked-stream.h: Class now inherits AUDIO_IO_BARRIER.
+	* audioio-barrier.h: File added.
+
 2008-03-09  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-audio-time.h: Added overloaded constructor that takes a std::string
@@ -7,6 +22,8 @@
 	* audioio-tone.h: File added.
 	* audioio-seqbase.h: File added.
 	* audioio-acseq.h: File added.
+	* audioio-ewf.h: Rebased implementation on the new AUDIO_SEQUENCER_BASE
+	interface.
 		
 2007-08-14  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 

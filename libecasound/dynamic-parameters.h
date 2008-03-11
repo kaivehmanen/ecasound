@@ -20,12 +20,18 @@ class DYNAMIC_PARAMETERS {
 
  public:
 
-  virtual ~DYNAMIC_PARAMETERS (void) { }
+  virtual ~DYNAMIC_PARAMETERS (void) {}
 
   /**
    * Gets the total number of of parameters.
    */
   int number_of_params(void) const { return kvu_get_number_of_arguments(parameter_names()); }
+
+  /**
+   * Whether parameters (and number_of_params()) may be added
+   * during object life-cycle.
+   */
+  virtual bool variable_params(void) const { return false; } 
 
   /**
    * Gets name of parameter with index 'id'.
