@@ -5,7 +5,7 @@
 <body>
 <hr>
 <h1>ecasound</h1>
-<h2>13.08.2007</h2>
+<h2>26.08.2007</h2>
 
 <html><head>
 <link rev="made" href="mailto:kvehmanen -at- eca -dot- cx">
@@ -22,7 +22,7 @@
 <hr>
 <h1>ecasound(1)</h1>
 <h2> Multimedia software</h2>
-<h2>13.08.2007</h2>
+<h2>26.08.2007</h2>
 
 
 <p>
@@ -375,6 +375,14 @@ a null audio device is created. This is useful if you just want
 to analyze sample data without writing it to a file. There's 
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed.
+<p>
+<p><dt><strong>Tone generator</strong><dd>
+To generate a test tone, input <strong>-i:tone,freq,duration-secs,type</strong> 
+can be used. Parameter 'freq' is the frequency of the test 
+tone generated, 'duration-secs' is the duration in seconds 
+(zero or negative value will produce an infinite stream), and 'type
+a string specifying the tone type (currently only 'sine' is
+supported). This feature was first added to Ecasound 2.4.7.
 <p>
 <p><dt><strong>Resample - access object of different sample rates</strong><dd>
 Object type 'resample' can be used to resample audio 

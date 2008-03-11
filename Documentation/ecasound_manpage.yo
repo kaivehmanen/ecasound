@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (13.08.2007)
+       (11.03.2008)
        ()
        (Multimedia software)
 
@@ -252,7 +252,7 @@ If the input is a file, its type is determined using the file name
 extension. If the object name contains any commas, the name must be 
 enclosed in backquotes to avoid confusing the parser. Currently supported 
 formats are RIFF WAVE files (.wav), audio-cd tracks (.cdr), ecasound 
-ewf-files (.ewf), RAW audio data (.raw) and MPEG files (.mp2,.mp3). Also, 
+EWF files (.ewf), RAW audio data (.raw) and MPEG files (.mp2,.mp3). Also, 
 formats supported by the SGI audiofile library: AIFF (.aiff, .aifc, .aif) and 
 Sun/NeXT audio files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
 .it, etc). MIDI files (.mid) are supported using Timidity++. Similarly
@@ -289,10 +289,29 @@ If enabled at compile-time, ecasound supports audio input and
 output using aRts audio server. Option syntax is bf(-i:arts),
 bf(-o:arts).
 
-dit(Ecasound Wave Files - .ewf)
-A simple wrapper class for handling other audio objects. 
+dit(Audio file sequecing)
+Ecasound provides a set of special audio object types that 
+can be used for temporal sequencing of audio files - i.e. looping,
+playing only a select portion of a file, playing file at a spefific
+time, and other such operation.
+
+Looping is possible with bf(-i:audioloop,file.wav,params). The
+file name (or any object type understood by Ecasound) given
+as the second parameter is played back continuously looping
+back to the beginning when the end of file is reached. Any additional
+parameters given are passed unaltered to the file object.
+
+Parameters 3...N are passed as is to the child object (i.e.
+"-i audioloop,foo.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo.wav" object.
+
+dit(Ecasound Wave Files (EWF) - .ewf)
+A special file format that allows to slice and loop full (or segments)
+of audio files. This format is specific to Ecasound.
 See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for more 
 detailed information.
+
+See also audio object types 'audioloop', 'audioselect' and 'audioinsert'.
 
 dit(JACK input/outputs)
 JACK is a low-latency audio server that can be used to connect
@@ -338,11 +357,13 @@ override the audio format (for example you can create an
 AIFF file with filename "foo.wav").
 
 dit(Loop device) 
-Loop devices make it possible to route data between chains.
-Option syntax is bf(-[io][:]loop,id_number). If you add a loop 
-output with id '1', all data written to this output is routed
+Loop devices make it possible to route (loop back) data between 
+chains. Option syntax is bf(-[io][:]loop,id_number). If you add
+a loop output with id '1', all data written to this output is routed
 to all loop inputs with id '1'. You can attach the same loop
 device to multiple inputs and outputs.
+
+Note: this 'loop' device is different from 'audioloop'.
 
 dit(Mikmod)
 If mikmod support was enabled at compile-time, this
@@ -370,6 +391,10 @@ files formats such as .wav which store meta information about
 the audio file format. To use 'auto' in the previous example, 
 bf(ecasound -f:16,2,44100 -i resample,auto,foo.wav -o /dev/dsp).
 
+Parameters 4...N are passed as is to the child object (i.e.
+"-i resample,22050,foo.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo.wav" object.
+
 If ecasound was compiled with support for libsamplerate, you can 
 use 'resample-hq' to use the highest quality resampling algorithm 
 available. To force ecasound to use the internal resampler, 
@@ -385,11 +410,24 @@ slow seek operation (like mp3), works extremely badly.
 Try converting to an uncompressed format (wav or raw)
 first, and then do reversation.
 
+Parameters 3...N are passed as is to the child object (i.e.
+"-i reverse,foo.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo.wav" object.
+
 dit(System standard streams and named pipes)
 You can use standard streams (stdin and stdout) by giving bf(stdin)
 or bf(stdout) as the file name. Audio data is assumed to be in
 raw/headerless (.raw) format. If you want to use named pipes, 
 create them with the proper file name extension before use.
+
+dit(Tone generator)
+To generate a test tone, input bf(-i:tone,type,freq,duration-secs) 
+can be used. Parameter 'type' specifies the tone type: currently
+only 'sine' is supported. The 'freq' parameter sets the frequency 
+of the generated tone and 'duration-secs' the length of the generated
+stream. Specifying zero, or a negative value, as the duration will
+produce an infinite stream. This feature was first added to Ecasound 
+2.4.7.
 
 dit(Typeselect - overriding object type settings)
 The special 'typeselect' object type can be used to override 
@@ -397,6 +435,10 @@ how ecasound maps filename extensions and object types. For
 instance bf(ecasound -i typeselect,.mp3,an_mp3_file.wav -o /dev/dsp).
 would play the file 'an_mp3_file.wav' as an mp3-file and not
 as an wav-file as would happen without typeselect.
+
+Parameters 4...N are passed as is to the child object (i.e.
+"-i typeselect,.au,foo.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo.wav" object.
 
 enddit()
 

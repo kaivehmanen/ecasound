@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (13.08.2007)
+       (03.03.2008)
        ()
        (Multimedia software)
 
@@ -90,12 +90,19 @@ Returns a string describing the engine status (running, stopped,
 finished, error, not ready). See also em(cs-status). em([s])
 
 dit(engine-launch)
-Initializes and starts the engine. Doesn't start the actual
-processing. See also em(start). em([-])
+Starts the real-time engine. Engine will execute the currently
+connected chainsetup (see 'cs-connect). This action does not yet
+start actual processing (see em(start) and em(stop)). When
+ecasound is used as a JACK client, issuing em(engine-launch) 
+makes ecasound an active JACK client (i.e. ecasound's ports
+can be connected to other JACK clients). em([-])
 
 dit(engine-halt)
 Stops the engine. Does not disconnect the chainsetup that 
-was running. See also em(stop). em([-])
+was running. See also em(cs-disconnet) and em(stop). When
+ecasound is used as a JACK client, em(engine-halt) will 
+cause ecasound to become a deactivated client (all JACK
+connections are torn down). em([-])
  
 enddit()
 
@@ -152,12 +159,15 @@ dit(cs-is-valid)
 Whether currently selected chainsetup is valid (=can be connected)? em([i])
 
 dit(cs-connect)
-Connect currently selected chainsetup to engine. Only one chainsetup
-can be connected at a time. Error string is returned if connection 
-fails. em([e])
+Connect currently selected chainsetup to engine. When connecting, 
+all resources (e.g. files, soundcard devices, external programs) needed 
+to execute the chainsetup are reserved. Only one chainsetup can be connected 
+at a time. Error string is returned if connection fails (for instance
+due to error in allocating the resources). em([e])
 
 dit(cs-disconnect)
-Disconnect currently connected chainsetup. em([-])
+Disconnect currently connected chainsetup. This action will free
+all external resources needed by the chainsetup. em([-])
 
 dit(cs-connected)
 Returns the name of currently connected chainsetup. em([s])
@@ -418,10 +428,7 @@ Adds a new chain operator. In addition to normal chain operators,
 this commmand can also be used to add effect presets and various 
 plugins. Note; it is not possible to add operators to multiple
 chains at once. In other words only one chain should be selected
-when issuing 'cop-add'. Argument format is 
-"-<id_string>:par1,...,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes). See 
-ecasound (1) man page for more info. em([-])
+when issuing 'cop-add'.  See ecasound (1) man page for more info. em([-])
 
 dit(cop-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string
@@ -482,10 +489,10 @@ selected chainsetup and chains are used.
 
 dit(ctrl-add 'copc_format_string')
 Adds a new controller and attach it to currently selected chain 
-operator. Argument format is "-<id_string>:<param_id>,<range_low>,
-<range_high>,par1,...,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes).  See ecasound (1) 
-man page for more info. em([-])
+operator. The argument syntax is either "-<id_string>:par1,...,parN" 
+or just "<id_string>:par1,...,parN". If parameter itself contains 
+commas, the parameter should be enclosed in double-quotes.
+See ecasound (1) man page for more info. em([-])
 
 dit(ctrl-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string

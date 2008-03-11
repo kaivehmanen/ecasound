@@ -5,7 +5,7 @@
 <body>
 <hr>
 <h1>ecasound-iam</h1>
-<h2>13.08.2007</h2>
+<h2>03.03.2008</h2>
 
 <html><head>
 <link rev="made" href="mailto:kvehmanen -at- eca -dot- cx">
@@ -22,7 +22,7 @@
 <hr>
 <h1>ecasound-iam(1)</h1>
 <h2> Multimedia software</h2>
-<h2>13.08.2007</h2>
+<h2>03.03.2008</h2>
 
 
 <p>
@@ -109,12 +109,19 @@ Returns a string describing the engine status (running, stopped,
 finished, error, not ready). See also <em>cs-status</em>. <em>[s]</em>
 <p>
 <p><dt><strong>engine-launch</strong><dd>
-Initializes and starts the engine. Doesn't start the actual
-processing. See also <em>start</em>. <em>[-]</em>
+Starts the real-time engine. Engine will execute the currently
+connected chainsetup (see 'cs-connect). This action does not yet
+start actual processing (see <em>start</em> and <em>stop</em>). When
+ecasound is used as a JACK client, issuing <em>engine-launch</em> 
+makes ecasound an active JACK client (i.e. ecasound's ports
+can be connected to other JACK clients). <em>[-]</em>
 <p>
 <p><dt><strong>engine-halt</strong><dd>
 Stops the engine. Does not disconnect the chainsetup that 
-was running. See also <em>stop</em>. <em>[-]</em>
+was running. See also <em>cs-disconnet</em> and <em>stop</em>. When
+ecasound is used as a JACK client, <em>engine-halt</em> will 
+cause ecasound to become a deactivated client (all JACK
+connections are torn down). <em>[-]</em>
 <p>
 </dl>
 <p>
@@ -171,12 +178,15 @@ editing, the chainsetup is loaded back to ecasound. <em>[-]</em>
 Whether currently selected chainsetup is valid (=can be connected)? <em>[i]</em>
 <p>
 <p><dt><strong>cs-connect</strong><dd>
-Connect currently selected chainsetup to engine. Only one chainsetup
-can be connected at a time. Error string is returned if connection 
-fails. <em>[e]</em>
+Connect currently selected chainsetup to engine. When connecting, 
+all resources (e.g. files, soundcard devices, external programs) needed 
+to execute the chainsetup are reserved. Only one chainsetup can be connected 
+at a time. Error string is returned if connection fails (for instance
+due to error in allocating the resources). <em>[e]</em>
 <p>
 <p><dt><strong>cs-disconnect</strong><dd>
-Disconnect currently connected chainsetup. <em>[-]</em>
+Disconnect currently connected chainsetup. This action will free
+all external resources needed by the chainsetup. <em>[-]</em>
 <p>
 <p><dt><strong>cs-connected</strong><dd>
 Returns the name of currently connected chainsetup. <em>[s]</em>
@@ -437,10 +447,7 @@ Adds a new chain operator. In addition to normal chain operators,
 this commmand can also be used to add effect presets and various 
 plugins. Note; it is not possible to add operators to multiple
 chains at once. In other words only one chain should be selected
-when issuing 'cop-add'. Argument format is 
-"-&lt;id_string&gt;:par1,...,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes). See 
-ecasound (1) man page for more info. <em>[-]</em>
+when issuing 'cop-add'.  See ecasound (1) man page for more info. <em>[-]</em>
 <p>
 <p><dt><strong>cop-describe</strong><dd>
 Returns a Ecasound Option Syntax (EOS) compliant string
@@ -501,10 +508,10 @@ selected chainsetup and chains are used.
 <p>
 <p><dt><strong>ctrl-add 'copc_format_string'</strong><dd>
 Adds a new controller and attach it to currently selected chain 
-operator. Argument format is "-&lt;id_string&gt;:&lt;param_id&gt;,&lt;range_low&gt;,
-&lt;range_high&gt;,par1,...,parN" (if parameter itself contains commas,
-the parameter should be enclosed in double-quotes).  See ecasound (1) 
-man page for more info. <em>[-]</em>
+operator. The argument syntax is either "-&lt;id_string&gt;:par1,...,parN" 
+or just "&lt;id_string&gt;:par1,...,parN". If parameter itself contains 
+commas, the parameter should be enclosed in double-quotes.
+See ecasound (1) man page for more info. <em>[-]</em>
 <p>
 <p><dt><strong>ctrl-describe</strong><dd>
 Returns a Ecasound Option Syntax (EOS) compliant string
