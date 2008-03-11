@@ -99,21 +99,25 @@ AUDIO_SEQUENCER_BASE* AUDIO_SEQUENCER_BASE::clone(void) const
 
 void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
-  if (io_mode() != AUDIO_IO::io_read)
-    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ACLIPSEQ: Only read mode supported."));
+  dump_child_debug();
 
   if (init_rep != true) {
     AUDIO_IO* tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
     if (tmp == 0) 
-      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ACLIPSEQ: Couldn't open child object."));
+      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Couldn't open child object."));
 
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Opening audio clip sequencer file:" + tmp->label() + ".");
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Opening audio sequencer file:" + tmp->label() + ".");
 
     set_child(tmp);
+    init_rep = true;
   }
 
   pre_child_open();
   child()->open();
+
+  /* FIXME: doesn't work, either we get incorrect sample coutn (if
+     time given as samples in EWF files, or incorrect seconds (if 
+     given as seconds ... maybe we need to track the two separately?) */
 
   /* step: set srate for audio time variable */
   child_offset_rep.set_samples_per_second_keeptime(child()->samples_per_second());
@@ -124,12 +128,15 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 
   /* step: set length of the used audio segment 
    *       (note, result may still be zero) */
-  AUDIO_SEQUENCER_BASE::set_child_length(ECA_AUDIO_TIME(child()->length_in_samples(),
-							child()->samples_per_second()));
+  if (child_length().samples() == 0)
+    set_child_length(ECA_AUDIO_TIME(child()->length_in_samples(),
+				    child()->samples_per_second()));
 
   /* step: set public length of the EWF object */
   if (child_looping_rep != true)
     set_length_in_samples(child_offset_rep.samples() + child_length_rep.samples());
+
+  dump_child_debug();
 
   tmp_buffer.number_of_channels(child()->channels());
   tmp_buffer.length_in_samples(child()->buffersize());
@@ -245,15 +252,12 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 		 buffersize() > sbuf->length_in_samples()) ||
 		child()->finished() != true);
       
-      /* mute the extra tail 
-       * (note: sbuf size can be either buffersize() or a smaller
-       *  value in case of EOF) */
-      sample_pos_t mute_at = sbuf->length_in_samples() - over_child_eof;
-      if (mute_at >= 0) {
-	/* before commit: delete */
-	sbuf->make_silent_range(mute_at,
-				sbuf->length_in_samples());
-      }
+      /* resize the sbuf if needed: either EOF was encountered
+       * and sbuf is shorter than buffersize() or otherwise we
+       * need to drop some of the samples read so at to not
+       * go beyond set length */
+      sample_pos_t data_left = buffersize() - over_child_eof;
+      sbuf->length_in_samples(data_left);
       change_position_in_samples(sbuf->length_in_samples());
     }
     else if (chipos2 < chipos1 &&
@@ -372,7 +376,9 @@ void AUDIO_SEQUENCER_BASE::set_child_start_position(const ECA_AUDIO_TIME& v)
   child_start_pos_rep = v;
 }
 
-void AUDIO_SEQUENCER_BASE::set_child_length(const ECA_AUDIO_TIME& v) {
+void AUDIO_SEQUENCER_BASE::set_child_length(const ECA_AUDIO_TIME& v)
+{
+  cout << "setting child length to " << v.seconds() << "\n";
   child_length_rep = v;
 }
 

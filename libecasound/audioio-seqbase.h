@@ -88,27 +88,42 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
    */
   void set_child_object_string(const std::string& v);
 
+  const std::string& child_object_string(void) const { return child_name_rep; }
+
   /**
    * Set start offset for child object
    */
   void set_child_offset(const ECA_AUDIO_TIME& v);
+
+  const ECA_AUDIO_TIME& child_offset(void) const { return child_offset_rep; }
 
   /**
    * Set start position inside child object.
    */
   void set_child_start_position(const ECA_AUDIO_TIME& v);
 
+  const ECA_AUDIO_TIME& child_start_position(void) const { return child_start_pos_rep; }
+
   /**
    * Set child length. If not set, defaults to the total length. 
    */
   void set_child_length(const ECA_AUDIO_TIME& v);
 
+  const ECA_AUDIO_TIME& child_length(void) const { return child_length_rep; }
+
   /**
    * Toggle whether child object data is looped.
    */
   void toggle_looping(bool v) { child_looping_rep = v; }
-    
+
+  bool child_looping(void) const { return child_looping_rep; }    
+
   /*@}*/
+
+protected:
+
+  void dump_child_debug(void);    
+  SAMPLE_SPECS::sample_pos_t priv_public_to_child_pos(SAMPLE_SPECS::sample_pos_t pubpos) const;
 
 private:
 
@@ -122,9 +137,6 @@ private:
   long int buffersize_rep;
   bool child_write_started;
   bool init_rep;
-
-  void dump_child_debug(void);    
-  SAMPLE_SPECS::sample_pos_t priv_public_to_child_pos(SAMPLE_SPECS::sample_pos_t pubpos) const;
   
   AUDIO_SEQUENCER_BASE& operator=(const AUDIO_SEQUENCER_BASE& x) { return *this; }
   AUDIO_SEQUENCER_BASE (const AUDIO_SEQUENCER_BASE& x) { }

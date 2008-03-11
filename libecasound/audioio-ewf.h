@@ -2,8 +2,7 @@
 #define INCLUDED_AUDIOIO_EWF_H
 
 #include <string>
-#include "audioio-proxy.h"
-#include "audioio-wave.h"
+#include "audioio-seqbase.h"
 #include "samplebuffer.h"
 #include "eca-audio-time.h"
 #include "resource-file.h"
@@ -22,14 +21,14 @@
  *
  * @author Kai Vehmanen
  */
-class EWFFILE : public AUDIO_IO_PROXY {
+class EWFFILE : public AUDIO_SEQUENCER_BASE {
 
  public:
 
   /** @name Public functions */
   /*@{*/
 
-  EWFFILE (const std::string& name = "");
+  EWFFILE (void);
   virtual ~EWFFILE(void);
 
   /*@}*/
@@ -42,10 +41,12 @@ class EWFFILE : public AUDIO_IO_PROXY {
 
   /*@}*/
 
-  /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
+  /** @name Reimplemented functions from DYNAMIC_PARAMETERS */
   /*@{*/
 
-  /* none */
+  virtual std::string parameter_names(void) const;
+  virtual void set_parameter(int param, std::string value);
+  virtual std::string get_parameter(int param) const;
 
   /*@}*/
 
@@ -60,21 +61,12 @@ class EWFFILE : public AUDIO_IO_PROXY {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual void seek_position(void);
+  /* none */
 
   /*@}*/
 
   /** @name Reimplemented functions from AUDIO_IO */
   /*@{*/
-
-  virtual bool locked_audio_format(void) const { return(true); }
-  virtual bool supports_seeking(void) const { return(true); }
-  virtual bool finite_length_stream(void) const { return(!child_looping_rep); }
-
-  virtual bool finished(void) const;
-
-  virtual void read_buffer(SAMPLE_BUFFER* sbuf);
-  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
@@ -84,40 +76,10 @@ class EWFFILE : public AUDIO_IO_PROXY {
   /** @name New functions */
   /*@{*/
 
-  /**
-   * Set start offset for child object
-   */
-  void child_offset(const ECA_AUDIO_TIME& v);
-
-  /**
-   * Set start position inside child object.
-   */
-  void child_start_position(const ECA_AUDIO_TIME& v);
-
-  /**
-   * Set child length. If not set, defaults to the total length. 
-   */
-  void child_length(const ECA_AUDIO_TIME& v);
-
-  /**
-   * Toggle whether child object data is looped.
-   */
-  void toggle_looping(bool v) { child_looping_rep = v; }
     
   /*@}*/
 
 private:
-
-  SAMPLE_BUFFER tmp_buffer;
-
-  bool child_looping_rep;
-  ECA_AUDIO_TIME child_offset_rep,
-                 child_start_pos_rep,
-                 child_length_rep;
-  std::string child_name_rep;
-  long int buffersize_rep;
-  bool child_write_started;
-  bool init_rep;
 
   RESOURCE_FILE ewf_rc;
 
