@@ -63,6 +63,9 @@ void EFFECT_BASE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_rate)
 	      name() + ". Old value " +
 	      kvu_numtostr(samples_per_second()) + ".");
 
+  /* note: changing the sample rate might change values of
+   *       of parameters, so we want to preserve the values */
+
   if (samples_per_second() != new_rate) {
     std::vector<parameter_t> old_values (number_of_params());
     for(int n = 0; n < number_of_params(); n++) {
