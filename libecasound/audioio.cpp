@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -30,6 +30,14 @@
 #include "eca-error.h"
 #include "audioio.h"
 #include "eca-logger.h"
+
+/**
+ * FIXME notes  (last update 2008-03-11)
+ *
+ * - Modify default implementation of set_label()/label() so
+ *   that is mapped directly to set/get_parameter(1, ...).
+ */
+
 
 const string& AUDIO_IO::SETUP_ERROR::message(void) const { return message_rep; }
 AUDIO_IO::SETUP_ERROR::Error_type AUDIO_IO::SETUP_ERROR::type(void) const { return type_rep; }
@@ -284,7 +292,13 @@ void AUDIO_IO::length(const ECA_AUDIO_TIME& v)
  */
 void AUDIO_IO::position(const ECA_AUDIO_TIME& v)
 {
-  set_position_in_samples(v.samples());
+  if (v.samples_per_second() == samples_per_second())
+    set_position_in_samples(v.samples());
+  else {
+    ECA_AUDIO_TIME modified (v);
+    modified.set_samples_per_second_keeptime(samples_per_second());
+    set_position_in_samples(modified.samples());
+  }
 }
 
 /**
