@@ -50,6 +50,9 @@ using SAMPLE_SPECS::sample_pos_t;
 
 AUDIO_CLIP_SEQUENCER::AUDIO_CLIP_SEQUENCER ()
 {
+  set_label("audiocseq");
+  child_param_offset_rep = 1;
+  cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_none;
 }
 
 AUDIO_CLIP_SEQUENCER::~AUDIO_CLIP_SEQUENCER(void)
@@ -65,34 +68,50 @@ AUDIO_CLIP_SEQUENCER* AUDIO_CLIP_SEQUENCER::clone(void) const
   return target;
 }
 
+
 void AUDIO_CLIP_SEQUENCER::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
-  AUDIO_SEQUENCER_BASE::toggle_looping(true);
-  AUDIO_SEQUENCER_BASE::set_child_object_string(get_parameter(2));
+  if (io_mode() != AUDIO_IO::io_read)
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ACLIPSEQ: Only read mode supported."));
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "Opening audio clip sequencer in mode: " 
+	      + get_parameter(1));
+
+  /* note: change behaviour based on first param */
+  if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_loop) {
+    /* following is specific to looping */
+    AUDIO_SEQUENCER_BASE::toggle_looping(true);
+    DBC_CHECK(finite_length_stream() != true);
+    AUDIO_SEQUENCER_BASE::set_child_object_string(
+      child_params_as_string(1 + child_param_offset_rep, &params_rep));
+  }
+  else if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_select) {
+    /* following is specific to looping */
+    AUDIO_SEQUENCER_BASE::toggle_looping(false);
+    DBC_CHECK(finite_length_stream() == true);
+    AUDIO_SEQUENCER_BASE::set_child_start_position(get_parameter(2));
+    AUDIO_SEQUENCER_BASE::set_child_length(get_parameter(3));
+    AUDIO_SEQUENCER_BASE::set_child_object_string(
+      child_params_as_string(1 + child_param_offset_rep, &params_rep));
+  }
+  else
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ACLIPSEQ: Unknown audio sequencing mode (loop, select, ...)."));
 
   AUDIO_SEQUENCER_BASE::open();
 
   /* step: set additional child params (if any) */
   int numparams = child()->number_of_params();
   for(int n = 0; n < numparams; n++) {
-    child()->set_parameter(n + 1, get_parameter(n + 3));
-    numparams = child()->number_of_params(); // in case 'n_o_p()' varies
+    child()->set_parameter(n + 1, get_parameter(n + 1 + child_param_offset_rep));
+    if (child()->variable_params())
+      numparams = child()->number_of_params();
   }
-
-#if 0
-  /* step: set length of the used audio segment 
-   *       (note, result may still be zero) */
-  AUDIO_SEQUENCER_BASE::set_child_length(ECA_AUDIO_TIME(child()->length_in_samples(),
-							child()->samples_per_second()));
-#endif
 }
 
 void AUDIO_CLIP_SEQUENCER::close(void)
 {
-  if (child()->is_open() == true) 
-    child()->close();
-
-  AUDIO_IO_PROXY::close();
+  AUDIO_SEQUENCER_BASE::close();
 }
 
 std::string AUDIO_CLIP_SEQUENCER::parameter_names(void) const
@@ -104,17 +123,35 @@ std::string AUDIO_CLIP_SEQUENCER::parameter_names(void) const
 void AUDIO_CLIP_SEQUENCER::set_parameter(int param, string value)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      AUDIO_IO::parameter_set_to_string(param, value) + ".");
+	      AUDIO_IO::parameter_set_to_string(param, value));
 
   if (param > static_cast<int>(params_rep.size())) params_rep.resize(param);
 
   if (param > 0)
     params_rep[param - 1] = value;
-  
-  if (param > 2 && 
-      child() != 0) {
-    child()->set_parameter(param - 2, value);
+
+  if (param == 1) {
+    set_label(value);
+    if (value == "audioloop") {
+      cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_loop;
+      child_param_offset_rep = 1;
+    }
+    else if (value == "audioselect") {
+      cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_select;
+      child_param_offset_rep = 3;
+    }
+    else {
+      cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_none;
+      child_param_offset_rep = 1;
+    }
   }
+
+  if (param > child_param_offset_rep && 
+      is_child_initialized() == true) {
+    child()->set_parameter(param - child_param_offset_rep, value);
+  }
+  
+  AUDIO_IO::set_parameter(param, value);
 }
 
 string AUDIO_CLIP_SEQUENCER::get_parameter(int param) const
@@ -123,9 +160,9 @@ string AUDIO_CLIP_SEQUENCER::get_parameter(int param) const
 	      AUDIO_IO::parameter_get_to_string(param) + ".");
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
-    if (param > 2 &&
-	child() != 0) {
-      params_rep[param - 1] = child()->get_parameter(param - 2);
+    if (param > child_param_offset_rep &&
+	is_child_initialized() == true) {
+      params_rep[param - 1] = child()->get_parameter(param - child_param_offset_rep);
     }
     return params_rep[param - 1];
   }

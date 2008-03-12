@@ -15,6 +15,8 @@ class AUDIO_CLIP_SEQUENCER : public AUDIO_SEQUENCER_BASE {
 
  public:
 
+  enum { cseq_none = 0, cseq_loop = 1, cseq_select = 2 };
+
   /** @name Public functions */
   /*@{*/
 
@@ -71,6 +73,8 @@ class AUDIO_CLIP_SEQUENCER : public AUDIO_SEQUENCER_BASE {
 private:
 
   mutable std::vector<std::string> params_rep;
+  int child_param_offset_rep;
+  int cseq_mode_rep;
 
   AUDIO_CLIP_SEQUENCER& operator=(const AUDIO_CLIP_SEQUENCER& x) { return *this; }
   AUDIO_CLIP_SEQUENCER (const AUDIO_CLIP_SEQUENCER& x) { }

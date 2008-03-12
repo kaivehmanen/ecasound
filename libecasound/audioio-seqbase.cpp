@@ -99,8 +99,6 @@ AUDIO_SEQUENCER_BASE* AUDIO_SEQUENCER_BASE::clone(void) const
 
 void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
-  dump_child_debug();
-
   if (init_rep != true) {
     AUDIO_IO* tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
     if (tmp == 0) 
@@ -114,10 +112,6 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 
   pre_child_open();
   child()->open();
-
-  /* FIXME: doesn't work, either we get incorrect sample coutn (if
-     time given as samples in EWF files, or incorrect seconds (if 
-     given as seconds ... maybe we need to track the two separately?) */
 
   /* step: set srate for audio time variable */
   child_offset_rep.set_samples_per_second_keeptime(child()->samples_per_second());
@@ -136,7 +130,7 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   if (child_looping_rep != true)
     set_length_in_samples(child_offset_rep.samples() + child_length_rep.samples());
 
-  dump_child_debug();
+  //dump_child_debug();
 
   tmp_buffer.number_of_channels(child()->channels());
   tmp_buffer.length_in_samples(child()->buffersize());
@@ -236,7 +230,7 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       priv_public_to_child_pos(position_in_samples() + buffersize());
 
     if (chipos2 >= 
-	(child_length_rep.samples() - child_start_pos_rep.samples()) &&
+	(child_length_rep.samples() + child_start_pos_rep.samples()) &&
 	child_looping_rep != true) {
 	// ---
 	// case 3a: not looping, reaching child file end during the next read
@@ -245,9 +239,9 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       child()->read_buffer(sbuf);
 
       sample_pos_t over_child_eof = 
-	chipos2 - (child_length_rep.samples() - child_start_pos_rep.samples());
+	chipos2 - (child_length_rep.samples() + child_start_pos_rep.samples());
       
-      DBC_CHECK(over_child_eof > 0);
+      DBC_CHECK(over_child_eof >= 0);
       DBC_CHECK((child()->finished() == true &&
 		 buffersize() > sbuf->length_in_samples()) ||
 		child()->finished() != true);
@@ -276,11 +270,6 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 	priv_public_to_child_pos(position_in_samples() + 
 				 buffersize() - over_child_eof);
 
-      /* before commit: delete */
-#if 1
-      cout << "CASE 3b\n";
-#endif
-      
       DBC_CHECK(chistartpos == child_start_pos_rep.samples());
       child()->seek_position_in_samples(chistartpos);
 
@@ -305,7 +294,8 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       // ---
       // case 3c: normal case, read samples from child
       // ---
-      
+
+      child()->set_buffersize(buffersize());      
       child()->read_buffer(sbuf);
       /* note: if the 'length' parameter value is longer than 
        *       actual child object length, less than buffersize()
@@ -378,7 +368,6 @@ void AUDIO_SEQUENCER_BASE::set_child_start_position(const ECA_AUDIO_TIME& v)
 
 void AUDIO_SEQUENCER_BASE::set_child_length(const ECA_AUDIO_TIME& v)
 {
-  cout << "setting child length to " << v.seconds() << "\n";
   child_length_rep = v;
 }
 
