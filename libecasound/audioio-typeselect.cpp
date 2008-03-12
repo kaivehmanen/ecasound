@@ -57,14 +57,8 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
 
   if (init_rep != true) {
-    AUDIO_IO* tmp = 0;
-    if (params_rep.size() > 1) {
-      string& type = params_rep[1];
-      if (type.size() > 0) {
-	//  cerr << "typeselect: " << type << endl;
-	tmp = ECA_OBJECT_FACTORY::create_audio_object(type);
-      }
-    }
+    AUDIO_IO* tmp = 
+      ECA_OBJECT_FACTORY::create_audio_object(child_params_as_string(2, &params_rep));
 
     if (tmp != 0) {
       set_child(tmp);
@@ -73,7 +67,8 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {
       child()->set_parameter(n + 1, get_parameter(n + 3));
-      numparams = child()->number_of_params(); // in case 'n_o_p()' varies
+      if (child()->variable_params())
+	numparams = child()->number_of_params(); 
     }
 
     init_rep = true; /* must be set after dyn. parameters */
