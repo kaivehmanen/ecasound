@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-object-factory.cpp: Abstract factory for creating libecasound 
 //                         objects.
-// Copyright (C) 2000-2005,2007 Kai Vehmanen
+// Copyright (C) 2000-2005,2007,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -252,12 +252,10 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg)
   // --
   DBC_REQUIRE(arg.empty() != true);
   // --
+
+  int args_given = kvu_get_number_of_arguments(arg);
  
   string fname = kvu_get_argument_number(1, arg);
-  if (fname.find(".") != string::npos) {
-    fname = string(fname, fname.find_last_of("."), string::npos);
-  }
-
   const AUDIO_IO* main_file = 0;
   main_file = dynamic_cast<const AUDIO_IO*>(ECA_OBJECT_FACTORY::audio_io_rt_map().object_expr(fname));
   if (main_file == 0) {
@@ -267,8 +265,20 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_audio_object(const string& arg)
   AUDIO_IO* new_file = 0;
   if (main_file != 0) {
     new_file = main_file->new_expr();
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Object \"" + arg + "\" created, type \"" + new_file->name() + "\". Has " + kvu_numtostr(new_file->number_of_params()) + " parameter(s).");
-    for(int n = 0; n < new_file->number_of_params(); n++) {
+
+    ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		"Object \"" + arg + "\" created, type \"" + new_file->name() + 
+		"\". Has " + kvu_numtostr(new_file->number_of_params()) + 
+		" parameter(s) (variable: " + (new_file->variable_params() == true ? string("yes).") : string("no).")));
+
+    /* if more params are given and the object supports 
+     * variable number of args, pass them all to the object */
+    int params = new_file->number_of_params();
+    if (new_file->variable_params() &&
+	args_given > params)
+      params = args_given;
+      
+    for(int n = 0; n < params; n++) {
       new_file->set_parameter(n + 1, kvu_get_argument_number(n + 1, arg));
     }
   }
@@ -493,6 +503,7 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu)
   // --------
 
   string prefix = kvu_get_argument_prefix(argu);
+  int args_given = kvu_get_number_of_arguments(argu);
 
   MESSAGE_ITEM otemp;
   otemp.setprecision(3);
@@ -506,7 +517,13 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_chain_operator (const string& argu)
 		  new_cop->name() + "\"");
     //    otemp << "(eca-chainsetup) Adding effect " << new_cop->name();
     otemp << "Setting parameters: ";
-    for(int n = 0; n < new_cop->number_of_params(); n++) {
+
+    int params = new_cop->number_of_params();
+    if (new_cop->variable_params() &&
+	args_given > params)
+      params = args_given;
+
+    for(int n = 0; n < params; n++) {
       new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 1, argu).c_str()));
       otemp << new_cop->get_parameter_name(n + 1) << " = ";
       otemp << new_cop->get_parameter(n +1);
@@ -562,7 +579,8 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu)
 	new_gcontroller->set_parameter(n + 1, atof(kvu_get_argument_number(n + 1, argu).c_str()));
 	otemp << new_gcontroller->get_parameter_name(n + 1) << " = ";
 	otemp << new_gcontroller->get_parameter(n +1);
-	numparams = new_gcontroller->number_of_params(); // in case 'n_o_p()' varies
+	if (new_gcontroller->variable_params())
+	  numparams = new_gcontroller->number_of_params(); // in case 'n_o_p()' varies
 	if (n + 1 < numparams) otemp << ", ";
       }
       ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
@@ -721,6 +739,7 @@ string ECA_OBJECT_FACTORY::operator_parameters_to_eos(const OPERATOR* chainop)
   MESSAGE_ITEM t;
   
   for(int n = 0; n < chainop->number_of_params(); n++) {
+    /* FIXME: escape commas */
     t << chainop->get_parameter(n + 1);
     if (n + 1 < chainop->number_of_params()) t << ",";
   }
