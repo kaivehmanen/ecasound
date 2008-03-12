@@ -1,16 +1,16 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 010308) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 120308) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
 
-  X = major version  - the overall development status
-  Y = minor version  - represents a set of planned features (see TODO)
-  Z = micro version  - small changes to major.minor version (optional)
-  R = revision       - urgent fixes to normal releases (optional)
+  X = major version  - incremented after major redesigns
+  Y = minor version  - incremented when new features are added
+  Z = micro version  - incremented if major.minor version is not 
+		       modified (optional)
+  R = revision       - urgent fixes to planned releases (optional)
 
-  extraT             - beta, pre and rc releases that are in 
-                       preparation of major releases (optional)
+  extraT             - 'beta', 'pre' and 'rc' releases (optional)
 
 Howto for reading the entries:
 
@@ -24,14 +24,59 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-????2008 (v2.4.z) -** stable release **-
+????2008 (TBD) -** stable release **-
+	- notice: slightly modified the version numbering scheme -
+		  minor version is incremented whenever non-trivial
+		  new features are added
+	- edi-entries: edi-40 closed (Update to error and warning 
+	               reporting mechanisms)
 	- added: ecasound.el: added missing ECI commands cs-option, 
 	         cs-set-length, cs-set-position-samples, ai-get-length,
 		 ai-set-position, and ai-set-position-samples [dto,
 	  	 mlang]
+        - added: tone generator input; '-i:tone,sine,440,10.3' will 
+		 create a 440Hz sine tone with duration of 10.3 seconds;
+		 this input type will be especially useful for reproducing
+	 	 bugs in complicated chainsetups, without the need to
+		 exchange complete session data (which usually are composed
+		 of large amounts of audio data)
+        - added: audio looper object; '-i:audioloop,foo.wav" will play
+		 'foo.wav' and loop it indefinitely
+        - added: audio selector object; '-i:audioselect,5,15.2,foo.wav" will 
+		 15.2sec of 'foo.wav', starting at 5sec position
+	- added: EWF files; ability to specify positions in time in 
+		 sample frames; "2.0" is interpreted as 2.0secs while
+	         "88200sa" is interpreted as 88200 samples
+        - changed: eaim - commands 'cop-add' and 'ctrl-add' now allow
+		   an alternate syntax: both "-<id_string>:par1,...,parN"
+		   and "<id_string>:par1,...,parN" are now accepted
+        - changed: ability to write to EWF file is now marked as 
+	           a deprecated feature which will be remove in
+	           a later release 
+        - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
+		   has been rewritten in this version; numerous bugs
+	  	   are fixed
+	- changed: mechanism to terminate forked child processes; 
+		   properly wait for process termination in all 
+		   circumstances (previously there were some 
+		   exceptional cases)
+	- changed: major updates to the examples.html page (available
+	           also at http://eca.cx/ecasound/Documentation/examples.html)
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965
+        - fixed: bugs in ewf-looping code; FIXME (not yet finished)
+	- fixed: avoid terminating processing when invalid parameters are 
+		 passed to channel copy (chcopy/erc), mix (chmix/erm) and 
+	         move (chmove) chainops
+	- fixed: eaim - buffering mode was sometimes incorrectly 
+		 reported in 'cs-status' output (-B:auto instead of 
+		 the actual set buffering mode) output; bug reported by 
+		 Jan Weil
+        - fixed: compilation warnings from GCC-4.3; fixes Debian bug
+	         #454890, patch from Cyril Brulebois
+	- fixed: bug in passing multiple arguments to 'typeselect', 
+	         'resample', and 'resample' objects
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
