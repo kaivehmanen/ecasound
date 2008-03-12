@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (11.03.2008)
+       (12.03.2008)
        ()
        (Multimedia software)
 
@@ -295,15 +295,21 @@ can be used for temporal sequencing of audio files - i.e. looping,
 playing only a select portion of a file, playing file at a spefific
 time, and other such operation.
 
-Looping is possible with bf(-i:audioloop,file.wav,params). The
+Looping is possible with bf(-i:audioloop,file.ext,params). The
 file name (or any object type understood by Ecasound) given
 as the second parameter is played back continuously looping
 back to the beginning when the end of file is reached. Any additional
 parameters given are passed unaltered to the file object.
-
 Parameters 3...N are passed as is to the child object (i.e.
 "-i audioloop,foo.wav,bar1,bar2" will pass parameters
 "bar1,bar2" to the "foo.wav" object.
+
+To select and use only a specific segment of an audio object,
+the bf(-i:audioselect,start-time,duration,file.ext,params) can
+be used. This will play "duration" of "file.ext", starting at 
+"start-time". The time values should be given as seconds (e.g.
+"2.25", or as samples (e.g. "25000sa"). Parameters 4...N are 
+passed as is to the child object.
 
 dit(Ecasound Wave Files (EWF) - .ewf)
 A special file format that allows to slice and loop full (or segments)

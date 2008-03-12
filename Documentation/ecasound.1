@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "26\&.08\&.2007" "" "Multimedia software"
+.TH "ecasound" "1" "12\&.03\&.2008" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -233,7 +233,7 @@ If the input is a file, its type is determined using the file name
 extension\&. If the object name contains any commas, the name must be 
 enclosed in backquotes to avoid confusing the parser\&. Currently supported 
 formats are RIFF WAVE files (\&.wav), audio-cd tracks (\&.cdr), ecasound 
-ewf-files (\&.ewf), RAW audio data (\&.raw) and MPEG files (\&.mp2,\&.mp3)\&. Also, 
+EWF files (\&.ewf), RAW audio data (\&.raw) and MPEG files (\&.mp2,\&.mp3)\&. Also, 
 formats supported by the SGI audiofile library: AIFF (\&.aiff, \&.aifc, \&.aif) and 
 Sun/NeXT audio files (\&.au, \&.snd)\&. MikMod is also supported (\&.xm, \&.mod, \&.s3m, 
 \&.it, etc)\&. MIDI files (\&.mid) are supported using Timidity++\&. Similarly
@@ -270,10 +270,35 @@ If enabled at compile-time, ecasound supports audio input and
 output using aRts audio server\&. Option syntax is \fB-i:arts\fP,
 \fB-o:arts\fP\&.
 .IP 
-.IP "Ecasound Wave Files - \&.ewf"
-A simple wrapper class for handling other audio objects\&. 
+.IP "Audio file sequecing"
+Ecasound provides a set of special audio object types that 
+can be used for temporal sequencing of audio files - i\&.e\&. looping,
+playing only a select portion of a file, playing file at a spefific
+time, and other such operation\&.
+.IP 
+Looping is possible with \fB-i:audioloop,file\&.ext,params\fP\&. The
+file name (or any object type understood by Ecasound) given
+as the second parameter is played back continuously looping
+back to the beginning when the end of file is reached\&. Any additional
+parameters given are passed unaltered to the file object\&.
+Parameters 3\&.\&.\&.N are passed as is to the child object (i\&.e\&.
+"-i audioloop,foo\&.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo\&.wav" object\&.
+.IP 
+To select and use only a specific segment of an audio object,
+the \fB-i:audioselect,start-time,duration,file\&.ext,params\fP can
+be used\&. This will play "duration" of "file\&.ext", starting at 
+"start-time"\&. The time values should be given as seconds (e\&.g\&.
+"2\&.25", or as samples (e\&.g\&. "25000sa")\&. Parameters 4\&.\&.\&.N are 
+passed as is to the child object\&.
+.IP 
+.IP "Ecasound Wave Files (EWF) - \&.ewf"
+A special file format that allows to slice and loop full (or segments)
+of audio files\&. This format is specific to Ecasound\&.
 See ecasound user\&'s guide for more 
 detailed information\&.
+.IP 
+See also audio object types \&'audioloop\&', \&'audioselect\&' and \&'audioinsert\&'\&.
 .IP 
 .IP "JACK input/outputs"
 JACK is a low-latency audio server that can be used to connect
@@ -319,11 +344,13 @@ override the audio format (for example you can create an
 AIFF file with filename "foo\&.wav")\&.
 .IP 
 .IP "Loop device"
-Loop devices make it possible to route data between chains\&.
-Option syntax is \fB-[io][:]loop,id_number\fP\&. If you add a loop 
-output with id \&'1\&', all data written to this output is routed
+Loop devices make it possible to route (loop back) data between 
+chains\&. Option syntax is \fB-[io][:]loop,id_number\fP\&. If you add
+a loop output with id \&'1\&', all data written to this output is routed
 to all loop inputs with id \&'1\&'\&. You can attach the same loop
 device to multiple inputs and outputs\&.
+.IP 
+Note: this \&'loop\&' device is different from \&'audioloop\&'\&.
 .IP 
 .IP "Mikmod"
 If mikmod support was enabled at compile-time, this
@@ -338,14 +365,6 @@ to analyze sample data without writing it to a file\&. There\&'s
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed\&.
 .IP 
-.IP "Tone generator"
-To generate a test tone, input \fB-i:tone,freq,duration-secs,type\fP 
-can be used\&. Parameter \&'freq\&' is the frequency of the test 
-tone generated, \&'duration-secs\&' is the duration in seconds 
-(zero or negative value will produce an infinite stream), and \&'type
-a string specifying the tone type (currently only \&'sine\&' is
-supported)\&. This feature was first added to Ecasound 2\&.4\&.7\&.
-.IP 
 .IP "Resample - access object of different sample rates"
 Object type \&'resample\&' can be used to resample audio 
 object\&'s audio data to match the sampling rate used
@@ -358,6 +377,10 @@ to query the child object for its sampling rate\&. This works with
 files formats such as \&.wav which store meta information about 
 the audio file format\&. To use \&'auto\&' in the previous example, 
 \fBecasound -f:16,2,44100 -i resample,auto,foo\&.wav -o /dev/dsp\fP\&.
+.IP 
+Parameters 4\&.\&.\&.N are passed as is to the child object (i\&.e\&.
+"-i resample,22050,foo\&.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo\&.wav" object\&.
 .IP 
 If ecasound was compiled with support for libsamplerate, you can 
 use \&'resample-hq\&' to use the highest quality resampling algorithm 
@@ -374,11 +397,24 @@ slow seek operation (like mp3), works extremely badly\&.
 Try converting to an uncompressed format (wav or raw)
 first, and then do reversation\&.
 .IP 
+Parameters 3\&.\&.\&.N are passed as is to the child object (i\&.e\&.
+"-i reverse,foo\&.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo\&.wav" object\&.
+.IP 
 .IP "System standard streams and named pipes"
 You can use standard streams (stdin and stdout) by giving \fBstdin\fP
 or \fBstdout\fP as the file name\&. Audio data is assumed to be in
 raw/headerless (\&.raw) format\&. If you want to use named pipes, 
 create them with the proper file name extension before use\&.
+.IP 
+.IP "Tone generator"
+To generate a test tone, input \fB-i:tone,type,freq,duration-secs\fP 
+can be used\&. Parameter \&'type\&' specifies the tone type: currently
+only \&'sine\&' is supported\&. The \&'freq\&' parameter sets the frequency 
+of the generated tone and \&'duration-secs\&' the length of the generated
+stream\&. Specifying zero, or a negative value, as the duration will
+produce an infinite stream\&. This feature was first added to Ecasound 
+2\&.4\&.7\&.
 .IP 
 .IP "Typeselect - overriding object type settings"
 The special \&'typeselect\&' object type can be used to override 
@@ -386,6 +422,10 @@ how ecasound maps filename extensions and object types\&. For
 instance \fBecasound -i typeselect,\&.mp3,an_mp3_file\&.wav -o /dev/dsp\fP\&.
 would play the file \&'an_mp3_file\&.wav\&' as an mp3-file and not
 as an wav-file as would happen without typeselect\&.
+.IP 
+Parameters 4\&.\&.\&.N are passed as is to the child object (i\&.e\&.
+"-i typeselect,\&.au,foo\&.wav,bar1,bar2" will pass parameters
+"bar1,bar2" to the "foo\&.wav" object\&.
 .IP 
 \fBMIDI SETUP\fP
 .PP 
