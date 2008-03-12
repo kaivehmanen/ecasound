@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-resample.cpp: A proxy class that resamples the child 
 //                       object's data.
-// Copyright (C) 2002-2004 Kai Vehmanen
+// Copyright (C) 2002-2004,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -64,14 +64,9 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
 
   if (init_rep != true) {
-    AUDIO_IO* tmp = 0;
-    if (params_rep.size() > 1) {
-      /* 2nd-param: audio object name */
-      string& type = params_rep[2];
-      if (type.size() > 0) {
-	tmp = ECA_OBJECT_FACTORY::create_audio_object(type);
-      }
-    }
+    AUDIO_IO* tmp =
+      ECA_OBJECT_FACTORY::create_audio_object(
+        child_params_as_string(AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep));
 
     /* FIXME: add check for real-time devices, resample does _not_
      *        work with them (rt API not proxied properly)
@@ -83,8 +78,9 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
     int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {
-      child()->set_parameter(n + 1, get_parameter(n + 3));
-      numparams = child()->number_of_params(); // in case 'n_o_p()' varies
+      child()->set_parameter(n + 1, get_parameter(n + 1 + AUDIO_IO_RESAMPLE::child_parameter_offset));
+      if (child()->variable_params())
+	numparams = child()->number_of_params();
     }
 
     init_rep = true; /* must be set after dyn. parameters */
@@ -205,8 +201,9 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
   
   sbuf_rep.resample_set_quality(quality_rep);
 
-  if (param > 2 && init_rep == true) {
-    child()->set_parameter(param - 2, value);
+  if (param > AUDIO_IO_RESAMPLE::child_parameter_offset 
+      && init_rep == true) {
+    child()->set_parameter(param - AUDIO_IO_RESAMPLE::child_parameter_offset, value);
   }
 }
 
@@ -216,8 +213,10 @@ string AUDIO_IO_RESAMPLE::get_parameter(int param) const
 		"get_parameter " + label() + ".");
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
-    if (param > 2 && init_rep == true) {
-      params_rep[param - 1] = child()->get_parameter(param - 2);
+    if (param > AUDIO_IO_RESAMPLE::child_parameter_offset 
+	&& init_rep == true) {
+      params_rep[param - 1] = 
+	child()->get_parameter(param - AUDIO_IO_RESAMPLE::child_parameter_offset);
     }
     return params_rep[param - 1];
   }

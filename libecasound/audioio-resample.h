@@ -39,6 +39,7 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   /** @name Reimplemented functions from DYNAMIC_PARAMETERS<string> */
   /*@{*/
 
+  virtual bool variable_params(void) const { return true; }
   virtual std::string parameter_names(void) const;
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
@@ -107,6 +108,8 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   float psfactor_rep;
   int quality_rep;
   SAMPLE_BUFFER sbuf_rep;
+
+  static const int child_parameter_offset = 2;
 
   AUDIO_IO_RESAMPLE& operator=(const AUDIO_IO_RESAMPLE& x) { return *this; }
   AUDIO_IO_RESAMPLE (const AUDIO_IO_RESAMPLE& x) { }
