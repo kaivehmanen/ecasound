@@ -4,6 +4,7 @@
 #include <kvu_dbc.h>
 
 #include "audioio.h"
+#include "audioio-barrier.h"
 
 class SAMPLE_BUFFER;
 
@@ -23,7 +24,10 @@ class SAMPLE_BUFFER;
  *
  * @author Kai Vehmanen
  */
-class AUDIO_IO_PROXY : public AUDIO_IO {
+class AUDIO_IO_PROXY
+  : public AUDIO_IO,
+    public AUDIO_IO_BARRIER
+{
 
  public:
 
@@ -46,6 +50,7 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
   /** @name Reimplemented functions from DYNAMIC_PARAMETERS */
   /*@{*/
 
+  virtual bool variable_params(void) const { return true; }
   virtual std::string parameter_names(void) const;
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
@@ -103,12 +108,23 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
 
   /*@}*/
 
+  /** @name Reimplemented functions from AUDIO_IO_BARRIER */
+  /*@{*/
+
+  virtual void start_io(void);
+  virtual void stop_io(void);
+
+  /*@}*/
+
  protected: 
 
   void set_child(AUDIO_IO* v);
   void release_child_no_delete(void);
   void pre_child_open(void);
   void post_child_open(void);
+  bool is_child_initialized(void) const { return child_initialized_rep; }
+
+  std::string child_params_as_string(int first, std::vector<std::string>* params);
 
   AUDIO_IO* child(void) const { return child_repp; }
 
@@ -116,6 +132,7 @@ class AUDIO_IO_PROXY : public AUDIO_IO {
 
   AUDIO_IO* child_repp;
   long int buffersize_rep;
+  bool child_initialized_rep;
 };
 
 #endif // INCLUDED_AUDIO_IO_PROXY

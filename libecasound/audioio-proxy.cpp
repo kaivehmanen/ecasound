@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-proxy.cpp: Generic interface for objects that act as
 //                    proxies for other objects of type AUDIO_IO.
-// Copyright (C) 2002,2005 Kai Vehmanen
+// Copyright (C) 2002,2005,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -28,7 +28,8 @@
 #include "audioio-proxy.h"
 
 AUDIO_IO_PROXY::AUDIO_IO_PROXY(void) 
-  : buffersize_rep(0)
+  : buffersize_rep(0),
+    child_initialized_rep(false)
 {
   child_repp = new NULLFILE("uninitialized");
 }
@@ -44,9 +45,12 @@ AUDIO_IO_PROXY::~AUDIO_IO_PROXY(void)
  */
 void AUDIO_IO_PROXY::set_child(AUDIO_IO* v)
 { 
-  if (child_repp != 0) {
+  if (v != child_repp)
+    child_initialized_rep = false;
+
+  if (child_repp != 0) 
     delete child_repp;
-  }
+  
   child_repp = v;
 }
 
@@ -60,6 +64,9 @@ void AUDIO_IO_PROXY::release_child_no_delete(void)
 
 /**
  * Prepares child object for opening.
+ * 
+ * Sets the audio objects parameters, which have an effect
+ * at open time, to those of the parent object.
  */
 void AUDIO_IO_PROXY::pre_child_open(void)
 {
@@ -73,6 +80,9 @@ void AUDIO_IO_PROXY::pre_child_open(void)
  * Checks if any audio parameters were changed
  * during child's open(), fetches any changes and
  * sets the object length.
+ *
+ * @post is_child_initialized() != true
+ * @post is_child_initialized() == true
  */
 void AUDIO_IO_PROXY::post_child_open(void)
 {
@@ -80,6 +90,7 @@ void AUDIO_IO_PROXY::post_child_open(void)
     set_audio_format(child()->audio_format());
   }
   set_length_in_samples(child()->length_in_samples());
+  child_initialized_rep = true;
 }
 
 void AUDIO_IO_PROXY::set_buffersize(long int samples)
@@ -132,4 +143,36 @@ void AUDIO_IO_PROXY::set_parameter(int param, std::string value)
 std::string AUDIO_IO_PROXY::get_parameter(int param) const
 {
   return child_repp->get_parameter(param);
+}
+
+void AUDIO_IO_PROXY::start_io(void)
+{
+  AUDIO_IO_BARRIER *barrier
+    = dynamic_cast<AUDIO_IO_BARRIER*>(child_repp);
+
+  if (barrier)
+    barrier->start_io();
+
+}
+
+void AUDIO_IO_PROXY::stop_io(void)
+{
+  AUDIO_IO_BARRIER *barrier
+    = dynamic_cast<AUDIO_IO_BARRIER*>(child_repp);
+
+  if (barrier)
+    barrier->stop_io();
+}
+
+std::string AUDIO_IO_PROXY::child_params_as_string(int first, std::vector<std::string>* params)
+{
+  int last = params->size();
+  string res;
+  for (int n = first; n <= last; n++) {
+    /* FIXME: should quote the commas */
+    res += get_parameter(n);
+    if (n != last)
+      res += ",";
+  }
+  return res;
 }
