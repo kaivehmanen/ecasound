@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-reverse.cpp: A proxy class that reverts the child 
 //                      object's data.
-// Copyright (C) 2002,2005 Kai Vehmanen
+// Copyright (C) 2002,2005,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -67,39 +67,40 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   }
   
   if (init_rep != true) {
-    AUDIO_IO* tmp = 0;
-    if (params_rep.size() > 1) {
-      /* 2nd-param: audio object name */
-      string& type = params_rep[1];
-      if (type.size() > 0) {
-	tmp = ECA_OBJECT_FACTORY::create_audio_object(type);
-      }
-    }
-    
+    AUDIO_IO* tmp = 
+      ECA_OBJECT_FACTORY::create_audio_object(
+        child_params_as_string(1 + AUDIO_IO_REVERSE::child_parameter_offset, &params_rep));
+
     if (tmp != 0) {
       set_child(tmp);
     }
 
     int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {
-      child()->set_parameter(n + 1, get_parameter(n + 2));
-      numparams = child()->number_of_params(); // in case 'n_o_p()' varies
+      child()->set_parameter(n + 1, get_parameter(n + 1 + AUDIO_IO_REVERSE::child_parameter_offset));
+      if (child()->variable_params())
+	numparams = child()->number_of_params();
     }
 
     init_rep = true; /* must be set after dyn. parameters */
   }
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"checking whether child is a finite object");  
     
+  pre_child_open();
+  child()->open();
+  post_child_open();
+
   if (child()->finite_length_stream() != true) {
+    child()->close();
     throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse an infinite length audio object " + child()->label() + "."));
   }
 
   if (child()->supports_seeking() != true) {
+    child()->close();
     throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse audio object types that don't support seek (" + child()->label() + ")."));
   }
-
-  pre_child_open();
-  child()->open();
-  post_child_open();
 
   AUDIO_IO::open();
 }
@@ -134,8 +135,8 @@ void AUDIO_IO_REVERSE::set_parameter(int param, string value)
     params_rep[param - 1] = value;
   }
   
-  if (param > 1 && init_rep == true) {
-    child()->set_parameter(param - 1, value);
+  if (param > AUDIO_IO_REVERSE::child_parameter_offset && init_rep == true) {
+    child()->set_parameter(param - AUDIO_IO_REVERSE::child_parameter_offset, value);
   }
 }
 
@@ -146,8 +147,10 @@ string AUDIO_IO_REVERSE::get_parameter(int param) const
 		"get_parameter " + label() + ".");
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
-    if (param > 1 && init_rep == true) {
-      params_rep[param - 1] = child()->get_parameter(param - 1);
+    if (param > AUDIO_IO_REVERSE::child_parameter_offset 
+	&& init_rep == true) {
+      params_rep[param - 1] = 
+	child()->get_parameter(param - AUDIO_IO_REVERSE::child_parameter_offset);
     }
     return params_rep[param - 1];
   }

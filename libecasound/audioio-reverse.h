@@ -92,6 +92,8 @@ class AUDIO_IO_REVERSE : public AUDIO_IO_PROXY {
   bool finished_rep;
   SAMPLE_BUFFER* tempbuf_repp;
 
+  static const int child_parameter_offset = 1;
+
   AUDIO_IO_REVERSE& operator=(const AUDIO_IO_REVERSE& x) { return *this; }
   AUDIO_IO_REVERSE (const AUDIO_IO_REVERSE& x) { }
 
