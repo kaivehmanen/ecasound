@@ -148,10 +148,7 @@ void AUDIO_IO_TONE::close(void)
 
 bool AUDIO_IO_TONE::finite_length_stream(void) const
 {
-  if (ECA_AUDIO_POSITION::length_set() != true)
-    return true;
-  else 
-    return false;
+  return ECA_AUDIO_POSITION::length_set();
 }
 
 void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
@@ -233,6 +230,9 @@ void AUDIO_IO_TONE::setPhaseStepFromFrequency(const SAMPLE_SPECS::sample_t fFreq
 void AUDIO_IO_TONE::set_parameter(int param, 
 				  string value)
 {
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      AUDIO_IO::parameter_set_to_string(param, value));
+
   switch (param)
     {
     case 1: 
