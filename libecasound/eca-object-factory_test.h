@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-object-factory_test.h: Unit test for ECA_OBJECT_FACTORY
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2008 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -107,7 +107,8 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
       test_object_types<T>(obj, target, "clone");
       
       if (target != 0) {
-	if (obj->number_of_params() != target->number_of_params()) {
+	if (obj->number_of_params() != target->number_of_params() &&
+	    target->variable_params() != true) {
 	  ECA_TEST_FAILURE("Cloned object has different number of arguments " 
 			   "than original object; type name \"" + 
 			   obj->name() + "\".");
