@@ -57,6 +57,7 @@ void ECA_CHAINSETUP_TEST::do_run(void)
 void ECA_CHAINSETUP::do_run_save_and_restore(void)
 {
   /**
+   * FIXME:
    * - create simple setup with multiple instance of all basic
    *   object types and operations
    * - save to temp .ecs
