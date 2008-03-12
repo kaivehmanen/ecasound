@@ -70,6 +70,10 @@ AUDIO_IO::AUDIO_IO(const string& name,
 /**
  * Returns info about supported I/O modes (bitwise-OR)
  *
+ * Note that return value may change after device is
+ * opened (some objects will refine their attributes after
+ * external resources are acquired).
+ *
  * By default, all I/O modes are supported.
  */
 int AUDIO_IO::supported_io_modes(void) const { return (io_read | io_readwrite | io_write); }
@@ -77,12 +81,20 @@ int AUDIO_IO::supported_io_modes(void) const { return (io_read | io_readwrite | 
 /**
  * Whether device supports non-blocking I/O mode.
  *
+ * Note that return value may change after device is
+ * opened (some objects will refine their attributes after
+ * external resources are acquired).
+ *
  * By default, nonblocking mode is not supported.
  */
 bool AUDIO_IO::supports_nonblocking_mode(void) const { return false; }
 
 /**
  * Whether device supports non-blocking I/O mode.
+ *
+ * Note that return value may change after device is
+ * opened (some objects will refine their attributes after
+ * external resources are acquired).
  *
  * By default, seeking is supported.
  */
@@ -99,6 +111,10 @@ bool AUDIO_IO::supports_seeking(void) const { return true; }
  *
  * This attributes directly affects how 'finished()' should
  * to be interpreted. @see finished().
+ *
+ * Note that return value may change after device is
+ * opened (some objects will refine their attributes after
+ * external resources are acquired).
  *
  * By default, audio streams are finite length.
  */
