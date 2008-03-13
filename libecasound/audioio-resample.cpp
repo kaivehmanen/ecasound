@@ -61,17 +61,20 @@ AUDIO_IO_RESAMPLE* AUDIO_IO_RESAMPLE::clone(void) const
 
 void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "open " + 
+	      child_params_as_string(1 + AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep) + ".");  
 
   if (init_rep != true) {
     AUDIO_IO* tmp =
       ECA_OBJECT_FACTORY::create_audio_object(
-        child_params_as_string(AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep));
+        child_params_as_string(1 + AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep));
 
     /* FIXME: add check for real-time devices, resample does _not_
      *        work with them (rt API not proxied properly)
      */
     
+    DBC_CHECK(tmp != 0);
     if (tmp != 0) {
       set_child(tmp);
     }
@@ -104,11 +107,12 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   }
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      "open(); psfactor=" + kvu_numtostr(psfactor_rep) +
+	      "pre-open(); psfactor=" + kvu_numtostr(psfactor_rep) +
 	      ", child_srate=" + kvu_numtostr(child_srate_rep) +
 	      ", srate=" + kvu_numtostr(samples_per_second()) +
 	      ", bsize=" + kvu_numtostr(buffersize()) +
-	      ", c-bsize=" + kvu_numtostr(child_buffersize_rep) + ".");
+	      ", c-bsize=" + kvu_numtostr(child_buffersize_rep) + 
+	      ", child=" + child()->label() + ".");
 
   /* note, we don't use pre_child_open() as 
    * we want to set srate differently */
@@ -118,6 +122,9 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   child()->set_samples_per_second(child_srate_rep);
 
   child()->open();
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "post-open(); child=" + child()->label() + ".");
 
   /* same for the post processing */ 
   SAMPLE_SPECS::sample_rate_t orig_srate = samples_per_second();
@@ -139,7 +146,10 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void AUDIO_IO_RESAMPLE::close(void)
 {
-  if (child()->is_open() == true) child()->close();
+  if (child()->is_open() == true) 
+    child()->close();
+
+  init_rep = false;
 
   AUDIO_IO_PROXY::close();
 }
