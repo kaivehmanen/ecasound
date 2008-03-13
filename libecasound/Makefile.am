@@ -116,7 +116,8 @@ ecasound_audioio_include = 	\
 			audioio-aac.h \
 			audioio-tone.h \
 			audioio-seqbase.h \
-			audioio-acseq.h
+			audioio-acseq.h \
+			audioio-barrier.h
 
 ecasound_midi_include =	\
 			midi-server.h \
@@ -195,6 +196,7 @@ ecasound_extra_include = \
 ecasound_test_framework_include = \
 			eca-test-repository.h \
 			eca-test-case.h \
+			eca-audio-time_test.h \
 			eca-chainsetup_test.h \
 			eca-control_test.h \
 			eca-session_test.h \
