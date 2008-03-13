@@ -31,7 +31,7 @@ AUDIO_IO_PROXY::AUDIO_IO_PROXY(void)
   : buffersize_rep(0),
     child_initialized_rep(false)
 {
-  child_repp = new NULLFILE("uninitialized");
+  child_repp = new NULLFILE("uninitialized proxy child");
 }
 
 AUDIO_IO_PROXY::~AUDIO_IO_PROXY(void)
@@ -59,7 +59,7 @@ void AUDIO_IO_PROXY::set_child(AUDIO_IO* v)
  */
 void AUDIO_IO_PROXY::release_child_no_delete(void)
 {
-  child_repp = new NULLFILE("uninitialized");
+  child_repp = new NULLFILE("uninitialized proxy child");
 }
 
 /**
