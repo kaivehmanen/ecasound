@@ -51,7 +51,7 @@ Howto for reading the entries:
 		   an alternate syntax: both "-<id_string>:par1,...,parN"
 		   and "<id_string>:par1,...,parN" are now accepted
         - changed: ability to write to EWF file is now marked as 
-	           a deprecated feature which will be remove in
+	           a deprecated feature which will be removed in
 	           a later release 
         - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
 		   has been rewritten in this version; numerous bugs
@@ -65,7 +65,7 @@ Howto for reading the entries:
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965
-        - fixed: bugs in ewf-looping code; FIXME (not yet finished)
+        - fixed: bugs in ewf-looping code
 	- fixed: avoid terminating processing when invalid parameters are 
 		 passed to channel copy (chcopy/erc), mix (chmix/erm) and 
 	         move (chmove) chainops
@@ -77,6 +77,11 @@ Howto for reading the entries:
 	         #454890, patch from Cyril Brulebois
 	- fixed: bug in passing multiple arguments to 'typeselect', 
 	         'resample', and 'resample' objects
+	- fixed: with some glibc versions (tested with 2.3.6.ds1-13etch5),
+		 ecasound did not fully clean up all threads when
+		 it received a signal and terminated; the bug showed
+	  	 up as a stuck thread, with backtrace pointing to
+	  	 pthread_onexit_process()
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release

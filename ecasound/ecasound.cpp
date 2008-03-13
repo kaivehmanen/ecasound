@@ -66,7 +66,7 @@ static void ecasound_setup_signals(struct ecasound_state* state);
 
 extern "C" {
   static void ecasound_atexit_cleanup(void);
-  static void* ecasound_watchdog_thread(void* arg); 
+  static void* ecasound_signal_watchdog_thread(void* arg); 
   static void ecasound_signal_handler(int signal);
 }
 
@@ -104,16 +104,23 @@ int main(int argc, char *argv[])
 {
   struct ecasound_state* state = &ecasound_state_global;
 
-  /* 1. setup signals and watchdog thread */
+  /* 1. register cleanup routine */
+  // as of 20080313: The signal handler thread now closes 
+  // the engine cleanly and terminates, so atexit() is no
+  // longer needed and the application cleanup is more
+  // robust.
+  // atexit(&ecasound_atexit_cleanup);
+
+  /* 2. setup signals and the signal watchdog thread */
   ecasound_setup_signals(state);
 
-  /* 2. parse command-line args */
+  /* 3. parse command-line args */
   COMMAND_LINE* cline = new COMMAND_LINE(argc, argv);
   COMMAND_LINE* clineout = new COMMAND_LINE();
   ecasound_parse_command_line(state, *cline, clineout); 
   delete cline; cline = 0;
 
-  /* 3. create console interface */
+  /* 4. create console interface */
   if (state->retval == ECASOUND_RETVAL_SUCCESS) {
 
 #if defined(ECA_PLATFORM_CURSES) 
@@ -131,29 +138,29 @@ int main(int argc, char *argv[])
       }
     
     if (state->quiet_mode != true) {
-      /* 4. print banner */
+      /* 5. print banner */
       state->console->print_banner();
     }
 
-    /* 5. set default debug levels */
+    /* 6. set default debug levels */
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::eiam_return_values, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::module_names, true);
     
-    /* 6. create eca objects */
+    /* 7. create eca objects */
     ecasound_create_eca_objects(state, *clineout);
     delete clineout; clineout = 0;
 
-    /* 7. start ecasound daemon */
+    /* 8. start ecasound daemon */
     if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       if (state->daemon_mode == true) {
 	ecasound_launch_daemon(state);
       }
     }
 
-    /* 8. start processing */
+    /* 9. start processing */
     if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       ecasound_main_loop(state);
     }
@@ -445,7 +452,7 @@ void ecasound_print_version_banner(void)
 
 static void ecasound_signal_handler(int signal)
 {
-#ifdef HAVE_SIGWAIT
+#if defined(HAVE_SIGPROCMASK)
   cerr << "(ecasound-watchdog) WARNING! ecasound_signal_handler entered, this should _NOT_ happen!";
   cerr << " pid=" << getpid() << endl;
 #endif
@@ -453,9 +460,16 @@ static void ecasound_signal_handler(int signal)
 
 /**
  * Sets up a signal mask with sigaction() that blocks 
- * all common signals, and then launces an watchdog
+ * all common signals, and then launces a signal watchdog
  * thread that waits on the blocked signals using
- * sigwait().
+ * sigwait(). 
+ * 
+ * This design causes all non-fatal termination signals
+ * to be routed through a single thread. This signal watchdog
+ * in turn performs a clean exit upon receiving a signal.
+ * Without this setup, interactions between threads when handling 
+ * would be harder to control (especially considering that
+ * ecasound needs to work on various different platforms).
  */
 void ecasound_setup_signals(struct ecasound_state* state)
 {
@@ -498,27 +512,24 @@ void ecasound_setup_signals(struct ecasound_state* state)
 
   int res = pthread_create(&watchdog, 
 			   NULL, 
-			   ecasound_watchdog_thread, 
+			   ecasound_signal_watchdog_thread, 
 			   reinterpret_cast<void*>(state));
   if (res != 0) {
     cerr << "ecasound: Warning! Unable to create watchdog thread." << endl;
   }
 
-#ifdef HAVE_SIGPROCMASK
+#if defined(HAVE_SIGPROCMASK)
   /* block all signals */
   sigprocmask(SIG_BLOCK, signalset, NULL);
 #endif
 }
 
-void* ecasound_watchdog_thread(void* arg)
+void* ecasound_signal_watchdog_thread(void* arg)
 {
   int signalno = 0;
   struct ecasound_state* state = reinterpret_cast<struct ecasound_state*>(arg);
 
   // cerr << "Watchdog-thread created, pid=" << getpid() << "." << endl;
-
-  /* register cleanup routine */
-  atexit(&ecasound_atexit_cleanup);
 
   /* 1. block until a signal received */
 #ifdef HAVE_SIGWAIT
@@ -527,11 +538,13 @@ void* ecasound_watchdog_thread(void* arg)
   sigprocmask(SIG_SETMASK, state->signalset, NULL);
 #endif
   sigwait(state->signalset, &signalno);
-  // cerr << endl << "(ecasound-watchdog) Received signal " << signalno << ". Cleaning up and exiting..." << endl;
+
+  cerr << endl << "(ecasound-watchdog) Received signal " << signalno << ". Cleaning up and exiting..." << endl;
 
   /* 2. use pause() instead */
 #elif HAVE_PAUSE
   pause();
+
   // cerr << endl << "(ecasound-watchdog) Received signal and returned from pause(). Cleaning up and exiting..." << endl;
 
   /* 3. if proper signal handling is not possible, stop compilation */
@@ -545,8 +558,8 @@ void* ecasound_watchdog_thread(void* arg)
 	    state->retval == ECASOUND_RETVAL_INIT_FAILURE ||
 	    state->retval == ECASOUND_RETVAL_START_ERROR ||
 	    state->retval == ECASOUND_RETVAL_RUNTIME_ERROR);
-  
-  exit(state->retval);
+
+  state->control->quit();
 
   /* to keep the compilers happy; never actually executed */
   return 0;
