@@ -1,0 +1,21 @@
+#!/bin/sh
+
+ECASOUND=../ecasound/ecasound
+
+function error_exit() {
+  echo "ERROR: Test failure, exiting."
+  exit 1
+}
+
+if [ ! -e $ECASOUND ] ; then
+  echo "Ecasound binary not found."
+
+ecasound -f:16,1,96000 -i tone,sine,880,1 -o src96k.wav -t:10 || error_exit
+
+ecasound -f:16,1,48000 -i resample,auto,src96k.wav -o dst48000.wav -x || error_exit
+ecasound -f:16,1,44100 -i resample,auto,src96k.wav -o dst44100.wav -x || error_exit
+ecasound -f:16,1,22050 -i resample,auto,src96k.wav -o dst44100.wav -x || error_exit
+ecasound -f:16,1,16000 -i resample,auto,src96k.wav -o dst44100.wav -x || error_exit
+ecasound -f:16,1,8000  -i resample,auto,src96k.wav -o dst8000.wav -x || error_exit
+
+exit 0
