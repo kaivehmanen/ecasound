@@ -1,0 +1,18 @@
+This directory contains various manual test cases for Ecasound.
+
+Files
+-----
+
+run-all.sh
+    Shell script to run all the tests.
+
+clean.sh
+    Script to clean all temporary files created when
+    running the test cases.
+
+test-*.sh
+    The test cases.
+
+test-common-sh
+    Common bash functions used by test cases.
+
