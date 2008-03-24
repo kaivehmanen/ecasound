@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (12.03.2008)
+       (21.03.2008)
        ()
        (Multimedia software)
 
@@ -827,11 +827,18 @@ and fade-outs. Stays at 'start_value' for '1st_stage_length' seconds
 and then linearly changes towards 'end_value' during
 '2nd_stage_length' seconds.
 
-dit(-klg:fx-param,start-value,end-value,point_count,pos1,value1,...,posN,valueN)
+dit(-klg:fx-param,low-value,high-value,point_count,pos1,value1,...,posN,valueN)
 Generic linear envelope. This controller source can be 
-used to map custom envelopes to chain operator parameters. 
-All 'posX' parameters are given as seconds (from start of the stream).
-'valueX' parameters  must be in the range [0,1].
+used to map custom envelopes to chain operator parameters. Number of
+envelope points is specified in 'point_count'. Each envelope point
+consists of a position and a matching value. Number of pairs must
+match 'point_count' (i.e. 'N==point_count'). The 'posX' parameters are given 
+as seconds (from start of the stream). The envelope points are specified as 
+float values in range '[0,1]'. Before envelope values are mapped to operator
+parameters, they are mapped to the target range of '[low-value,high-value]'. E.g.
+a value of '0' will set operator parameter to 'low-value' and a value of
+'1' will set it to 'high-value'. For the initial segment '[0,pos1]', the envelope 
+will output value of 'value1' (e.g. 'low-value').
 
 dit(-km:fx-param,start-value,end-value,controller,channel)
 MIDI continuous controller (control change messages). 
