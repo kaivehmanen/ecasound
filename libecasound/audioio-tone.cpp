@@ -1,8 +1,7 @@
 // ------------------------------------------------------------------------
-// audioio-sine.cpp: Sine wave generator
+// audioio-tone.cpp: Tone generator
 //
 // Adaptation to Ecasound:
-// 
 // Copyright (C) 2007,2008 Kai Vehmanen (adaptation to Ecasound)
 //
 // Sources for sine generation (cmt-src-1.15/src/sine.cpp):
@@ -156,9 +155,6 @@ void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
   /* write to sbuf->buffer[ch], similarly as the LADSPA
    * chainops */
 
-  /* FIXME: actually, we should reset the channel count
-   *        every time -> we output an 'sbuf' with fixed
-   *        number of channels */
   sbuf->number_of_channels(channels());
 
   /* set the length according to our buffersize */
@@ -175,11 +171,6 @@ void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
   
   i.init(sbuf);
   i.begin();
-
-#if 0
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "In tone read_buffer().");
-#endif
 
   while(!i.end()) {
     for(int n = 0; n < channels(); n++) {
