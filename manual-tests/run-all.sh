@@ -1,6 +1,12 @@
 # ----------------------------------------------------------------------
-# File: ecasound/manual-tests/clean.sh
+# File: ecasound/manual-tests/run-all.sh
 # License: GPL (see ecasound/{AUTHORS,COPYING})
 # ----------------------------------------------------------------------
 
-rm -vf *dst*.wav src*.wav *.foobar
+for i in `ls test-*.sh` ; do
+  ./$i
+  if test $? != 0; then
+    break
+  fi
+done
+

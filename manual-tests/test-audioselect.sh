@@ -1,22 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 # 
-# version:20080313-1 
+# version:20080321-2
 #
 # Script to generate and test audio selecting.
 # The output files need to be verified manually.
 #
+# ----------------------------------------------------------------------
+# File: ecasound/manual-tests/test-klg.sh
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
 
 
 ECASOUND=../ecasound/ecasound_debug
 
-function error_exit() {
-  echo "ERROR: Test failure, exiting."
-  exit 1
-}
+. test-common-sh
 
-if [ ! -e $ECASOUND ] ; then
-  echo "Ecasound binary not found."
-fi
+check_ecabin
 
 set -x
 
@@ -30,6 +29,7 @@ $ECASOUND -q -f:16,1,44100 -i audioselect,1,22000sa,src44100.wav -o as-dst22000s
 set +x
 samples=`sndfile-info as-dst22000sa.wav |grep Frames |cut -d ':' -f2`
 if [ $samples != "22000" ] ; then error_exit ; fi
+check_md5sum as-dst22000sa.wav 6074b14f616a40cb1c7c74d305719c47
 
 # perform test 2
 set -x
@@ -37,6 +37,7 @@ $ECASOUND -q -f:16,1,88200 -i audioselect,1.9,33000sa,resample,44100,src44100.wa
 set +x
 samples=`sndfile-info as-dst33000sa.wav |grep Frames |cut -d ':' -f2`
 if [ $samples != "33000" ] ; then error_exit ; fi
+check_md5sum as-dst33000sa.wav 6118d58a9149a55f0392684b4c0fec81
 
 # perform test 3
 set -x
@@ -44,6 +45,7 @@ $ECASOUND -q -f:16,1,44100 -i audioselect,40000sa,55000sa,typeselect,.wav,src441
 set +x
 samples=`sndfile-info as-dst55000sa.wav |grep Frames |cut -d ':' -f2`
 if [ $samples != "55000" ] ; then error_exit ; fi
+check_md5sum as-dst55000sa.wav 0d792fe459a75e0e69e64c530d682fb3
 
 echo "Test run succesful (no manual verification needed)."
 echo "Run './clean.sh' to remove created audio files."
