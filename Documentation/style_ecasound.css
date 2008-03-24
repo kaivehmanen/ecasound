@@ -1,7 +1,12 @@
 body { background-color: #ffffff }
 a { color: #662a00 }
 a:visited {color: #666655 }
-p.examplecat { color: #662a00 }
+#code { color: #0000ff }
+#pre { color: #0000ff }
+code { background-color: #cccccc }
+pre { background-color: #cccccc }
+pre.codepre { background-color: #cccccc; margin-left: 0.5cm }
+p.examplecat { color: #662a00; font-size: 130% }
 p.desc { text-align: center; margin-left: 3cm; margin-right: 3cm }
 p.index { text-align: center; font-weight: bold }
 p.mirrors { text-align: center; font-variant: small-caps}
