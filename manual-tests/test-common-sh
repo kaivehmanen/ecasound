@@ -1,0 +1,39 @@
+# ----------------------------------------------------------------------
+# File: ecasound/manual-tests/test-common-sh
+# License: GPL (see ecasound/{AUTHORS,COPYING})
+# ----------------------------------------------------------------------
+
+function error_exit() {
+  echo "ERROR: Test failure, exiting."
+  exit 1
+}
+
+function check_ecabin() {
+  if [ ! -e $TESTECASOUND ] ; then
+    echo "Ecasound binary not found."
+    error_exit
+  fi
+}
+
+function set_ecasound_envvar() {
+  if test "x$TESTECASOUND" = "x"; then
+    if test -e "../ecasound/ecasound_debug" ; then
+      TESTECASOUND="../ecasound/ecasound_debug"
+    else
+      TESTECASOUND="../ecasound/ecasound"
+    fi
+  fi 
+}
+
+function check_md5sum() {
+  set +x
+  if test "`md5sum $1 |cut -f1 -d' '`" != "$2" ; then
+    echo -e "\n\nWARNING: md5sum did not match (not necessarily an error, but"
+    echo -e "\tneeds to be manually verified).\n"
+    if test "x$SKIP_MD5SUM" != "x1"; then
+      error_exit
+    fi
+  fi
+  set -x
+}
+
