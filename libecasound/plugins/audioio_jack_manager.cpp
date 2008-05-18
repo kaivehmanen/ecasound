@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_jack_manager.cpp: Manager for JACK client objects
-// Copyright (C) 2001-2004 Kai Vehmanen
+// Copyright (C) 2001-2004,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -1750,7 +1750,9 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(eca_jack_node_t* node, bool conn
 	}
 	
 	if (connect == true) {
-	  ECA_LOG_MSG(ECA_LOGGER::system_objects, "jack_port_connect() ");
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		      "Connecting JACK port " +
+		      *fromport + " to " + *toport);
 	  if (jack_connect (client_repp,
 			    fromport->c_str(), 
 			    toport->c_str())) {
