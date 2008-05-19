@@ -25,7 +25,7 @@
 #include "samplebuffer_iterators.h"
 #include "audiofx_mixing.h"
 
-static EFFECT_MIXING::ch_type priv_make_sane(EFFECT_MIXING::ch_type channel, SAMPLE_BUFFER *insample)
+static EFFECT_MIXING::ch_type priv_from_make_sane(EFFECT_MIXING::ch_type channel, SAMPLE_BUFFER *insample)
 {
   EFFECT_MIXING::ch_type channels =
     static_cast<EFFECT_MIXING::ch_type>(insample->number_of_channels());
@@ -35,6 +35,14 @@ static EFFECT_MIXING::ch_type priv_make_sane(EFFECT_MIXING::ch_type channel, SAM
 
   if (channel >= channels)
     return channels - 1;
+
+  return channel;
+}
+
+static EFFECT_MIXING::ch_type priv_to_make_sane(EFFECT_MIXING::ch_type channel, SAMPLE_BUFFER *insample)
+{
+  if (channel < 0)
+    return 0;
 
   return channel;
 }
@@ -102,8 +110,8 @@ void EFFECT_CHANNEL_COPY::init(SAMPLE_BUFFER *insample)
 {
   f_iter.init(insample);
   t_iter.init(insample);
-  from_channel = priv_make_sane(from_channel, insample);
-  to_channel = priv_make_sane(to_channel, insample);
+  from_channel = priv_from_make_sane(from_channel, insample);
+  to_channel = priv_to_make_sane(to_channel, insample);
 }
 
 void EFFECT_CHANNEL_COPY::process(void)
@@ -177,8 +185,8 @@ void EFFECT_CHANNEL_MOVE::init(SAMPLE_BUFFER *insample)
 {
   f_iter.init(insample);
   t_iter.init(insample);
-  from_channel = priv_make_sane(from_channel, insample);
-  to_channel = priv_make_sane(to_channel, insample);
+  from_channel = priv_from_make_sane(from_channel, insample);
+  to_channel = priv_to_make_sane(to_channel, insample);
 }
 
 void EFFECT_CHANNEL_MOVE::process(void)
@@ -286,7 +294,7 @@ void EFFECT_MIX_TO_CHANNEL::init(SAMPLE_BUFFER *insample)
   i.init(insample);
   t_iter.init(insample);
   channels = insample->number_of_channels();
-  to_channel = priv_make_sane(to_channel, insample);
+  to_channel = priv_to_make_sane(to_channel, insample);
 }
 
 void EFFECT_MIX_TO_CHANNEL::process(void)
