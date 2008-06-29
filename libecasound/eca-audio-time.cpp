@@ -223,12 +223,12 @@ std::string ECA_AUDIO_TIME::to_string(format_type type) const
 
 double ECA_AUDIO_TIME::seconds(void) const
 {
-  if (rate_set_rep)
-    return static_cast<double>(samples_rep) / sample_rate_rep;
-  else {
+  if (rate_set_rep != true) {
     sample_rate_rep = ECA_AUDIO_TIME::default_srate;
     rate_set_rep = true;
   }
+
+  return static_cast<double>(samples_rep) / sample_rate_rep;
 }
 
 SAMPLE_SPECS::sample_rate_t ECA_AUDIO_TIME::samples_per_second(void) const
