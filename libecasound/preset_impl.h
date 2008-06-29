@@ -12,7 +12,7 @@ using std::vector;
 
 class AUDIO_IO;
 class GENERIC_CONTROLLER;
-class OPERATOR::PARAM_DESCRIPTION;
+class OPERATOR;
 
 class PRESET_impl {
 

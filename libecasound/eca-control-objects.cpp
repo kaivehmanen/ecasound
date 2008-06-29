@@ -142,8 +142,8 @@ void ECA_CONTROL_OBJECTS::load_chainsetup(const string& filename)
   try {
     session_repp->load_chainsetup(filename);
     selected_chainsetup_repp = session_repp->selected_chainsetup_repp;
-    DBC_CHECK(selected_chainsetup_repp != 0 &&
-	      selected_chainsetup_repp->filename() == filename ||
+    DBC_CHECK((selected_chainsetup_repp != 0 &&
+	       selected_chainsetup_repp->filename() == filename) ||
 	      selected_chainsetup_repp == 0);
     ECA_LOG_MSG(ECA_LOGGER::info, "Loaded chainsetup from file \"" + filename + "\".");
   }

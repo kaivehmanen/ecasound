@@ -181,8 +181,8 @@ void ECA_SESSION::add_chainsetup(const std::string& name)
   }
 
   // --------
-  DBC_ENSURE(selected_chainsetup_repp != 0 &&
-	     selected_chainsetup_repp->name() == name ||
+  DBC_ENSURE((selected_chainsetup_repp != 0 &&
+	      selected_chainsetup_repp->name() == name) ||
 	     selected_chainsetup_repp == 0);
   // --------
 }
@@ -345,8 +345,8 @@ void ECA_SESSION::load_chainsetup(const std::string& filename)
   }
   
   // --------
-  DBC_ENSURE(selected_chainsetup_repp != 0 &&
-	     selected_chainsetup_repp->filename() == filename || 
+  DBC_ENSURE((selected_chainsetup_repp != 0 &&
+	      selected_chainsetup_repp->filename() == filename) || 
 	     selected_chainsetup_repp == 0);
   // --------
 }

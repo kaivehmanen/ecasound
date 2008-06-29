@@ -238,11 +238,11 @@ int ECA_CONTROL_BASE::run(bool batchmode)
   
   // --------
   DBC_ENSURE(is_finished() == true ||
-	     processing_started == true && is_running() != true ||
-	     processing_started != true &&
-	     (is_engine_started() != true ||
-	      is_engine_started() == true &&
-	      engine_repp->status() != ECA_ENGINE::engine_status_stopped));
+	     (processing_started == true && is_running()) != true ||
+	     (processing_started != true &&
+	      (is_engine_started() != true ||
+	       (is_engine_started() == true &&
+		engine_repp->status() != ECA_ENGINE::engine_status_stopped))));
   // --------
 
   return result;

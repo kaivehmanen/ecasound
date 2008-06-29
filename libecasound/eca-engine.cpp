@@ -1465,10 +1465,10 @@ void ECA_ENGINE::update_cache_latency_values(void)
 	  out_latency = realtime_outputs_rep[n]->latency();
       }
       else {
-	if (realtime_outputs_rep[n]->prefill_space() > 0 && 
-	    out_latency != (prefill_threshold_rep * buffersize()) + realtime_outputs_rep[n]->latency() || 
-	    realtime_outputs_rep[n]->prefill_space() == 0 &&
-	    out_latency != realtime_outputs_rep[n]->latency()) {
+	if ((realtime_outputs_rep[n]->prefill_space() > 0 && 
+	    out_latency != (prefill_threshold_rep * buffersize()) + realtime_outputs_rep[n]->latency()) || 
+	    (realtime_outputs_rep[n]->prefill_space() == 0 &&
+	    out_latency != realtime_outputs_rep[n]->latency())) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
 			"WARNING: Latency mismatch between output objects!");
 	}

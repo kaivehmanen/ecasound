@@ -270,8 +270,8 @@ void ECA_CHAINSETUP_PARSER::interpret_exit(const string& arg)
     }
   }
 
-  DBC_ENSURE(interpret_result() == true && interpret_result_verbose() == "" ||
-	     interpret_result() == false && interpret_result_verbose() != "");
+  DBC_ENSURE((interpret_result() == true && interpret_result_verbose() == "") ||
+	     (interpret_result() == false && interpret_result_verbose() != ""));
 }
 
 /**
