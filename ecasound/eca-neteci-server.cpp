@@ -193,9 +193,9 @@ void ECA_NETECI_SERVER::open_server_socket(void)
     std::cerr << "bind() failed." << endl;
   }
   
-  DBC_ENSURE((unix_sockets_rep == true) && 
-	     ((server_listening_rep == true && socketpath_rep.size() > 0 ||
-	       server_listening_rep != true && socketpath_rep.size() == 0)) ||
+  DBC_ENSURE((unix_sockets_rep == true && 
+	     (((server_listening_rep == true && socketpath_rep.size() > 0) ||
+	       (server_listening_rep != true && socketpath_rep.size() == 0)))) ||
 	     (unix_sockets_rep != true));
 }
 

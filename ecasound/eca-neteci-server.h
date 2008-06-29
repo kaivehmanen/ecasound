@@ -10,7 +10,7 @@
 
 struct ecasound_state;
 
-typedef struct ecasound_neteci_server_client {
+struct ecasound_neteci_server_client {
   std::string peername;
   char* buffer;
   int fd;

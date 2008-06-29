@@ -347,7 +347,7 @@ void ecasv_output_init(void)
 	     "avg-length = %.0f (msec)", 
 	     ecasv_rate_msec, ecasv_buffersize, avg_length); */
     ++r;
-    char* bar="------------------------------------------------------------------------------\n";
+    const char* bar="------------------------------------------------------------------------------\n";
     mvprintw(r++, 0, bar);
     mvprintw(r, 0, "channel");
     if (ecasv_log_display_mode) 
