@@ -116,8 +116,7 @@ void AUDIO_CLIP_SEQUENCER::close(void)
 
 std::string AUDIO_CLIP_SEQUENCER::parameter_names(void) const
 {
-  return label() + 
-    string("," + child()->parameter_names()); 
+  return string("acseqtype," + child()->parameter_names()); 
 }
 
 void AUDIO_CLIP_SEQUENCER::set_parameter(int param, string value)
