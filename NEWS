@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 120308) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 300608) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -18,13 +18,14 @@ Howto for reading the entries:
                   implementation of some feature
   changed       = changed behaviour, modified implementation, APIs, etc
   fixed         = fixed bugs, "features" and other sources of problems
-  [foobar]      = tag identifying the author of the change author, see 
+
+  [foobar]      = tag identifying the author of the change; see 
 	          README for a complete list contributor tags; entries 
 		  with no tags are from the main author(s)
 
 -----------------------------------------------------------------------
 
-????2008 (TBD) -** stable release **-
+14082007 (v2.4.6.1) -** stable release **-
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
 		  new features are added
@@ -40,6 +41,9 @@ Howto for reading the entries:
 	 	 bugs in complicated chainsetups, without the need to
 		 exchange complete session data (which usually are composed
 		 of large amounts of audio data)
+        - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
+		   has been rewritten in this version; numerous bugs
+	  	   are fixed
         - added: audio looper object; '-i:audioloop,foo.wav" will play
 		 'foo.wav' and loop it indefinitely
         - added: audio selector object; '-i:audioselect,5,15.2,foo.wav" will 
@@ -53,15 +57,13 @@ Howto for reading the entries:
         - changed: ability to write to EWF file is now marked as 
 	           a deprecated feature which will be removed in
 	           a later release 
-        - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
-		   has been rewritten in this version; numerous bugs
-	  	   are fixed
 	- changed: mechanism to terminate forked child processes; 
 		   properly wait for process termination in all 
 		   circumstances (previously there were some 
 		   exceptional cases)
 	- changed: major updates to the examples.html page (available
 	           also at http://eca.cx/ecasound/Documentation/examples.html)
+        - changed: updated ecasound(1) man page description of '-klg'
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965
@@ -82,6 +84,7 @@ Howto for reading the entries:
 		 it received a signal and terminated; the bug showed
 	  	 up as a stuck thread, with backtrace pointing to
 	  	 pthread_onexit_process()
+	- fixed: compilation issue on Mac OS X 10.5 [grobian]
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
