@@ -72,10 +72,12 @@ int main(int argc, char *argv[])
   int n, failed = 0;
   
 #if NDEBUG
-  putenv("ECASOUND=../ecasound/ecasound");
+  const char *binpath = "ECASOUND=../ecasound/ecasound";
 #else
-  putenv("ECASOUND=../ecasound/ecasound_debug");
+  const char *binpath = "ECASOUND=../ecasound/ecasound_debug";
 #endif
+
+  putenv((char *)binpath);
 
   for(n = 0; eci_funcs[n] != NULL; n++) {
     int ret = eci_funcs[n]();
