@@ -31,6 +31,7 @@
 #include <netinet/in.h>   /* BSD: inet_ntoa() */
 #include <sys/poll.h>     /* POSIX: poll() */
 #include <sys/socket.h>   /* BSD: getpeername() */
+#include <sys/types.h>    /* OSX: u_int32_t (INADDR_ANY) */
 
 #include <kvu_dbc.h>
 #include <kvu_fd_io.h>
