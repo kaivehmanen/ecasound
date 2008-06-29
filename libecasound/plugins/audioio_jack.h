@@ -25,6 +25,7 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   AUDIO_IO_JACK (void);
   ~AUDIO_IO_JACK(void);
 
+  virtual bool variable_params(void) const { return true; }
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 

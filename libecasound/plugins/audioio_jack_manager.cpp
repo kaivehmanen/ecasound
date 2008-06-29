@@ -1322,6 +1322,9 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port_client(int client_id, const s
   // ---
 
   const char** ports;
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+	      "Making autoconnection to ports matching: " + dst);
   
   eca_jack_node_t* node = get_node(client_id);
   list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
@@ -1338,7 +1341,8 @@ void AUDIO_IO_JACK_MANAGER::auto_connect_jack_port_client(int client_id, const s
       (*p)->autoconnect_string = eca_get_jack_port_item(ports, n);
       ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		  "Making autoconnection to terminal port: " + 
-		  (*p)->autoconnect_string);
+		  (*p)->autoconnect_string +
+		  ", channel " + kvu_numtostr(n));
       if (ports != NULL) free(ports);
     }
     else {
