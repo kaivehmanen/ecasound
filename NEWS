@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 300608) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 010708) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -25,10 +25,12 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-14082007 (v2.4.6.1) -** stable release **-
+xx072008 (v2.5.0) -** stable release **-
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
 		  new features are added
+	- notice: verified to compile with minimal warnings with
+	          gcc-4.3.1
 	- edi-entries: edi-40 closed (Update to error and warning 
 	               reporting mechanisms)
 	- added: ecasound.el: added missing ECI commands cs-option, 
@@ -44,10 +46,10 @@ Howto for reading the entries:
         - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
 		   has been rewritten in this version; numerous bugs
 	  	   are fixed
-        - added: audio looper object; '-i:audioloop,foo.wav" will play
+        - added: audio looper object; "-i:audioloop,foo.wav" will play
 		 'foo.wav' and loop it indefinitely
-        - added: audio selector object; '-i:audioselect,5,15.2,foo.wav" will 
-		 15.2sec of 'foo.wav', starting at 5sec position
+        - added: audio selector object; "-i:audioselect,5,15.2,foo.wav" will 
+		 play 15.2sec of "foo.wav", starting at position 5sec.
 	- added: EWF files; ability to specify positions in time in 
 		 sample frames; "2.0" is interpreted as 2.0secs while
 	         "88200sa" is interpreted as 88200 samples
@@ -60,9 +62,9 @@ Howto for reading the entries:
 	- changed: mechanism to terminate forked child processes; 
 		   properly wait for process termination in all 
 		   circumstances (previously there were some 
-		   exceptional cases)
+		   unhandled corner cases)
 	- changed: major updates to the examples.html page (available
-	           also at http://eca.cx/ecasound/Documentation/examples.html)
+	           also at http://eca.cx/examples )
         - changed: updated ecasound(1) man page description of '-klg'
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
