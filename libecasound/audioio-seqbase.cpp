@@ -301,12 +301,6 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
        *       actual child object length, less than buffersize()
        *       samples will be read */
 
-      /* before commit: delete */
-#if 1
-      if (sbuf->length_in_samples() < buffersize())
-	cout << "CASE 3c-2\n";
-#endif
-
       change_position_in_samples(sbuf->length_in_samples());
     }
   }

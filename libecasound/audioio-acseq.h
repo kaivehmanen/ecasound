@@ -4,7 +4,8 @@
 #include "audioio-seqbase.h"
 
 /**
- *  TBD
+ * Audio clip sequencer class. Allows to loop, play parts
+ * of, and play files at a specific moment of time.
  *
  * Related design patterns:
  *     - Proxy (GoF207
@@ -15,7 +16,7 @@ class AUDIO_CLIP_SEQUENCER : public AUDIO_SEQUENCER_BASE {
 
  public:
 
-  enum { cseq_none = 0, cseq_loop = 1, cseq_select = 2 };
+  enum { cseq_none = 0, cseq_loop = 1, cseq_select = 2, cseq_play_at = 3 };
 
   /** @name Public functions */
   /*@{*/

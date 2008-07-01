@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "21\&.03\&.2008" "" "Multimedia software"
+.TH "ecasound" "1" "02\&.07\&.2008" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -290,6 +290,13 @@ the \fB-i:audioselect,start-time,duration,file\&.ext,params\fP can
 be used\&. This will play "duration" of "file\&.ext", starting at 
 "start-time"\&. The time values should be given as seconds (e\&.g\&.
 "2\&.25", or as samples (e\&.g\&. "25000sa")\&. Parameters 4\&.\&.\&.N are 
+passed as is to the child object\&.
+.IP 
+To play an audio object at a given moment in time, 
+the \fB-i:audioplayat,play-at-time,file\&.ext,params\fP can be
+used\&. This will play "file\&.ext" after position reaches 
+"play-at-time"\&. The time values should be given as seconds (e\&.g\&.
+"2\&.25", or as samples (e\&.g\&. "25000sa")\&. Parameters 2\&.\&.\&.N are 
 passed as is to the child object\&.
 .IP 
 .IP "Ecasound Wave Files (EWF) - \&.ewf"

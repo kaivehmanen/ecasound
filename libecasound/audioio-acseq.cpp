@@ -1,5 +1,5 @@
 // ------------------------------------------------------------------------
-// audioio-audioseq.cpp: TBD
+// audioio-audioseq.cpp: Audio clip sequencer class.
 // Copyright (C) 2008 Kai Vehmanen
 //
 // Attributes:
@@ -45,13 +45,18 @@ using SAMPLE_SPECS::sample_pos_t;
 /**
  * FIXME notes  (last update 2008-03-04)
  *
- * - TBD
+ * - None.
  */
 
 AUDIO_CLIP_SEQUENCER::AUDIO_CLIP_SEQUENCER ()
 {
   set_label("audiocseq");
+
+  /* note: index of last sequencer parameter (one if no
+   *       extra parameters); params beyond this value are
+   *       passed on to the child object */
   child_param_offset_rep = 1;
+
   cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_none;
 }
 
@@ -92,6 +97,14 @@ void AUDIO_CLIP_SEQUENCER::open(void) throw(AUDIO_IO::SETUP_ERROR &)
     DBC_CHECK(finite_length_stream() == true);
     AUDIO_SEQUENCER_BASE::set_child_start_position(get_parameter(2));
     AUDIO_SEQUENCER_BASE::set_child_length(get_parameter(3));
+    AUDIO_SEQUENCER_BASE::set_child_object_string(
+      child_params_as_string(1 + child_param_offset_rep, &params_rep));
+  }
+  else if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_play_at) {
+    /* following is specific to play-at */
+    AUDIO_SEQUENCER_BASE::toggle_looping(false);
+    DBC_CHECK(finite_length_stream() == true);
+    AUDIO_SEQUENCER_BASE::set_child_offset(get_parameter(2));
     AUDIO_SEQUENCER_BASE::set_child_object_string(
       child_params_as_string(1 + child_param_offset_rep, &params_rep));
   }
@@ -138,6 +151,10 @@ void AUDIO_CLIP_SEQUENCER::set_parameter(int param, string value)
     else if (value == "audioselect") {
       cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_select;
       child_param_offset_rep = 3;
+    }
+    else if (value == "audioplayat") {
+      cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_play_at;
+      child_param_offset_rep = 2;
     }
     else {
       cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_none;

@@ -305,7 +305,7 @@ void ECA_STATIC_OBJECT_MAPS::register_audio_io_nonrt_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("resample-lq", "^resample-lq$", new AUDIO_IO_RESAMPLE());
   objmap->register_object("reverse", "^reverse$", new AUDIO_IO_REVERSE());
   objmap->register_object("tone", "^tone$", new AUDIO_IO_TONE());
-  objmap->register_object("audioloop", "^(audioloop|audioselect|audioinsert)$", new AUDIO_CLIP_SEQUENCER());
+  objmap->register_object("audioloop", "^(audioloop|audioselect|audioplayat)$", new AUDIO_CLIP_SEQUENCER());
 
   if (native_flac != true) {
     AUDIO_IO* forkedflac = new FLAC_FORKED_INTERFACE();
