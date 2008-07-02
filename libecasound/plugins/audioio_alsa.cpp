@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-alsa.cpp: ALSA 0.9.x PCM input and output.
-// Copyright (C) 1999-2004 Kai Vehmanen, Jeremy Hall 
+// Copyright (C) 1999-2004,2008 Kai Vehmanen
+// Copyright (C) 2001,2002 Jeremy Hall 
 //
 // Attributes:
 //     eca-style-version: 3
@@ -417,13 +418,13 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
 	  if (realsamples < 0) realsamples = 0;
 	}
 	else {
-	  cerr << "Overrun! Stopping operation!" << endl;
+	  cerr << "ALSA: Overrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "Read error (" << realsamples << ")! Stopping operation." << endl;
+	cerr << "ALSA: Read error (" << realsamples << ")! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -446,13 +447,13 @@ long int AUDIO_IO_ALSA_PCM::read_samples(void* target_buffer,
 	  if (realsamples < 0) realsamples = 0;
 	}
 	else {
-	  cerr << "Overrun! Stopping operation!" << endl;
+	  cerr << "ALSA: Overrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "Read error! Stopping operation." << endl;
+	cerr << "ALSA: Read error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -475,7 +476,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
 
-      cerr << "warning! playback overrun - samples lost! " 
+      cerr << "WARNING: ALSA recording overrun, some audio samples were lost!" 
 		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
 							  1000 +
 							  diff.tv_usec /
@@ -488,12 +489,12 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
       start();
     }
     else if (state == SND_PCM_STATE_SUSPENDED) {
-      cerr << "Device suspended! Stopping operation!" << endl;
+      cerr << "ALSA: Device suspended! Stopping operation!" << endl;
       stop();
       close();
     }
     else {
-      cerr << "Unknown device state '" 
+      cerr << "ALSA: Unknown device state '" 
 	   << static_cast<int>(state) << "'" << endl;
     }
   }
@@ -519,17 +520,17 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 	if (ignore_xruns() == true) {
 	  handle_xrun_playback();
 	  if (snd_pcm_writei(audio_fd_repp, target_buffer, samples) < 0) 
-	    cerr << "Xrun handling failed!" << endl;
+	    cerr << "ALSA: playback xrun handling failed!" << endl;
 	  trigger_request_rep = true;
 	}
 	else {
-	  cerr << "Underrun! Stopping operation!" << endl;
+	  cerr << "ALSA: Overrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "Write error! Stopping operation (" << count << ")." << endl;
+	cerr << "ALSA: Write error! Stopping operation (" << count << ")." << endl;
 	stop();
 	close();
       }
@@ -559,13 +560,13 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
 	  trigger_request_rep = true;
 	}
 	else {
-	  cerr << "Underrun! Stopping operation!" << endl;
+	  cerr << "ALSA: Overrun! Stopping operation!" << endl;
 	  stop();
 	  close();
 	}
       }
       else {
-	cerr << "Write  error! Stopping operation." << endl;
+	cerr << "ALSA: Write error! Stopping operation." << endl;
 	stop();
 	close();
       }
@@ -587,7 +588,7 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       snd_pcm_status_get_trigger_tstamp(status, &tstamp);
       timersub(&now, &tstamp, &diff);
       
-      cerr << "warning! playback underrun - samples lost! " 
+      cerr << "WARNING: ALSA playback underrun, glitches in audio playback possible!" 
 		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
 							  1000 +
 							  diff.tv_usec /
@@ -599,12 +600,12 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
       trigger_request_rep = true;
     }
     else if (state == SND_PCM_STATE_SUSPENDED) {
-      cerr << "Device suspended! Stopping operation!" << endl;
+      cerr << "ALSA: Device suspended! Stopping operation!" << endl;
       stop();
       close();
     }
     else {
-      cerr << "Unknown device state '" 
+      cerr << "ALSA: Unknown device state '" 
 	   << static_cast<int>(state) << "'" << endl;
     }
   }
