@@ -198,7 +198,6 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
       sigaddset(&newset, SIGTERM);
       sigprocmask(SIG_UNBLOCK, &newset, &oldset);
 #endif
-      std::cerr << "parent pid at fork: " << getpid() << "\n";
       pid_of_child_rep = fork();
       if (pid_of_child_rep == 0) { 
 	// ---
