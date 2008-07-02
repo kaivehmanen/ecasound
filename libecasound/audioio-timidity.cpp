@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-timidity.cpp: Interface class for Timidity++ input.
-// Copyright (C) 2000,2002,2004-2006 Kai Vehmanen
+// Copyright (C) 2000,2002,2004-2006,2008 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,6 +84,7 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer,
 					  long int samples)
 {
   if (triggered_rep != true) { 
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: triggering an external program in real-time context");
     triggered_rep = true;
     fork_timidity();
   }
@@ -91,22 +92,12 @@ long int TIMIDITY_INTERFACE::read_samples(void* target_buffer,
   bytes_read_rep = std::fread(target_buffer, 1, frame_size() * samples, f1_rep);
   if (bytes_read_rep < samples * frame_size() || bytes_read_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-timidity) Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Can't start process \"" + TIMIDITY_INTERFACE::default_timidity_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
   else finished_rep = false;
   return(bytes_read_rep / frame_size());
-}
-
-void TIMIDITY_INTERFACE::seek_position(void)
-{
-  if (triggered_rep == true) {
-    if (io_mode() == io_read) {
-      kill_timidity();
-    }
-  }
-  set_position_in_samples(0);
 }
 
 void TIMIDITY_INTERFACE::kill_timidity(void)
@@ -136,6 +127,25 @@ void TIMIDITY_INTERFACE::fork_timidity(void)
   }
   if (wait_for_child() != true) {
     finished_rep = true;
+    triggered_rep = false;
+  }
+}
+
+void TIMIDITY_INTERFACE::start_io(void)
+{
+  if (triggered_rep != true) {
+    if (io_mode() == io_read) 
+      fork_timidity();
+
+    triggered_rep = true;
+  }
+}
+
+void TIMIDITY_INTERFACE::stop_io(void)
+{
+  if (triggered_rep == true) {
+    if (io_mode() == io_read) 
+      clean_child(true);
     triggered_rep = false;
   }
 }

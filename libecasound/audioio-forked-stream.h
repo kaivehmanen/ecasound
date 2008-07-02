@@ -77,7 +77,8 @@ public:
 public:
 
   AUDIO_IO_FORKED_STREAM(void) : 
-    pid_of_child_rep(0),
+    pid_of_parent_rep(-1),
+    pid_of_child_rep(-1),
     fd_rep(0),
     last_fork_rep(false),
     tmp_file_created_rep(false),

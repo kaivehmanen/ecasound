@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-mikmod.cpp: Interface class for MikMod input. Uses FIFO pipes.
-// Copyright (C) 1999-2000,2004-2006 Kai Vehmanen
+// Copyright (C) 1999-2000,2004-2006,2008 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,6 +92,7 @@ void MIKMOD_INTERFACE::close(void)
 long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples)
 {
   if (triggered_rep != true) { 
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: triggering an external program in real-time context");
     triggered_rep = true;
     fork_mikmod();
   }
@@ -105,16 +106,6 @@ long int MIKMOD_INTERFACE::read_samples(void* target_buffer, long int samples)
   }
   else finished_rep = false;
   return(bytes_read_rep / frame_size());
-}
-
-void MIKMOD_INTERFACE::seek_position(void)
-{
-  if (triggered_rep == true) {
-    if (io_mode() == io_read) {
-      kill_mikmod();
-    }
-  }
-  set_position_in_samples(0);
 }
 
 void MIKMOD_INTERFACE::kill_mikmod(void)
@@ -171,4 +162,23 @@ string MIKMOD_INTERFACE::get_parameter(int param) const
     return(opt_filename_rep);
   }
   return("");
+}
+
+void MIKMOD_INTERFACE::start_io(void)
+{
+  if (triggered_rep != true) {
+    if (io_mode() == io_read) 
+      fork_mikmod();
+
+    triggered_rep = true;
+  }
+}
+
+void MIKMOD_INTERFACE::stop_io(void)
+{
+  if (triggered_rep == true) {
+    if (io_mode() == io_read) 
+      clean_child(true);
+    triggered_rep = false;
+  }
 }

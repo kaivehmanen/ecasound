@@ -42,6 +42,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
 
   virtual int supported_io_modes(void) const { return(io_read | io_write); }
   virtual bool supports_seeking(void) const { return io_mode() == io_read; }
+  virtual bool supports_seeking_sample_accurate(void) const { return false; }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
@@ -55,10 +56,9 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
 
-  // --
-  // Realtime related functions
-  // --
-  
+  virtual void start_io(void);
+  virtual void stop_io(void);
+
  private:
 
   bool finished_rep;

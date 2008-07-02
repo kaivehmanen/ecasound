@@ -336,7 +336,8 @@ MP3FILE::MP3FILE(const std::string& name)
 
 MP3FILE::~MP3FILE(void)
 {
-  clean_child(true);
+  /* see notes in stop_io() */
+  clean_child(io_mode() == io_read ? true : false);
   if (is_open() == true) {
     close();
   }
@@ -383,7 +384,8 @@ void MP3FILE::process_mono_fix(char* target_buffer, long int bytes) {
 
 long int MP3FILE::read_samples(void* target_buffer, long int samples)
 {
-  if (triggered_rep != true) { 
+  if (triggered_rep != true) {
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: triggering an external program in real-time context"); 
     triggered_rep = true;
     fork_input_process();
   }
@@ -443,7 +445,7 @@ void MP3FILE::seek_position(void)
       last_position_rep != position_in_samples()) {
     if (is_open() == true) {
       ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
-      clean_child();
+      clean_child(true);
       triggered_rep = false;
     }
   }
@@ -530,6 +532,34 @@ void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERR
   /* sample format (this comes from mpg123) */
   set_channels(2);
   set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+}
+
+void MP3FILE::start_io(void)
+{
+  if (triggered_rep != true) {
+    if (io_mode() == io_read) 
+      fork_input_process();
+    else
+      fork_output_process();
+
+    triggered_rep = true;
+  }
+}
+
+void MP3FILE::stop_io(void)
+{
+  if (triggered_rep == true) {
+    /* note: it's safe to send a SIGTERM if the client is 
+     *       an input and we know its PID (otherwise 
+     *       cleanup will still work but will take more time, which
+     *       is nasty if we are in a middle of a seek */
+    if (io_mode() == io_read) 
+      clean_child(true);
+    else
+      clean_child(false);
+
+    triggered_rep = false;
+  }
 }
 
 void MP3FILE::fork_input_process(void)

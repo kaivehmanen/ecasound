@@ -34,13 +34,13 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual OGG_VORBIS_INTERFACE* clone(void) const { return new OGG_VORBIS_INTERFACE(*this); }
   virtual OGG_VORBIS_INTERFACE* new_expr(void) const { return new OGG_VORBIS_INTERFACE(*this); }
 
-  virtual std::string name(void) const { return("Ogg Vorbis stream"); }
-  virtual std::string description(void) const { return("Interface for Ogg Vorbis decoders and encoders using UNIX pipe i/o."); }
-  virtual std::string parameter_names(void) const { return("label,bitrate"); }
-  virtual bool locked_audio_format(void) const { return(true); }
+  virtual std::string name(void) const { return "Ogg Vorbis stream"; }
+  virtual std::string description(void) const { return "Interface for Ogg Vorbis decoders and encoders using UNIX pipe i/o."; }
+  virtual std::string parameter_names(void) const { return "label,bitrate"; }
+  virtual bool locked_audio_format(void) const { return true; }
 
-  virtual int supported_io_modes(void) const { return(io_read | io_write); }
-  virtual bool supports_seeking(void) const { return(false); }
+  virtual int supported_io_modes(void) const { return io_read | io_write; }
+  virtual bool supports_seeking(void) const { return false; }
 
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR &);
   virtual void close(void);
@@ -49,15 +49,13 @@ class OGG_VORBIS_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual bool finished(void) const { return(finished_rep); }
-  virtual void seek_position(void);
 
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
 
-  // --
-  // Realtime related functions
-  // --
-  
+  virtual void start_io(void);
+  virtual void stop_io(void);
+
  private:
 
   bool triggered_rep;

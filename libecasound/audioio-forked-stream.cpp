@@ -39,6 +39,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
@@ -87,6 +88,11 @@ AUDIO_IO_FORKED_STREAM::~AUDIO_IO_FORKED_STREAM(void)
 void AUDIO_IO_FORKED_STREAM::start_io(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "start_io()");
+  /* FIXME: don't commit yet */
+#if 0
+  if (pid_of_child_rep <= 0)
+    fork_input_process();
+#endif
 }
 
 void AUDIO_IO_FORKED_STREAM::stop_io(void)
@@ -202,6 +208,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
       sigaddset(&newset, SIGTERM);
       sigprocmask(SIG_UNBLOCK, &newset, &oldset);
 #endif
+      std::cerr << "parent pid at fork: " << getpid() << "\n";
       pid_of_child_rep = fork();
       if (pid_of_child_rep == 0) { 
 	// ---
@@ -346,34 +353,41 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     fd_rep = -1;
   }
 
-  if (pid_of_child_rep > 0) {
+  if (pid_of_child_rep > 0 && 
+      force == true) {
+    kill(pid_of_child_rep, SIGTERM);
+  }
+
+  if (pid_of_child_rep > 0 &&
+      pid_of_parent_rep == getpid()) {
+    /* wait until child process has exited 
+     * note: this only works reliable when our pid is
+     *       the same as used for starting the child */
     int flags = 0;
-#ifdef __WALL
-    /* Linux-specific flag to waitpid() for to wait for
-     * childs created by other threads */
-    flags += __WALL;
-#endif
-    /* wait until child process has exited */
     int status = 0;
     int res = waitpid(pid_of_child_rep, &status, flags);
-    if (res == pid_of_child_rep && WIFEXITED(status)) {
+
+    /* FIX: don't commit */
+#if 1
+    std::cerr << "parent pid: " << getpid() << ", child " << pid_of_child_rep << "\n";
+    std::cerr << "waitpid res " << res << ", status " << status << "\n";
+    if (res < 0)
+      std::cerr << "errno " << errno << ", ECHILD=" << ECHILD << "\n";
+#endif
+
+    if (res == pid_of_child_rep) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child process exit ok");
       pid_of_child_rep = 0;
     }
     else {
-      if (res < 0)
-	/* FIXME: the following is printed out even in 
-	 *        normal circumstances (like seeking with
-	 *        an mp3 input */
-	perror("waitpid");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Problems in terminating child process:" + std::string(strerror(errno)));
     }
   }
 
-  /* if 'killing you softly' didn't work, next try with SIGTERM */
-  if (force == true && pid_of_child_rep > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "sending SIGTERM to child process");
-    /* close did not trigger exit, send SIGTERM */
-    kill(pid_of_child_rep, SIGTERM);
+  if (pid_of_child_rep > 0) {
+    /* if 'killing you softly' didn't work, next try with SIGKILL */
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGKILL to child process");
+    kill(pid_of_child_rep, SIGKILL);
     pid_of_child_rep = 0;
   }
   
@@ -389,12 +403,18 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
  */
 bool AUDIO_IO_FORKED_STREAM::wait_for_child(void) const
 {
-  if (pid_of_child_rep > 0) {
+  if (pid_of_child_rep <= 0) 
+    return false;
+  else if (pid_of_parent_rep == getpid() &&
+	   pid_of_child_rep > 0) {
     int pid = waitpid(pid_of_child_rep, 0, WNOHANG);
-    if (pid > 0) {
+    if (pid == pid_of_child_rep) {
       return false;
     }
-    if (pid == 0) return true;
+    /* no change in state, so still active */
+    return true;
   }
-  return false;
+  else 
+    /* note: we don't really know so assume that yes */
+    return true;
 }

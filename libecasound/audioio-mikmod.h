@@ -48,8 +48,9 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual void write_samples(void* target_buffer, long int samples) { }
 
   virtual bool finished(void) const { return(finished_rep); }
-  virtual void seek_position(void);
 
+  virtual void start_io(void);
+  virtual void stop_io(void);
 
  private:
 

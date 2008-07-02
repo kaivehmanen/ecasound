@@ -103,6 +103,7 @@ void OGG_VORBIS_INTERFACE::close(void)
 long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int samples)
 {
   if (triggered_rep != true) { 
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: triggering an external program in real-time context"); 
     triggered_rep = true;
     fork_input_process();
   }
@@ -129,6 +130,7 @@ long int OGG_VORBIS_INTERFACE::read_samples(void* target_buffer, long int sample
 void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
 {
   if (triggered_rep != true) {
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: triggering an external program in real-time context"); 
     triggered_rep = true;
     fork_output_process();
   }
@@ -158,16 +160,6 @@ void OGG_VORBIS_INTERFACE::write_samples(void* target_buffer, long int samples)
     else 
       finished_rep = false;
   }
-}
-
-void OGG_VORBIS_INTERFACE::seek_position(void)
-{
-  if (pid_of_child() > 0) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
-    clean_child();
-    triggered_rep = false;
-  }
-  set_position_in_samples(0);
 }
 
 void OGG_VORBIS_INTERFACE::set_parameter(int param, string value)
@@ -251,5 +243,29 @@ void OGG_VORBIS_INTERFACE::fork_output_process(void)
   }
   else {
     filedes_rep = 0;
+  }
+}
+
+void OGG_VORBIS_INTERFACE::start_io(void)
+{
+  if (triggered_rep != true) {
+    if (io_mode() == io_read) 
+      fork_input_process();
+    else
+      fork_output_process();
+
+    triggered_rep = true;
+  }
+}
+
+void OGG_VORBIS_INTERFACE::stop_io(void)
+{
+  if (triggered_rep == true) {
+    if (io_mode() == io_read) 
+      clean_child(true);
+    else
+      clean_child(false);
+
+    triggered_rep = false;
   }
 }
