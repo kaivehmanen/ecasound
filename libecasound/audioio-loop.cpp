@@ -70,11 +70,12 @@ bool LOOP_DEVICE::finished(void) const
   return finished_rep;
 }
 
-void LOOP_DEVICE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t LOOP_DEVICE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   writes_rep = 0;
   filled_rep = 0;
   empty_rounds_rep = 0;
+  return pos;
 } 
 
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer)

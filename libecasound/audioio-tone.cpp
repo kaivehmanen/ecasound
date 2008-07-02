@@ -196,15 +196,17 @@ void AUDIO_IO_TONE::write_buffer(SAMPLE_BUFFER* sbuf)
   DBC_CHECK(false);
 }
 
-void AUDIO_IO_TONE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t AUDIO_IO_TONE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   /* note: phase must be correct after arbitrary seeks */
-  m_lPhase = m_lPhaseStep * position_in_samples();
+  m_lPhase = m_lPhaseStep * pos;
 
   if (ECA_AUDIO_POSITION::length_set() == true &&
-      position_in_samples() <
+      pos <
       ECA_AUDIO_POSITION::length_in_samples())
     finished_rep = false;
+
+  return pos;
 }
 
 void AUDIO_IO_TONE::setPhaseStepFromFrequency(const SAMPLE_SPECS::sample_t fFrequency, bool force)

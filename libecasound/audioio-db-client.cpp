@@ -191,7 +191,7 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
 	recursing_rep = false;
       }
       else {
-	seek_position(); // hack to force a restart of the db server
+	seek_position(position_in_samples()); // hack to force a restart of the db server
 	std::cerr << "(audioio-db-client) Serious trouble with the disk-io subsystem! (output)" << std::endl;
       }
     }
@@ -204,11 +204,12 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
  * Note! Seeking involves stopping the whole db 
  *       server, so it's a costly operation.
  */
-void AUDIO_IO_DB_CLIENT::seek_position(void)
+SAMPLE_SPECS::sample_pos_t AUDIO_IO_DB_CLIENT::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 { 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "seek " + label() + 
-	      " to pos " + kvu_numtostr(position_in_seconds_exact()) + ".");
+	      " to pos " + kvu_numtostr(pos) + ".");
+  SAMPLE_SPECS::sample_pos_t res;
   bool was_running = false;
   if (pserver_repp->is_running() == true) {
     was_running = true;
@@ -216,7 +217,8 @@ void AUDIO_IO_DB_CLIENT::seek_position(void)
     pserver_repp->wait_for_stop();
     DBC_CHECK(pserver_repp->is_running() != true);
   }
-  child()->seek_position_in_samples(position_in_samples());
+  child()->seek_position_in_samples(pos);
+  res = child()->position_in_samples();
   if (pbuffer_repp != 0) {
     pbuffer_repp->reset();
   }
@@ -226,6 +228,7 @@ void AUDIO_IO_DB_CLIENT::seek_position(void)
     pserver_repp->wait_for_full();
     DBC_CHECK(pserver_repp->is_running() == true);
   }
+  return res;
 }
 
 /**

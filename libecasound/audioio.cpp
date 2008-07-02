@@ -90,15 +90,31 @@ int AUDIO_IO::supported_io_modes(void) const { return (io_read | io_readwrite | 
 bool AUDIO_IO::supports_nonblocking_mode(void) const { return false; }
 
 /**
- * Whether device supports non-blocking I/O mode.
+ * Whether device supports seeking.
  *
  * Note that return value may change after device is
  * opened (some objects will refine their attributes after
  * external resources are acquired).
  *
  * By default, seeking is supported.
+ *
+ * @see supports_seeking_sample_accurate()
  */
 bool AUDIO_IO::supports_seeking(void) const { return true; }
+
+/**
+ * Whether device supports sample accurate seeking.
+ *
+ * @see supports_seeking()
+ *
+ * Note that return value may change after device is
+ * opened (some objects will refine their attributes after
+ * external resources are acquired).
+ *
+ * By default, sample accurate seeking is supported if 
+ * supports_seeking() returns 'true'.
+ */
+bool AUDIO_IO::supports_seeking_sample_accurate(void) const { return AUDIO_IO::supports_seeking(); }
 
 /**
  * Whether audio stream has a distinct length. It's important
@@ -242,7 +258,8 @@ void AUDIO_IO::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   DBC_CHECK(samples_per_second() > 0);
 
   open_rep = true;
-  seek_position();
+  if (supports_seeking() == true)
+    seek_position(position_in_samples());
 }
 
 void AUDIO_IO::close(void)
@@ -378,13 +395,15 @@ void AUDIO_IO::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
   ECA_AUDIO_POSITION::set_samples_per_second(f_str.samples_per_second());
 }
 
-void AUDIO_IO::seek_position(void)
+SAMPLE_SPECS::sample_pos_t AUDIO_IO::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"seek position, aobj '" +
-		label() +
-		"' to pos in sec " + 
-		kvu_numtostr(position_in_seconds()) + ".");
+  if (supports_seeking() != true &&
+      pos != 0) {
+    ECA_LOG_MSG(ECA_LOGGER::info,
+		"WARNING: seeking not supported by audio objects of type '" +
+		name() + ".");
+    return position_in_samples();
+  }
 
-  ECA_AUDIO_POSITION::seek_position();
+  return pos;
 }

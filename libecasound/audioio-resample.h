@@ -54,20 +54,6 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
 
   /*@}*/
 
-  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
-  /*@{*/
-
-  virtual void seek_position(void);
-
-  /* -- not reimplemented 
-   * virtual SAMPLE_SPECS::sample_pos_t position_in_samples(void) const { return(child()->position_in_samples()); }
-   * virtual SAMPLE_SPECS::sample_pos_t length_in_samples(void) const { return(); }
-   * virtual void set_length_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-   * virtual void set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos);
-   */
-
-  /*@}*/
-
   /** @name Reimplemented functions from AUDIO_IO */
   /*@{*/
 

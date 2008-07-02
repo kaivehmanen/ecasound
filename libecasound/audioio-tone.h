@@ -52,7 +52,7 @@ class AUDIO_IO_TONE : public AUDIO_IO {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual void seek_position(void);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   /*@}*/
 

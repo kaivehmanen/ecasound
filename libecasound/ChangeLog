@@ -1,3 +1,13 @@
+2008-07-02  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-audio-position.h (seek_position): Moved to protected scope. The signature
+	and the call semantics were also changed. All classed inhering from 
+	ECA_AUDIO_POSITION need to be updated.
+	* eca-audio-position.h (supports_seeking, supports_seeking_sample_accurate): Added
+	as pure virtual methods.
+	* audioio.h (supports_seeking_sample_accurate): Added as implemented 
+	inherited method.
+
 2008-03-11  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* dynamic-parameters.h (variable_params): Added.

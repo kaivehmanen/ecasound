@@ -63,7 +63,7 @@ class CDRFILE : public AUDIO_IO_BUFFERED {
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual bool finished(void) const;
-  virtual void seek_position(void);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
     
   CDRFILE (const std::string& name = "");
   virtual ~CDRFILE(void);

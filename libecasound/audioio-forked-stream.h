@@ -33,20 +33,6 @@ class AUDIO_IO_FORKED_STREAM : public AUDIO_IO_BARRIER {
 
 public:
 
-  /**
-   * Starts I/O processing. 
-   * 
-   * The read_buffer()/write_buffer() functions will not be called
-   * before I/O started.
-   */
-  virtual void start_io(void);
-
-  /**
-   * Stops I/O processing. 
-   * 
-   * The read_buffer()/write_buffer() functions will not be called
-   * after I/O has been stopped.
-   */
   virtual void stop_io(void);
 
  protected:

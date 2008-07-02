@@ -113,6 +113,12 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   pre_child_open();
   child()->open();
 
+  if (child()->finite_length_stream() != true &&
+      child_looping_rep) {
+    child()->close();
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Unable to loop an object with infinite length."));
+  }
+
   /* step: set srate for audio time variable */
   child_offset_rep.set_samples_per_second_keeptime(child()->samples_per_second());
   child_start_pos_rep.set_samples_per_second_keeptime(child()->samples_per_second());
@@ -330,7 +336,7 @@ void AUDIO_SEQUENCER_BASE::write_buffer(SAMPLE_BUFFER* sbuf)
   extend_position();
 }
 
-void AUDIO_SEQUENCER_BASE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t AUDIO_SEQUENCER_BASE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   /* in write mode, seek can be only performed once
    * the initial write has been performed to the child */
@@ -339,10 +345,12 @@ void AUDIO_SEQUENCER_BASE::seek_position(void)
        (io_mode() != AUDIO_IO::io_read &&
 	child_write_started == true))) {
     sample_pos_t chipos = 
-      priv_public_to_child_pos(position_in_samples());
+      priv_public_to_child_pos(pos);
 
     child()->seek_position_in_samples(chipos);
   }
+
+  return pos;
 }
 
 void AUDIO_SEQUENCER_BASE::set_child_object_string(const std::string& v)

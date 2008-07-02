@@ -153,11 +153,12 @@ void RAWFILE::write_samples(void* target_buffer, long int samples)
   fio_repp->write_from_buffer(target_buffer, frame_size() * samples);  
 }
 
-void RAWFILE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t RAWFILE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   if (is_open() == true) {
-    fio_repp->set_file_position(position_in_samples() * frame_size());
+    fio_repp->set_file_position(pos * frame_size());
   }
+  return pos;
 }
 
 void RAWFILE::set_length_in_bytes(void)

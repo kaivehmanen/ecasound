@@ -23,7 +23,8 @@ class NULLFILE : public AUDIO_IO_BUFFERED {
 
   virtual bool finished(void) const { return false; }
   virtual bool supports_seeking(void) const { return true; }
-  virtual void seek_position(void) { } 
+  virtual bool finite_length_stream(void) const { return false; }
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) { return position_in_samples(); }
 
   NULLFILE(const std::string& name = "null");
   virtual ~NULLFILE(void);

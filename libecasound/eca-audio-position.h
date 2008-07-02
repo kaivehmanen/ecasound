@@ -87,9 +87,30 @@ class ECA_AUDIO_POSITION : public ECA_SAMPLERATE_AWARE {
   void seek_position_in_seconds(double pos_in_seconds);
   void seek_first(void);
   void seek_last(void);
-  virtual void seek_position(void) { }
+
+public:
+  virtual bool supports_seeking(void) const = 0;
+  virtual bool supports_seeking_sample_accurate(void) const = 0;
+
+protected:
+  /**
+   * Seeks to the current position.
+   *
+   * If the seek is succesful, seek_position() should return 
+   * position given as argument 'pos'.
+   *
+   * If the seek is unsuccesful (seeking not supported at all,
+   * or not with sample accuracy), the current actual position 
+   * in samples should be returned.
+   *
+   * @param pos new position in samples
+   * @return pos on success, actual current position otherwise
+   */
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) = 0;
 
   /*@}*/
+
+public:
 
   /** @name Public utility functions */
   /*@{*/

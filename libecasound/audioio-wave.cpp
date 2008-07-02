@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-wave.cpp: RIFF WAVE audio file input/output.
-// Copyright (C) 1999-2003,2005 Kai Vehmanen
+// Copyright (C) 1999-2003,2005,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -506,13 +506,13 @@ void WAVEFILE::write_samples(void* target_buffer, long int samples)
   fio_repp->write_from_buffer(target_buffer, frame_size() * samples);
 }
 
-void WAVEFILE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t WAVEFILE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   if (is_open() == true) {
-    fio_repp->set_file_position(data_start_position_rep + position_in_samples() * frame_size());
+    fio_repp->set_file_position(data_start_position_rep + pos * frame_size());
   }
 
-  AUDIO_IO_BUFFERED::seek_position();
+  return pos;
 }
 
 void WAVEFILE::set_length_in_bytes(void)

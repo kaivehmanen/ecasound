@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic_controller.cpp: General sources for control signals
-// Copyright (C) 1999-2002,2005 Kai Vehmanen
+// Copyright (C) 1999-2002,2005,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -137,15 +137,17 @@ void GENERIC_CONTROLLER::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 /**
  * Reimplemented from ECA_AUDIO_POSITION.
  */
-void GENERIC_CONTROLLER::seek_position(void)
+SAMPLE_SPECS::sample_pos_t GENERIC_CONTROLLER::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   /* Note! called on each iteration from CHAIN::controller_update() */
 
   // DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " << kvu_numtostr(position_in_seconds(), 3) << ".\n");
 
   if (source != 0) {
-    source->seek_position_in_samples(position_in_samples());
+    source->seek_position_in_samples(pos);
   }
+
+  return pos;
 }
 
 void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t v)

@@ -78,13 +78,13 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
   /**
    * Returns the current setting for xrun handling.
    */
-  virtual bool ignore_xruns(void) const { return(ignore_xruns_rep); }
+  virtual bool ignore_xruns(void) const { return ignore_xruns_rep; }
 
   /**
    * Returns the current setting for how internal 
    * buffering is used.
    */
-  virtual bool max_buffers(void) const { return(max_buffers_rep); }
+  virtual bool max_buffers(void) const { return max_buffers_rep; }
 
   /**
    * Returns the systematic latency in sample frames. 
@@ -97,7 +97,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    *
    * @pre is_open() == true
    */
-  virtual long int latency(void) const { return(0); }
+  virtual long int latency(void) const { return 0; }
 
   /**
    * How much data in sample frames can be prefilled 
@@ -109,7 +109,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    *
    * @see latency()
    */
-  virtual long int prefill_space(void) const { return(0); }
+  virtual long int prefill_space(void) const { return 0; }
 
   /*@}*/
 
@@ -179,36 +179,26 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * @pre is_running() == true
    * @post delay() <= latency()
    */
-  virtual long int delay(void) const { return(0); }
+  virtual long int delay(void) const { return 0; }
 
   /**
    * Whether device has been started?
    */
-  bool is_running(void) const { return(is_running_rep); }
+  bool is_running(void) const { return is_running_rep; }
 
   /**
    * Whether device has been prepared for processing?
    */
-  bool is_prepared(void) const { return(is_prepared_rep); }
+  bool is_prepared(void) const { return is_prepared_rep; }
 
   /*@}*/
 
   /** @name Functions reimplemented from AUDIO_IO */
   /*@{*/
 
-  virtual bool supports_seeking(void) const { return(false); }
-  virtual bool finished(void) const { return(is_open() == false); }
+  virtual bool supports_seeking(void) const { return false; }
+  virtual bool finished(void) const { return is_open() == false; }
   virtual std::string status(void) const;
-
-  /*@}*/
-
-  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
-  /*@{*/
-
-  /**
-   * Seeking is impossible with realtime devices.
-   */
-  virtual void seek_position(void) { }
 
   /*@}*/
 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2007 Kai Vehmanen
+// Copyright (C) 1999-2008 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -803,13 +803,15 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 /**
  * Reimplemented from ECA_AUDIO_POSITION.
  */
-void CHAIN::seek_position(void)
+SAMPLE_SPECS::sample_pos_t CHAIN::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"seek position, to pos " +
-		kvu_numtostr(position_in_seconds()) + ".");
+		kvu_numtostr(pos) + ".");
 
   for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
-    gcontrollers_rep[p]->seek_position_in_samples(position_in_samples());
+    gcontrollers_rep[p]->seek_position_in_samples(pos);
   }
+
+  return pos;
 }

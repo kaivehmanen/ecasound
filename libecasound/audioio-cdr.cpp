@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-cdr.cpp: CDDA/CDR audio file format input/output
-// Copyright (C) 1999,2001 Kai Vehmanen
+// Copyright (C) 1999,2001,2008 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +62,7 @@ CDRFILE* CDRFILE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void CDRFILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
@@ -110,7 +113,8 @@ void CDRFILE::close(void)
   AUDIO_IO::close();
 }
 
-bool CDRFILE::finished(void) const {
+bool CDRFILE::finished(void) const
+{
  if (std::ferror(fobject) ||
      std::feof(fobject))
    return true;
@@ -120,16 +124,18 @@ bool CDRFILE::finished(void) const {
 
 long int CDRFILE::read_samples(void* target_buffer, long int samples)
 {
-  return(std::fread(target_buffer, frame_size(), samples, fobject));
+  return std::fread(target_buffer, frame_size(), samples, fobject);
 }
 
-void CDRFILE::write_samples(void* target_buffer, long int samples) {
+void CDRFILE::write_samples(void* target_buffer, long int samples)
+{
   std::fwrite(target_buffer, frame_size(), samples, fobject);
 }
 
-void CDRFILE::seek_position(void) {
+SAMPLE_SPECS::sample_pos_t CDRFILE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
+{
   if (is_open() == true) {
-    off_t curpos_rep = position_in_samples() * frame_size();
+    off_t curpos_rep = pos * frame_size();
     DBC_CHECK(curpos_rep >= 0);
 /* fseeko doesn't seem to work with glibc 2.1.x */
 #if _LARGEFILE_SOURCE
@@ -145,7 +151,7 @@ void CDRFILE::seek_position(void) {
       // std::cerr << "(audioio-cdr) fw-seeking from " << seekpos << " to " << seekpos+seekstep << std::endl;
       int res = std::fseek(fobject, seekstep, whence);
       if (res != 0) {
-	  ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-cdr) fseek() error! (lfs).");
+	  ECA_LOG_MSG(ECA_LOGGER::info, "fseek() error! (lfs).");
 	  curpos_rep = 0;
 	  std::fseek(fobject, 0, SEEK_SET);
 	  break;
@@ -158,9 +164,12 @@ void CDRFILE::seek_position(void) {
     std::fseek(fobject, static_cast<long int>(curpos_rep), SEEK_SET);
 #endif
   }
+
+  return pos;
 }
 
-void CDRFILE::pad_to_sectorsize(void) {
+void CDRFILE::pad_to_sectorsize(void)
+{
   int padsamps = CDRFILE::sectorsize - ((length_in_samples() *
 					frame_size()) % CDRFILE::sectorsize);
 
@@ -174,7 +183,8 @@ void CDRFILE::pad_to_sectorsize(void) {
   DBC_CHECK((endpos %  CDRFILE::sectorsize) == 0);
 }
 
-void CDRFILE::set_length_in_bytes(void) {
+void CDRFILE::set_length_in_bytes(void)
+{
   struct stat temp;
   stat(label().c_str(), &temp);
   set_length_in_samples(temp.st_size / frame_size());

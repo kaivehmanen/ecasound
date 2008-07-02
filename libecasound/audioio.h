@@ -122,7 +122,6 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
 
   virtual int supported_io_modes(void) const;
   virtual bool supports_nonblocking_mode(void) const;
-  virtual bool supports_seeking(void) const;
   virtual bool finite_length_stream(void) const;
   virtual bool locked_audio_format(void) const;
 
@@ -317,7 +316,9 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
   /** @name Functions implemented from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual void seek_position(void);
+  virtual bool supports_seeking(void) const;
+  virtual bool supports_seeking_sample_accurate(void) const;
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   /*@}*/
 

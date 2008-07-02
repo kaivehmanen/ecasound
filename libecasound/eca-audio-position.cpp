@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-audio-position.cpp: Base class for representing position and length
 //                         of a audio stream.
-// Copyright (C) 1999-2002,2007 Kai Vehmanen
+// Copyright (C) 1999-2002,2007,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -136,8 +136,9 @@ void ECA_AUDIO_POSITION::seek_last(void)
 
 void ECA_AUDIO_POSITION::seek_position_in_samples(SAMPLE_SPECS::sample_pos_t pos_in_samples)
 {
-  set_position_in_samples(pos_in_samples);
-  seek_position();
+  SAMPLE_SPECS::sample_pos_t res =
+    seek_position(pos_in_samples);
+  set_position_in_samples(res);
 }
 
 void ECA_AUDIO_POSITION::seek_position_in_samples_advance(SAMPLE_SPECS::sample_pos_t pos)

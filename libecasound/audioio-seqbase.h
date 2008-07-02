@@ -60,7 +60,7 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
   /** @name Reimplemented functions from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual void seek_position(void);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   /*@}*/
 

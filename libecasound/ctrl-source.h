@@ -36,6 +36,17 @@ class CONTROLLER_SOURCE : public OPERATOR,
    */
   virtual void set_initial_value(parameter_t arg) = 0; 
 
+  /** @name Functions implemented from ECA_AUDIO_POSITION */
+  /*@{*/
+
+protected:
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) { return position_in_samples(); }
+public:
+  virtual bool supports_seeking(void) const { return true; }
+  virtual bool supports_seeking_sample_accurate(void) const { return true; }
+
+  /*@}*/
+
   virtual CONTROLLER_SOURCE* clone(void) const = 0;
   virtual CONTROLLER_SOURCE* new_expr(void) const = 0;
 };

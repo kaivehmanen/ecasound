@@ -74,7 +74,9 @@ class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
   /** @name Functions implemented from ECA_AUDIO_POSITION */
   /*@{*/
 
-  virtual void seek_position(void);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
+  virtual bool supports_seeking(void) const { return true; }
+  virtual bool supports_seeking_sample_accurate(void) const { return true; }
 
   /*@}*/
 

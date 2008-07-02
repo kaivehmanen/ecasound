@@ -158,12 +158,12 @@ string AUDIO_IO_REVERSE::get_parameter(int param) const
   return ""; 
 }
 
-void AUDIO_IO_REVERSE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t AUDIO_IO_REVERSE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   finished_rep = false;
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"seek_position " + kvu_numtostr(position_in_samples()) + ".");
-  AUDIO_IO_PROXY::seek_position();
+		"seek_position " + kvu_numtostr(pos) + ".");
+  return AUDIO_IO_PROXY::seek_position(pos);
 }
 
 void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)

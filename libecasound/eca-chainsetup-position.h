@@ -44,6 +44,14 @@ class ECA_CHAINSETUP_POSITION : public ECA_AUDIO_POSITION {
 
   /*@}*/
 
+  /** @name Functions implemented from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual bool supports_seeking(void) const { return true; }
+  virtual bool supports_seeking_sample_accurate(void) const { return true; }
+
+  /*@}*/
+
  protected:
 
   /** @name Protected functions for controlling looping */

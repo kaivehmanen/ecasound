@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2006 Kai Vehmanen
+// Copyright (C) 1999-2006,2008 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -2062,32 +2062,54 @@ void ECA_CHAINSETUP::set_samples_per_second(SAMPLE_SPECS::sample_rate_t new_valu
   ECA_CHAINSETUP_POSITION::set_samples_per_second(new_value);
 }
 
+static void priv_seek_position_helper(std::vector<AUDIO_IO*>* objs, SAMPLE_SPECS::sample_pos_t pos, const std::string& tag)
+{
+  for(vector<AUDIO_IO*>::iterator q = objs->begin(); q != objs->end(); q++) {
+    /* note: don't try to seek real-time devices (only
+     *       allowed exception, try seeking all other
+     *       objects */
+    if (dynamic_cast<AUDIO_IO_DEVICE*>(*q) == 0) { 
+      (*q)->seek_position_in_samples(pos);
+      /* note: report if object claims it supports seeking, but
+       *       in fact the seek failed */
+      if ((*q)->supports_seeking() == true) {
+	if ((*q)->position_in_samples() != pos)
+	  ECA_LOG_MSG(ECA_LOGGER::info,
+		      "WARNING: sample accurate seek failed with " +
+		      tag + " '" + (*q)->name() + "'");
+      }
+    }
+  }
+}
+
 /**
  * Reimplemented from ECA_AUDIO_POSITION.
  */
-void ECA_CHAINSETUP::seek_position(void)
+SAMPLE_SPECS::sample_pos_t ECA_CHAINSETUP::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"seek position, chainsetup '" +
-		name() +
-		"' to pos in sec " + 
-		kvu_numtostr(position_in_seconds()) + ".");
+	      "seek position, chainsetup '" +
+	      name() +
+	      "' to pos in sec " + 
+	      kvu_numtostr(pos) + ".");
 
   if (is_enabled() == true) {
     if (double_buffering() == true) pserver_repp->flush();
   }
 
-  for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
-    (*q)->seek_position_in_samples(position_in_samples());
-  }
-  
-  for(vector<AUDIO_IO*>::iterator q = outputs.begin(); q != outputs.end(); q++) {
-    (*q)->seek_position_in_samples(position_in_samples());
-  }
+  priv_seek_position_helper(&inputs, pos, "input");
+  priv_seek_position_helper(&outputs, pos, "output");
 
   for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
-    (*q)->seek_position_in_samples(position_in_samples());
+    (*q)->seek_position_in_samples(pos);
+    if ((*q)->position_in_samples() != pos)
+      ECA_LOG_MSG(ECA_LOGGER::info,
+		  "WARNING: sample accurate seek failed with chainop '" +
+		  (*q)->name() + "'");
+    
   }
+
+  return pos;
 }
 
 /**

@@ -234,15 +234,6 @@ string AUDIO_IO_RESAMPLE::get_parameter(int param) const
   return "";
 }
 
-void AUDIO_IO_RESAMPLE::seek_position(void)
-{
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"seek_position " + kvu_numtostr(position_in_samples()) + ".");
-  child()->seek_position_in_samples(position_in_samples());
-
-  AUDIO_IO_PROXY::seek_position();
-}
-
 void AUDIO_IO_RESAMPLE::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 {
   AUDIO_IO::set_audio_format(f_str);
