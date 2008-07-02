@@ -607,8 +607,8 @@ void ECA_ENGINE::prepare_operation(void)
   }
 
   /* 3. start subsystem servers and forked audio objects */
-  start_servers();
   start_forked_objects();
+  start_servers();
 
   /* 4. prepare rt objects */
   prepare_realtime_objects();
