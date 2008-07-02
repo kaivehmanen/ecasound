@@ -43,9 +43,6 @@ xx072008 (v2.5.0) -** stable release **-
 	 	 bugs in complicated chainsetups, without the need to
 		 exchange complete session data (which usually are composed
 		 of large amounts of audio data)
-        - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
-		   has been rewritten in this version; numerous bugs
-	  	   are fixed
         - added: audio looper object; "-i:audioloop,foo.wav" will play
 		 'foo.wav' and loop it indefinitely
         - added: audio selector object; "-i:audioselect,5,15.2,foo.wav" will 
@@ -55,6 +52,9 @@ xx072008 (v2.5.0) -** stable release **-
 	- added: EWF files; ability to specify positions in time in 
 		 sample frames; "2.0" is interpreted as 2.0secs while
 	         "88200sa" is interpreted as 88200 samples
+        - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
+		   has been rewritten in this version; numerous bugs
+	  	   are fixed
         - changed: eaim - commands 'cop-add' and 'ctrl-add' now allow
 		   an alternate syntax: both "-<id_string>:par1,...,parN"
 		   and "<id_string>:par1,...,parN" are now accepted
@@ -67,6 +67,12 @@ xx072008 (v2.5.0) -** stable release **-
 		   unhandled corner cases)
 	- changed: major updates to the examples.html page (available
 	           also at http://eca.cx/examples )
+	- changed: refactored logic for propagating seek events 
+		   across chainsetups; warnings are now issued if 
+		   one tries to seek objects that do not supports
+		   seeking; similarly warning is issued if a given
+	 	   audio object type doesn't support sample accurate
+		   seeks (for example mp3 inputs have this limitation)
         - changed: updated ecasound(1) man page description of '-klg'
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
