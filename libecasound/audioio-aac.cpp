@@ -85,7 +85,7 @@ void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
     /* decoder supports: fixed channel count and sample format, 
                          sample rate unknown and must be set manually  */
     set_channels(2); /* 5.1 downmixed to stereo if needed by faad2 */
-    /* do not commit: */
+    /* FIXME: fix properly */
     set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
   }
   else {

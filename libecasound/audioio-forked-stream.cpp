@@ -85,16 +85,6 @@ AUDIO_IO_FORKED_STREAM::~AUDIO_IO_FORKED_STREAM(void)
 {
 }
 
-void AUDIO_IO_FORKED_STREAM::start_io(void)
-{
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "start_io()");
-  /* FIXME: don't commit yet */
-#if 0
-  if (pid_of_child_rep <= 0)
-    fork_input_process();
-#endif
-}
-
 void AUDIO_IO_FORKED_STREAM::stop_io(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "stop_io()");
@@ -366,14 +356,6 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     int flags = 0;
     int status = 0;
     int res = waitpid(pid_of_child_rep, &status, flags);
-
-    /* FIX: don't commit */
-#if 1
-    std::cerr << "parent pid: " << getpid() << ", child " << pid_of_child_rep << "\n";
-    std::cerr << "waitpid res " << res << ", status " << status << "\n";
-    if (res < 0)
-      std::cerr << "errno " << errno << ", ECHILD=" << ECHILD << "\n";
-#endif
 
     if (res == pid_of_child_rep) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child process exit ok");

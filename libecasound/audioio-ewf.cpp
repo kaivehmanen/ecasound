@@ -124,9 +124,6 @@ void EWFFILE::read_ewf_data(void) throw(ECA_ERROR&)
   else
     set_child_start_position(ECA_AUDIO_TIME());
 
-  /* FIXME: don't commit */
-  cout << "here, setting length to " << ewf_rc.resource("length") << ".\n";
-    
   if (ewf_rc.has("length")) {
     set_child_length(ECA_AUDIO_TIME(ewf_rc.resource("length")));
   }
