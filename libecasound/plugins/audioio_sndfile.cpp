@@ -410,11 +410,12 @@ void SNDFILE_INTERFACE::write_buffer(SAMPLE_BUFFER* sbuf)
   extend_position();
 }
 
-void SNDFILE_INTERFACE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t SNDFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   // FIXME: check if format supports seeking
-  sf_seek(snd_repp, position_in_samples(), SEEK_SET);
+  sf_seek(snd_repp, pos, SEEK_SET);
   finished_rep = false;
+  return pos;
 }
 
 void SNDFILE_INTERFACE::set_parameter(int param, 

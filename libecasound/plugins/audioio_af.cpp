@@ -214,10 +214,11 @@ void AUDIOFILE_INTERFACE::write_samples(void* target_buffer,
   ::afWriteFrames(afhandle, AF_DEFAULT_TRACK, target_buffer, samples);
 }
 
-void AUDIOFILE_INTERFACE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t AUDIOFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
-  ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, position_in_samples());
+  ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, pos);
   finished_rep = false;
+  return pos;
 }
 
 void AUDIOFILE_INTERFACE::set_parameter(int param, 

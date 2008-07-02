@@ -46,7 +46,7 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual bool finished(void) const;
-  virtual void seek_position(void);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
     
   AUDIOFILE_INTERFACE* clone(void) const;
   AUDIOFILE_INTERFACE* new_expr(void) const { return new AUDIOFILE_INTERFACE(); }  
