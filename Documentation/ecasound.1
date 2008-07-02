@@ -286,14 +286,14 @@ Parameters 3\&.\&.\&.N are passed as is to the child object (i\&.e\&.
 "bar1,bar2" to the "foo\&.wav" object\&.
 .IP 
 To select and use only a specific segment of an audio object,
-the \fB-i:audioselect,start-time,duration,file\&.ext,params\fP can
+the \fB-i:select,start-time,duration,file\&.ext,params\fP can
 be used\&. This will play "duration" of "file\&.ext", starting at 
 "start-time"\&. The time values should be given as seconds (e\&.g\&.
 "2\&.25", or as samples (e\&.g\&. "25000sa")\&. Parameters 4\&.\&.\&.N are 
 passed as is to the child object\&.
 .IP 
 To play an audio object at a given moment in time, 
-the \fB-i:audioplayat,play-at-time,file\&.ext,params\fP can be
+the \fB-i:playat,play-at-time,file\&.ext,params\fP can be
 used\&. This will play "file\&.ext" after position reaches 
 "play-at-time"\&. The time values should be given as seconds (e\&.g\&.
 "2\&.25", or as samples (e\&.g\&. "25000sa")\&. Parameters 2\&.\&.\&.N are 
@@ -305,7 +305,7 @@ of audio files\&. This format is specific to Ecasound\&.
 See ecasound user\&'s guide for more 
 detailed information\&.
 .IP 
-See also audio object types \&'audioloop\&', \&'audioselect\&' and \&'audioinsert\&'\&.
+See also audio object types \&'audioloop\&', \&'select\&' and \&'playat\&'\&.
 .IP 
 .IP "JACK input/outputs"
 JACK is a low-latency audio server that can be used to connect

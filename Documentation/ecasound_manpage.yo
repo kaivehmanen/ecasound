@@ -305,14 +305,14 @@ Parameters 3...N are passed as is to the child object (i.e.
 "bar1,bar2" to the "foo.wav" object.
 
 To select and use only a specific segment of an audio object,
-the bf(-i:audioselect,start-time,duration,file.ext,params) can
+the bf(-i:select,start-time,duration,file.ext,params) can
 be used. This will play "duration" of "file.ext", starting at 
 "start-time". The time values should be given as seconds (e.g.
 "2.25", or as samples (e.g. "25000sa"). Parameters 4...N are 
 passed as is to the child object.
 
 To play an audio object at a given moment in time, 
-the bf(-i:audioplayat,play-at-time,file.ext,params) can be
+the bf(-i:playat,play-at-time,file.ext,params) can be
 used. This will play "file.ext" after position reaches 
 "play-at-time". The time values should be given as seconds (e.g.
 "2.25", or as samples (e.g. "25000sa"). Parameters 2...N are 
@@ -324,7 +324,7 @@ of audio files. This format is specific to Ecasound.
 See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for more 
 detailed information.
 
-See also audio object types 'audioloop', 'audioselect' and 'audioinsert'.
+See also audio object types 'audioloop', 'select' and 'playat'.
 
 dit(JACK input/outputs)
 JACK is a low-latency audio server that can be used to connect

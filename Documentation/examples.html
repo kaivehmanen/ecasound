@@ -513,7 +513,7 @@ that out to the ALSA device.
 </p>
 
 <blockquote>
-<pre class="codepre">4. ecasound  -i audioselect,5,10,audioclip.wav -o alsa</pre>
+<pre class="codepre">4. ecasound  -i select,5,10,audioclip.wav -o alsa</pre>
 </blockquote>
 
 <p>
@@ -521,7 +521,7 @@ Next let's play that segment in reverse:
 </p>
 
 <blockquote>
-<pre class="codepre">5. ecasound  -i reverse,audioselect,5,10,audioclip.wav -o alsa</pre>
+<pre class="codepre">5. ecasound  -i reverse,select,5,10,audioclip.wav -o alsa</pre>
 </blockquote>
 
 <p>
@@ -530,7 +530,24 @@ loop the reversed segment:
 </p>
 
 <blockquote>
-<pre class="codepre">6. ecasound  -i audioloop,reverse,audioselect,5,10,audioclip.wav -o alsa</pre>
+<pre class="codepre">6. ecasound  -i audioloop,reverse,select,5,10,audioclip.wav -o alsa</pre>
+</blockquote>
+
+Another available operator is "playat", which can be used to play an audio
+clip at a given moment in time (i.e. postpone the time it is
+played). A simple example of playing "audioclip.wav" at position 20sec (i.e.
+20secs of silences and then file is played out from start).
+
+<blockquote>
+<pre class="codepre">7. ecasound  -i playat,20.0,audioclip.wav -o alsa</pre>
+</blockquote>
+
+This operatoror can be combined with others as well. To select
+a 10sec clip, starting at 25sec (i.e. 25-35sec of "audioclip.wav"), and 
+play it at 180.5sec (with total length of 180.5+10=190.5sec):
+
+<blockquote>
+<pre class="codepre">8. ecasound  -i playat,180.0,select,25,10,audioclip.wav -o alsa</pre>
 </blockquote>
 
 <!-- ###  new section ### -->

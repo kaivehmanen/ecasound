@@ -148,11 +148,11 @@ void AUDIO_CLIP_SEQUENCER::set_parameter(int param, string value)
       cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_loop;
       child_param_offset_rep = 1;
     }
-    else if (value == "audioselect") {
+    else if (value == "select") {
       cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_select;
       child_param_offset_rep = 3;
     }
-    else if (value == "audioplayat") {
+    else if (value == "playat") {
       cseq_mode_rep = AUDIO_CLIP_SEQUENCER::cseq_play_at;
       child_param_offset_rep = 2;
     }

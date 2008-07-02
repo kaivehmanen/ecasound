@@ -45,9 +45,9 @@ xx072008 (v2.5.0) -** stable release **-
 		 of large amounts of audio data)
         - added: audio looper object; "-i:audioloop,foo.wav" will play
 		 'foo.wav' and loop it indefinitely
-        - added: audio selector object; "-i:audioselect,5,15.2,foo.wav" will 
+        - added: audio selector object; "-i:select,5,15.2,foo.wav" will 
 		 play 15.2sec of "foo.wav", starting at position 5sec.
-	- added: audio play-at object; "-i:audioplayat,5,foo.wav" will
+	- added: audio play-at object; "-i:playat,5,foo.wav" will
 		 start playing "foo.wav" after position reaches 5sec
 	- added: EWF files; ability to specify positions in time in 
 		 sample frames; "2.0" is interpreted as 2.0secs while

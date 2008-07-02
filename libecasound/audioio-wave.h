@@ -114,7 +114,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual bool finished(void) const;
-  SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
