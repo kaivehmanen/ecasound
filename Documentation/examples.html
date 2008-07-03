@@ -544,11 +544,16 @@ played). A simple example of playing "audioclip.wav" at position 20sec (i.e.
 
 This operatoror can be combined with others as well. To select
 a 10sec clip, starting at 25sec (i.e. 25-35sec of "audioclip.wav"), and 
-play it at 180.5sec (with total length of 180.5+10=190.5sec):
+play it at 180.5sec (with total length of 180.5+10.0=190.5sec):
 
 <blockquote>
-<pre class="codepre">8. ecasound  -i playat,180.0,select,25,10,audioclip.wav -o alsa</pre>
+<pre class="codepre">8. ecasound  -i playat,180.5,select,25,10.0,audioclip.wav -o alsa</pre>
 </blockquote>
+
+<p>
+Version note: 'audioloop', 'select' and 'playat' audio object types were
+added to ecasound version 2.5.0.
+</p>
 
 <!-- ###  new section ### -->
 <p class="examplecat">
