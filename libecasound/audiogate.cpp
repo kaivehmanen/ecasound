@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999-2002,2005-2007 Kai Vehmanen
+// Copyright (C) 1999-2002,2005-2008 Kai Vehmanen
+// Copyrtigh (C) 2008 Andrew Lees
 //
 // Attributes:
 //     eca-style-version: 3
@@ -41,6 +42,7 @@ void GATE_BASE::process(void)
 
 void GATE_BASE::init(SAMPLE_BUFFER* sbuf)
 { 
+  gate_open = false;
   target = sbuf;
 }
 
@@ -71,7 +73,7 @@ TIME_CROP_GATE::TIME_CROP_GATE (CHAIN_OPERATOR::parameter_t open_at, CHAIN_OPERA
   durtime_rep = duration;
   position_in_samples_rep = 0;
   
-  ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Time crop gate created; opens at " +
+  ECA_LOG_MSG(ECA_LOGGER::info, "Time crop gate created; opens at " +
 	      kvu_numtostr(begtime_rep) + " seconds and stays open for " +
 	      kvu_numtostr(durtime_rep) + " seconds.\n");
 }
@@ -121,15 +123,23 @@ THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel,
   is_opened_rep = is_closed_rep = false;
 
   if (rms_rep) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Threshold gate created; open threshold " +
+    ECA_LOG_MSG(ECA_LOGGER::info, "Threshold gate created; open threshold " +
 		kvu_numtostr(openlevel_rep * 100) + "%, close threshold " +
 		kvu_numtostr(closelevel_rep * 100) + "%, using RMS volume.");
   }
   else {
-    ECA_LOG_MSG(ECA_LOGGER::info, "(audiogate) Threshold gate created; open threshold " +
+    ECA_LOG_MSG(ECA_LOGGER::info, "Threshold gate created; open threshold " +
 		kvu_numtostr(openlevel_rep * 100) + "%, close threshold " +
 		kvu_numtostr(closelevel_rep * 100) + "%, using peak volume.");
   }
+}
+
+void THRESHOLD_GATE::init(SAMPLE_BUFFER* sbuf)
+{
+  reopens_left_rep = reopen_count_param_rep;
+  is_opened_rep = false;
+  is_closed_rep = false;
+  GATE_BASE::init(sbuf);
 }
 
 void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
@@ -142,7 +152,7 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
   if (is_opened_rep == false) {
     if (avolume_rep > openlevel_rep) { 
       open_gate();
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate opened (loop_count = " + kvu_numtostr(loop_count) + ")");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate opened (reopen count = " + kvu_numtostr(reopens_left_rep) + ")");
       is_opened_rep = true;
       is_closed_rep = false;
     }
@@ -150,13 +160,18 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
   else if (is_closed_rep == false) {
     if (avolume_rep < closelevel_rep) { 
       close_gate();
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate closed (loop_count = " + kvu_numtostr(loop_count) + ")");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate closed (reopens left = " + kvu_numtostr(reopens_left_rep) + ")");
       is_closed_rep = true;
-      if (loop_count != 0) {
+      if (reopens_left_rep != 0) {
         is_opened_rep = false;
-        if (loop_count > 0) --loop_count;
+        if (reopens_left_rep > 0)
+	  --reopens_left_rep;
       } else {
-        //Could we stop the engine and exit here, maybe?
+        // - Could we stop the engine and exit here, maybe? -AL/2008-Jul
+	// - Not from a chain operator, but the audio object
+	//   that writes the stream to a file could in
+	//   theory react in a special way to the 0-length 
+	//   samplebuffers we generate when the gate is closed... -KV/2008-Jul
       }
     }
   }
@@ -175,7 +190,7 @@ CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const
     else 
       return 0.0;
   case 4:
-    return loop_count;
+    return reopen_count_param_rep;
   }
   return 0.0;
 }
@@ -190,10 +205,10 @@ void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
     closelevel_rep = value / 100.0;
     break;
   case 3: 
-      rms_rep = (value != 0);
+    rms_rep = (value != 0);
     break;
   case 4:
-    loop_count = value;
+    reopen_count_param_rep = static_cast<int>(value);
     break;
   }
 }

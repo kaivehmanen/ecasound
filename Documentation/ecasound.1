@@ -731,22 +731,22 @@ Time crop gate\&. Initially gate is closed\&. After \&'start-time\&' seconds
 has elapsed, gate opens and remains open for \&'len\&' seconds\&. When
 closed, passing audio buffers are trucated to zero length\&.
 .IP 
-.IP "-ge:open-threshold-%, close-thold-%,volume-mode,loop-count"
-Threshold gate\&. Initially gate is closed\&. It is opened when volume 
-goes over \&'othreshold\&' percent\&. After this, if volume drops below 
+.IP "-ge:open-threshold-%,close-thold-%,volume-mode,reopen-count"
+Threshold gate\&. Initially gate is closed\&. It is opened when volume
+goes over \&'othreshold\&' percent\&. After this, if volume drops below
 \&'cthold\&' percent, gate is closed and won\&'t be opened again, unless the
-loop-count is set to anything other than zero\&.
+\&'reopen-count\&' is set to anything other than zero\&.
 If \&'value_mode\&' is \&'rms\&', average RMS volume is used\&. Otherwise
-peak average is used\&.  When closed, passing audio buffers are trucated 
+peak average is used\&.  When closed, passing audio buffers are trucated
 to zero length\&.
-If the loop-count is set to a positive number, then the gate operation will
-loop that many times\&. So for example, a loop count of 1 will cause up to
-2 openings of the gate\&. A negative value for loop-count will result in
-the operation looping indefinitely\&. The loop-count is invaluable in recording
-vinyl and tapes, where you can set things up and then recording starts whenever
-the needle is on the vinyl, and stops when it's off\&.  As many sides as you like
-can be recorded in one session\&.  You will need to experiment with buffer lengths
-and start/stop levels to get reliable settings for your equipment\&.
+If the \&'reopen-count\&' is set to a positive number, then the gate will 
+restart its operation that many times\&. So for example, a reopen count 
+of 1 will cause up to 2 openings of the gate\&. A negative value for \&'reopen-count\&'
+will result in the gate reopening indefinitely\&. The \&'reopen-count\&' is invaluable 
+in recording vinyl and tapes, where you can set things up and then recording 
+starts whenever the needle is on the vinyl, and stops when it\&'s off\&. As many sides 
+as you like can be recorded in one session\&.  You will need to experiment with 
+buffer lengths and start/stop levels to get reliable settings for your equipment\&.
 .IP 
 \fBCONTROL ENVELOPE SETUP\fP
 

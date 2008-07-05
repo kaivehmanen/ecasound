@@ -42,6 +42,8 @@ Lang, Mario [mlang]
 	Ecasound.el, the ecasound emacs module.
 Leake, Tony [tonyleake]
 	PHP ECI extension.
+Lees, Andrew [andrewl]
+	Reopen functionality to threshold gate (-ge).
 Lopez-Cabanillas, Pedro [pedrolc] (pedro -dot- lopez-cabanillas -at- gmail -dot -com)
 	ALSA sequencer interface support.
 Massy, S. [smassy]

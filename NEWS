@@ -52,6 +52,10 @@ xx072008 (v2.5.0) -** stable release **-
 	- added: EWF files; ability to specify positions in time in 
 		 sample frames; "2.0" is interpreted as 2.0secs while
 	         "88200sa" is interpreted as 88200 samples
+	- added: 'reopen-count' parameter to threshold gate (-ge);
+		 for instance when recording vinyl/tapes, this allows
+		 to automatically restart recording when a new track 
+		 is started [andrewl]
         - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
 		   has been rewritten in this version; numerous bugs
 	  	   are fixed

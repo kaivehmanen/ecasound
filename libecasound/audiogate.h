@@ -27,8 +27,8 @@ protected:
 public:
 
   inline bool is_open(void) const { return(gate_open); }
-  void init(SAMPLE_BUFFER* sbuf);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER* sbuf);
+  virtual void process(void);
   virtual void analyze(SAMPLE_BUFFER* sbuf) = 0;
 
   virtual GATE_BASE* clone(void) const = 0;   
@@ -96,14 +96,16 @@ public:
 
   // Functions returning info about effect and its parameters.
   // ---
-  parameter_t get_parameter(int param) const;
-  void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
 
-  std::string name(void) const { return("Threshold gate"); }
+  virtual void init(SAMPLE_BUFFER* sbuf);
 
-  std::string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled,loop-count"); }
+  virtual std::string name(void) const { return("Threshold gate"); }
 
-  void analyze(SAMPLE_BUFFER* insample);
+  virtual std::string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled,reopen-count"); }
+
+  virtual void analyze(SAMPLE_BUFFER* insample);
 
   THRESHOLD_GATE* clone(void) const { return new THRESHOLD_GATE(*this); }
   THRESHOLD_GATE* new_expr(void) const { return new THRESHOLD_GATE(); }
@@ -115,7 +117,7 @@ public:
 private:
   
   parameter_t openlevel_rep, closelevel_rep, avolume_rep;
-  int loop_count;
+  int reopen_count_param_rep, reopens_left_rep;
   bool rms_rep;
   bool is_opened_rep, is_closed_rep;
 };
