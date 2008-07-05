@@ -142,15 +142,22 @@ void THRESHOLD_GATE::analyze(SAMPLE_BUFFER* sbuf)
   if (is_opened_rep == false) {
     if (avolume_rep > openlevel_rep) { 
       open_gate();
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate opened.");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate opened (loop_count = " + kvu_numtostr(loop_count) + ")");
       is_opened_rep = true;
+      is_closed_rep = false;
     }
   }
   else if (is_closed_rep == false) {
     if (avolume_rep < closelevel_rep) { 
       close_gate();
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate closed.");
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Threshold gate closed (loop_count = " + kvu_numtostr(loop_count) + ")");
       is_closed_rep = true;
+      if (loop_count != 0) {
+        is_opened_rep = false;
+        if (loop_count > 0) --loop_count;
+      } else {
+        //Could we stop the engine and exit here, maybe?
+      }
     }
   }
 }
@@ -167,6 +174,8 @@ CHAIN_OPERATOR::parameter_t THRESHOLD_GATE::get_parameter(int param) const
       return 1.0;
     else 
       return 0.0;
+  case 4:
+    return loop_count;
   }
   return 0.0;
 }
@@ -181,10 +190,10 @@ void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
     closelevel_rep = value / 100.0;
     break;
   case 3: 
-    if (value != 0) 
-      rms_rep = true;
-    else 
-      rms_rep = false;
+      rms_rep = (value != 0);
+    break;
+  case 4:
+    loop_count = value;
     break;
   }
 }

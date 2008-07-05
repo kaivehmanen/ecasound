@@ -101,7 +101,7 @@ public:
 
   std::string name(void) const { return("Threshold gate"); }
 
-  std::string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled"); }
+  std::string parameter_names(void) const { return("threshold-openlevel-%,threshold-closelevel-%,rms-enabled,loop-count"); }
 
   void analyze(SAMPLE_BUFFER* insample);
 
@@ -115,6 +115,7 @@ public:
 private:
   
   parameter_t openlevel_rep, closelevel_rep, avolume_rep;
+  int loop_count;
   bool rms_rep;
   bool is_opened_rep, is_closed_rep;
 };
