@@ -34,11 +34,13 @@ class ECA_AUDIO_TIME {
   void set_samples(SAMPLE_SPECS::sample_pos_t samples);
   void set_samples_per_second(long int srate);
   void set_samples_per_second_keeptime(long int srate);
-    
+  void mark_as_invalid(void);
+
   std::string to_string(format_type type) const;
   double seconds(void) const;
   SAMPLE_SPECS::sample_rate_t samples_per_second(void) const;
   SAMPLE_SPECS::sample_pos_t samples(void) const;
+  bool valid(void) const;
 };
 
 #endif

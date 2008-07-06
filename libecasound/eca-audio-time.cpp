@@ -33,7 +33,7 @@
 /**
  * FIXME notes  (last update 2008-03-09)
  *
- *  - Add varinat that allows specifying both sample position and
+ *  - Add variant that allows specifying both sample position and
  *    sampling rate to set_time_string(). E.g. "1234@44100sa" or
  *    something similar.
  */
@@ -171,8 +171,10 @@ void ECA_AUDIO_TIME::set_samples_per_second(SAMPLE_SPECS::sample_rate_t srate)
     sample_rate_rep = srate;
     rate_set_rep = true;
   }
-  else 
+  else {
+    rate_set_rep = false;
     sample_rate_rep = ECA_AUDIO_TIME::invalid_srate;
+  }
 }
 
 /**
@@ -197,7 +199,12 @@ void ECA_AUDIO_TIME::set_samples_per_second_keeptime(sample_rate_t srate)
     }
   }
 }
-  
+
+void ECA_AUDIO_TIME::mark_as_invalid(void)
+{
+  set_samples_per_second(ECA_AUDIO_TIME::invalid_srate);
+}
+
 std::string ECA_AUDIO_TIME::to_string(format_type type) const
 {
   /* FIXME: not implemented */
@@ -239,4 +246,9 @@ SAMPLE_SPECS::sample_rate_t ECA_AUDIO_TIME::samples_per_second(void) const
 SAMPLE_SPECS::sample_pos_t ECA_AUDIO_TIME::samples(void) const
 {
   return samples_rep;
+}
+
+bool ECA_AUDIO_TIME::valid(void) const
+{
+  return rate_set_rep;
 }

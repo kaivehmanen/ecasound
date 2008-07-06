@@ -344,8 +344,11 @@ string AUDIO_IO::status(void) const {
   MESSAGE_ITEM mitem;
   mitem.setprecision(3);
 
-  mitem << "position (" << position_in_seconds_exact();
-  mitem << "/" << length_in_seconds_exact();
+  mitem << "position (" << position_in_seconds_exact() << "/";
+  if (finite_length_stream() == true)
+    mitem << length_in_seconds_exact();
+  else
+    mitem << "inf";
   mitem << ") seconds.\n -> ";
   
   if (is_open() == true) 

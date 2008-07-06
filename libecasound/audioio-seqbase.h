@@ -67,7 +67,7 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
   /** @name Reimplemented functions from AUDIO_IO */
   /*@{*/
 
-  virtual bool finite_length_stream(void) const { return(!child_looping_rep); }
+  virtual bool finite_length_stream(void) const;
   virtual bool finished(void) const;
 
   virtual void read_buffer(SAMPLE_BUFFER* sbuf);
@@ -91,7 +91,13 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
   const std::string& child_object_string(void) const { return child_name_rep; }
 
   /**
-   * Set start offset for child object
+   * Sets start offset for the child object. 
+   *
+   * At this offset, samples from the child start to
+   * be read.
+   *
+   * If not set, defaults to zero offset (start 
+   * consuming child object samples from the beginning).
    */
   void set_child_offset(const ECA_AUDIO_TIME& v);
 
@@ -99,17 +105,36 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
 
   /**
    * Set start position inside child object.
+   *
+   * This is the position, within the child object, where
+   * first samples will be read.
+   *
+   * If not set, defaults to zero (read from start of
+   * child object).
    */
   void set_child_start_position(const ECA_AUDIO_TIME& v);
 
   const ECA_AUDIO_TIME& child_start_position(void) const { return child_start_pos_rep; }
 
   /**
-   * Set child length. If not set, defaults to the total length. 
+   * Set the child length. 
+   * 
+   * If not set, defaults to the total length of 
+   * the child object.
+   * 
+   * @see reset_child_length(void);
    */
   void set_child_length(const ECA_AUDIO_TIME& v);
 
-  const ECA_AUDIO_TIME& child_length(void) const { return child_length_rep; }
+  /**
+   * Returns the child length.
+   * 
+   * Note that in the case that child length is infinite,
+   * the returned object may be invalid (ECA_AUDIO_TIME::valid()
+   * returns false). So caller must check validity of 
+   * the returned value before using it.
+   */
+  ECA_AUDIO_TIME child_length(void) const;
 
   /**
    * Toggle whether child object data is looped.
@@ -123,6 +148,7 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
 protected:
 
   void dump_child_debug(void);    
+  void set_child_length_private(const ECA_AUDIO_TIME& v);
   SAMPLE_SPECS::sample_pos_t priv_public_to_child_pos(SAMPLE_SPECS::sample_pos_t pubpos) const;
 
 private:
@@ -133,6 +159,7 @@ private:
   ECA_AUDIO_TIME child_offset_rep,
                  child_start_pos_rep,
                  child_length_rep;
+  bool child_length_set_by_client_rep;
   std::string child_name_rep;
   long int buffersize_rep;
   bool child_write_started;

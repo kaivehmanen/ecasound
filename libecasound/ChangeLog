@@ -1,3 +1,8 @@
+2008-07-06  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-audio-time.h (valid): Added.
+	* eca-audio-time.h (mark_as_invalid): Added.
+
 2008-07-02  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-audio-position.h (seek_position): Moved to protected scope. The signature

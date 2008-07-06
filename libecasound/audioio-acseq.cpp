@@ -92,9 +92,7 @@ void AUDIO_CLIP_SEQUENCER::open(void) throw(AUDIO_IO::SETUP_ERROR &)
       child_params_as_string(1 + child_param_offset_rep, &params_rep));
   }
   else if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_select) {
-    /* following is specific to looping */
     AUDIO_SEQUENCER_BASE::toggle_looping(false);
-    DBC_CHECK(finite_length_stream() == true);
     AUDIO_SEQUENCER_BASE::set_child_start_position(get_parameter(2));
     AUDIO_SEQUENCER_BASE::set_child_length(get_parameter(3));
     AUDIO_SEQUENCER_BASE::set_child_object_string(
@@ -103,7 +101,6 @@ void AUDIO_CLIP_SEQUENCER::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   else if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_play_at) {
     /* following is specific to play-at */
     AUDIO_SEQUENCER_BASE::toggle_looping(false);
-    DBC_CHECK(finite_length_stream() == true);
     AUDIO_SEQUENCER_BASE::set_child_offset(get_parameter(2));
     AUDIO_SEQUENCER_BASE::set_child_object_string(
       child_params_as_string(1 + child_param_offset_rep, &params_rep));

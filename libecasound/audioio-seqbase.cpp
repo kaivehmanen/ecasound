@@ -64,6 +64,7 @@ sample_pos_t AUDIO_SEQUENCER_BASE::priv_public_to_child_pos(sample_pos_t pubpos)
     return child_start_pos_rep.samples();
 
   if (child_looping_rep == true) {
+    DBC_CHECK(child()->finite_length_stream() == true);
     sample_pos_t one_loop = 
       child_length_rep.samples() -
       child_start_pos_rep.samples();
@@ -81,6 +82,11 @@ sample_pos_t AUDIO_SEQUENCER_BASE::priv_public_to_child_pos(sample_pos_t pubpos)
 }
 
 AUDIO_SEQUENCER_BASE::AUDIO_SEQUENCER_BASE (void)
+  : child_looping_rep(false),
+    child_length_set_by_client_rep(false),
+    buffersize_rep(-1),
+    child_write_started(false),
+    init_rep(false)
 {
 }
 
@@ -126,13 +132,26 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 
   post_child_open();
 
-  /* step: set length of the used audio segment 
-   *       (note, result may still be zero) */
-  if (child_length().samples() == 0)
-    set_child_length(ECA_AUDIO_TIME(child()->length_in_samples(),
-				    child()->samples_per_second()));
+  /* step: unless overridden by the client, store the length
+   *       of child object */
+  ECA_AUDIO_TIME len_tmp (child()->length_in_samples(),
+			  child()->samples_per_second());
+  if (child_length_set_by_client_rep != true)
+    set_child_length_private(len_tmp);
+  else if (len_tmp.valid() == true &&
+	   child_length_rep.valid() == true) {
+    if (len_tmp.seconds() < 
+	child_length_rep.seconds()) 
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "WARNING: object '" + child()->label() +
+		  "' is too short, reducing segment length to '" 
+		  + kvu_numtostr(len_tmp.seconds()) + "'sec.");
+  }
 
-  /* step: set public length of the EWF object */
+  /* step: set public length of the EWF object;
+   *       child length is infinite, we will extend our object
+   *       length in read_buffer(), see also
+   *       AUDIO_SEQUENCER_BASE::finite_length_stream() */
   if (child_looping_rep != true)
     set_length_in_samples(child_offset_rep.samples() + child_length_rep.samples());
 
@@ -237,7 +256,8 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 
     if (chipos2 >= 
 	(child_length_rep.samples() + child_start_pos_rep.samples()) &&
-	child_looping_rep != true) {
+	child_looping_rep != true &&
+	child()->finite_length_stream() == true) {
 	// ---
 	// case 3a: not looping, reaching child file end during the next read
 	// ---
@@ -310,6 +330,13 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       change_position_in_samples(sbuf->length_in_samples());
     }
   }
+
+  /* note: as we are looping indefinitely, so our length must
+   *       be continuously updated (see child_lengt() implementation) */
+  if (child_looping_rep == true ||
+      (child_length_set_by_client_rep != true &&
+      child()->finite_length_stream() != true))
+    extend_position();
 }
 
 void AUDIO_SEQUENCER_BASE::dump_child_debug(void)
@@ -368,9 +395,36 @@ void AUDIO_SEQUENCER_BASE::set_child_start_position(const ECA_AUDIO_TIME& v)
   child_start_pos_rep = v;
 }
 
-void AUDIO_SEQUENCER_BASE::set_child_length(const ECA_AUDIO_TIME& v)
+void AUDIO_SEQUENCER_BASE::set_child_length_private(const ECA_AUDIO_TIME& v)
 {
   child_length_rep = v;
+}
+
+void AUDIO_SEQUENCER_BASE::set_child_length(const ECA_AUDIO_TIME& v)
+{
+  set_child_length_private(v);
+  child_length_set_by_client_rep = true;
+}
+
+ECA_AUDIO_TIME AUDIO_SEQUENCER_BASE::child_length(void) const
+{
+  /* case: infinite child length */
+  if (child_length_set_by_client_rep != true &&
+      child()->finite_length_stream() != true) {
+    ECA_AUDIO_TIME tmp;
+    tmp.mark_as_invalid();
+    return tmp;
+  }
+
+  return child_length_rep;
+} 
+
+bool AUDIO_SEQUENCER_BASE::finite_length_stream(void) const
+{
+  if (child_looping_rep == true)
+    return false;
+
+  return child()->finite_length_stream();
 }
 
 bool AUDIO_SEQUENCER_BASE::finished(void) const
@@ -379,8 +433,9 @@ bool AUDIO_SEQUENCER_BASE::finished(void) const
    * File is finished if...
    *  1) the child object is out of data (implies that looping
    *     is disabled), or
-   *  2) file is open in read mode, looping is disabled and the child 
-   *     position has gone beyond the requested child_length
+   *  2) file is open in read mode, looping is disabled, child is
+   *     a finite length stream and its position has gone beyond 
+   *     the requested child_length
    */
   if (child()->finished())
     return true;
@@ -389,6 +444,7 @@ bool AUDIO_SEQUENCER_BASE::finished(void) const
     return false;
 
   if (child_looping_rep != true &&
+      child()->finite_length_stream() == true && 
       priv_public_to_child_pos(position_in_samples()) 
       >= child_length_rep.samples() + child_start_pos_rep.samples())
     return true;

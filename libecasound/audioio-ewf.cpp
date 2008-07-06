@@ -159,7 +159,7 @@ void EWFFILE::write_ewf_data(void)
     ewf_rc.resource("start-position", kvu_numtostr(child_start_position().seconds(), 6));
   if (child_looping() == true) 
     ewf_rc.resource("looping","true");
-  if (child_length().samples() > 0)
+  if (child_length().valid() == true)
     ewf_rc.resource("length", kvu_numtostr(child_length().seconds(),  6));
   
   ewf_rc.save();
