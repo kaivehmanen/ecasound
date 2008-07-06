@@ -438,17 +438,18 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
   }
 }
 
-void MP3FILE::seek_position(void)
+SAMPLE_SPECS::sample_pos_t MP3FILE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   finished_rep = false;
   if (triggered_rep == true &&
-      last_position_rep != position_in_samples()) {
+      last_position_rep != pos) {
     if (is_open() == true) {
       ECA_LOG_MSG(ECA_LOGGER::user_objects, "Cleaning child process pid=" + kvu_numtostr(pid_of_child()) + ".");
       clean_child(true);
       triggered_rep = false;
     }
   }
+  return pos;
 }
 
 void MP3FILE::set_parameter(int param, std::string value)

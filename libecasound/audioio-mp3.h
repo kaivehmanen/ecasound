@@ -51,7 +51,7 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
   virtual void write_samples(void* target_buffer, long int samples);
 
   virtual bool finished(void) const { return finished_rep; }
-  virtual void seek_position(void);
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   virtual void set_parameter(int param, std::string value);
   virtual std::string get_parameter(int param) const;
