@@ -1,9 +1,9 @@
 // ------------------------------------------------------------------------
 // linear-envelope.cpp: Linear envelope
-// Copyright (C) 1999-2002,2005 Kai Vehmanen
+// Copyright (C) 1999-2002,2005,2008 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,17 +37,25 @@ LINEAR_ENVELOPE::~LINEAR_ENVELOPE(void)
 
 CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(void)
 {
-  // change_position_in_seconds(step_length());
-  if (position_in_seconds_exact() <= length_in_seconds_exact()) {
-    curval = (position_in_seconds_exact() / length_in_seconds_exact());
+  parameter_t retval;
+
+  /* note: length_in_seconds_exact() depends only on
+   *       envelope parameters and equals to envelope
+   *       length (position may go beyond length() */
+
+  if (position_in_seconds_exact() < length_in_seconds_exact()) {
+    retval = (position_in_seconds_exact() / length_in_seconds_exact());
   }
-  return curval;
+  else 
+    retval = 1.0f;
+
+  return retval;
 }
 
 void LINEAR_ENVELOPE::init(void)
 {
   MESSAGE_ITEM otemp;
-  otemp << "Fade-in enveloped initialized; length ";
+  otemp << "Linear enveloped initialized; length ";
   otemp.setprecision(3);
   otemp << length_in_seconds_exact();
   otemp << " seconds.";
@@ -59,8 +67,6 @@ void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t va
   switch (param) {
   case 1:
     set_length_in_seconds(value);
-    set_position_in_samples(0);
-    curval = 0.0;
     break;
   }
 }

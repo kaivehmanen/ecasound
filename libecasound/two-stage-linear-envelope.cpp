@@ -1,9 +1,9 @@
 // ------------------------------------------------------------------------
 // two-stage-linear-envelope.cpp: Two-stage linear envelope
-// Copyright (C) 2000-2002,2005 Kai Vehmanen
+// Copyright (C) 2000-2002,2005,2008 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,17 +29,32 @@
 
 CONTROLLER_SOURCE::parameter_t TWO_STAGE_LINEAR_ENVELOPE::value(void)
 {
-  // change_position_in_seconds(step_length());
   parameter_t curpos = position_in_seconds_exact();
-  if (curpos > first_stage_length_rep) {
-    if (curpos <= length_in_seconds_exact()) {
-      curval = ((curpos - first_stage_length_rep) /
-		second_stage_length_rep);
-    }
-    else 
-      curval = 1.0;
+  parameter_t retval;
+
+  /* note: length_in_seconds_exact() depends only on
+   *       envelope parameters and equals to envelope
+   *       length (position may go beyond length() */
+  
+  /* phase: hold start value */
+  if (curpos < first_stage_length_rep) {
+    retval = 0.0f;
   }
-  return curval;
+  /* phase: linear fade */ 
+  else if (curpos < length_in_seconds_exact()) {
+    /* note: length_in_seconds_exact() is 
+     *       cached value of 
+     *       first_state_length_rep+second_state_length_rep
+     */
+    DBC_CHECK(second_stage_length_rep > 0);
+    retval = ((curpos - first_stage_length_rep) /
+	      second_stage_length_rep);
+  }
+  /* phase: hold end value */
+  else 
+    retval = 1.0;
+
+  return retval;
 }
 
 TWO_STAGE_LINEAR_ENVELOPE::TWO_STAGE_LINEAR_ENVELOPE(void)
@@ -55,8 +70,8 @@ void TWO_STAGE_LINEAR_ENVELOPE::init(void)
   MESSAGE_ITEM otemp;
   otemp << "Envelope initialized: ";
   otemp.setprecision(3);
-  otemp << "1." << get_parameter(1);
-  otemp << "- 2." << get_parameter(2);
+  otemp << "1. " << get_parameter(1);
+  otemp << ", 2. " << get_parameter(2);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
 
@@ -67,16 +82,12 @@ void TWO_STAGE_LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::para
     {
       first_stage_length_rep = value;
       set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
-      set_position_in_samples(0);
-      curval = 0.0;
       break;
     }
   case 2:
     {
       second_stage_length_rep = value;
       set_length_in_seconds(first_stage_length_rep + second_stage_length_rep);
-      set_position_in_samples(0);
-      curval = 0.0;
       break;
     }
   }

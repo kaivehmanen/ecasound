@@ -27,10 +27,7 @@ class SINE_OSCILLATOR : public OSCILLATOR {
 
 private:
 
-  double phase, L;
-  double phasemod;
-  double curval;
-  double last_global_pos_rep;
+  double period_len_rep;
 };
 
 #endif

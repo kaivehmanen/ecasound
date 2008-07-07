@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // osc-sine.cpp: Sine oscillator
-// Copyright (C) 1999,2001 Kai Vehmanen
+// Copyright (C) 1999,2001,2008 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,17 +31,21 @@
 
 CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(void)
 {
-  curval = (sin(phase) + 1.0) / 2.0;
-  phase += phasemod * (position_in_seconds_exact() - last_global_pos_rep);
-  last_global_pos_rep = position_in_seconds_exact();
-  return(curval);
+  parameter_t retval, phase;
+
+  phase = 2.0 * M_PI * (position_in_seconds_exact() / period_len_rep);
+  retval = sin(phase + phase_offset());
+
+  /* note: scale return value to proper [0,1] range */
+  retval += 1.0;
+  retval /= 2.0;
+
+  return retval;
 }
 
 SINE_OSCILLATOR::SINE_OSCILLATOR (double freq, double initial_phase) :
-  OSCILLATOR(freq, initial_phase) {
-
-  last_global_pos_rep = 0.0f;
-
+  OSCILLATOR(freq, initial_phase)
+{
   set_parameter(1, get_parameter(1));
   set_parameter(2, get_parameter(2));
 }
@@ -59,13 +66,15 @@ void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t v)
   switch (param) {
   case 1: 
     frequency(v);
-    L = 1.0 / frequency();   // length of one wave in seconds
-    phasemod = 2.0 * M_PI / L; 
+    /* note: cache length of one period in seconds */
+    if (v > 0)
+      period_len_rep = 1.0 / frequency();
+    else
+      period_len_rep = 0;
     break;
 
   case 2: 
     phase_offset(static_cast<double>(v * M_PI));
-    phase = phase_offset();
     break;
   }
 }
@@ -74,9 +83,9 @@ CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(frequency());
+    return frequency();
   case 2: 
-    return(phase_offset() / M_PI);
+    return phase_offset() / M_PI;
   }
   return(0.0);
 }

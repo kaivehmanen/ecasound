@@ -33,7 +33,7 @@
 #include "eca-logger.h"
 
 /* Debug controller source values */ 
-// #define DEBUG_CONTROLLERS
+// #define DEBUG_CONTROLLERS 1
 
 #ifdef DEBUG_CONTROLLERS
 #define DEBUG_CTRL_STATEMENT(x) x
@@ -139,12 +139,9 @@ void GENERIC_CONTROLLER::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
  */
 SAMPLE_SPECS::sample_pos_t GENERIC_CONTROLLER::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
-  /* Note! called on each iteration from CHAIN::controller_update() */
-
-  // DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " << kvu_numtostr(position_in_seconds(), 3) << ".\n");
-
   if (source != 0) {
     source->seek_position_in_samples(pos);
+    DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " << kvu_numtostr(source->position_in_seconds_exact(), 3) << ".\n");
   }
 
   return pos;

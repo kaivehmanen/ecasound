@@ -28,7 +28,6 @@ class TWO_STAGE_LINEAR_ENVELOPE : public CONTROLLER_SOURCE {
   private:
 
   parameter_t first_stage_length_rep, second_stage_length_rep;
-  parameter_t curval;
 };
 
 #endif

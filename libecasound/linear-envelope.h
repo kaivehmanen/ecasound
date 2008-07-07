@@ -27,10 +27,6 @@ class LINEAR_ENVELOPE : public CONTROLLER_SOURCE {
   std::string parameter_names(void) const { return("length-sec"); }
   void set_parameter(int param, parameter_t value);
   parameter_t get_parameter(int param) const;
-
-  private:
-
-  parameter_t curval;
 };
 
 #endif
