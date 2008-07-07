@@ -40,7 +40,7 @@ class CONTROLLER_SOURCE : public OPERATOR,
   /*@{*/
 
 protected:
-  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) { return position_in_samples(); }
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) { return pos; }
 public:
   virtual bool supports_seeking(void) const { return true; }
   virtual bool supports_seeking_sample_accurate(void) const { return true; }
