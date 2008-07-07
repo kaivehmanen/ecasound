@@ -751,6 +751,7 @@ string CHAIN::to_string(void) const
     while (p < gcontrollers_rep.size()) {
       if (chainops_rep[q] == gcontrollers_rep[p]->target_pointer()) {
 	t << " " << ECA_OBJECT_FACTORY::controller_to_eos(gcontrollers_rep[p]);
+	t << " ";
 	/* check if the gcontroller is controlled by another gcontroller */
 	std::vector<GENERIC_CONTROLLER*>::size_type r = 0;
 	while (r < gcontrollers_rep.size()) {
