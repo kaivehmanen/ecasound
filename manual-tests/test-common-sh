@@ -37,3 +37,32 @@ function check_md5sum() {
   set -x
 }
 
+function check_filesize() {
+  set +x
+  if test "`stat --format=%s $1`" != "$2" ; then
+    echo -e "\n\nWARNING: size did not match (not necessarily an error, but"
+    echo -e "\tneeds to be manually verified).\n"
+    if test "x$SKIP_FILESIZE_CHECK" != "x1"; then
+      error_exit
+    fi
+  fi
+  set -x
+}
+
+# a very rough way to check whether newly
+# created audio file has similar content than
+# the orignal: count how many positive samples 
+# went above -1dB
+#
+function check_1dbpeak_count() {
+  set -x
+  count=`ecasound -i $1 -o null -ev |grep "Pos -1.0" |cut -d':' -f2 |cut -d',' -f1 |cut -c4-`
+  if test $count != $2 ; then
+   echo -e "\n\nWARNING: peak count samples didt match (not necessarily an error, but"
+    echo -e "\tneeds to be manually verified).\n"
+    if test "x$SKIP_1DBPEAK_CHECK" != "x1"; then
+      error_exit
+    fi
+   fi
+  set -x
+}
