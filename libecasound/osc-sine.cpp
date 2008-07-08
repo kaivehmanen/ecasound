@@ -53,7 +53,7 @@ SINE_OSCILLATOR::SINE_OSCILLATOR (double freq, double initial_phase) :
 void SINE_OSCILLATOR::init(void)
 {
   MESSAGE_ITEM otemp;
-  otemp << "(osc-sine) Sine oscillator created; frequency ";
+  otemp << "Sine oscillator created; frequency ";
   otemp.setprecision(3);
   otemp << frequency();
   otemp << " and initial phase of "; 
