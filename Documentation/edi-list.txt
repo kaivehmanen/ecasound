@@ -14,6 +14,15 @@ discussions, changelogs, etc.
 To submit a new EDI-item, send a mail the 'ecasound-list' mailing
 list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
 
+Another database of feature/development ideas is maintained
+at the sourceforge.net bug tracker:
+
+  - https://sourceforge.net/tracker/?group_id=4605&atid=104605
+
+There is currently no good split between what goes where, so feel
+free to use whichever you feel more comfortable with, and crosslink
+if/when needed between the bug tracker and this EDI list.
+
 -----------------------------------------------------------------------
 [ Meta: Syntax ]
 

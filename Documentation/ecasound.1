@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "02\&.07\&.2008" "" "Multimedia software"
+.TH "ecasound" "1" "08\&.07\&.2008" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -23,10 +23,15 @@ in the package\&.
 .SH "OPTIONS"
 
 .PP 
-Note! All options except those mentioned in \fIGlobal options\fP, can 
-be used in ecasound chainsetup files (\&.ecs)\&.
+Note! All options except those mentioned in \fIecasound options\fP and 
+\fIGlobal options\fP, can be used in ecasound chainsetup files (\&.ecs)\&.
 .PP 
-\fBGLOBAL OPTIONS\fP
+\fBECASOUND OPTIONS\fP
+.PP 
+These options are parsed and handled by the ecasound frontbed binary and 
+are not passed to backend library\&. This means that these options may
+not work in other applications that use ecasound libraries for their
+functionality\&.
 .PP 
 .IP "-c"
 Starts ecasound in interactive mode\&. In interactive mode you can
@@ -35,7 +40,51 @@ etc\&.)\&. See ecasound-iam \&.
 .IP 
 .IP "-C"
 Disables ecasound\&'s interactive mode (see \&'-c\&' and \&'-K\&')\&.
-.IP 
+
+.PP 
+.IP "-D"
+Print all debug information to stderr (unbuffered, plain output
+without ncurses)\&.
+.PP 
+.IP "-s[:]chainsetup-file"
+Create a new chainsetup from file \&'chainsetup-file\&' and add
+it to the current session\&. Chainsetup can contain inputs, outputs, 
+chains, effects, controllers, etc\&. A session, on the other hand, 
+contains all the chainsetups\&. Although only one chainsetup can
+be connected at a time, you can switch between them on-the-fly\&.
+.PP 
+.IP "--daemon"
+Enable ecasound\&'s daemon mode\&. If this option is given,
+ecasound will allow clients to connect to the running 
+ecasound session using a TCP/IP network connection\&.
+The clients can both observe and control the session\&. 
+.PP 
+\fIWarning!\fP As there is no access control implemented,
+be sure to block ecasound\&'s port in your firewall 
+if the machine running ecasound is connected to 
+a public network! Otherwise anyone can connect to 
+your ecasound sessions\&.
+.PP 
+.IP "--daemon-port"
+Set the TCP port used by the daemon mode\&. By default
+ecasound will use port number \fI2868\fP\&.
+.PP 
+.IP "--nodaemon"
+Disable ecasound\&'s daemon mode\&. This is the default\&.
+.PP 
+.IP "--keep-running,-K"
+Do not exit when processing is finished/stopped\&. Only affects
+non-interactive operating mode (see -c/-C)\&.
+Option added to ecasound 2\&.4\&.2\&.
+.PP 
+.IP "--help,-h"
+Show this help\&.
+.PP 
+.IP "--version"
+Print version info\&.
+.PP 
+\fBGLOBAL OPTIONS\fP
+.PP 
 .IP "-d, -dd, -ddd"
 Increase the amount of printed debug messages\&. \fI-d\fP adds 
 some verbosity, while \fI-ddd\fP results in very detailed 
@@ -48,10 +97,6 @@ user_objects (16), system_objects 32, functions (64), continuous (128) and
 eiam_return_values (256)\&. Default is 271 (1+2+4+8+256)\&. See sourcode 
 documentation for the ECA_LOGGER class for more detailed information\&.
 .IP 
-.IP "-D"
-Print all debug information to stderr (unbuffered, plain output
-without ncurses)\&.
-.IP 
 .IP "-R[:]path-to-file"
 Use ecasound resource file (see ecasoundrc man page) \&'path-to-file\&' as 
 the only source of setting resource value\&. Specifying this option
@@ -60,43 +105,6 @@ resource files\&.
 .IP 
 .IP "-q"
 Quiet mode, no output\&. Same as \fI-d:0\fP\&.
-.IP 
-.IP "-s[:]chainsetup-file"
-Create a new chainsetup from file \&'chainsetup-file\&' and add
-it to the current session\&. Chainsetup can contain inputs, outputs, 
-chains, effects, controllers, etc\&. A session, on the other hand, 
-contains all the chainsetups\&. Although only one chainsetup can
-be connected at a time, you can switch between them on-the-fly\&.
-.IP 
-.IP "--daemon"
-Enable ecasound\&'s daemon mode\&. If this option is given,
-ecasound will allow clients to connect to the running 
-ecasound session using a TCP/IP network connection\&.
-The clients can both observe and control the session\&. 
-.IP 
-\fIWarning!\fP As there is no access control implemented,
-be sure to block ecasound\&'s port in your firewall 
-if the machine running ecasound is connected to 
-a public network! Otherwise anyone can connect to 
-your ecasound sessions\&.
-.IP 
-.IP "--daemon-port"
-Set the TCP port used by the daemon mode\&. By default
-ecasound will use port number \fI2868\fP\&.
-.IP 
-.IP "--nodaemon"
-Disable ecasound\&'s daemon mode\&. This is the default\&.
-.IP 
-.IP "--keep-running,-K"
-Do not exit when processing is finished/stopped\&. Only affects
-non-interactive operating mode (see -c/-C)\&.
-Option added to ecasound 2\&.4\&.2\&.
-.IP 
-.IP "--help,-h"
-Show this help\&.
-.IP 
-.IP "--version"
-Print version info\&.
 .IP 
 \fBGENERAL CHAINSETUP OPTIONS\fP
 

@@ -5,7 +5,7 @@
 <body>
 <hr>
 <h1>ecasound</h1>
-<h2>02.07.2008</h2>
+<h2>08.07.2008</h2>
 
 <html><head>
 <link rev="made" href="mailto:kvehmanen -at- eca -dot- cx">
@@ -22,7 +22,7 @@
 <hr>
 <h1>ecasound(1)</h1>
 <h2> Multimedia software</h2>
-<h2>02.07.2008</h2>
+<h2>08.07.2008</h2>
 
 
 <p>
@@ -45,11 +45,16 @@ in the package.
 <p>
 <h2>OPTIONS</h2>
 <p>
-Note! All options except those mentioned in <em>Global options</em>, can 
-      be used in ecasound chainsetup files (.ecs).
+Note! All options except those mentioned in <em>ecasound options</em> and 
+      <em>Global options</em>, can be used in ecasound chainsetup files (.ecs).
 <p>
 
-<strong>GLOBAL OPTIONS</strong>
+<strong>ECASOUND OPTIONS</strong>
+<p>
+These options are parsed and handled by the ecasound frontbed binary and 
+are not passed to backend library. This means that these options may
+not work in other applications that use ecasound libraries for their
+functionality.
 <p>
 <dl>
 <p><dt><strong>-c</strong><dd>
@@ -59,31 +64,11 @@ etc.). See <a href="ecasound-iam_manpage.html">ecasound-iam </a>.
 <p>
 <p><dt><strong>-C</strong><dd>
 Disables ecasound's interactive mode (see '-c' and '-K').
-<p>
-<p><dt><strong>-d, -dd, -ddd</strong><dd>
-Increase the amount of printed debug messages. <em>-d</em> adds 
-some verbosity, while <em>-ddd</em> results in very detailed 
-output.
-<p>
-<p><dt><strong>-d:debug_level</strong><dd>
-Set the debug level mask to 'debug_level'. This a bitmasked value with
-the following classes: errors (1), info (2), subsystems (4), module_names (8),
-user_objects (16), system_objects 32, functions (64), continuous (128) and
-eiam_return_values (256). Default is 271 (1+2+4+8+256). See sourcode 
-documentation for the ECA_LOGGER class for more detailed information.
+</dl>
 <p>
 <p><dt><strong>-D</strong><dd>
 Print all debug information to stderr (unbuffered, plain output
 without ncurses).
-<p>
-<p><dt><strong>-R[:]path-to-file</strong><dd>
-Use ecasound resource file (see ecasoundrc man page) 'path-to-file' as 
-the only source of setting resource value. Specifying this option
-will disable the normal policy of querying both global and user (if exists)
-resource files.
-<p>
-<p><dt><strong>-q</strong><dd>
-Quiet mode, no output. Same as <em>-d:0</em>.
 <p>
 <p><dt><strong>-s[:]chainsetup-file</strong><dd>
 Create a new chainsetup from file 'chainsetup-file' and add
@@ -121,6 +106,32 @@ Show this help.
 <p>
 <p><dt><strong>--version</strong><dd>
 Print version info.
+<p>
+
+<strong>GLOBAL OPTIONS</strong>
+<p>
+<dl>
+<p>
+<p><dt><strong>-d, -dd, -ddd</strong><dd>
+Increase the amount of printed debug messages. <em>-d</em> adds 
+some verbosity, while <em>-ddd</em> results in very detailed 
+output.
+<p>
+<p><dt><strong>-d:debug_level</strong><dd>
+Set the debug level mask to 'debug_level'. This a bitmasked value with
+the following classes: errors (1), info (2), subsystems (4), module_names (8),
+user_objects (16), system_objects 32, functions (64), continuous (128) and
+eiam_return_values (256). Default is 271 (1+2+4+8+256). See sourcode 
+documentation for the ECA_LOGGER class for more detailed information.
+<p>
+<p><dt><strong>-R[:]path-to-file</strong><dd>
+Use ecasound resource file (see ecasoundrc man page) 'path-to-file' as 
+the only source of setting resource value. Specifying this option
+will disable the normal policy of querying both global and user (if exists)
+resource files.
+<p>
+<p><dt><strong>-q</strong><dd>
+Quiet mode, no output. Same as <em>-d:0</em>.
 <p>
 </dl>
 <p>

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (02.07.2008)
+       (08.07.2008)
        ()
        (Multimedia software)
 
@@ -25,11 +25,16 @@ in the package.
 
 manpageoptions()
 
-Note! All options except those mentioned in em(Global options), can 
-      be used in ecasound chainsetup files (.ecs).
+Note! All options except those mentioned in em(ecasound options) and 
+      em(Global options), can be used in ecasound chainsetup files (.ecs).
 
 COMMENT(----------------------------------------------------------------)
-bf(GLOBAL OPTIONS)
+bf(ECASOUND OPTIONS)
+
+These options are parsed and handled by the ecasound frontbed binary and 
+are not passed to backend library. This means that these options may
+not work in other applications that use ecasound libraries for their
+functionality.
 
 startdit()
 dit(-c)
@@ -39,31 +44,11 @@ etc.). See url(ecasound-iam )(ecasound-iam_manpage.html).
 
 dit(-C)
 Disables ecasound's interactive mode (see '-c' and '-K').
-
-dit(-d, -dd, -ddd)
-Increase the amount of printed debug messages. em(-d) adds 
-some verbosity, while em(-ddd) results in very detailed 
-output.
-
-dit(-d:debug_level)
-Set the debug level mask to 'debug_level'. This a bitmasked value with
-the following classes: errors (1), info (2), subsystems (4), module_names (8),
-user_objects (16), system_objects 32, functions (64), continuous (128) and
-eiam_return_values (256). Default is 271 (1+2+4+8+256). See sourcode 
-documentation for the ECA_LOGGER class for more detailed information.
+enddit()
 
 dit(-D)
 Print all debug information to stderr (unbuffered, plain output
 without ncurses).
-
-dit(-R[:]path-to-file)
-Use ecasound resource file (see ecasoundrc man page) 'path-to-file' as 
-the only source of setting resource value. Specifying this option
-will disable the normal policy of querying both global and user (if exists)
-resource files.
-
-dit(-q)
-Quiet mode, no output. Same as em(-d:0).
 
 dit(-s[:]chainsetup-file)
 Create a new chainsetup from file 'chainsetup-file' and add
@@ -101,6 +86,32 @@ Show this help.
 
 dit(--version)
 Print version info.
+
+COMMENT(----------------------------------------------------------------)
+bf(GLOBAL OPTIONS)
+
+startdit()
+
+dit(-d, -dd, -ddd)
+Increase the amount of printed debug messages. em(-d) adds 
+some verbosity, while em(-ddd) results in very detailed 
+output.
+
+dit(-d:debug_level)
+Set the debug level mask to 'debug_level'. This a bitmasked value with
+the following classes: errors (1), info (2), subsystems (4), module_names (8),
+user_objects (16), system_objects 32, functions (64), continuous (128) and
+eiam_return_values (256). Default is 271 (1+2+4+8+256). See sourcode 
+documentation for the ECA_LOGGER class for more detailed information.
+
+dit(-R[:]path-to-file)
+Use ecasound resource file (see ecasoundrc man page) 'path-to-file' as 
+the only source of setting resource value. Specifying this option
+will disable the normal policy of querying both global and user (if exists)
+resource files.
+
+dit(-q)
+Quiet mode, no output. Same as em(-d:0).
 
 enddit()
 
