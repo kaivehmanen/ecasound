@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-# version:20080706-2
+# version:20080708-3
 #
 # Script to generate and test common resampling
 # use cases. The output files need to be verified
@@ -31,8 +31,10 @@ set -x
 #   20.0 -> 30.0:  80%  -> 10%
 #
 $ECASOUND -q -f:16,1,44100 -i tone,sine,440,30 -o klg-dst.wav -ea:100 -klg:1,0,100,5,0,0,5.5,1,10.5,0.2,20.0,0.8,30,0.1 -x  || error_exit
-check_md5sum klg-dst.wav e4a87025d0205016cb3c9f7e6b5aa63f 
-# cur...: e4a87025d0205016cb3c9f7e6b5aa63f, size 2646042
+check_1dbpeak_count klg-dst.wav 5753
+check_filesize klg-dst.wav 2646042
+# cur...: e7c1a4d352423eb9c40f184274546c8e, size 2646042
+# prev-2: e4a87025d0205016cb3c9f7e6b5aa63f, size 2646042
 # prev-1: e7c1a4d352423eb9c40f184274546c8e, size <unknown>
 
 echo "Test run succesful."
