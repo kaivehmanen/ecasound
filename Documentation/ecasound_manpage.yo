@@ -548,11 +548,13 @@ it using id 'stamp-id' (integer number). This data can later be
 used by controllers and other operators.
 
 dit(-ea:amplify-%)
-Amplifies signal by amplify-% percent. 
+Amplifies signal by amplify-% percent (linear scale, i.e. individual
+samples are multiplied by 'amplify-%/100').
  
 dit(-eac:amplify-%,channel)
-Amplifies signal of channel 'channel' by amplify-% percent. 'channel'
-ranges from 1...n where n is the total number of channels.
+Amplifies signal of channel 'channel' by amplify-% percent (linear 
+scale, i.e. individual samples are multiplied by 'amplify-%/100'). 
+'channel' ranges from 1...n where n is the total number of channels. 
 
 dit(-eaw:amplify-%,max-clipped-samples)
 Amplifies signal by amplify-% percent. If number of consecutive

@@ -567,11 +567,13 @@ it using id 'stamp-id' (integer number). This data can later be
 used by controllers and other operators.
 <p>
 <p><dt><strong>-ea:amplify-%</strong><dd>
-Amplifies signal by amplify-% percent. 
+Amplifies signal by amplify-% percent (linear scale, i.e. individual
+samples are multiplied by 'amplify-%/100').
 <p>
 <p><dt><strong>-eac:amplify-%,channel</strong><dd>
-Amplifies signal of channel 'channel' by amplify-% percent. 'channel'
-ranges from 1...n where n is the total number of channels.
+Amplifies signal of channel 'channel' by amplify-% percent (linear 
+scale, i.e. individual samples are multiplied by 'amplify-%/100'). 
+'channel' ranges from 1...n where n is the total number of channels. 
 <p>
 <p><dt><strong>-eaw:amplify-%,max-clipped-samples</strong><dd>
 Amplifies signal by amplify-% percent. If number of consecutive
