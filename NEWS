@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 010708) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 090708) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -25,7 +25,7 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-xx072008 (v2.5.0) -** stable release **-
+xx082008 (v2.5.0) -** stable release **-
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
 		  new features are added
