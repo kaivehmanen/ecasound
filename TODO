@@ -2,19 +2,25 @@
 *** Ecasound - To do list / Plans                                   ***
 -----------------------------------------------------------------------
 
-[ Ecasound Development Items - (edi-x) codes ]
+Ecasound Development Items - "(edi-xxx)" codes
 -----------------------------------------------------------------------
 
 The Ecasound Development Item concept is used for keeping track of 
-bugs, open issues, enhancement proposals, and other similar issues.
-Each new EDI item is given a unique number. The resulting
-tag '(edi-xxx)' can then be used as a reference in mailing list 
-discussions, changelogs, etc. 
+major design issues, improvement ideas, and other similar long
+terms development items. See information and a full list of current
+items (master copy maintained in the source tree):
+ 
+   - http://eca.cx/ecasound/files/edi-list.txt
 
-To submit a new EDI-item, send a mail the 'ecasound-list' mailing
-list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
+Ecasound bug tracker at sourceforge.net
+-----------------------------------------------------------------------
 
-[ Active development areas ]
+The Ecasound bug tracker at sourceforge.net is also used to track
+feature requests:
+
+   - https://sourceforge.net/tracker/?group_id=4605&atid=104605
+
+Active development areas
 -----------------------------------------------------------------------
 
 - improvements to JACK usage; some candidate features to implement:
@@ -41,7 +47,7 @@ not roadmapped, but if time permits
     - dithering 
     - logarithmic envelopes
 
-[ Help - developer in trouble ]
+Help - developer in trouble
 -----------------------------------------------------------------------
 
 - Please report if Ecasound does not compile out-of-the-box on your 

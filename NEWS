@@ -78,6 +78,9 @@ xx072008 (v2.5.0) -** stable release **-
 	 	   audio object type doesn't support sample accurate
 		   seeks (for example mp3 inputs have this limitation)
         - changed: updated ecasound(1) man page description of '-klg'
+	- changed: separate global (-d, -R, ...) and ecasound frontend 
+		   specific (-c, --daemon, -s, ...) options in 
+		   ecasound(1) man page
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965
@@ -99,6 +102,11 @@ xx072008 (v2.5.0) -** stable release **-
 	  	 up as a stuck thread, with backtrace pointing to
 	  	 pthread_onexit_process()
 	- fixed: compilation issue on Mac OS X 10.5 [grobian]
+	- fixed: bug in saving control state with 'cs-save' or
+	         'cs-save-as'; triggered if controller was followed
+		 by more chainops on the same chain
+	- fixed: bugs with preserving state across seeks with
+	         many controller objects (-kl, -kl2 and -kos)
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
