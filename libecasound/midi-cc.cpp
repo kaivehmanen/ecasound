@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // midi-cc.cpp: Interface to MIDI continuous controllers
-// Copyright (C) 1999,2001-2002,2005 Kai Vehmanen
+// Copyright (C) 1999,2001-2002,2005,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -33,7 +33,7 @@
 
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(void)
+CONTROLLER_SOURCE::parameter_t MIDI_CONTROLLER::value(double pos)
 {
   DBC_CHECK(server() != 0);
   parameter_t value_rep = init_value_rep;
@@ -79,7 +79,7 @@ MIDI_CONTROLLER::MIDI_CONTROLLER(int controller_number,
 void MIDI_CONTROLLER::init(void)
 {
     MESSAGE_ITEM otemp;
-    otemp << "(midi-cc) MIDI-controller initialized using controller ";
+    otemp << "MIDI-controller initialized using controller ";
     otemp.setprecision(0);
     otemp << controller_rep << " and channel " << channel_rep << ".";
     ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());

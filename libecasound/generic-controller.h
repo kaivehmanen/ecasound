@@ -41,7 +41,7 @@ class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
    *
    * @pre is_valid() == true
    */
-  virtual parameter_t value(void);
+  virtual parameter_t value(double pos_secs);
 
   virtual void set_initial_value(parameter_t arg) { }
 
@@ -64,22 +64,6 @@ class GENERIC_CONTROLLER : public CONTROLLER_SOURCE {
 
   /*@}*/
 
-  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
-  /*@{*/
-
-  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
-
-  /*@}*/
-
-  /** @name Functions implemented from ECA_AUDIO_POSITION */
-  /*@{*/
-
-  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
-  virtual bool supports_seeking(void) const { return true; }
-  virtual bool supports_seeking_sample_accurate(void) const { return true; }
-
-  /*@}*/
-
   /** @name Public functions  */
   /*@{*/
 
@@ -99,8 +83,10 @@ private:
   OPERATOR* target;
   CONTROLLER_SOURCE* source;
 
+  bool init_called_rep;
   int param_id_rep;
   double rangelow_rep, rangehigh_rep;
+  double last_value_pos_rep;
 };
 
 #endif

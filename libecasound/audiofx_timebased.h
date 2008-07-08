@@ -169,7 +169,7 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
 
   std::vector<std::vector<SAMPLE_SPECS::sample_t> > buffer;
   SAMPLE_ITERATOR_CHANNELS i;
-  SAMPLE_SPECS::sample_pos_t advance_len_rep;
+  double advance_len_secs_rep, lfo_pos_secs_rep;
   long int dtime;
   parameter_t dtime_msec;
   parameter_t feedback, vartime;
@@ -186,13 +186,6 @@ class EFFECT_MODULATING_DELAY : public EFFECT_TIME_BASED {
 
   virtual void init(SAMPLE_BUFFER* insample);
   virtual void process(void);
-
-  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
-  /*@{*/
-
-  virtual void set_samples_per_second(SAMPLE_SPECS::sample_rate_t v);
-
-  /*@}*/
 
   EFFECT_MODULATING_DELAY(parameter_t delay_time = 2.0,
 			  long int vartime_in_samples = 20,

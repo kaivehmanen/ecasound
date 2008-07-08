@@ -22,7 +22,7 @@ public:
   GENERIC_LINEAR_ENVELOPE* new_expr(void) const { return new GENERIC_LINEAR_ENVELOPE(); }
   
   virtual void init(void);
-  virtual parameter_t value(void);
+  virtual parameter_t value(double pos);
   virtual void set_initial_value(parameter_t arg) {}
 
   virtual bool variable_params(void) const { return true; }  

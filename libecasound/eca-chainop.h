@@ -25,6 +25,9 @@ class CHAIN_OPERATOR : public OPERATOR {
 
   /**
    * Prepares chain operator for processing. 
+   *
+   * This function is called at least once before 
+   * the first call to process().
    * 
    * Whenever attributes of the sample buffer pointed 
    * by 'sbuf' are changed, chain operator should
@@ -39,6 +42,9 @@ class CHAIN_OPERATOR : public OPERATOR {
   /**
    * Releases the buffer that was used to initialize
    * the chain operator.
+   *
+   * This function is called after the last call
+   * to process().
    *
    * After release(), chain operator is not 
    * allowed to access the sample buffer given 

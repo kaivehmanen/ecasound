@@ -108,11 +108,6 @@ void PRESET::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
     chains[q]->set_samples_per_second(v);
   }
 
-  for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
-    impl_repp->gctrls_rep[n]->set_samples_per_second(v);
-  }
-
-  
   ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
 }
 
@@ -545,7 +540,6 @@ void PRESET::init(SAMPLE_BUFFER *insample)
 
   for(size_t n = 0; n < impl_repp->gctrls_rep.size(); n++) {
     impl_repp->gctrls_rep[n]->init();
-    impl_repp->gctrls_rep[n]->set_samples_per_second(samples_per_second());
   }
 }
 

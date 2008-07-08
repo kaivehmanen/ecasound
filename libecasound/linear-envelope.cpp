@@ -35,16 +35,14 @@ LINEAR_ENVELOPE::~LINEAR_ENVELOPE(void)
 {
 }
 
-CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(void)
+CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::value(double pos)
 {
   parameter_t retval;
 
-  /* note: length_in_seconds_exact() depends only on
-   *       envelope parameters and equals to envelope
-   *       length (position may go beyond length() */
+  /* note: position may go beyond stages_len_rep */
 
-  if (position_in_seconds_exact() < length_in_seconds_exact()) {
-    retval = (position_in_seconds_exact() / length_in_seconds_exact());
+  if (pos < stages_len_rep) {
+    retval = (pos / stages_len_rep);
   }
   else 
     retval = 1.0f;
@@ -57,7 +55,7 @@ void LINEAR_ENVELOPE::init(void)
   MESSAGE_ITEM otemp;
   otemp << "Linear enveloped initialized; length ";
   otemp.setprecision(3);
-  otemp << length_in_seconds_exact();
+  otemp << stages_len_rep;
   otemp << " seconds.";
   ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
 }
@@ -66,7 +64,7 @@ void LINEAR_ENVELOPE::set_parameter(int param, CONTROLLER_SOURCE::parameter_t va
 {
   switch (param) {
   case 1:
-    set_length_in_seconds(value);
+    stages_len_rep = value;
     break;
   }
 }
@@ -75,7 +73,7 @@ CONTROLLER_SOURCE::parameter_t LINEAR_ENVELOPE::get_parameter(int param) const
 {
   switch (param) {
   case 1:
-    return length_in_seconds_exact();
+    return stages_len_rep;
   }
   return 0.0;
 }

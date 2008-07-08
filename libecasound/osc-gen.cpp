@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen.cpp: Generic oscillator
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2008 Kai Vehmanen
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,19 +23,21 @@
 
 #include <kvu_numtostr.h>
 
+#include "eca-object-factory.h"
 #include "osc-gen.h"
 #include "oscillator.h"
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(void)
+CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(double pos)
 {
   if (mode_rep == 0)
     update_current_static();
   else
     update_current_linear();
 
-  loop_pos_rep += position_in_seconds_exact() - last_global_pos_rep;
-  last_global_pos_rep = position_in_seconds_exact();
+  /* FIXME: not really seeking-safe */
+  loop_pos_rep += pos - last_global_pos_rep;
+  last_global_pos_rep = pos;
 
   if (loop_pos_rep > loop_length_rep) {
     loop_pos_rep = 0.0f;
@@ -120,7 +122,9 @@ GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
 
 void GENERIC_OSCILLATOR::init(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(osc-gen) Generic oscillator init.");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+	      "Generic oscillator init with params: "
+	      + ECA_OBJECT_FACTORY::operator_parameters_to_eos(this));
 }
 
 GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void)

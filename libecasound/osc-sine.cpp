@@ -29,11 +29,11 @@
 #include "osc-sine.h"
 #include "eca-logger.h"
 
-CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(void)
+CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(double pos_secs)
 {
   parameter_t retval, phase;
 
-  phase = 2.0 * M_PI * (position_in_seconds_exact() / period_len_rep);
+  phase = 2.0 * M_PI * (pos_secs / period_len_rep);
   retval = sin(phase + phase_offset());
 
   /* note: scale return value to proper [0,1] range */

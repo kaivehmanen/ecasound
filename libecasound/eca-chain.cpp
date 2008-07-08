@@ -365,7 +365,6 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
   DBC_REQUIRE(selected_dynobj_repp != 0);
   // --------
 
-  gcontroller->set_samples_per_second(samples_per_second());
 #ifndef ECA_DISABLE_EFFECTS
   gcontroller->assign_target(selected_dynobj_repp);
   ECA_LOG_MSG(ECA_LOGGER::user_objects, gcontroller->status());
@@ -666,11 +665,14 @@ void CHAIN::process(void)
   DBC_REQUIRE(is_initialized() == true);
   // --------
 
+  /* step: update operator parameters */
   controller_update();
-  /* note: if muted, don't bother running the chainops */
+
+  /* step: run processing components */
   if (muted_rep != true) {
-    /* note: check if in bypass mode */
+    /* note: if muted, don't bother running the chainops */
     if (sfx_rep == true) {
+      /* note: processing enabled (no bypass) */
       for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
 	audioslot_repp->number_of_channels(chainops_rep[p]->output_channels(audioslot_repp->number_of_channels()));
 	chainops_rep[p]->process();
@@ -680,6 +682,9 @@ void CHAIN::process(void)
   else {
     audioslot_repp->make_silent();
   }
+
+  /* step: update chain position */
+  seek_position_in_samples_advance(audioslot_repp->length_in_samples());
 }
 
 /**
@@ -690,8 +695,7 @@ void CHAIN::controller_update(void)
   for(size_t n = 0; n < gcontrollers_rep.size(); n++) {
     DEBUG_CTRL_STATEMENT(GENERIC_CONTROLLER* ptr = gcontrollers_rep[n]);
 
-    gcontrollers_rep[n]->value();
-    gcontrollers_rep[n]->seek_position_in_samples_advance(audioslot_repp->length_in_samples());
+    gcontrollers_rep[n]->value(position_in_seconds_exact());
 
     DEBUG_CTRL_STATEMENT(std::cerr << "trace: " << ptr->name());
     DEBUG_CTRL_STATEMENT(std::cerr << "; value " << ptr->source_pointer()->value() << "." << std::endl);
@@ -789,15 +793,6 @@ void CHAIN::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
     }
   }
 
-  for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"sample rate change, chain '" +
-		name() + "' object '" +
-		gcontrollers_rep[p]->name() + "' rate " +
-		kvu_numtostr(v) + ".");
-    gcontrollers_rep[p]->set_samples_per_second(v);
-  }
-      
   ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
 }
 
@@ -809,10 +804,6 @@ SAMPLE_SPECS::sample_pos_t CHAIN::seek_position(SAMPLE_SPECS::sample_pos_t pos)
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
 		"seek position, to pos " +
 		kvu_numtostr(pos) + ".");
-
-  for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
-    gcontrollers_rep[p]->seek_position_in_samples(pos);
-  }
 
   return pos;
 }

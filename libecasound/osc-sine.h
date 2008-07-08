@@ -13,7 +13,7 @@ class SINE_OSCILLATOR : public OSCILLATOR {
  public:
 
   virtual void init(void);
-  virtual parameter_t value(void);
+  virtual parameter_t value(double pos);
 
   std::string parameter_names(void) const { return("freq,phase-offset"); }
   void set_parameter(int param, parameter_t value);

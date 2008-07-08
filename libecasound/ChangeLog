@@ -1,3 +1,9 @@
+2008-07-08  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* ctrl-source.h: Major refactoring. No longer
+	inherits ECA_AUDIO_POSITION.
+	* generic-controller.h: Now inherits ECA_AUDIO_POSITION.
+
 2008-07-06  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-audio-time.h (valid): Added.

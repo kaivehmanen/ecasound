@@ -8,23 +8,25 @@
  * Interface class for implementing control data
  * source objects. 
  */
-class CONTROLLER_SOURCE : public OPERATOR,
-			  public ECA_AUDIO_POSITION {
+class CONTROLLER_SOURCE : public OPERATOR {
 
  public:
 
   typedef SAMPLE_SPECS::sample_t parameter_t;
 
   /**
-   * Initialize controller source
+   * Initializes the controller source.
+   *
+   * This function is called at least once before 
+   * the first call to value().
    */
   virtual void init(void) = 0;
 
   /**
-   * Returns the current value. Standard value range is [0,1].
+   * Returns the current value for the given
+   * position.
    */
-  virtual parameter_t value(void) = 0; 
-
+  virtual parameter_t value(double pos_secs) = 0; 
   /**
    * Sets an initial value for the controller. 
    * 
@@ -35,17 +37,6 @@ class CONTROLLER_SOURCE : public OPERATOR,
    * Should be set before the first call to value().
    */
   virtual void set_initial_value(parameter_t arg) = 0; 
-
-  /** @name Functions implemented from ECA_AUDIO_POSITION */
-  /*@{*/
-
-protected:
-  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) { return pos; }
-public:
-  virtual bool supports_seeking(void) const { return true; }
-  virtual bool supports_seeking_sample_accurate(void) const { return true; }
-
-  /*@}*/
 
   virtual CONTROLLER_SOURCE* clone(void) const = 0;
   virtual CONTROLLER_SOURCE* new_expr(void) const = 0;

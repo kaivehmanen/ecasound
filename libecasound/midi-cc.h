@@ -14,11 +14,11 @@ class MIDI_CONTROLLER : public CONTROLLER_SOURCE,
     
  public:
 
-  /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
+  /** @name Functions implemented from CONTROLLER_SOURCE */
   /*@{*/
 
   virtual void init(void);
-  virtual parameter_t value(void);
+  virtual parameter_t value(double pos_secs);
   virtual void set_initial_value(parameter_t arg);
 
   /*@}*/

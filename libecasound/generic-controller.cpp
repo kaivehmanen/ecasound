@@ -45,9 +45,11 @@ GENERIC_CONTROLLER::GENERIC_CONTROLLER(CONTROLLER_SOURCE* src, OPERATOR* dobj, i
 {
   source = src;
   target = dobj;
+  init_called_rep = false;
   param_id_rep = par_id;
   rangelow_rep = range_low;
   rangehigh_rep = range_high;
+  last_value_pos_rep = -1;
 }
 
 void GENERIC_CONTROLLER::init(void)
@@ -58,31 +60,31 @@ void GENERIC_CONTROLLER::init(void)
   init_value = (init_value - rangelow_rep) / (rangehigh_rep - rangelow_rep);
   source->set_initial_value(init_value);
 
-  DEBUG_CTRL_STATEMENT(std::cerr << "generic-controller: type '"
-		       << source->name() << "', pos_sec " 
-		       << position_in_seconds_exact() 
-		       << ", source_value " << source->value() 
-		       << ", target_value " << target->get_parameter(param_id_rep)
-		       << ", init_value " << init_value 
-		       << "." << std::endl);
+  DEBUG_CTRL_STATEMENT(std::cerr << "generic-controller: init type '"
+		       << source->name() << "', init_value " 
+		       << init_value << "." << std::endl);
+
+  init_called_rep = true;
+  last_value_pos_rep = -1;
 }
 
-CONTROLLER_SOURCE::parameter_t GENERIC_CONTROLLER::value(void)
+CONTROLLER_SOURCE::parameter_t GENERIC_CONTROLLER::value(double pos)
 {
   // --------
   DBC_REQUIRE(is_valid() == true);
   // --------
 
-  source->seek_position_in_samples(position_in_samples());
-  double new_value = (source->value() * (rangehigh_rep - rangelow_rep)) + rangelow_rep;
+  double new_value = rangelow_rep +
+    (source->value(pos) * (rangehigh_rep - rangelow_rep));
 
   DEBUG_CTRL_STATEMENT(std::cerr << "generic-controller: type '"
-		       << source->name() << "', pos_sec " 
-		       << position_in_seconds_exact() 
-		       << ", source_value " << source->value() 
+		       << source->name() << "', pos_sec " << pos 
+		       << ", source_value " << source->value(pos) 
 		       << ", scaled_value " << new_value << "." << std::endl);
 
   target->set_parameter(param_id_rep, new_value);
+
+  last_value_pos_rep = pos;
 
   return new_value;
 }
@@ -92,10 +94,8 @@ string GENERIC_CONTROLLER::status(void) const
   if (is_valid() == true) {
     double value = -1.0f;
 
-    /* if srate is invalud, controller values 
-     * might not be valid */
-    if (samples_per_second() > 0) {
-      value = source->value();
+    if (last_value_pos_rep > 0) {
+      value = source->value(last_value_pos_rep);
     }
 
     return "Source \"" + source->name() + 
@@ -118,33 +118,11 @@ void GENERIC_CONTROLLER::assign_target(OPERATOR* obj)
 
 void GENERIC_CONTROLLER::assign_source(CONTROLLER_SOURCE* obj)
 { 
+  if (init_called_rep == true &&
+      source != obj)
+    init();
+
   source = obj;
-  source->set_samples_per_second(samples_per_second());
-}
-
-/**
- * Reimplemented from ECA_SAMPLERATE_AWARE
- */
-void GENERIC_CONTROLLER::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
-{
-  if (source != 0) {
-    source->set_samples_per_second(v);
-  }
-  
-  ECA_SAMPLERATE_AWARE::set_samples_per_second(v);
-}
-
-/**
- * Reimplemented from ECA_AUDIO_POSITION.
- */
-SAMPLE_SPECS::sample_pos_t GENERIC_CONTROLLER::seek_position(SAMPLE_SPECS::sample_pos_t pos)
-{
-  if (source != 0) {
-    source->seek_position_in_samples(pos);
-    DEBUG_CTRL_STATEMENT(std::cerr << "(generic-controller) seek position, to pos " << kvu_numtostr(source->position_in_seconds_exact(), 3) << ".\n");
-  }
-
-  return pos;
 }
 
 void GENERIC_CONTROLLER::set_parameter(int param, CHAIN_OPERATOR::parameter_t v)

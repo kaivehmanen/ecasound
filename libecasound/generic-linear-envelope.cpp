@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic-linear-envelope.cpp: Generic linear envelope
-// Copyright (C) 2000-2002,2006 Kai Vehmanen
+// Copyright (C) 2000-2002,2006,2008 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
 //
 // Attributes:
@@ -50,9 +50,10 @@ GENERIC_LINEAR_ENVELOPE::~GENERIC_LINEAR_ENVELOPE(void)
 {
 } 
 
-CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(void)
+CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(double curpos)
 {
-  parameter_t curpos = position_in_seconds_exact();
+  /* FIXME: not really seeking-safe */
+
   if (curpos < pos_rep[0] || curstage == -2) {
     /* not reached the first position yet, or processing not 
        started yet */

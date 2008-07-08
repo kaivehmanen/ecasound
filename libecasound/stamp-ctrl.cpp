@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // stamp-ctrl.cpp: Controller sources that analyze audio stamps
 //                 and produce control data.
-// Copyright (C) 2000,2001 Kai Vehmanen
+// Copyright (C) 2000,2001,2008 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,17 +28,20 @@ VOLUME_ANALYZE_CONTROLLER::VOLUME_ANALYZE_CONTROLLER(void)
 {
 }
 
-CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::value(void)
+CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::value(double pos)
 {
-  fetch_stamp(&sbuf_rep);
   parameter_t v = 0.0f;
+
+  fetch_stamp(&sbuf_rep);
+
   if (rms_mode_rep != 0) 
     v = SAMPLE_BUFFER_FUNCTIONS::RMS_volume(sbuf_rep);
   else
     v = SAMPLE_BUFFER_FUNCTIONS::average_amplitude(sbuf_rep);
   if (!(v > 0.0f)) v = 0.0f;
   // cerr << "(volume-analyze-ctrl) Fetches a sbuf with value " << v  << endl;
-  return(v);
+
+  return v;
 }
 
 void VOLUME_ANALYZE_CONTROLLER::init(void)
@@ -60,10 +66,10 @@ CONTROLLER_SOURCE::parameter_t VOLUME_ANALYZE_CONTROLLER::get_parameter(int para
 {
   switch (param) {
   case 1: 
-    return(static_cast<parameter_t>(id()));
+    return static_cast<parameter_t>(id());
 
   case 2: 
-    return(static_cast<parameter_t>(rms_mode_rep));
+    return static_cast<parameter_t>(rms_mode_rep);
   }
-  return(0.0);
+  return 0.0f;
 }

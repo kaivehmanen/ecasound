@@ -781,8 +781,14 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample)
 {
   i.init(insample);
   lfo.init();
-  advance_len_rep = insample->length_in_samples();
 
+  if (samples_per_second() > 0)
+    advance_len_secs_rep = 
+      ((double)insample->length_in_samples()) / 
+      samples_per_second();
+  else
+    advance_len_secs_rep = 0;
+    
   set_parameter(1, dtime_msec);
 
   EFFECT_BASE::init(insample);
@@ -794,13 +800,7 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample)
 
 void EFFECT_MODULATING_DELAY::process(void)
 {
-  lfo.seek_position_in_samples_advance(advance_len_rep);
-}
-
-void EFFECT_MODULATING_DELAY::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
-{
-  EFFECT_TIME_BASED::set_samples_per_second(v);
-  lfo.set_samples_per_second(v);
+  lfo_pos_secs_rep += advance_len_secs_rep;
 }
 
 void EFFECT_FLANGER::process(void)
@@ -810,7 +810,7 @@ void EFFECT_FLANGER::process(void)
   i.begin();
   while(!i.end()) {
     SAMPLE_SPECS::sample_t temp1 = 0.0;
-    parameter_t p = vartime * lfo.value();
+    parameter_t p = vartime * lfo.value(lfo_pos_secs_rep);
     if (filled[i.channel()] == true) {
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
@@ -835,7 +835,7 @@ void EFFECT_CHORUS::process(void)
   i.begin();
   while(!i.end()) {
     SAMPLE_SPECS::sample_t temp1 = 0.0;
-    parameter_t p = vartime * lfo.value();
+    parameter_t p = vartime * lfo.value(lfo_pos_secs_rep);
     if (filled[i.channel()] == true) {
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));
@@ -860,7 +860,7 @@ void EFFECT_PHASER::process(void)
   i.begin();
   while(!i.end()) {
     SAMPLE_SPECS::sample_t temp1 = 0.0;
-    parameter_t p = vartime * lfo.value();
+    parameter_t p = vartime * lfo.value(lfo_pos_secs_rep);
     if (filled[i.channel()] == true) {
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) >= 0);
       DBC_CHECK((dtime + delay_index[i.channel()] + static_cast<long int>(p)) % (dtime * 2) < static_cast<long int>(buffer[i.channel()].size()));

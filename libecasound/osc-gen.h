@@ -19,8 +19,7 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
  public:
 
   virtual void init(void);
-  virtual parameter_t value(void);
-
+  virtual parameter_t value(double pos_secs);
   virtual std::string parameter_names(void) const;
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
