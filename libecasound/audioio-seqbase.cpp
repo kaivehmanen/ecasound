@@ -437,17 +437,25 @@ bool AUDIO_SEQUENCER_BASE::finished(void) const
    *     a finite length stream and its position has gone beyond 
    *     the requested child_length
    */
-  if (child()->finished())
+  if (child()->finished()) {
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"Child object " + child->label() + " finished.");
     return true;
+  }
 
-  if (io_mode() != AUDIO_IO::io_read) 
+  if (io_mode() != AUDIO_IO::io_read) {
     return false;
+  }
 
   if (child_looping_rep != true &&
       child()->finite_length_stream() == true && 
       priv_public_to_child_pos(position_in_samples()) 
-      >= child_length_rep.samples() + child_start_pos_rep.samples())
+      >= child_length_rep.samples() + child_start_pos_rep.samples()) {
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"Finite length child object " + child->label() + 
+		" finished. All samples from the requested range have been read.");
     return true;
+  }
 
   return false;
 }
