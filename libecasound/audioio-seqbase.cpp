@@ -439,7 +439,7 @@ bool AUDIO_SEQUENCER_BASE::finished(void) const
    */
   if (child()->finished()) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"Child object " + child->label() + " finished.");
+		"Child object " + child()->label() + " finished.");
     return true;
   }
 
@@ -452,7 +452,7 @@ bool AUDIO_SEQUENCER_BASE::finished(void) const
       priv_public_to_child_pos(position_in_samples()) 
       >= child_length_rep.samples() + child_start_pos_rep.samples()) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"Finite length child object " + child->label() + 
+		"Finite length child object " + child()->label() + 
 		" finished. All samples from the requested range have been read.");
     return true;
   }
