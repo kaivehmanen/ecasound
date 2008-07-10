@@ -111,7 +111,14 @@ void ECA_CONTROL::command(const string& cmd)
       // ---
       if (p->size() > 0 && (*p)[0] == '-') {
 	//  std::cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)" << " as iactive-mode commands is considered deprecated. " << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << std::endl;
-	chainsetup_option(cmd);
+	if (*p == "-i")
+	  ECA_LOG_MSG(ECA_LOGGER::info, 
+		      "WARNING: syntax variant '-i file.ext' not supported, please use 'ai-add file.ext' instead.");
+	else if (*p == "-o")
+	  ECA_LOG_MSG(ECA_LOGGER::info, 
+		      "WARNING: syntax variant '-o file.ext' not supported, please use 'ai-add file.ext' instead.");
+	else
+	  chainsetup_option(cmd);
       }
       else {
 	set_last_error("Unknown command!");
