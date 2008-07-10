@@ -689,6 +689,7 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   open_rep = false;
   activated_rep = false;
 
+  open_clients_rep = 0;
   last_node_id_rep = 1;
   jackslave_seekahead_rep = 2;
   jackslave_seekahead_target_rep = -1;
@@ -1537,8 +1538,13 @@ void AUDIO_IO_JACK_MANAGER::close(int client_id)
 
   /* only for the last client */
   if (open_clients_rep == 1) {
-    if (is_open() == true) close_server_connection();
+    if (is_open() == true) 
+      close_server_connection();
   }
+  else 
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"Not yet closing JACK server connection as there are "
+		+ kvu_numtostr(open_clients_rep - 1) + " clients still active.");
 
   --open_clients_rep;
 }
@@ -1669,6 +1675,8 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
     profile_callback_timer.set_upper_bound_seconds(0.005f);
 #endif
 
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"Succesfully opened JACK server connection.");
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::info, "Error! Cannot connect to JACK server!");
@@ -1702,8 +1710,8 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
 
   open_rep = false;
 
-  ECA_LOG_MSG(ECA_LOGGER::info, 
-		"Connection closed!");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"Succesfully closed JACK server connection.");
 
 #ifdef PROFILE_CALLBACK_EXECUTION
   cerr << profile_callback_timer.to_string() << endl;
