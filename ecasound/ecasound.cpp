@@ -452,7 +452,7 @@ void ecasound_print_version_banner(void)
 
 static void ecasound_signal_handler(int signal)
 {
-#if defined(HAVE_SIGPROCMASK)
+#if defined(HAVE_SIGPROCMASK) || defined(HAVE_PTHREAD_SIGMASK)
   cerr << "(ecasound-watchdog) WARNING! ecasound_signal_handler entered, this should _NOT_ happen!";
   cerr << " pid=" << getpid() << endl;
 #endif
@@ -474,9 +474,7 @@ static void ecasound_signal_handler(int signal)
 void ecasound_setup_signals(struct ecasound_state* state)
 {
   pthread_t watchdog;
-  sigset_t* signalset = new sigset_t;
-
-  state->signalset = signalset;
+  sigset_t* signalset;
 
   /* man pthread_sigmask:
    *  "...signal actions and signal handlers, as set with
@@ -489,9 +487,10 @@ void ecasound_setup_signals(struct ecasound_state* state)
   sigemptyset(&blockaction.sa_mask);
   blockaction.sa_flags = 0;
 
-  sigemptyset(signalset);
-
   /* handle the following signals explicitly */
+  signalset = new sigset_t;
+  state->signalset = signalset;
+  sigemptyset(signalset);
   sigaddset(signalset, SIGTERM);
   sigaddset(signalset, SIGINT);
   sigaddset(signalset, SIGHUP);
@@ -506,6 +505,7 @@ void ecasound_setup_signals(struct ecasound_state* state)
   sigaction(SIGQUIT, &blockaction, 0);
 
 #ifdef __FreeBSD__
+  /* ignore signals instead of passing them to our handler */
   blockaction.sa_handler = SIG_IGN;
   sigaction(SIGFPE, &blockaction, 0);
 #endif
@@ -518,12 +518,20 @@ void ecasound_setup_signals(struct ecasound_state* state)
     cerr << "ecasound: Warning! Unable to create watchdog thread." << endl;
   }
 
-#if defined(HAVE_SIGPROCMASK)
-  /* block all signals */
+  /* block all signals in 'signalset' (see above) */
+#if defined(HAVE_PTHREAD_SIGMASK)
+  pthread_sigmask(SIG_BLOCK, signalset, NULL);
+#elif 1
+  #error "testing"
+#elif defined(HAVE_SIGPROCMASK)
   sigprocmask(SIG_BLOCK, signalset, NULL);
 #endif
 }
 
+/**
+ * Runs a watchdog thread that centrally catches signals that
+ * will cause ecasound to exit.
+ */
 void* ecasound_signal_watchdog_thread(void* arg)
 {
   int signalno = 0;
@@ -531,25 +539,32 @@ void* ecasound_signal_watchdog_thread(void* arg)
 
   // cerr << "Watchdog-thread created, pid=" << getpid() << "." << endl;
 
-  /* 1. block until a signal received */
 #ifdef HAVE_SIGWAIT
-#ifdef HAVE_SIGPROCMASK
+
+# if defined(HAVE_PTHREAD_SIGMASK)
+  pthread_sigmask(SIG_BLOCK, state->signalset, NULL);
+# elif defined(HAVE_SIGPROCMASK)
   /* the set of signals must be blocked before entering sigwait() */
-  sigprocmask(SIG_SETMASK, state->signalset, NULL);
-#endif
+  sigprocmask(SIG_BLOCK, state->signalset, NULL);
+# endif
+
+  /* 1.a) block until a signal received */
   sigwait(state->signalset, &signalno);
 
   cerr << endl << "(ecasound-watchdog) Received signal " << signalno << ". Cleaning up and exiting..." << endl;
 
-  /* 2. use pause() instead */
-#elif HAVE_PAUSE
+#elif HAVE_PAUSE /* !HAVE_SIGWAIT */
+
+  /* 1.b. use pause() instead (alternative to sigwait() */
   pause();
 
-  // cerr << endl << "(ecasound-watchdog) Received signal and returned from pause(). Cleaning up and exiting..." << endl;
+  cerr << endl << "(ecasound-watchdog) Received signal and returned from pause(). Cleaning up and exiting..." << endl;
 
-  /* 3. if proper signal handling is not possible, stop compilation */
-#else
-#error "Neither sigwait() or pause() is available, unable to continue."
+#else /* !HAVE_PAUSE */
+
+  /* 2. if proper signal handling is not possible, stop compilation */
+  #error "Neither sigwait() or pause() is available, unable to continue."
+
 #endif
 
   state->exit_request = 1;
