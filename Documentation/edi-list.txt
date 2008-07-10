@@ -47,6 +47,8 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- submitted: ecasound-list daemon :), 2001
 (edi-7): Adding a 'loop x times' option to the ewf file format.
 	- submitted: nolan_d, 09.07.2001
+	- partially implemented: kaiv, 11.07.2008 (combination of 'select' 
+	  and 'audioloop' provides similar functionality)
 (edi-9): Adding and removing audio and chainop objects on-the-fly. 
 	- submitted: jhalttun, xx.06.2001
 (edi-16): More flexible system for assigning controllers of 
@@ -84,9 +86,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 	- frozen: kaiv, 20.08.2003	
 (edi-35): JACK support to ecasound's interactive mode (EIAM)
 	 - submitted: kaiv, 16.11.2002
-         - frozen: kaiv, 20.08.2003
-(edi-38): Initial EIAM commands upon connecting a chainsetup.
-         - submitted: kaiv, 20.08.2003
          - frozen: kaiv, 20.08.2003
 
 -----------------------------------------------------------------------
@@ -168,6 +167,11 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-33): Libsndfile support.
 	 - submitted: kaiv, 29.10.2002
 	 - closed: kaiv, 28.11.2003
+(edi-38): Initial EIAM commands upon connecting a chainsetup.
+         - submitted: kaiv, 20.08.2003
+         - frozen: kaiv, 20.08.2003
+	 - reopened: kaiv, 10.07.2008
+	 - closed: kaiv, 11.07.2008
 (edi-40): Update to error and warning reporting mechanisms.
          - submitted: kaiv, 13.05.2004
 	 - closed: kaiv, 03.03.2008
