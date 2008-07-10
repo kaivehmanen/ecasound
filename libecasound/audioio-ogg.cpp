@@ -261,8 +261,11 @@ void OGG_VORBIS_INTERFACE::start_io(void)
 void OGG_VORBIS_INTERFACE::stop_io(void)
 {
   if (triggered_rep == true) {
-    if (io_mode() == io_read) 
+    if (io_mode() == io_read) {
+      fclose(f1_rep);
+      f1_rep = 0;
       clean_child(true);
+    }
     else
       clean_child(false);
 
