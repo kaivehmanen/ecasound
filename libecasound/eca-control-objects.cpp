@@ -805,7 +805,8 @@ void ECA_CONTROL_OBJECTS::add_chains(const string& names)
 { 
   // --------
   DBC_REQUIRE(is_selected() == true &&
-	 is_connected() == false);
+	      (session_repp->connected_chainsetup_repp !=
+	       session_repp->selected_chainsetup_repp));
   // --------
 
   add_chains(kvu_string_to_vector(names, ','));
@@ -860,8 +861,9 @@ void ECA_CONTROL_OBJECTS::remove_chains(void)
 {
   // --------
   DBC_REQUIRE(is_selected() == true &&
-	 selected_chains().size() > 0 &&
-	 is_connected() == false);
+	      selected_chains().size() > 0 &&
+	      (session_repp->connected_chainsetup_repp !=
+	       session_repp->selected_chainsetup_repp));
   // --------
 
   selected_chainsetup_repp->remove_chains();
