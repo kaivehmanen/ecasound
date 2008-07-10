@@ -367,7 +367,9 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
   if (pid_of_child_rep > 0 && 
       force == true) {
     if (sigkill_sent_rep != true) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGKILL to child process.");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		  "Sending SIGKILL to child process related to: "
+		  + object_rep);
       kill(pid_of_child_rep, SIGKILL);
       sigkill_sent_rep = true;
     }
@@ -387,7 +389,8 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     int res = waitpid(pid_of_child_rep, &status, flags);
 
     if (res == pid_of_child_rep) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child process exit ok");
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child process exit ok: "
+		  + object_rep);
       pid_of_child_rep = 0;
     }
     else {
@@ -397,7 +400,8 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
 
   if (pid_of_child_rep > 0) {
     /* wait didn't work, terminate with SIGTERM to be sure */
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGTERM to child process");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGTERM to child process: "
+		+ object_rep);
     kill(pid_of_child_rep, SIGTERM);
     pid_of_child_rep = 0;
   }
