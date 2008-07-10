@@ -1144,6 +1144,7 @@ AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(pthread_self)
 AC_CHECK_FUNCS(pthread_getschedparam)
 AC_CHECK_FUNCS(pthread_setschedparam)
+AC_CHECK_FUNCS(pthread_sigmask)
 AC_CHECK_FUNCS(sigprocmask)
 AC_CHECK_FUNCS(sigwait)
 
