@@ -684,7 +684,7 @@ void CHAIN::process(void)
   }
 
   /* step: update chain position */
-  seek_position_in_samples_advance(audioslot_repp->length_in_samples());
+  change_position_in_samples(audioslot_repp->length_in_samples());
 }
 
 /**
