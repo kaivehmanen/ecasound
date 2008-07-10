@@ -203,10 +203,12 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
 
 	sigset_t newset;
 	sigemptyset(&newset);
+
 	sigaddset(&newset, SIGTERM);
+	sigaddset(&newset, SIGPIPE);
 
 #if defined(HAVE_PTHREAD_SIGMASK)
-	pthread_sigmask(SIG_BLOCK, &newset, NULL);
+	pthread_sigmask(SIG_UNBLOCK, &newset, NULL);
 #elif defined(HAVE_SIGPROCMASK)
 	sigprocmask(SIG_UNBLOCK, &newset, NULL);
 #endif
@@ -255,9 +257,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
     sigset_t newset;
     sigemptyset(&newset);
     sigaddset(&newset, SIGTERM);
+    sigaddset(&newset, SIGPIPE);
     
 #if defined(HAVE_PTHREAD_SIGMASK)
-    pthread_sigmask(SIG_BLOCK, &newset, NULL);
+    pthread_sigmask(SIG_UNBLOCK, &newset, NULL);
 #elif defined(HAVE_SIGPROCMASK)
     sigprocmask(SIG_UNBLOCK, &newset, NULL);
 #endif
@@ -300,18 +303,22 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
   
   int fpipes[2];
   if (pipe(fpipes) == 0) {
-#ifdef HAVE_SIGPROCMASK
-    sigset_t oldset, newset;
-    sigemptyset(&newset);
-    sigaddset(&newset, SIGTERM);
-    sigprocmask(SIG_UNBLOCK, &newset, &oldset);
-#endif
     sigkill_sent_rep = false;
     pid_of_child_rep = fork();
     if (pid_of_child_rep == 0) { 
       // ---
       // child 
       // ---
+      sigset_t newset;
+      sigaddset(&newset, SIGTERM);
+      sigaddset(&newset, SIGPIPE);
+    
+#if defined(HAVE_PTHREAD_SIGMASK)
+      pthread_sigmask(SIG_UNBLOCK, &newset, NULL);
+#elif defined(HAVE_SIGPROCMASK)
+      sigprocmask(SIG_UNBLOCK, &newset, NULL);
+#endif
+
       ::close(0);
       ::dup2(fpipes[0],0);
       ::close(fpipes[0]);
@@ -324,9 +331,6 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
       // ---
       // parent
       // ---
-#ifdef HAVE_SIGPROCMASK
-      sigprocmask(SIG_SETMASK, &oldset, 0);
-#endif
       pid_of_parent_rep = ::getpid();
       ::close(fpipes[0]);
       fd_rep = fpipes[1];
