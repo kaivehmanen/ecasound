@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2004,2006 Kai Vehmanen
+// Copyright (C) 1999-2004,2006,2008 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,14 +59,18 @@ using std::vector;
  */
 void* ECA_CONTROL_BASE::start_normal_thread(void *ptr)
 {
-  sigset_t sigset;
-  sigemptyset(&sigset);
-  sigaddset(&sigset, SIGINT);
-  sigprocmask(SIG_BLOCK, &sigset, 0);
-
-  ECA_LOG_MSG(ECA_LOGGER::system_objects,"Engine-thread pid: " + kvu_numtostr(getpid()));
   ECA_CONTROL_BASE* ctrl_base = static_cast<ECA_CONTROL_BASE*>(ptr);
+  ctrl_base->engine_pid_rep = getpid();
+  DBC_CHECK(ctrl_base->engine_pid_rep >= 0);
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine thread started with pid: " + kvu_numtostr(ctrl_base->engine_pid_rep));
+
   ctrl_base->run_engine();
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,  
+	      "Engine thread " + kvu_numtostr(ctrl_base->engine_pid_rep) + " will exit.\n");
+  ctrl_base->engine_pid_rep = -1;
+
   return 0;
 }
 
@@ -75,8 +79,10 @@ ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession)
   session_repp = psession;
   selected_chainsetup_repp = psession->selected_chainsetup_repp;
   engine_repp = 0;
+  engine_pid_rep = -1;
   engine_exited_rep.set(0);
   float_to_string_precision_rep = 3;
+  joining_rep = false;
 }
 
 ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void)
@@ -364,7 +370,25 @@ void ECA_CONTROL_BASE::close_engine(void)
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "Waiting for engine thread to exit.");
-  pthread_join(th_cqueue_rep,NULL);
+  if (joining_rep != true) {
+    joining_rep = true;
+    int res = pthread_join(th_cqueue_rep,NULL);
+    joining_rep = false;
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"pthread_join returned: " 
+		+ kvu_numtostr(res));
+  }
+  else {
+    DBC_CHECK(engine_pid_rep >= 0);
+    int i;
+    for (i = 0; i < 30; i++) { 
+      if (engine_exited_rep.get() ==1)
+	break;
+      usleep(100000);
+    }
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine stuck, sending SIGKILL.");
+    kill(engine_pid_rep, SIGKILL);
+  }
 
   if (engine_exited_rep.get() == 1) {
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine thread has exited succesfully.");

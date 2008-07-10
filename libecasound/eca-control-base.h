@@ -32,6 +32,8 @@ class ECA_CONTROL_BASE {
   pthread_t th_cqueue_rep;
   ATOMIC_INTEGER engine_exited_rep;
   int float_to_string_precision_rep;
+  int engine_pid_rep;
+  bool joining_rep;
 
   static void* start_normal_thread(void *ptr);
 
