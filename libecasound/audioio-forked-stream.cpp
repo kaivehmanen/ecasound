@@ -4,7 +4,7 @@
 // Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
