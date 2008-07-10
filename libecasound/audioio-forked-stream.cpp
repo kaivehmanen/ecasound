@@ -83,6 +83,8 @@ static int afs_run_exec(const string& command, const string& filename)
 
 AUDIO_IO_FORKED_STREAM::~AUDIO_IO_FORKED_STREAM(void)
 {
+  if (pid_of_child_rep > 0) 
+    clean_child(true);
 }
 
 void AUDIO_IO_FORKED_STREAM::stop_io(void)
@@ -192,17 +194,23 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
   else {
     int fpipes[2];
     if (pipe(fpipes) == 0) {
-#ifdef HAVE_SIGPROCMASK
-      sigset_t oldset, newset;
-      sigemptyset(&newset);
-      sigaddset(&newset, SIGTERM);
-      sigprocmask(SIG_UNBLOCK, &newset, &oldset);
-#endif
+      sigkill_sent_rep = false;
       pid_of_child_rep = fork();
       if (pid_of_child_rep == 0) { 
 	// ---
 	// child 
 	// ---
+
+	sigset_t newset;
+	sigemptyset(&newset);
+	sigaddset(&newset, SIGTERM);
+
+#if defined(HAVE_PTHREAD_SIGMASK)
+	pthread_sigmask(SIG_BLOCK, &newset, NULL);
+#elif defined(HAVE_SIGPROCMASK)
+	sigprocmask(SIG_UNBLOCK, &newset, NULL);
+#endif
+
 	::close(1);
 	dup2(fpipes[1], 1);
 	::close(fpipes[0]);
@@ -217,9 +225,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
 	// ---
 	// parent
 	// ---
-#ifdef HAVE_SIGPROCMASK
-	sigprocmask(SIG_SETMASK, &oldset, 0);
-#endif
+
 	pid_of_parent_rep = ::getpid();
 	::close(fpipes[1]);
 	fd_rep = fpipes[0];
@@ -239,17 +245,23 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-fifo-read: '" + fork_command() + "'");
 
-#ifdef HAVE_SIGPROCMASK
-  sigset_t oldset, newset;
-  sigemptyset(&newset);
-  sigaddset(&newset, SIGTERM);
-  sigprocmask(SIG_UNBLOCK, &newset, &oldset);
-#endif
+  sigkill_sent_rep = false;
   pid_of_child_rep = fork();
   if (pid_of_child_rep == 0) { 
     // ---
     // child 
     // ---
+
+    sigset_t newset;
+    sigemptyset(&newset);
+    sigaddset(&newset, SIGTERM);
+    
+#if defined(HAVE_PTHREAD_SIGMASK)
+    pthread_sigmask(SIG_BLOCK, &newset, NULL);
+#elif defined(HAVE_SIGPROCMASK)
+    sigprocmask(SIG_UNBLOCK, &newset, NULL);
+#endif
+
     freopen("/dev/null", "w", stderr);
     int res = afs_run_exec(command_rep, object_rep);
     if (res < 0) {
@@ -269,9 +281,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
     // ---
     // parent
     // ---
-#ifdef HAVE_SIGPROCMASK
-    sigprocmask(SIG_SETMASK, &oldset, 0);
-#endif
+
     pid_of_parent_rep = ::getpid();
     fd_rep = 0;
     if (wait_for_child() == true)
@@ -296,6 +306,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
     sigaddset(&newset, SIGTERM);
     sigprocmask(SIG_UNBLOCK, &newset, &oldset);
 #endif
+    sigkill_sent_rep = false;
     pid_of_child_rep = fork();
     if (pid_of_child_rep == 0) { 
       // ---
@@ -329,8 +340,19 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
 
 /**
  * Cleans (waits for) the forked child process. Note! This
- * function must be called from the same thread as 
- * fork_child_for_read/write() was called.
+ * function should be called from the same thread as 
+ * fork_child_for_read/write() was called. 
+ * 
+ * In case the function is called from a different thread, 
+ * it attemts to terminate the child anyways, but the child's 
+ *  state is not known exactly when function returns.
+ *
+ * @param force if true, client is terminated with SIGKILL,
+ *              which guarantees that it terminates (but 
+ *              possibly without going through normal 
+ *              exit procedure); should be avoided especially
+ *              for output objects as this may result in 
+ *              data loss
  */
 void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
 {
@@ -344,7 +366,15 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
 
   if (pid_of_child_rep > 0 && 
       force == true) {
-    kill(pid_of_child_rep, SIGTERM);
+    if (sigkill_sent_rep != true) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGKILL to child process.");
+      kill(pid_of_child_rep, SIGKILL);
+      sigkill_sent_rep = true;
+    }
+    else {
+      /* SIGKILL already sent once for this process, don't send it again */
+      pid_of_child_rep = -1;
+    }
   }
 
   if (pid_of_child_rep > 0 &&
@@ -366,9 +396,9 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
   }
 
   if (pid_of_child_rep > 0) {
-    /* if 'killing you softly' didn't work, next try with SIGKILL */
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGKILL to child process");
-    kill(pid_of_child_rep, SIGKILL);
+    /* wait didn't work, terminate with SIGTERM to be sure */
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGTERM to child process");
+    kill(pid_of_child_rep, SIGTERM);
     pid_of_child_rep = 0;
   }
   
