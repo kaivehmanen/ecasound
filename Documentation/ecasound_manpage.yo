@@ -52,10 +52,29 @@ without ncurses).
 
 dit(-s[:]chainsetup-file)
 Create a new chainsetup from file 'chainsetup-file' and add
-it to the current session. Chainsetup can contain inputs, outputs, 
-chains, effects, controllers, etc. A session, on the other hand, 
-contains all the chainsetups. Although only one chainsetup can
-be connected at a time, you can switch between them on-the-fly.
+it to the current session. Chainsetup files commonly have 
+a filename ending to the '.ecs' extension. A chainsetup can 
+contain inputs, outputs, chains, effects, controllers -- i.e.
+objects one one specific configuration of audio processing
+elements. A session, on the other hand, is a collection of 
+one or more chainsetups. Only one of the chainsetups may be
+connected (i.e. it can be run/processed). But it is possible 
+to have another chainsetup select (i.e. can be configured)
+while other one is current connteced (i.e. running). 
+
+dit(-E "cmd1 [[args] ; cmd2 args ; ... ; cmdN]")
+Execute a set of Ecasound Interactive mode (EIAM) commands
+at launch. These commands are executed immediately after 
+ecasound is started. If the command line contains sufficient
+options to create a valid chainsetup that will be executed,
+the launch commands are executed after the other command
+line options are parsed, but before the processing engine
+is started. Note that this command is a feature of 
+the ecasound frontend binary and not supported by 
+the library backend. This means that other clients may
+not support the '-E' option, and also that the launch
+commands are not saved as part of chainsetup or session
+state.
 
 dit(--daemon)
 Enable ecasound's daemon mode. If this option is given,

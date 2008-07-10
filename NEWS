@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 090708) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 110708) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -32,7 +32,8 @@ xx082008 (v2.5.0) -** stable release **-
 	- notice: verified to compile with minimal warnings with
 	          gcc-4.3.1
 	- edi-entries: edi-40 closed (Update to error and warning 
-	               reporting mechanisms)
+	               reporting mechanisms), edi-38 closed (see
+		       edi-7 partially implemented
 	- added: ecasound.el: added missing ECI commands cs-option, 
 	         cs-set-length, cs-set-position-samples, ai-get-length,
 		 ai-set-position, and ai-set-position-samples [dto,
@@ -46,7 +47,8 @@ xx082008 (v2.5.0) -** stable release **-
         - added: audio looper object; "-i:audioloop,foo.wav" will play
 		 'foo.wav' and loop it indefinitely
         - added: audio selector object; "-i:select,5,15.2,foo.wav" will 
-		 play 15.2sec of "foo.wav", starting at position 5sec.
+		 play 15.2sec of "foo.wav", starting at position 5sec;
+		 relates to (edi-7)
 	- added: audio play-at object; "-i:playat,5,foo.wav" will
 		 start playing "foo.wav" after position reaches 5sec
 	- added: EWF files; ability to specify positions in time in 
@@ -56,6 +58,9 @@ xx082008 (v2.5.0) -** stable release **-
 		 for instance when recording vinyl/tapes, this allows
 		 to automatically restart recording when a new track 
 		 is started [andrewl]
+	- added: ecasound frontend option '-E "cmds"' that allows
+	 	 to run a set of interactive mode commands at
+		 startup; see ecasound(1) for details; closes (edi-38)
         - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
 		   has been rewritten in this version; numerous bugs
 	  	   are fixed

@@ -1,6 +1,8 @@
 #ifndef INCLUDED_ECASOUND_H
 #define INCLUDED_ECASOUND_H
 
+#include <string>
+#include <vector>
 
 #include <pthread.h>   /* POSIX: pthread_create() */
 #include <signal.h>    /* POSIX: sigaction(), sigwait(), sig_atomic_t */
@@ -36,6 +38,7 @@ struct ecasound_state {
   ECA_LOGGER_INTERFACE* logger;
   ECA_NETECI_SERVER* eciserver;
   ECA_SESSION* session;
+  std::vector<std::string>* launchcmds;
   pthread_t* daemon_thread;
   pthread_mutex_t* lock;
   sig_atomic_t exit_request;

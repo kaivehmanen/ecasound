@@ -56,6 +56,7 @@
 
 static void ecasound_create_eca_objects(struct ecasound_state* state, COMMAND_LINE& cline);
 static void ecasound_launch_daemon(struct ecasound_state* state);
+static int ecasound_pass_at_launch_commands(struct ecasound_state* state);
 static void ecasound_main_loop(struct ecasound_state* state);
 void ecasound_parse_command_line(struct ecasound_state* state, 
 				 const COMMAND_LINE& clinein,
@@ -76,6 +77,7 @@ static struct ecasound_state ecasound_state_global =
     0,        /* ECA_LOGGER_INTERFACE */
     0,        /* ECA_NETECI_SERVER */
     0,        /* ECA_SESSION */
+    0,        /* launchcmds, std::vector<std::string> */
     0,        /* pthread_t - daemon_thread */
     0,        /* pthread_mutex_t - lock */
     0,        /* sig_wait_t - exit_request */
@@ -160,7 +162,10 @@ int main(int argc, char *argv[])
       }
     }
 
-    /* 9. start processing */
+    /* 9. pass launch commands */
+    ecasound_pass_at_launch_commands(state);
+
+    /* 10. start processing */
     if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       ecasound_main_loop(state);
     }
@@ -221,6 +226,7 @@ void ecasound_atexit_cleanup(void)
       if (state->session != 0) { delete state->session; state->session = 0; }
     }
 
+    if (state->launchcmds != 0) { delete state->launchcmds; state->launchcmds = 0; }
     if (state->eciserver != 0) { delete state->eciserver; state->eciserver = 0; }
     if (state->console != 0) { delete state->console; state->console = 0; }
     if (state->daemon_thread != 0) { delete state->daemon_thread; state->daemon_thread = 0; }
@@ -282,6 +288,21 @@ void ecasound_launch_daemon(struct ecasound_state* state)
   }
 
   // state->console->print("ecasound: NetECI server started");
+}
+
+static int ecasound_pass_at_launch_commands(struct ecasound_state* state)
+{
+  if (state->launchcmds) {
+    std::vector<std::string>::const_iterator p = state->launchcmds->begin();
+
+    while(p != state->launchcmds->end()) {
+      state->control->command(*p);
+      state->control->print_last_value();
+      ++p;
+    }
+  }
+
+  return 0;
 }
 
 /**
@@ -394,6 +415,15 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 	state->daemon_mode = true;
       }
 
+      else if (cline.current().find("-E") != string::npos) {
+	cline.next();
+	if (cline.end() != true) {
+	  state->launchcmds = 
+	    new std::vector<std::string>
+ 	      (kvu_string_to_vector(cline.current(), ';'));
+	}
+      }
+
       else if (cline.current().find("--daemon-port") != string::npos) {
 	std::vector<std::string> argpair = 
 	  kvu_string_to_vector(cline.current(), '=');
@@ -402,6 +432,7 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 	  state->daemon_port = atoi(argpair[1].c_str());
 	}
       }
+
 
       else if (cline.current() == "--nodaemon") {
 	state->daemon_mode = false;
