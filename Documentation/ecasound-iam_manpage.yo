@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (03.03.2008)
+       (12.07.2008)
        ()
        (Multimedia software)
 
@@ -303,7 +303,8 @@ Toggle chain muting. Note! Deprecated, use em(c-muting) instead. em([-])
 
 dit(c-bypass)
 Toggle chain bypassing. When chain is bypassed, sample data is passed 
-through untouched. em([-])
+through unprocessed (all chain operators are disabled for the given
+chain). em([-])
 
 dit(c-status, cs)
 Print status info about all chains. em([s])
