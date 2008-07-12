@@ -86,6 +86,9 @@ xx082008 (v2.5.0) -** stable release **-
 	- changed: separate global (-d, -R, ...) and ecasound frontend 
 		   specific (-c, --daemon, -s, ...) options in 
 		   ecasound(1) man page
+        - changed: changes to "cs-status" (aka "status", "st")
+		   output formatting; now more information about
+	           selected and connected setups is printed out
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965

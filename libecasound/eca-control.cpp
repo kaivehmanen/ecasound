@@ -777,6 +777,7 @@ void ECA_CONTROL::print_last_value(void)
 string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
 {
   string result;
+  vector<CHAIN*>::const_iterator chain_citer;
 
   result += "\n -> Objects: " + kvu_numtostr(cs->inputs.size());
   result += " inputs, " + kvu_numtostr(cs->outputs.size());
@@ -786,13 +787,42 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   // FIXME: add explanations on why the chainsetup cannot be
   //        connected
 
-  if (cs->is_valid()) 
+  if (cs->is_locked())
+    result += "\n -> State:   connected to engine";
+  else if (cs->is_enabled())
+    result += "\n -> State:   connected (engine not yet running)";
+  else if (cs->is_valid()) 
     result += "\n -> State:   valid (can be connected)";
   else
     result += "\n -> State:   not valid (cannot be connected)";
+  
+  result += "\n -> Position:  ";
+  result += kvu_numtostr(cs->position_in_seconds_exact());
+  result += " / ";
+  if (cs->length_set())
+    result += kvu_numtostr(length_in_seconds_exact());
+  else
+    result += "inf";
 
   result += "\n -> Options: ";
   result += cs->options_to_string();
+
+  for(chain_citer = selected_chainsetup_repp->chains.begin();
+      chain_citer != selected_chainsetup_repp->chains.end();) {
+    result += "\n -> Chain \"" + (*chain_citer)->name() + "\": ";
+    int idx =
+      (*chain_citer)->connected_input();
+    if (idx >= 0)
+      result += ECA_OBJECT_FACTORY::audio_object_to_eos(selected_chainsetup_repp->inputs[idx], "i");
+    result += " ";
+    result += (*chain_citer)->to_string();
+    result += " ";
+    idx = (*chain_citer)->connected_output();
+    if (idx >= 0)
+      result += ECA_OBJECT_FACTORY::audio_object_to_eos(selected_chainsetup_repp->outputs[idx], "o");
+
+    ++chain_citer;
+  }
   
   return result;
 }
@@ -806,10 +836,26 @@ string ECA_CONTROL::chainsetup_status(void) const
   while(cs_citer != session_repp->chainsetups_rep.end()) {
     result += "Chainsetup ("  + kvu_numtostr(++index) + ") \"";
     result += (*cs_citer)->name() + "\" ";
+
+    if (*cs_citer ==
+	selected_chainsetup_repp)
+      result += "[selected] ";
+    if (*cs_citer ==
+	session_repp->connected_chainsetup_repp)
+      result += "[connected] ";
+
+
+#if 0
     if ((*cs_citer)->name() == selected_chainsetup()) result += "[selected] ";
     if ((*cs_citer)->name() == connected_chainsetup()) result += "[connected] ";
-    result += chainsetup_details_to_string((*cs_citer));
-    
+#endif
+
+    if ((*cs_citer == selected_chainsetup_repp) ||
+	(*cs_citer == session_repp->connected_chainsetup_repp))
+      result += chainsetup_details_to_string((*cs_citer));
+    else
+      result += ": <detailed status omitted -- set as selected to see full status>";
+
     ++cs_citer;
     if (cs_citer != session_repp->chainsetups_rep.end()) result += "\n";
   }
