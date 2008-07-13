@@ -3,7 +3,7 @@
 // Copyright (C) 2004-2006,2008 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
       }
       else {
 	urlprefix = std::string(label(), 0, offset);
-	ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-aac) Found url; protocol '" + urlprefix + "'.");
+	ECA_LOG_MSG(ECA_LOGGER::user_objects, "Found url; protocol '" + urlprefix + "'.");
       }
     }
 
@@ -125,7 +125,7 @@ long int AAC_FORKED_INTERFACE::read_samples(void* target_buffer, long int sample
 
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-aac) Can't start process \"" + AAC_FORKED_INTERFACE::default_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Can't start process \"" + AAC_FORKED_INTERFACE::default_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -156,7 +156,7 @@ void AAC_FORKED_INTERFACE::write_samples(void* target_buffer, long int samples)
       bytes_rep = 0;
     }
     if (bytes_rep < frame_size() * samples) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-aac) Can't start process \"" + AAC_FORKED_INTERFACE::default_output_cmd + "\". FAAC v1.24 or newer is required. Please check your ~/.ecasound/ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::info, "Can't start process \"" + AAC_FORKED_INTERFACE::default_output_cmd + "\". FAAC v1.24 or newer is required. Please check your ~/.ecasound/ecasoundrc.");
       finished_rep = true;
       triggered_rep = false;
       ECA_LOG_MSG(ECA_LOGGER::errors, 
