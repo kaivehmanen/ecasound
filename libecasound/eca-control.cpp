@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2005,2008 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -787,8 +787,14 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   // FIXME: add explanations on why the chainsetup cannot be
   //        connected
 
-  if (cs->is_locked())
-    result += "\n -> State:   connected to engine";
+  if (cs->is_locked()) {
+    result += "\n -> State:   connected to engine (engine status: ";
+    result += engine_status() + ")";
+  }
+  else if (cs->is_enabled() && is_engine_started() == true) {
+    result += "\n -> State:   connected (engine status: ";
+    result += engine_status() + ")";
+  }
   else if (cs->is_enabled())
     result += "\n -> State:   connected (engine not yet running)";
   else if (cs->is_valid()) 
@@ -797,29 +803,29 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
     result += "\n -> State:   not valid (cannot be connected)";
   
   result += "\n -> Position:  ";
-  result += kvu_numtostr(cs->position_in_seconds_exact());
+  result += kvu_numtostr(cs->position_in_seconds_exact(), 3);
   result += " / ";
   if (cs->length_set())
-    result += kvu_numtostr(length_in_seconds_exact());
+    result += kvu_numtostr(cs->length_in_seconds_exact(), 3);
   else
     result += "inf";
 
   result += "\n -> Options: ";
   result += cs->options_to_string();
 
-  for(chain_citer = selected_chainsetup_repp->chains.begin();
-      chain_citer != selected_chainsetup_repp->chains.end();) {
+  for(chain_citer = cs->chains.begin();
+      chain_citer != cs->chains.end();) {
     result += "\n -> Chain \"" + (*chain_citer)->name() + "\": ";
     int idx =
       (*chain_citer)->connected_input();
     if (idx >= 0)
-      result += ECA_OBJECT_FACTORY::audio_object_to_eos(selected_chainsetup_repp->inputs[idx], "i");
+      result += ECA_OBJECT_FACTORY::audio_object_to_eos(cs->inputs[idx], "i");
     result += " ";
     result += (*chain_citer)->to_string();
     result += " ";
     idx = (*chain_citer)->connected_output();
     if (idx >= 0)
-      result += ECA_OBJECT_FACTORY::audio_object_to_eos(selected_chainsetup_repp->outputs[idx], "o");
+      result += ECA_OBJECT_FACTORY::audio_object_to_eos(cs->outputs[idx], "o");
 
     ++chain_citer;
   }
