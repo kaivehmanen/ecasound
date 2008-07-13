@@ -219,7 +219,13 @@ For example cd-quality audio would be "16,2,44100"\&. This does the
 same as command-line argument "-f" (see ecasound (1))\&. \fI[-]\fP
 .PP 
 .IP "cs-status, status, st"
-Print status info about all chainsetups\&. \fI[s]\fP
+Prints out status information about available chainsetup\&.
+Detailed information is printed out for connected (=available
+for running) nd selected (=available for editing) chainsetups\&.
+Other chainsetups are listed, but further details are
+suppressed\&. To get full details of a specific chainsetup,
+select it with \&'cs-select\&' or \&'cs-iselect\&', and then
+issue \&'cs-select\&'\&. \fI[s]\fP
 .PP 
 .IP "cs-option \&'-prefix:arg1,\&.\&.\&.,argN\&'"
 One powerful feature of the interactive-mode is that it
