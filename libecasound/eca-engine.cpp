@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2007 Kai Vehmanen
+// Copyright (C) 1999-2008 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
