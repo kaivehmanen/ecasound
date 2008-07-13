@@ -220,7 +220,7 @@ void ECA_CHAINSETUP_PARSER::preprocess_options(std::vector<string>& opts) const
 
     if (p->size() > 0 && (*p)[0] != '-') {
       /* hack1: rest as "-i:file" */
-      ECA_LOG_MSG(ECA_LOGGER::info, "Note! Interpreting option " +
+      ECA_LOG_MSG(ECA_LOGGER::info, "NOTE: Interpreting option " +
 		    *p +
 		    " as -i:" +
 		    *p +

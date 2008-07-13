@@ -120,7 +120,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
 	delete comline_setup;
       }
       else if (selected_chainsetup_repp->is_valid() != true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "Note! Unable to create a valid chainsetup from the command-line arguments.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "NOTE: Unable to create a valid chainsetup from the command-line arguments.");
       }
     }
   }
@@ -457,7 +457,7 @@ void ECA_SESSION::preprocess_options(std::vector<std::string>* opts)
       /* hack1: options ending with .ecs as "-s:file.ecs" */
       string::size_type pos = p->find(".ecs");
       if (pos + 4 == p->size()) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "Note! Interpreting option " +
+	ECA_LOG_MSG(ECA_LOGGER::info, "NOTE: Interpreting option " +
 		    *p +
 		    " as -s:" +
 		    *p +
