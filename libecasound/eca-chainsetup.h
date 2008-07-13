@@ -121,8 +121,6 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   vector<string> audio_input_names(void) const;
   vector<string> audio_output_names(void) const;
 
-  static void audio_object_info(const AUDIO_IO* aio);
-
   /*@}*/
 
   /** @name Functions for handling chains */
@@ -411,6 +409,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   static void check_object_samplerate(const AUDIO_IO* obj,
 				      SAMPLE_SPECS::sample_rate_t srate) throw(ECA_ERROR&);
   static string set_resource_helper(const ECA_RESOURCES& ecaresources, const string& tag, const string& alternative);
+  static void audio_object_open_info(const AUDIO_IO* aio);
 
   /*@}*/
 

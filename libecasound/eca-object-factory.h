@@ -12,6 +12,7 @@
 
 class AUDIO_IO;
 class CHAIN_OPERATOR;
+class ECA_AUDIO_FORMAT;
 class ECA_OBJECT;
 class ECA_OBJECT_MAP;
 class ECA_PRESET_MAP;
@@ -81,6 +82,7 @@ class ECA_OBJECT_FACTORY {
   static std::string chain_operator_to_eos(const CHAIN_OPERATOR* chainop);
   static std::string controller_to_eos(const GENERIC_CONTROLLER* gctrl);
   static std::string operator_parameters_to_eos(const OPERATOR* chainop);
+  static std::string audio_format_to_eos(const ECA_AUDIO_FORMAT* aformat);
   static std::string audio_object_to_eos(const AUDIO_IO* aiod, const std::string& direction);
   static std::string audio_object_format_to_eos(const AUDIO_IO* aiod);
 

@@ -4,7 +4,7 @@
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -1569,22 +1569,25 @@ void ECA_CHAINSETUP::remove_audio_output(const string& label)
 }
 
 /**
- * Print format and id information
+ * Print trace messages when opening audio file 'aio'.
  *
  * @pre aio != 0
  */
-void ECA_CHAINSETUP::audio_object_info(const AUDIO_IO* aio)
+void ECA_CHAINSETUP::audio_object_open_info(const AUDIO_IO* aio)
 {
   // --------
   DBC_REQUIRE(aio != 0);
   // --------
 
-  string temp = "Audio object \"" + aio->label();
+  string temp = "Opening ";
+  
+  temp += (aio->io_mode() == AUDIO_IO::io_read) ? "input" : "output";
+  temp += " \"" + aio->label();
   temp += "\", mode \"";
   if (aio->io_mode() == AUDIO_IO::io_read) temp += "read";
   if (aio->io_mode() == AUDIO_IO::io_write) temp += "write";
-  if (aio->io_mode() == AUDIO_IO::io_readwrite) temp += "read/write";
-  temp += "\".\n";
+  if (aio->io_mode() == AUDIO_IO::io_readwrite) temp += "read/write (update)";
+  temp += "\". ";
   temp += aio->format_info();
 
   ECA_LOG_MSG(ECA_LOGGER::info, temp);
@@ -1762,10 +1765,22 @@ void ECA_CHAINSETUP::enable_audio_object_helper(AUDIO_IO* aobj) const
     dev->toggle_max_buffers(max_buffers());
     dev->toggle_ignore_xruns(ignore_xruns());
   }
-  if (aobj->is_open() == false) aobj->open();
+  if (aobj->is_open() == false) {
+    const std::string req_format = ECA_OBJECT_FACTORY::audio_object_format_to_eos(aobj);
+    aobj->open();
+    const std::string act_format =
+      ECA_OBJECT_FACTORY::audio_object_format_to_eos(aobj);
+    if (act_format != req_format) {
+      DBC_CHECK(aobj->locked_audio_format() == true);
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "NOTE: using existing audio parameters " + act_format +
+		  " for object '" + aobj->label() + " (tried to open with " +
+		  req_format + ").");
+    }
+  }
   if (aobj->is_open() == true) {
     aobj->seek_position_in_samples(aobj->position_in_samples());
-    audio_object_info(aobj);
+    audio_object_open_info(aobj);
   }
 }
 

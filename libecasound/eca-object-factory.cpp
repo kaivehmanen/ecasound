@@ -776,14 +776,31 @@ string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod, const std::
 
 /**
  * Return a string compliant with Ecasound Option Syntax (EOS)
+ * describing the audio format 'aformat'.
+ */
+string ECA_OBJECT_FACTORY::audio_format_to_eos(const ECA_AUDIO_FORMAT* aformat)
+{
+  MESSAGE_ITEM t;
+
+  t << "-f:" << aformat->format_string() << "," <<
+    aformat->channels() << ","  << aformat->samples_per_second();
+
+  return t.to_string();
+}
+
+/**
+ * Return a string compliant with Ecasound Option Syntax (EOS)
  * describing the audio format of object 'aiod'.
  */
-string ECA_OBJECT_FACTORY::audio_object_format_to_eos(const AUDIO_IO* aiod)
+string ECA_OBJECT_FACTORY::audio_object_format_to_eos(const AUDIO_IO* aio)
 {
+  return ECA_OBJECT_FACTORY::audio_format_to_eos(dynamic_cast<const ECA_AUDIO_FORMAT*>(aio));
+#if 0
   MESSAGE_ITEM t;
 
   t << "-f:" << aiod->format_string() << "," <<
     aiod->channels() << ","  << aiod->samples_per_second();
 
   return t.to_string();
+#endif
 }

@@ -61,6 +61,10 @@ xx082008 (v2.5.0) -** stable release **-
 	- added: ecasound frontend option '-E "cmds"' that allows
 	 	 to run a set of interactive mode commands at
 		 startup; see ecasound(1) for details; closes (edi-38)
+	- added: a notice is printed in case audio object's audio 
+		 format parameters differ from the chainsetup's default
+		 values (audio object's own params always override
+		 any value set by e.g. '-f:...').
         - changed: most of the EWF support (Ecasound Wave Files, .ewf) 
 		   has been rewritten in this version; numerous bugs
 	  	   are fixed
@@ -89,6 +93,8 @@ xx082008 (v2.5.0) -** stable release **-
         - changed: changes to "cs-status" (aka "status", "st")
 		   output formatting; now more information about
 	           selected and connected setups is printed out
+  	- changed: minor changes to the information printed out when
+		   open audio input/outputs
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965

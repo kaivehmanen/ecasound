@@ -1,3 +1,10 @@
+2008-07-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-chainsetup.cpp (audio_object_open_info): Renamed from
+	audio_object_info and moved to private scope.
+
+	* eca-object-factory.cpp (audio_object_format_to_eos): Added.
+
 2008-07-08  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* ctrl-source.h: Major refactoring. No longer

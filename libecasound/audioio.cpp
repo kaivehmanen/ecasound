@@ -199,18 +199,22 @@ const string& AUDIO_IO::label(void) const { return id_label_rep; }
 string AUDIO_IO::format_info(void) const
 {
   MESSAGE_ITEM otemp;
-  otemp << "(audio-io) ";
-
   if (locked_audio_format() == true && is_open() != true) {
-    otemp << "Using audio format specified in file header data.";
+    otemp << "Using audio format specified in file header data (file not yet opened).";
   } else {
     otemp << "Format: " << format_string();
     otemp << ", channels " << channels();
     otemp << ", srate " << samples_per_second();
+
     if (interleaved_channels() == true) 
-      otemp << ", interleaved.";
+      otemp << ", interleaved";
     else
-      otemp << ", noninterleaved.";
+      otemp << ", noninterleaved";
+
+    if (locked_audio_format() == true)
+      otemp << " (locked params).";
+    else
+      otemp << ".";
   }
   return otemp.to_string();
 }
