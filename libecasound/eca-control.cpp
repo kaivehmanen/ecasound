@@ -850,12 +850,6 @@ string ECA_CONTROL::chainsetup_status(void) const
 	session_repp->connected_chainsetup_repp)
       result += "[connected] ";
 
-
-#if 0
-    if ((*cs_citer)->name() == selected_chainsetup()) result += "[selected] ";
-    if ((*cs_citer)->name() == connected_chainsetup()) result += "[connected] ";
-#endif
-
     if ((*cs_citer == selected_chainsetup_repp) ||
 	(*cs_citer == session_repp->connected_chainsetup_repp))
       result += chainsetup_details_to_string((*cs_citer));
