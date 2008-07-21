@@ -132,9 +132,6 @@ void ECA_CURSES::init_readline_support(void)
 /*                                                                  */
 /* **************************************************************** */
 
-char *command_generator ();
-char **fileman_completion ();
-
 /**
  * Attempt to complete on the contents of TEXT.  START and END bound the
  * region of rl_line_buffer that contains the word to complete.  TEXT is
