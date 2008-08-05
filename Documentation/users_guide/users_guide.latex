@@ -5,7 +5,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{09032008}
+\date{05082008}
 \begin{document}
 
 \maketitle
@@ -30,6 +30,7 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 05.08.2008 - Fixed a bug in example of loop device usage.
 \item 09.03.2008 - Updated the EWF file section. Replace uses of ``/dev/dsp''
                    with ``alsa'' in many examples.
 \item 06.12.2006 - Added notes concerning quoting EOS arguments containing
@@ -522,15 +523,16 @@ in Ecasound 1.7.0.
 \subsection{Example of use}
 
 An example use-case where we route audio from chains ``1'' and ``2''
-to chain ``3'' which is connected to a soundcard output.
+to chain ``3'' which is amplified and send to a soundcard output (``alsa'').
 
 \begin{verbatim} 
 --cut--
 # note, the second loop parameter is the loop id-number;
 # it is used to associate loop inputs with correct loop outputs
-ecasound -a:1 -i:some.mp3 -o:loop,1
-         -a:2 -i:another.mp3 -o:loop,1
-         -a:3 -i:loop,1 -o alsa -ea:200
+ecasound -a:1 -i:some.mp3 
+         -a:2 -i:another.mp3 
+	 -a:1,2 -o:loop,1
+         -a:3 -ea:200 -i:loop,1 -o alsa
 --cut--
 
 \end{verbatim}
