@@ -378,9 +378,11 @@ void ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_objects(ECA_OBJECT_MAP* objm
 
 void ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_id_objects(ECA_OBJECT_MAP* objmap)
 {
+#ifndef ECA_DISABLE_EFFECTS
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_ladspa_plugin_id_objects()");
 
   eca_import_ladspa_plugins(objmap, true);
+#endif
 }
 
 void ECA_STATIC_OBJECT_MAPS::register_preset_objects(ECA_PRESET_MAP* objmap)
