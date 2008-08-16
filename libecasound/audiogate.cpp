@@ -119,6 +119,7 @@ THRESHOLD_GATE::THRESHOLD_GATE (CHAIN_OPERATOR::parameter_t threshold_openlevel,
   openlevel_rep = threshold_openlevel / 100.0;
   closelevel_rep = threshold_closelevel / 100.0;
   rms_rep = use_rms;
+  reopen_count_param_rep = 0;
 
   is_opened_rep = is_closed_rep = false;
 

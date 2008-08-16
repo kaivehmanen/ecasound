@@ -1,5 +1,6 @@
 2008-08-16  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
+	* library interface version 19 frozen (2.5.0 release)
 	* audioio-loop.h (id): Renamed to tag().
 
 2008-07-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>

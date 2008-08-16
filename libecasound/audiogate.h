@@ -112,7 +112,7 @@ public:
   THRESHOLD_GATE (parameter_t threshold_openlevel, parameter_t
 		  threshold_closelevel,  bool use_rms = false);
   THRESHOLD_GATE (void) 
-    : openlevel_rep(0.0), closelevel_rep(0.0), rms_rep(false), is_opened_rep(false), is_closed_rep(false) { }
+    : openlevel_rep(0.0), closelevel_rep(0.0), rms_rep(false), reopen_count_param_rep(0), reopens_left_rep(0), is_opened_rep(false), is_closed_rep(false) { }
   
 private:
   
