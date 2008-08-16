@@ -1,4 +1,4 @@
-.TH "ecasound" "1" "08\&.07\&.2008" "" "Multimedia software"
+.TH "ecasound" "1" "16\&.08\&.2008" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -379,12 +379,15 @@ AIFF file with filename "foo\&.wav")\&.
 .IP 
 .IP "Loop device"
 Loop devices make it possible to route (loop back) data between 
-chains\&. Option syntax is \fB-[io][:]loop,id_number\fP\&. If you add
-a loop output with id \&'1\&', all data written to this output is routed
-to all loop inputs with id \&'1\&'\&. You can attach the same loop
-device to multiple inputs and outputs\&.
+chains\&. Option syntax is \fB-[io][:]loop,tag\fP\&. If you add
+a loop output with tag \&'1\&', all data written to this output is routed
+to any loop input with tag \&'1\&'\&. The tag can be either numerical
+(e\&.g\&. \&'-i:loop,1\&') or a string (e\&.g\&. "-i:loop,vocals")\&. Like 
+with other input/output objects, you can attach the same loop 
+device to multiple chains and this way split/mix the signal\&.
 .IP 
-Note: this \&'loop\&' device is different from \&'audioloop\&'\&.
+Note: this \&'loop\&' device is different from \&'audioloop\&' (latter
+added to ecasound v2\&.5\&.0)\&.
 .IP 
 .IP "Mikmod"
 If mikmod support was enabled at compile-time, this

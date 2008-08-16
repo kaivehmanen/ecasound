@@ -242,7 +242,7 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   }
 
   /* delete loop objects */
-  for(map<int,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
+  for(map<string,LOOP_DEVICE*>::iterator q = loop_map.begin(); q != loop_map.end(); q++) {
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "Deleting loop device \"" + q->second->label() + "\".");
     delete q->second;
     q->second = 0;
@@ -1339,7 +1339,7 @@ void ECA_CHAINSETUP::remove_audio_object_loop(const string& label, AUDIO_IO* aio
   /* we also need to remove the loop device from 
    * the loop_map table */
 
-  map<int,LOOP_DEVICE*>::iterator iter = loop_map.begin();
+  map<string,LOOP_DEVICE*>::iterator iter = loop_map.begin();
   while(iter != loop_map.end()) {
     if (iter->second == aio) {
       loop_map.erase(iter);

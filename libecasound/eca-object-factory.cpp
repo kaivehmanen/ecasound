@@ -329,7 +329,7 @@ MIDI_IO* ECA_OBJECT_FACTORY::create_midi_device(const string& arg)
  * @pre argu.empty() != true
  */
 AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
-						map<int,LOOP_DEVICE*>* loop_map)
+						map<string,LOOP_DEVICE*>* loop_map)
 {
   // --------
   DBC_REQUIRE(argu.empty() != true);
@@ -338,7 +338,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
   LOOP_DEVICE* p = 0;
   string tname = kvu_get_argument_number(1, argu);
   if (tname == "loop") {
-    int id = atoi(kvu_get_argument_number(2, argu).c_str());
+    string id = kvu_get_argument_number(2, argu);
     p = new LOOP_DEVICE(id);
     if (loop_map->find(id) == loop_map->end()) { 
       (*loop_map)[id] = p;
@@ -363,7 +363,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
  * @pre argu.empty() != true
  */
 AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const string& argu,
-						 map<int,LOOP_DEVICE*>* loop_map)
+						 map<string,LOOP_DEVICE*>* loop_map)
 {
   // --------
   DBC_REQUIRE(argu.empty() != true);
@@ -372,7 +372,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const string& argu,
   LOOP_DEVICE* p = 0;
   string tname = kvu_get_argument_number(1, argu);
   if (tname == "loop") {
-    int id = atoi(kvu_get_argument_number(2, argu).c_str());
+    string id = kvu_get_argument_number(2, argu);
     p = new LOOP_DEVICE(id);
     if (loop_map->find(id) == loop_map->end()) { 
       (*loop_map)[id] = p;

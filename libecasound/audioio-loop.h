@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_LOOP_DEVICE_H
 
 #include <iostream>
+#include <string>
 
 #include "audioio.h"
 #include "samplebuffer.h"
@@ -13,7 +14,7 @@ class LOOP_DEVICE : public AUDIO_IO {
 
  public:
 
-  LOOP_DEVICE(int id);
+  LOOP_DEVICE(std::string tag);
   LOOP_DEVICE(void) { }
   virtual ~LOOP_DEVICE(void);
 
@@ -46,11 +47,11 @@ class LOOP_DEVICE : public AUDIO_IO {
    */
   void register_output(void) { ++registered_outputs_rep; }
 
-  int id(void) const { return(id_rep); }
+  const std::string& tag(void) const { return(tag_rep); }
 
 private:
 
-  int id_rep;
+  std::string tag_rep;
   int writes_rep;
   int registered_inputs_rep;
   int registered_outputs_rep;

@@ -319,7 +319,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   string setup_filename_rep;
 
   vector<string> selected_chainids;
-  map<int,LOOP_DEVICE*> loop_map;
+  map<string,LOOP_DEVICE*> loop_map;
 
   vector<double> input_start_pos;
   vector<double> output_start_pos;

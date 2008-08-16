@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-loop.cpp: Audio object that routes data between reads and writes
-// Copyright (C) 2000-2001,2004,2007 Kai Vehmanen
+// Copyright (C) 2000-2001,2004,2007,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -36,9 +36,9 @@
 
 using std::string;
 
-LOOP_DEVICE::LOOP_DEVICE(int id) 
-  :  AUDIO_IO("loop," + kvu_numtostr(id), io_readwrite),
-     id_rep(id),
+LOOP_DEVICE::LOOP_DEVICE(string tag) 
+  :  AUDIO_IO("loop," + tag, io_readwrite),
+     tag_rep(tag),
      sbuf(buffersize(), 0)
 { 
   writes_rep = 0;
@@ -139,7 +139,7 @@ void LOOP_DEVICE::set_parameter(int param,
     break;
 
   case 2: 
-    id_rep = atoi(value.c_str());
+    tag_rep = value;
     break;
   }
 }
@@ -151,7 +151,7 @@ string LOOP_DEVICE::get_parameter(int param) const
     return label();
 
   case 2: 
-    return kvu_numtostr(id_rep);
+    return tag_rep;
   }
   return "";
 }
