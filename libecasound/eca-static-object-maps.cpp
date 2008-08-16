@@ -33,6 +33,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <kvu_numtostr.h>
 #include <kvu_utils.h>
@@ -530,14 +531,47 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
     dp = opendir(p->c_str());
     if (dp != 0) {
       struct dirent *entry = readdir(dp);
-      while(entry != 0) {
-	lstat(entry->d_name, &statbuf);
+      for(; entry != 0; entry = readdir(dp)) {
+	const char* full_path_str =  string(*p + "/" + entry->d_name).c_str();
+
+	int err = lstat(full_path_str, &statbuf);
+	 
+	if (err) {
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      string("Invalid LADSPA plugin file \"") + 
+		      entry->d_name + "\" (" +
+		      strerror(errno) + ").");
+	  continue;
+	}
+
+	if (S_ISDIR(statbuf.st_mode)) {
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      string("Skipping directory \"") + 
+		      entry->d_name + "\" while loading LADSPA plugins.");
+	  continue;
+	}
+
+	if (S_ISCHR(statbuf.st_mode) ||
+	    S_ISBLK(statbuf.st_mode)) {
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      string("Skipping device \"") + 
+		      entry->d_name + "\" while loading LADSPA plugins.");
+	  continue;
+	}
+
+	if (S_ISFIFO(statbuf.st_mode) ||
+	    S_ISSOCK(statbuf.st_mode)) {
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      string("Skipping pipe/socket \"") + 
+		      entry->d_name + "\" while loading LADSPA plugins.");
+	  continue;
+	}
+
 	vector<EFFECT_LADSPA*> ladspa_plugins;
 
 	try {
-	  string entry_name (entry->d_name);
-	  if (entry_name.size() > 0 && entry_name[0] != '.')
-	    ladspa_plugins = eca_create_ladspa_plugins(*p + "/" + entry_name);
+	  if (entry->d_name[0] != '.')
+	    ladspa_plugins = eca_create_ladspa_plugins(full_path_str);
 	}
 	catch(ECA_ERROR& e) {  }
 
@@ -554,7 +588,7 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
 	  }
 	}
 
-	entry = readdir(dp);
+	
       }
     }
     ++p;
