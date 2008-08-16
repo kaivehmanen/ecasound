@@ -126,6 +126,10 @@ xx082008 (v2.5.0) -** stable release **-
 	         many controller objects (-kl, -kl2 and -kos)
 	- fixed: a bug in ecasound user's guide w.r.t. usage of 
 		 loop devices
+	- fixed: sloppy parsing of "-i:loop" and "-o:loop" arguments
+		 leading to confusing error messages when invalid input/output
+		 objects, containing the substring "loop" were passed
+	 	 as arguments to "-i" and "-o"
 14082007 (v2.4.6.1) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release

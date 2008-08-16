@@ -337,7 +337,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_input(const string& argu,
 
   LOOP_DEVICE* p = 0;
   string tname = kvu_get_argument_number(1, argu);
-  if (tname.find("loop") != string::npos) {
+  if (tname == "loop") {
     int id = atoi(kvu_get_argument_number(2, argu).c_str());
     p = new LOOP_DEVICE(id);
     if (loop_map->find(id) == loop_map->end()) { 
@@ -371,7 +371,7 @@ AUDIO_IO* ECA_OBJECT_FACTORY::create_loop_output(const string& argu,
 
   LOOP_DEVICE* p = 0;
   string tname = kvu_get_argument_number(1, argu);
-  if (tname.find("loop") != string::npos) {
+  if (tname == "loop") {
     int id = atoi(kvu_get_argument_number(2, argu).c_str());
     p = new LOOP_DEVICE(id);
     if (loop_map->find(id) == loop_map->end()) { 
