@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 150808) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 200808) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -25,7 +25,13 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-xx082008 (v2.5.0) -** stable release **-
+xx082008 (v2.5.1) -** stable release **-
+	- fixed: a last minute change in 2.5.0 that causes build errors
+	 	 with gcc-4.3.1 if ALSA support is disabled; reported by 
+		 Alexis Ballier
+	- fixed: ???not-verified-yet??? a nasty bug in signal handling
+		 that brought down X sessions on some machines
+16082008 (v2.5.0) -** stable release **-
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
 		  new features are added
@@ -98,6 +104,9 @@ xx082008 (v2.5.0) -** stable release **-
 	- changed: pipes, sockets and device nodes in LADSPA plugin
 		   directories are skipped (previously hidden files 
 		   were already skipped)
+	- changed: loop device identifier was changed from an integer
+	 	   to a generic string; both "-i:loop,1" and 
+		   "-i:loop,myloop" are now valid
         - fixed: incorrect usage of the Python C API, which leads to
 	 	 segfaults when pyecasound is used under python2.5;
 		 fixes Debian bug #468965

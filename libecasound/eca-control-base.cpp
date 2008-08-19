@@ -391,7 +391,7 @@ void ECA_CONTROL_BASE::close_engine(void)
     DBC_CHECK(engine_pid_rep >= 0);
     /* note: we use SIGKILL as SIGTERM, SIGINT et al are blocked and
      *       handled by the watchdog thread */
-    kill(engine_pid_rep, SIGKILL);
+    pthread_kill(th_cqueue_rep, SIGKILL);
   }
 
   if (engine_exited_rep.get() == 1) {
