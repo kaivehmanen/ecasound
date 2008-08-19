@@ -342,8 +342,9 @@ void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
 				   static_cast<void *>(this));
   if (retcode_rep != 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Unable to create a new thread for engine.");
-    delete engine_repp;
+    ECA_ENGINE *engine_tmp = engine_repp;
     engine_repp = 0;
+    delete engine_tmp;
   }
 }
 
@@ -386,7 +387,10 @@ void ECA_CONTROL_BASE::close_engine(void)
 	break;
       usleep(100000);
     }
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine stuck, sending SIGKILL.");
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: engine is stuck, sending SIGKILL.");
+    DBC_CHECK(engine_pid_rep >= 0);
+    /* note: we use SIGKILL as SIGTERM, SIGINT et al are blocked and
+     *       handled by the watchdog thread */
     kill(engine_pid_rep, SIGKILL);
   }
 
