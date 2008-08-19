@@ -33,7 +33,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
-/*#include <string.h>*/
+#include <string.h>
 #include <errno.h>
 
 #include <kvu_numtostr.h>
