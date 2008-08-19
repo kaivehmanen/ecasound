@@ -33,6 +33,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
+/*#include <string.h>*/
 #include <errno.h>
 
 #include <kvu_numtostr.h>
@@ -578,17 +579,15 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
 	for(unsigned int n = 0; n < ladspa_plugins.size(); n++) {
 	  if (reg_with_id == true) {
 	    objmap->register_object(kvu_numtostr(ladspa_plugins[n]->unique_number()),
-				    kvu_numtostr(ladspa_plugins[n]->unique_number()), 
+				    "^" + kvu_numtostr(ladspa_plugins[n]->unique_number()) +  "$", 
 				    ladspa_plugins[n]);
 	  }
 	  else {
 	    objmap->register_object(ladspa_plugins[n]->unique(), "^" + 
-				    kvu_string_regex_meta_escape(ladspa_plugins[n]->unique()) + 
-				    "$", ladspa_plugins[n]);
+				    kvu_string_regex_meta_escape(ladspa_plugins[n]->unique()) + "$", 
+				    ladspa_plugins[n]);
 	  }
 	}
-
-	
       }
     }
     ++p;
