@@ -93,6 +93,7 @@ static struct ecasound_state ecasound_state_global =
 
 static sig_atomic_t ecasound_cleanup_done = 0;
 static sig_atomic_t ecasound_normal_exit = 0;
+static sig_atomic_t ecasound_watchdog_active = 0;
 
 /**
  * Namespace imports
@@ -190,7 +191,13 @@ int main(int argc, char *argv[])
   ecasound_normal_exit = 1;
   ecasound_atexit_cleanup();
 
-  // cerr << endl << "ecasound: main() exiting..." << endl << endl;
+  /* XXX: remove before 2.5.1 */
+  cerr << endl << "ecasound: main() exiting..." << endl << endl;
+
+  DBC_CHECK(state->retval == ECASOUND_RETVAL_SUCCESS ||
+	    state->retval == ECASOUND_RETVAL_INIT_FAILURE ||
+	    state->retval == ECASOUND_RETVAL_START_ERROR ||
+	    state->retval == ECASOUND_RETVAL_RUNTIME_ERROR);
 
   return state->retval;
 }
@@ -356,10 +363,12 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
 
     if (ctrl->is_connected() == true) {
-      int res = ctrl->run(!state->keep_running_mode);
-      if (res < 0) {
-	state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
-	cerr << "ecasound: Warning! Errors detected during processing." << endl;
+      if (!state->exit_request) {
+	int res = ctrl->run(!state->keep_running_mode);
+	if (res < 0) {
+	  state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
+	  cerr << "ecasound: Warning! Errors detected during processing." << endl;
+	}
       }
     }
     else {
@@ -484,9 +493,18 @@ void ecasound_print_version_banner(void)
 static void ecasound_signal_handler(int signal)
 {
 #if defined(HAVE_SIGPROCMASK) || defined(HAVE_PTHREAD_SIGMASK)
-  cerr << "(ecasound-watchdog) WARNING! ecasound_signal_handler entered, this should _NOT_ happen!";
-  cerr << " pid=" << getpid() << endl;
+  if (ecasound_watchdog_active &&
+      ecasound_state_global.exit_request == 0) {
+    cerr << "(ecasound-watchdog) WARNING: ecasound_signal_handler entered, this should _NOT_ happen!";
+    cerr << " pid=" << getpid() << endl;
+  }
 #endif
+
+  if (ecasound_watchdog_active &&
+      ecasound_state_global.exit_request) {
+    cerr << "(ecasound-watchdog) WARNING: Signal received during cleanup, exiting immediately.\n";
+    exit(ECASOUND_RETVAL_RUNTIME_ERROR);
+  }
 }
 
 /**
@@ -512,12 +530,6 @@ void ecasound_setup_signals(struct ecasound_state* state)
    *   sigaction(2), are shared between all threads"
    */
 
-  /* create a dummy signal handler */
-  struct sigaction blockaction;
-  blockaction.sa_handler = ecasound_signal_handler;
-  sigemptyset(&blockaction.sa_mask);
-  blockaction.sa_flags = 0;
-
   /* handle the following signals explicitly */
   signalset = new sigset_t;
   state->signalset = signalset;
@@ -527,6 +539,12 @@ void ecasound_setup_signals(struct ecasound_state* state)
   sigaddset(signalset, SIGHUP);
   sigaddset(signalset, SIGPIPE);
   sigaddset(signalset, SIGQUIT);
+
+  /* create a dummy signal handler */
+  struct sigaction blockaction;
+  blockaction.sa_handler = ecasound_signal_handler;
+  sigemptyset(&blockaction.sa_mask);
+  blockaction.sa_flags = 0;
 
   /* attach the dummy handler to the following signals */
   sigaction(SIGTERM, &blockaction, 0);
@@ -552,8 +570,6 @@ void ecasound_setup_signals(struct ecasound_state* state)
   /* block all signals in 'signalset' (see above) */
 #if defined(HAVE_PTHREAD_SIGMASK)
   pthread_sigmask(SIG_BLOCK, signalset, NULL);
-#elif 1
-  #error "testing"
 #elif defined(HAVE_SIGPROCMASK)
   sigprocmask(SIG_BLOCK, signalset, NULL);
 #endif
@@ -572,6 +588,11 @@ void* ecasound_signal_watchdog_thread(void* arg)
 
 #ifdef HAVE_SIGWAIT
 
+  /* step: block execution until a signal received 
+   **********************************************/
+
+  ecasound_watchdog_active = 1;
+
 # if defined(HAVE_PTHREAD_SIGMASK)
   pthread_sigmask(SIG_BLOCK, state->signalset, NULL);
 # elif defined(HAVE_SIGPROCMASK)
@@ -579,34 +600,55 @@ void* ecasound_signal_watchdog_thread(void* arg)
   sigprocmask(SIG_BLOCK, state->signalset, NULL);
 # endif
 
-  /* 1.a) block until a signal received */
   sigwait(state->signalset, &signalno);
 
   cerr << endl << "(ecasound-watchdog) Received signal " << signalno << ". Cleaning up and exiting..." << endl;
 
+  /* step: use pause() instead (alternative to sigwait()) 
+  ********************************************************/
+
 #elif HAVE_PAUSE /* !HAVE_SIGWAIT */
 
-  /* 1.b. use pause() instead (alternative to sigwait() */
+  /* note: with pause() we don't set 'ecasound_watchdog_active' as
+   * it is normal to get signals when watchdog is running */
   pause();
 
-  cerr << endl << "(ecasound-watchdog) Received signal and returned from pause(). Cleaning up and exiting..." << endl;
+  cerr << endl << "(ecasound-watchdog) Received signal and returned from pause(). Cleaning up and Exiting..." << Endl;
 
 #else /* !HAVE_PAUSE */
 
-  /* 2. if proper signal handling is not possible, stop compilation */
-  #error "Neither sigwait() or pause() is available, unable to continue."
+  /* 2. If proper signal handling is not possible, stop compilation.
+   *****************************************************************/
+
+# error "Neither sigwait() or pause() Is available, unable to continue."
 
 #endif
 
   state->exit_request = 1;
-  
-  DBC_CHECK(state->retval == ECASOUND_RETVAL_SUCCESS ||
-	    state->retval == ECASOUND_RETVAL_INIT_FAILURE ||
-	    state->retval == ECASOUND_RETVAL_START_ERROR ||
-	    state->retval == ECASOUND_RETVAL_RUNTIME_ERROR);
 
-  state->control->quit();
+  /* step: unblock signals after process termination has 
+   *       been started */
 
-  /* to keep the compilers happy; never actually executed */
+#ifdef HAVE_SIGWAIT
+# if defined(HAVE_PTHREAD_SIGMASK)
+  pthread_sigmask(SIG_UNBLOCK, state->signalset, NULL);
+# elif defined(HAVE_SIGPROCMASK)
+  /* the set of signals must be blocked before entering sigwait() */
+  sigprocmask(SIG_UNBLOCK, state->signalset, NULL);
+# endif
+#endif
+
+  if (state->control)
+    state->control->quit();
+
+  while(ecasound_normal_exit != 1)
+    /* sleep for one second */
+    kvu_sleep(0, 200000);
+    
+  ecasound_watchdog_active = 0;
+
+  /* XXX: remove before 2.5.1 */
+  cerr << endl << "ecasound: watchdog thread exiting..." << endl;
+
   return 0;
 }
