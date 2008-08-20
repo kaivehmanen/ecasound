@@ -533,9 +533,9 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
     if (dp != 0) {
       struct dirent *entry = readdir(dp);
       for(; entry != 0; entry = readdir(dp)) {
-	const char* full_path_str =  string(*p + "/" + entry->d_name).c_str();
+	string full_path_str =  string(*p + "/" + entry->d_name);
 
-	int err = lstat(full_path_str, &statbuf);
+	int err = lstat(full_path_str.c_str(), &statbuf);
 	 
 	if (err) {
 	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
@@ -572,7 +572,7 @@ static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id)
 
 	try {
 	  if (entry->d_name[0] != '.')
-	    ladspa_plugins = eca_create_ladspa_plugins(full_path_str);
+	    ladspa_plugins = eca_create_ladspa_plugins(full_path_str.c_str());
 	}
 	catch(ECA_ERROR& e) {  }
 
