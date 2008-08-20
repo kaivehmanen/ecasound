@@ -66,7 +66,7 @@ static void ecasound_print_version_banner(void);
 static void ecasound_setup_signals(struct ecasound_state* state);
 
 extern "C" {
-  static void ecasound_atexit_cleanup(void);
+  static void ecasound_exit_cleanup(void);
   static void* ecasound_signal_watchdog_thread(void* arg); 
   static void ecasound_signal_handler(int signal);
 }
@@ -107,23 +107,16 @@ int main(int argc, char *argv[])
 {
   struct ecasound_state* state = &ecasound_state_global;
 
-  /* 1. register cleanup routine */
-  // as of 20080313: The signal handler thread now closes 
-  // the engine cleanly and terminates, so atexit() is no
-  // longer needed and the application cleanup is more
-  // robust.
-  // atexit(&ecasound_atexit_cleanup);
-
-  /* 2. setup signals and the signal watchdog thread */
+  /* 1. setup signals and the signal watchdog thread */
   ecasound_setup_signals(state);
 
-  /* 3. parse command-line args */
+  /* 2. parse command-line args */
   COMMAND_LINE* cline = new COMMAND_LINE(argc, argv);
   COMMAND_LINE* clineout = new COMMAND_LINE();
   ecasound_parse_command_line(state, *cline, clineout); 
   delete cline; cline = 0;
 
-  /* 4. create console interface */
+  /* 3. create console interface */
   if (state->retval == ECASOUND_RETVAL_SUCCESS) {
 
 #if defined(ECA_PLATFORM_CURSES) 
@@ -141,32 +134,32 @@ int main(int argc, char *argv[])
       }
     
     if (state->quiet_mode != true) {
-      /* 5. print banner */
+      /* 4. print banner */
       state->console->print_banner();
     }
 
-    /* 6. set default debug levels */
+    /* 5. set default debug levels */
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::errors, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::info, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::subsystems, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::eiam_return_values, true);
     ECA_LOGGER::instance().set_log_level(ECA_LOGGER::module_names, true);
     
-    /* 7. create eca objects */
+    /* 6. create eca objects */
     ecasound_create_eca_objects(state, *clineout);
     delete clineout; clineout = 0;
 
-    /* 8. start ecasound daemon */
+    /* 7. start ecasound daemon */
     if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       if (state->daemon_mode == true) {
 	ecasound_launch_daemon(state);
       }
     }
 
-    /* 9. pass launch commands */
+    /* 8. pass launch commands */
     ecasound_pass_at_launch_commands(state);
 
-    /* 10. start processing */
+    /* 9. start processing */
     if (state->retval == ECASOUND_RETVAL_SUCCESS) {
       ecasound_main_loop(state);
     }
@@ -186,10 +179,10 @@ int main(int argc, char *argv[])
   /* note: we prefer to run the cleanup routines before 
    *       returning from main; there have been problems with
    *       dynamic libraries and libecasound cleanup routines
-   *       when run from atexit handler
+   *       when run from an atexit() handler
    */
   ecasound_normal_exit = 1;
-  ecasound_atexit_cleanup();
+  ecasound_exit_cleanup();
 
   /* XXX: remove before 2.5.1 */
   cerr << endl << "ecasound: main() exiting..." << endl << endl;
@@ -206,7 +199,7 @@ int main(int argc, char *argv[])
  * Cleanup routine that is run after either exit()
  * is called or ecasound returns from its main().
  */
-void ecasound_atexit_cleanup(void)
+void ecasound_exit_cleanup(void)
 {
   struct ecasound_state* state = &ecasound_state_global;
 
@@ -223,15 +216,10 @@ void ecasound_atexit_cleanup(void)
       }
     }
 
-    if (ecasound_normal_exit == 1 ||
-	state->interactive_mode == true) {
-      /* note: do not call destructors in the case ECA_CONTROL::run()
-       * could still be running (in non-interactive mode, atexit
-       * called due to a signal)	
-       */
-      if (state->control != 0) { delete state->control; state->control = 0; }
-      if (state->session != 0) { delete state->session; state->session = 0; }
-    }
+    DBC_CHECK(ecasound_normal_exit == 1);
+
+    if (state->control != 0) { delete state->control; state->control = 0; }
+    if (state->session != 0) { delete state->session; state->session = 0; }
 
     if (state->launchcmds != 0) { delete state->launchcmds; state->launchcmds = 0; }
     if (state->eciserver != 0) { delete state->eciserver; state->eciserver = 0; }
@@ -241,7 +229,7 @@ void ecasound_atexit_cleanup(void)
     if (state->signalset != 0) { delete state->signalset; state->signalset = 0; }
   }
 
-  // cerr << "ecasound: atexit cleanup done." << endl << endl;
+  // cerr << "ecasound: exit cleanup done." << endl << endl;
 }
 
 /**
@@ -624,6 +612,7 @@ void* ecasound_signal_watchdog_thread(void* arg)
 
 #endif
 
+  /* step: signal the mainloop that process should terminate */
   state->exit_request = 1;
 
   /* step: unblock signals after process termination has 
@@ -638,12 +627,36 @@ void* ecasound_signal_watchdog_thread(void* arg)
 # endif
 #endif
 
-  if (state->control)
+  /* step: in case mainloop is blocked running a batch job, we signal
+   *       the engine thread directly and force it to terminate */
+  if (state->interactive_mode != true &&
+      state->control)
     state->control->quit_async();
 
-  while(ecasound_normal_exit != 1)
-    /* sleep for one second */
-    kvu_sleep(0, 200000);
+  while(ecasound_normal_exit != 1) {
+    /* sleep for one 200ms */
+    kvu_sleep(0, 200000000);
+
+    /* note: A race condition exists between ECA_CONTROL_BASE
+     *       quit_async() and run(): if quit_async() is called
+     *       after run() has been entered, but before run()
+     *       has managed to start the engine, it is possible engine
+     *       may still be started. 
+     * 
+     *       Thus we will keep checking the engine status until 
+     *       shutdown is really completed. 
+     *
+     *       For robustness, this check is also done when in
+     *       interactive mode (in case the mainloop does not for
+     *       some reason react to our exit request).
+     */
+    if (state->control) {
+      if (state->control->is_engine_started() == true) {
+	state->control->quit_async();
+      }
+    }
+
+  }
     
   ecasound_watchdog_active = 0;
 
