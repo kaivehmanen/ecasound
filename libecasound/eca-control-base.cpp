@@ -396,9 +396,12 @@ void ECA_CONTROL_BASE::close_engine(void)
     DBC_CHECK(engine_pid_rep >= 0);
     int i;
     for (i = 0; i < 30; i++) { 
+
       if (engine_exited_rep.get() ==1)
 	break;
-      usleep(100000);
+
+      /* 100ms sleep */
+      kvu_sleep(0, 100000000);
     }
     ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: engine is stuck, sending SIGKILL.");
     DBC_CHECK(engine_pid_rep >= 0);
