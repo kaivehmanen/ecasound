@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200808) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 210808) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -25,12 +25,18 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-xx082008 (v2.5.1) -** stable release **-
-	- fixed: a last minute change in 2.5.0 that causes build errors
-	 	 with gcc-4.3.1 if ALSA support is disabled; reported by 
-		 Alexis Ballier
-	- fixed: ???not-verified-yet??? a nasty bug in signal handling
-		 that brought down X sessions on some machines
+21082008 (v2.5.1) -** stable release **-
+	- fixed: a last minute change in 2.5.0 that caused build errors
+	 	 with gcc-4.3.1 if ALSA support is disabled
+	- fixed: a change in 2.5.0 how process cleanup is initiated from 
+		 the signal handler caused severe problems on some 
+		 systems when ecasound was interrupted with e.g. 
+	         ctrl-c/SIGINT; worst case was a crashed X session which
+	         is of course really, really bad
+ 	- fixed: a bug in registering LADSPA plugins; on some systems
+	         not all found plugins were registered properly to
+	 	 ecasound's object maps causing some plugins to be
+		 unusable;  errors 
 16082008 (v2.5.0) -** stable release **-
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
