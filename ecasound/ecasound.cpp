@@ -184,8 +184,7 @@ int main(int argc, char *argv[])
   ecasound_normal_exit = 1;
   ecasound_exit_cleanup();
 
-  /* XXX: remove before 2.5.1 */
-  cerr << endl << "ecasound: main() exiting..." << endl << endl;
+  // cerr << endl << "ecasound: main() exiting..." << endl << endl;
 
   DBC_CHECK(state->retval == ECASOUND_RETVAL_SUCCESS ||
 	    state->retval == ECASOUND_RETVAL_INIT_FAILURE ||
@@ -660,8 +659,7 @@ void* ecasound_signal_watchdog_thread(void* arg)
     
   ecasound_watchdog_active = 0;
 
-  /* XXX: remove before 2.5.1 */
-  cerr << endl << "ecasound: watchdog thread exiting..." << endl;
+  // cerr << endl << "ecasound: watchdog thread exiting..." << endl;
 
   return 0;
 }
