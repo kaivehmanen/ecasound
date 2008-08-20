@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx.cpp: General effect processing routines.
-// Copyright (C) 1999-2002,2004,2006 Kai Vehmanen
+// Copyright (C) 1999-2002,2004,2006,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -40,9 +40,9 @@ EFFECT_BASE::~EFFECT_BASE(void)
 void EFFECT_BASE::init(SAMPLE_BUFFER* sbuf)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		"(audiofx) Init w/ samplerate " +
-		kvu_numtostr(samples_per_second()) + " for object " +
-		name() + ".");
+	      "Init w/ samplerate " +
+	      kvu_numtostr(samples_per_second()) + " for object " +
+	      name() + ".");
 
   set_channels(sbuf->number_of_channels());
 
