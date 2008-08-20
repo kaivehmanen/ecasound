@@ -639,7 +639,7 @@ void* ecasound_signal_watchdog_thread(void* arg)
 #endif
 
   if (state->control)
-    state->control->quit();
+    state->control->quit_async();
 
   while(ecasound_normal_exit != 1)
     /* sleep for one second */

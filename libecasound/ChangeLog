@@ -1,3 +1,8 @@
+2008-08-20  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-control-base.cpp (quit_async added): 
+	* library interface version to 20:0:0.
+	
 2008-08-16  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 19 frozen (2.5.0 release)

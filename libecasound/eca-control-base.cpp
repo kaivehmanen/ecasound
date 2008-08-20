@@ -307,8 +307,21 @@ void ECA_CONTROL_BASE::stop_on_condition(void)
 
 /**
  * Stops the processing engine.
+ * Call will block until engine has terminated.
  */
 void ECA_CONTROL_BASE::quit(void) { close_engine(); }
+
+/**
+ * Stops the processing engine. A thread-safe variant of
+ * quit(). Call will not block.
+ *
+ */
+void ECA_CONTROL_BASE::quit_async(void)
+{
+  if (is_engine_started() != true) return;
+
+  engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
+}
 
 /**
  * Starts the processing engine.

@@ -62,6 +62,7 @@ class ECA_CONTROL_BASE {
   void stop_on_condition(void);
   int run(bool batchmode = true);
   void quit(void);
+  void quit_async(void);
 
   // -------------------------------------------------------------------
   // ECI specific routines
