@@ -16,9 +16,9 @@ export ACLOCAL=aclocal${ECA_AM_VERSION}
 export AUTOHEADER=autoheader${ECA_AC_VERSION}
 export AUTOCONF=autoconf${ECA_AC_VERSION}
 
-autoreconf --install --force
+autoreconf --install --force --verbose
 
 # test for --reconf
-if test x$1 == "x--reconf"; then
+if test x$1 = "x--reconf"; then
     ./config.status --recheck && ./config.status
 fi
