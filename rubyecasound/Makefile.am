@@ -27,8 +27,10 @@ endif
 # ----------------------------------------------------------------------
 
 # unit test requires "ecasound.rb" in the build directory
-$(builddir)/ecasound.rb stresstest.rb: ecasound.rb
-	if test ! -e ecasound.rb ; then ln -s $(srcdir)/ecasound.rb . ; fi
+stresstest.rb: ecasound.rb-STAMP
+ecasound.rb-STAMP: $(srcdir)/ecasound.rb
+	if test ! -e ecasound.rb ; then $(LN_S) $(srcdir)/ecasound.rb . ; fi
+	touch ecasound.rb-STAMP
 
 if ECA_AM_RUBYECASOUND_INSTALL
 install-exec-hook: $(rubyecasound_install_list1) $(rubyecasound_install_list2)
@@ -45,3 +47,6 @@ uninstall-local:
 else
 uninstall-local:
 endif
+
+clean-local:
+	rm -vf ecasound.rb-STAMP
