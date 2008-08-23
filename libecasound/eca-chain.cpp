@@ -608,12 +608,20 @@ void CHAIN::init(SAMPLE_BUFFER* sbuf, int in_channels, int out_channels)
   if (in_channels != 0) in_channels_rep = in_channels;
   if (out_channels != 0) out_channels_rep = out_channels;
 
-  int init_channels = in_channels_rep;
-  audioslot_repp->number_of_channels(init_channels);
+  int channels_next = in_channels_rep;
   for(size_t p = 0; p != chainops_rep.size(); p++) {
+    /* note: buffer must have room to store both input and 
+     *       output channels (processing in-place) */
+    int out_ch = chainops_rep[p]->output_channels(channels_next);
+    if (out_ch > channels_next)
+      channels_next = out_ch;
+    audioslot_repp->number_of_channels(channels_next);
+
     chainops_rep[p]->init(audioslot_repp);
-    init_channels = chainops_rep[p]->output_channels(init_channels);
-    audioslot_repp->number_of_channels(init_channels);
+
+    /* note: for the next plugin, only 'out_ch' channels contain 
+     *        valid audio */
+    channels_next = out_ch;
   }
 
   for(size_t p = 0; p != gcontrollers_rep.size(); p++) {
