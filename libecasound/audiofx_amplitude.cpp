@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_amplitude.cpp: Amplitude effects and dynamic processors.
-// Copyright (C) 1999-2000,2003 Kai Vehmanen
+// Copyright (C) 1999-2000,2003,2008 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,9 +54,9 @@ void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value) {
 CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(gain * 100.0);
+    return gain * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_AMPLIFY::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -93,11 +96,11 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) c
 {
   switch (param) {
   case 1: 
-    return(gain * 100.0);
+    return gain * 100.0;
   case 2:
-    return(maxnum_of_clipped);
+    return maxnum_of_clipped;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_AMPLIFY_CLIPCOUNT::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
@@ -138,6 +141,14 @@ EFFECT_AMPLIFY_CHANNEL::EFFECT_AMPLIFY_CHANNEL (parameter_t multiplier_percent, 
   set_parameter(2, channel);
 }
 
+int EFFECT_AMPLIFY_CHANNEL::output_channels(int i_channels) const
+{
+  if (channel_rep + 1 > i_channels)
+    return channel_rep + 1;
+
+  return i_channels;
+}
+
 void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value)
 {
   switch (param) {
@@ -158,12 +169,12 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) con
 { 
   switch (param) {
   case 1: 
-    return(gain * 100.0);
+    return gain * 100.0;
 
   case 2: 
-    return(static_cast<parameter_t>(channel_rep + 1));
+    return static_cast<parameter_t>(channel_rep + 1);
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_AMPLIFY_CHANNEL::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -219,9 +230,9 @@ void EFFECT_LIMITER::set_parameter(int param, parameter_t value) {
 CHAIN_OPERATOR::parameter_t EFFECT_LIMITER::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return(limit_rep * 100.0);
+    return limit_rep * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_LIMITER::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -279,11 +290,11 @@ void EFFECT_COMPRESS::set_parameter(int param, parameter_t value) {
 CHAIN_OPERATOR::parameter_t EFFECT_COMPRESS::get_parameter(int param) const { 
   switch (param) {
   case 1: 
-    return((log (crate)) / (log (2.0f)) * 6.0);
+    return (log (crate)) / (log (2.0f)) * 6.0;
   case 2: 
-    return(threshold * 100.0);
+    return threshold * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_COMPRESS::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -397,17 +408,17 @@ CHAIN_OPERATOR::parameter_t EFFECT_NOISEGATE::get_parameter(int param) const
 { 
   switch (param) {
   case 1: 
-    return(th_level * 100.0 / (parameter_t)SAMPLE_SPECS::max_amplitude);
+    return th_level * 100.0 / (parameter_t)SAMPLE_SPECS::max_amplitude;
   case 2: 
-    return(th_time * 1000.0 / (parameter_t)samples_per_second());
+    return th_time * 1000.0 / (parameter_t)samples_per_second();
   case 3: 
-    return(atime * 1000.0 / (parameter_t)samples_per_second());
+    return atime * 1000.0 / (parameter_t)samples_per_second();
   case 4: 
-    return(htime * 1000.0 / (parameter_t)samples_per_second());
+    return htime * 1000.0 / (parameter_t)samples_per_second();
   case 5: 
-    return(rtime * 1000.0 / (parameter_t)samples_per_second());
+    return rtime * 1000.0 / (parameter_t)samples_per_second();
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_NOISEGATE::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
@@ -562,9 +573,9 @@ CHAIN_OPERATOR::parameter_t EFFECT_NORMAL_PAN::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(right_percent_rep);
+    return right_percent_rep;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const

@@ -92,6 +92,8 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 
+  virtual int output_channels(int i_channels) const;
+
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
 
