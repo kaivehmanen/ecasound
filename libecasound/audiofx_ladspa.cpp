@@ -84,6 +84,8 @@ EFFECT_LADSPA* EFFECT_LADSPA::clone(void) const
 
 void EFFECT_LADSPA::init_ports(void)
 {
+  // note: run from plugin constructor
+
   port_count_rep = plugin_desc->PortCount;
   in_audio_ports = 0;
   out_audio_ports = 0;
@@ -289,6 +291,21 @@ CHAIN_OPERATOR::parameter_t EFFECT_LADSPA::get_parameter(int param) const
   return(0.0);
 }
 
+int EFFECT_LADSPA::output_channels(int i_channels) const
+{
+  // note: We have two separate cases: either one plugin 
+  //       is instantiated for each channel, or one plugin
+  //       per chain. See EFFECT_LADSPA::init().
+
+  if (in_audio_ports > 1 ||
+      out_audio_ports > 1) {
+
+    return out_audio_ports;
+  }
+  
+  return i_channels;
+}
+
 void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
 { 
   EFFECT_BASE::init(insample);
@@ -325,17 +342,26 @@ void EFFECT_LADSPA::init(SAMPLE_BUFFER *insample)
     for(unsigned long m = 0; m < port_count_rep; m++) {
       if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_AUDIO) == LADSPA_PORT_AUDIO) {
 	if ((plugin_desc->PortDescriptors[m] & LADSPA_PORT_INPUT) == LADSPA_PORT_INPUT) {
-	  plugin_desc->connect_port(plugins_rep[0], m, buffer_repp->buffer[inport]);
+	  if (inport < channels())
+	    plugin_desc->connect_port(plugins_rep[0], m, buffer_repp->buffer[inport]);
 	  ++inport;
-	  if (inport == channels()) inport--;
 	}
 	else {
-	  plugin_desc->connect_port(plugins_rep[0], m, buffer_repp->buffer[outport]);
+	  if (outport < channels())
+	    plugin_desc->connect_port(plugins_rep[0], m, buffer_repp->buffer[outport]);
 	  ++outport;
-	  if (outport == channels()) outport--;
 	}
       }
     }
+    
+    if (inport > channels())
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "WARNING: chain has less channels than plugin has input ports ("
+		  + name() + ").");
+    if (outport > channels())
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "WARNING: chain has less channels than plugin has output ports ("
+		  + name() + ").");
   } 
   else {
     plugins_rep.resize(channels());
