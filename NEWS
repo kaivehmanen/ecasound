@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 230808) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 240808) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -25,7 +25,7 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-xxyy2008 (v2.5.2) -** stable release **-
+24082008 (v2.5.2) -** stable release **-
 	- fixed: bug in channel routing of LADSPA plugins that have
 		 more audio output ports than input ports
 21082008 (v2.5.1) -** stable release **-
