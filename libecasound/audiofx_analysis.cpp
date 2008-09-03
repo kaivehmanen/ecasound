@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_analysis.cpp: Classes for signal analysis
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2008 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -194,10 +194,14 @@ CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::max_multiplier(void) const
 {
   parameter_t k;
   SAMPLE_SPECS::sample_t max_peak = max_pos;
-  if (max_neg > max_pos) max_peak = max_neg;
-  if (max_peak != 0.0f) k = SAMPLE_SPECS::max_amplitude / max_peak;
-  else k = 0.0f;
-  if (k < 1.0f) k = 1.0f;
+
+  if (max_neg > max_pos) 
+    max_peak = max_neg;
+  if (max_peak != 0.0f) 
+    k = SAMPLE_SPECS::max_amplitude / max_peak;
+  else 
+    k = 0.0f;
+
   return(k);
 }
 
