@@ -2,6 +2,9 @@
 // audiofx_analysis.cpp: Classes for signal analysis
 // Copyright (C) 1999-2002,2008 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -132,7 +135,7 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
   res = pthread_mutex_unlock(lock_repp);
   DBC_CHECK(res == 0);
 
-  return(status_rep);
+  return status_rep;
 }
 
 void EFFECT_VOLUME_BUCKETS::parameter_description(int param, 
@@ -182,12 +185,12 @@ CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::get_parameter(int param) cons
 {
   switch (param) {
   case 1: 
-    if (cumulativemode_rep == true) return(1.0);
+    if (cumulativemode_rep == true) return 1.0;
     
   case 2:
-    return(max_multiplier());
+    return max_multiplier();
   }
-  return(0.0);
+  return 0.0;
 }
 
 CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::max_multiplier(void) const
@@ -202,7 +205,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::max_multiplier(void) const
   else 
     k = 0.0f;
 
-  return(k);
+  return k;
 }
 
 void EFFECT_VOLUME_BUCKETS::init(SAMPLE_BUFFER* insample)
@@ -305,7 +308,7 @@ std::string EFFECT_VOLUME_PEAK::parameter_names(void) const
     params += "peak-amplitude-ch" + kvu_numtostr(n + 1);
     if (n != channels()) params += ",";
   }
-  return(params);
+  return params;
 }
 
 void EFFECT_VOLUME_PEAK::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
@@ -317,9 +320,9 @@ CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_PEAK::get_parameter(int param) const
   if (param > 0 && param <= channels()) {
     parameter_t temp = max_amplitude_repp[param - 1];
     max_amplitude_repp[param - 1] = 0.0f;
-    return(temp);
+    return temp;
   }
-  return(0.0f);
+  return 0.0f;
 }
 
 void EFFECT_VOLUME_PEAK::init(SAMPLE_BUFFER* insample)
@@ -358,7 +361,7 @@ string EFFECT_DCFIND::status(void) const
   mitem << "(audiofx) Optimal value for DC-adjust: ";
   mitem << get_deltafix(SAMPLE_SPECS::ch_left) << " (left), ";
   mitem << get_deltafix(SAMPLE_SPECS::ch_right) << " (right).";
-  return(mitem.to_string());
+  return mitem.to_string();
 }
 
 string EFFECT_DCFIND::parameter_names(void) const
@@ -367,7 +370,7 @@ string EFFECT_DCFIND::parameter_names(void) const
   for(int n = 0; n < channels(); n++) {
     t.push_back("result-offset-ch" + kvu_numtostr(n + 1));
   }
-  return(kvu_vector_to_string(t, ","));
+  return kvu_vector_to_string(t, ",");
 }
 
 CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const
@@ -376,12 +379,12 @@ CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_deltafix(int channel) const
 
   if (channel < 0 || 
       channel >= static_cast<int>(pos_sum.size()) ||
-      channel >= static_cast<int>(neg_sum.size())) return(0.0);
+      channel >= static_cast<int>(neg_sum.size())) return 0.0;
 
   if (pos_sum[channel] > neg_sum[channel]) deltafix = -(pos_sum[channel] - neg_sum[channel]) / num_of_samples[channel];
   else deltafix = (neg_sum[channel] - pos_sum[channel]) / num_of_samples[channel];
 
-  return((CHAIN_OPERATOR::parameter_t)deltafix); 
+  return (CHAIN_OPERATOR::parameter_t)deltafix; 
 }
 
 void EFFECT_DCFIND::parameter_description(int param, 
@@ -406,7 +409,7 @@ void EFFECT_DCFIND::set_parameter(int param,
 
 CHAIN_OPERATOR::parameter_t EFFECT_DCFIND::get_parameter(int param) const
 {
-  return(get_deltafix(param-1));
+  return get_deltafix(param-1);
 }
 
 void EFFECT_DCFIND::init(SAMPLE_BUFFER *insample)
