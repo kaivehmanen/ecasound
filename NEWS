@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 240903) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 150908) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -28,6 +28,8 @@ Howto for reading the entries:
 xx0y2008 (v2.5.x) -** stable release **-
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
+        - fixed: avoid denormal numbers in '-ete' (leads to unusually
+		 high CPU load)
 24082008 (v2.5.2) -** stable release **-
 	- fixed: bug in channel routing of LADSPA plugins that have
 		 more audio output ports than input ports

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audiofx_reverb.cpp: Reverb effect
 // Copyright (C) 2000 Stefan Fendt
-// Copyright (C) 2000,2003 Kai Vehmanen (C++ version)
+// Copyright (C) 2000,2003,2008 Kai Vehmanen (C++ version)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@
 // ------------------------------------------------------------------------
 
 #include <cstdlib>
+
+#include "sample-ops_impl.h"
 #include "samplebuffer_iterators.h"
 #include "sample-specs.h"
 #include "audiofx_reverb.h"
@@ -163,7 +165,8 @@ void ADVANCED_REVERB::process(void)
     cdata[i_channels.channel()].bufferpos_rep &= 65535;
 
     double old_value = cdata[i_channels.channel()].oldvalue;
-    cdata[i_channels.channel()].buffer[cdata[i_channels.channel()].bufferpos_rep] = *i_channels.current() + old_value;
+    cdata[i_channels.channel()].buffer[cdata[i_channels.channel()].bufferpos_rep] = 
+      ecaops_flush_to_zero(*i_channels.current() + old_value);
 
     old_value = 0.0;
     for(int i = 0; i < 64; i++) {
@@ -175,7 +178,8 @@ void ADVANCED_REVERB::process(void)
      * This is just a very simple high-pass-filter to remove offsets
      * which can accour during calculation of the echos
      */
-    cdata[i_channels.channel()].lpvalue = cdata[i_channels.channel()].lpvalue * 0.99 + old_value * 0.01;
+    cdata[i_channels.channel()].lpvalue = 
+      ecaops_flush_to_zero(cdata[i_channels.channel()].lpvalue * 0.99 + old_value * 0.01);
     old_value = old_value - cdata[i_channels.channel()].lpvalue;
 
     /**
@@ -183,7 +187,8 @@ void ADVANCED_REVERB::process(void)
      * more realistic... (Walls do not reflect high frequencies very
      * well at all...) 
      */
-    cdata[i_channels.channel()].oldvalue = cdata[i_channels.channel()].oldvalue * 0.75 + old_value * 0.25;
+    cdata[i_channels.channel()].oldvalue = 
+      ecaops_flush_to_zero(cdata[i_channels.channel()].oldvalue * 0.75 + old_value * 0.25);
 
     *i_channels.current() = cdata[i_channels.channel()].oldvalue * wet_rep + *i_channels.current() * (1 - wet_rep);
     i_channels.next();
