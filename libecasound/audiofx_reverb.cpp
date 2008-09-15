@@ -3,6 +3,9 @@
 // Copyright (C) 2000 Stefan Fendt
 // Copyright (C) 2000,2003,2008 Kai Vehmanen (C++ version)
 //
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
+//
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -94,13 +97,13 @@ CHAIN_OPERATOR::parameter_t ADVANCED_REVERB::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(roomsize_rep);
+    return roomsize_rep;
   case 2:
-    return(feedback_rep * 100.0);
+    return feedback_rep * 100.0;
   case 3:
-    return(wet_rep * 100.0);
+    return wet_rep * 100.0;
   }
-  return(0.0);
+  return 0.0;
 }
 
 void ADVANCED_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
