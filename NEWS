@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 150908) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 190908) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -25,7 +25,15 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-xx0y2008 (v2.5.x) -** stable release **-
+xx0y2008 (v2.6.0) -** stable release **-
+	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
+		 replaces old interfaces 'jack_auto', 'jack_generic' 
+		 and 'jack_alsa'; see ecasound(1) for more details
+	- changed: deprecated 'jack_auto', 'jack_generic' and
+	           'jack_alsa'
+	- changed: numbering of JACK ports created with 'jack' and
+	 	   'jack_generic' starts from "_1" separately for 
+		   each prefix [dsacre]
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually

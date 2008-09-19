@@ -341,15 +341,34 @@ It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
 professional audio work\&. 
 .IP 
-Ecasound provides multiple ways to communicate with JACK servers\&. To
-directly input or output to soundcard, use \fB-i jack_alsa\fP and \fB-o
-jack_alsa\fP\&. To communicate with other apps, use
-\fBjack_auto,remote_clientname\fP\&. To just create ports without making
-any automatic connections, there are \fBjack\fP and
-\fBjack_generic,local_portprefix\fP\&.
+Ecasound provides multiple ways to communicate with JACK servers\&. 
+To create a JACK input or output object, one should use \fB-i jack\fP and 
+\fB-o jack\fP\&. These create JACK client ports "ecasound:in_N" and 
+"ecasound:out_n" respectively (\&'N\&' is replaced by the channel number)\&.
+Ecasound automatically creates one JACK port for each channel (number
+of channels is set with \fB-f:bits,channels,rate\fP option)\&.
+.IP 
+It is important to note that by default JACK ports are not connected
+anywhere (e\&.g\&. to soundcard input/outputs, or to other apps)\&. One thus
+has to connect the ports with an external program (e\&.g\&. "QJackCtl"
+or "jack_connect")\&.
+.IP 
+For simple use scanerios, ecasound provides a way to autoconnect
+the ecasound ports\&. This can be done with by giving the peer client
+name as the second parameter to the "jack" object, e\&.g\&. \fB-o jack,clientname\fP\&.
+As an example, \fB-o jack,system\fP will create an output that is
+automatically connected to outputs of the default system soundcard\&.
+The client parameter can be omitted, in which case no automatic
+connections are made\&.
+.IP 
+If one needs to change the port prefix (e\&.g\&. "in" in client
+name "ecasound:in_N"), the prefix can be specified as the third
+parameter to "jack" object, e\&.g\&. \fB-o jack,,fxout\fP\&. Also the
+third parameter can be omitted, in which case the default prefixes
+"in" and "out" are used\&.
 .IP 
 Additionally global JACK options can be set using 
-\fB-G:jack,client_name,operation_mode\fP\&. \&'client_name\&' 
+\fB-G:jack,client_name,operation_mode\fP option\&. \&'client_name\&' 
 is the name used when registering ecasound to the JACK system\&. 
 If \&'operation_mode\&' is "notransport",  ecasound will ignore 
 any transport state changes in the JACK-system; in mode 
@@ -360,7 +379,12 @@ position-change events; and mode "sendrecv" (the default) which
 is a combination of the two previous modes\&.
 .IP 
 More details about ecasound\&'s JACK support can be found
-from ecasound user\&'s guide\&.
+from Ecasound User\&'s Guide\&.
+.IP 
+\fBDepracated interfaces\fP Ecasound 2\&.5 and older supported
+"jack_alsa" and "jack_generic" object types, but these are
+now replaced by a more generic "jack" interface, and thus are
+now deprecated (they work but are no longer documented)\&.
 .IP 
 .IP "Libaudiofile"
 If libaudiofile support was enabled at compile-time, this

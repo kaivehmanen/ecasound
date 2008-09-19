@@ -1,9 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-jack.cpp: Interface to JACK audio framework
-// Copyright (C) 2001-2003 Kai Vehmanen
+// Copyright (C) 2001-2003,2008 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 3
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -93,7 +93,12 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   if (jackmgr_rep != 0) {
     string my_in_portname ("in"), my_out_portname ("out");
 
-    if (label() == "jack_generic") {
+    /* note: deprecated interface */
+    if (label() == "jack" &&
+	thirdparam_rep.size() > 0) {
+      my_in_portname = my_out_portname = thirdparam_rep;
+    }
+    else if (label() == "jack_generic") {
       my_in_portname = my_out_portname = secondparam_rep;
     }
 
@@ -132,7 +137,16 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
     /* - make automatic connections */
 
-    if (label() == "jack_alsa") {
+    if (label() == "jack" &&
+	secondparam_rep.size() > 0) {
+      /* note: if 2nd param given, use it as the client to autoconnect to */
+      jackmgr_rep->auto_connect_jack_port_client(myid_rep, secondparam_rep, channels());
+    }
+    else if (label() == "jack_alsa") {
+      /* note: deprecated feature: 'alsa_pcm' is hidden in the port
+	 list returned by jack_get_ports(), but as you can still
+	 connect with the direct backend names, we have to keep this
+	 code around to be backward compatible */
       string in_aconn_portprefix, out_aconn_portprefix;
 
       in_aconn_portprefix = "alsa_pcm:capture_";
@@ -147,6 +161,7 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 	}
       }
     }
+    /* note: deprecated interface, plain "jack" should be used now */
     else if (label() == "jack_auto") {
       jackmgr_rep->auto_connect_jack_port_client(myid_rep, secondparam_rep, channels());
     }
@@ -230,8 +245,8 @@ std::string AUDIO_IO_JACK::parameter_names(void) const
   if (label() == "jack_auto")
     return "label,client";
 
-  /* jack, jack_alsa */
-  return "label";
+  /* jack */
+  return "label,client,portprefix";
 }
 
 void AUDIO_IO_JACK::set_parameter(int param, std::string value)
@@ -240,6 +255,7 @@ void AUDIO_IO_JACK::set_parameter(int param, std::string value)
     {
     case 1: { set_label(value); break; }
     case 2: { secondparam_rep = value; break; }
+    case 3: { thirdparam_rep = value; break; }
     }
 }
 
@@ -249,6 +265,7 @@ std::string AUDIO_IO_JACK::get_parameter(int param) const
     {
     case 1: { return label(); }
     case 2: { return secondparam_rep; }
+    case 3: { return thirdparam_rep; }
     }  
 
   return "";

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (16.08.2008)
+       (19.09.2008)
        ()
        (Multimedia software)
 
@@ -363,15 +363,34 @@ It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
 professional audio work. 
 
-Ecasound provides multiple ways to communicate with JACK servers. To
-directly input or output to soundcard, use bf(-i jack_alsa) and bf(-o
-jack_alsa). To communicate with other apps, use
-bf(jack_auto,remote_clientname). To just create ports without making
-any automatic connections, there are bf(jack) and
-bf(jack_generic,local_portprefix).
+Ecasound provides multiple ways to communicate with JACK servers. 
+To create a JACK input or output object, one should use bf(-i jack) and 
+bf(-o jack). These create JACK client ports "ecasound:in_N" and 
+"ecasound:out_n" respectively ('N' is replaced by the channel number).
+Ecasound automatically creates one JACK port for each channel (number
+of channels is set with bf(-f:bits,channels,rate) option).
+
+It is important to note that by default JACK ports are not connected
+anywhere (e.g. to soundcard input/outputs, or to other apps). One thus
+has to connect the ports with an external program (e.g. "QJackCtl"
+or "jack_connect").
+
+For simple use scanerios, ecasound provides a way to autoconnect
+the ecasound ports. This can be done with by giving the peer client
+name as the second parameter to the "jack" object, e.g. bf(-o jack,clientname).
+As an example, bf(-o jack,system) will create an output that is
+automatically connected to outputs of the default system soundcard.
+The client parameter can be omitted, in which case no automatic
+connections are made.
+
+If one needs to change the port prefix (e.g. "in" in client
+name "ecasound:in_N"), the prefix can be specified as the third
+parameter to "jack" object, e.g. bf(-o jack,,fxout). Also the
+third parameter can be omitted, in which case the default prefixes
+"in" and "out" are used.
 
 Additionally global JACK options can be set using 
-bf(-G:jack,client_name,operation_mode). 'client_name' 
+bf(-G:jack,client_name,operation_mode) option. 'client_name' 
 is the name used when registering ecasound to the JACK system. 
 If 'operation_mode' is "notransport",  ecasound will ignore 
 any transport state changes in the JACK-system; in mode 
@@ -382,7 +401,12 @@ position-change events; and mode "sendrecv" (the default) which
 is a combination of the two previous modes.
 
 More details about ecasound's JACK support can be found
-from ecasound user's guide.
+from Ecasound User's Guide.
+
+bf(Depracated interfaces) Ecasound 2.5 and older supported
+"jack_alsa", "jack_auto" and "jack_generic" object types, but these 
+are now replaced by a more generic "jack" interface, and thus are
+now deprecated (they work but are no longer documented).
 
 dit(Libaudiofile)
 If libaudiofile support was enabled at compile-time, this
