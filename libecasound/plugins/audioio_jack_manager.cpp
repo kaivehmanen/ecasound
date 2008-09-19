@@ -30,6 +30,7 @@
 #include <algorithm> /* std::count() */
 #include <iostream>
 #include <string>
+#include <utility>
 
 #include <sys/time.h> /* gettimeofday() */
 #include <errno.h> /* ETIMEDOUT */
@@ -1417,8 +1418,13 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
     portdata->total_latency = 0;
     portdata->cb_buffer = new jack_default_audio_sample_t [cb_allocated_frames_rep];
 
+    std::map<string, int>::iterator it = port_numbers_rep.find(portprefix);
+    if (it == port_numbers_rep.end()) {
+      it = port_numbers_rep.insert(std::make_pair(portprefix, 0)).first;
+    }
+    string tport = portprefix + "_" + kvu_numtostr(++it->second);
+
     if (node->aobj->io_mode() == AUDIO_IO::io_read) {
-      string tport = portprefix + "_" + kvu_numtostr(inports_rep.size() + 1);
       portdata->jackport = jack_port_register(client_repp, 
 					      tport.c_str(), 
 					      JACK_DEFAULT_AUDIO_TYPE, 
@@ -1427,7 +1433,6 @@ void AUDIO_IO_JACK_MANAGER::register_jack_ports(int client_id, int ports, const 
       inports_rep.push_back(portdata);
     }
     else {
-      string tport = portprefix + "_" + kvu_numtostr(outports_rep.size() + 1);
       portdata->jackport = jack_port_register(client_repp, 
 					      tport.c_str(), 
 					      JACK_DEFAULT_AUDIO_TYPE, 
@@ -1709,6 +1714,8 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
   }
 
   open_rep = false;
+
+  port_numbers_rep.clear();
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"Succesfully closed JACK server connection.");

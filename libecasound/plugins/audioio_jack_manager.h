@@ -4,6 +4,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <pthread.h>
 #include <jack/jack.h>
@@ -202,6 +203,8 @@ private:
   list<eca_jack_node_t*> node_list_rep;
   vector<eca_jack_port_data_t*> inports_rep;
   vector<eca_jack_port_data_t*> outports_rep;
+
+  std::map<string, int> port_numbers_rep;   /** highest port number used for each prefix */
 
   int jackslave_seekahead_rep;
   long int jackslave_seekahead_target_rep;
