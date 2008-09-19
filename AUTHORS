@@ -114,6 +114,8 @@ Poulton, Ron [thok]
 	Helped to track down the mysterious chain-bug.
 Rzewnicki, Eric Dantan [ericdr]
 	Lots of typo fixes and corrections to Ecasound docs.
+Sacré, Dominic [dsacre]
+	Fixes to 'jack_generic'.
 Sassmannshausen, Ruediger [rsassman]
 	Mp3 filename parsing fixes.
 Shchepin, Alexey [alexey]
