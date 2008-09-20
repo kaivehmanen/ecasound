@@ -1,8 +1,11 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2005,2008 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +81,7 @@ vector<string> ECA_IAMODE_PARSER::registered_commands_list(void)
     cmdlist.push_back(p->first);
     ++p;
   }
-  return(cmdlist);
+  return cmdlist;
 }
 
 void ECA_IAMODE_PARSER::register_commands_misc(void)
@@ -324,9 +327,18 @@ void ECA_IAMODE_PARSER::register_commands_dump(void)
   (*cmd_map_repp)["dump-cop-value"] = ec_dump_cop_value;
 }
 
+void ECA_IAMODE_PARSER::register_commands_external(void)
+{
+#if ECA_COMPILE_JACK
+  (*cmd_map_repp)["jack-connect"] = ec_jack_connect;
+  (*cmd_map_repp)["jack-disconnect"] = ec_jack_disconnect;
+  (*cmd_map_repp)["jack-list-connections"] = ec_jack_list_connections;
+#endif
+}
+
 int ECA_IAMODE_PARSER::command_to_action_id(const std::string& cmdstring)
 {
-  return((*cmd_map_repp)[cmdstring]);
+  return (*cmd_map_repp)[cmdstring];
 }
 
 bool ECA_IAMODE_PARSER::action_requires_params(int id)
@@ -386,12 +398,15 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id)
   case ec_dump_target:
   case ec_dump_cop_value:
 
-    return(true);
+  case ec_jack_connect:
+  case ec_jack_disconnect:
+
+    return true;
     
   default: 
     break;
   }
-  return(false);
+  return false;
 }
 
 bool ECA_IAMODE_PARSER::action_requires_connected(int id)
@@ -405,12 +420,12 @@ bool ECA_IAMODE_PARSER::action_requires_connected(int id)
   case ec_cs_disconnect:
   case ec_cs_set_position:
   case ec_cs_set_position_samples:
-    return(true);
+    return true;
     
   default: 
     break;
   }
-  return(false);
+  return false;
 }
 
 bool ECA_IAMODE_PARSER::action_requires_selected(int id)
@@ -502,12 +517,12 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id)
   case ec_ctrl_selected:
   case ec_ctrl_status:
 
-    return(true);
+    return true;
 
   default: break;
   }
   
-  return(false);
+  return false;
 }
 
 bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id)
@@ -544,12 +559,12 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id)
   case ec_ao_set_position_samples:
   case ec_ao_wave_edit:
 
-    return(true);
+    return true;
     
   default: 
     break;
   }
-  return(false);
+  return false;
 
 }
 
@@ -570,12 +585,12 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_input(int id)
   case ec_ai_get_length_samples:
   case ec_ai_get_format:
   case ec_ai_wave_edit:
-    return(true);
+    return true;
     
   default: 
     break;
   }
-  return(false);
+  return false;
 
 }
 
@@ -596,12 +611,12 @@ bool ECA_IAMODE_PARSER::action_requires_selected_audio_output(int id)
   case ec_ao_get_length_samples:
   case ec_ao_get_format:
   case ec_ao_wave_edit:
-    return(true);
+    return true;
     
   default: 
     break;
   }
-  return(false);
+  return false;
 
 }
 
