@@ -310,6 +310,7 @@ void ecasound_main_loop(struct ecasound_state* state)
   ECA_CONTROL* ctrl = state->control;
 
   if (state->interactive_mode == true) {
+
     while(state->exit_request == 0) {
       state->console->read_command("ecasound ('h' for help)> ");
       const string& cmd = state->console->last_command();
@@ -348,6 +349,7 @@ void ecasound_main_loop(struct ecasound_state* state)
 	ctrl->is_valid() == true) {
       ctrl->connect_chainsetup();
     }
+
 
     if (ctrl->is_connected() == true) {
       if (!state->exit_request) {

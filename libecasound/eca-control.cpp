@@ -56,6 +56,7 @@
 #include "audiofx_ladspa.h"
 #include "preset.h"
 #include "sample-specs.h"
+#include "jack-connections.h"
 
 #include "eca-version.h"
 #include "eca-error.h"
@@ -735,14 +736,44 @@ void ECA_CONTROL::action(int action_id)
   case ec_dump_ao_open_state: { ctrl_dump_rep.dump_audio_output_open_state(); break; }
   case ec_dump_cop_value: 
     { 
-      vector<string> temp = kvu_string_to_tokens_quoted(action_args_rep);
+      vector<string> temp = kvu_string_to_tokens_quoted(first_action_argument_as_string());
       if (temp.size() > 1) {
 	ctrl_dump_rep.dump_chain_operator_value(atoi(temp[0].c_str()),
 						atoi(temp[1].c_str()));
       }
       break; 
     }
+
+    // ---
+    // Commands with external dependencies
+    // ---
+  case ec_jack_connect: 
+    {
+      const vector<string>& params = action_arguments_as_vector();
+      if (params.size() >= 2) 
+	JACK_CONNECTIONS::connect(params[0].c_str(), params[1].c_str());
+      break;
+    }
+  case ec_jack_disconnect:   
+    {
+      const vector<string>& params = action_arguments_as_vector();
+      if (params.size() >= 2) 
+	JACK_CONNECTIONS::disconnect(params[0].c_str(), params[1].c_str());
+      break;
+    }
+
+  case ec_jack_list_connections:   
+    {
+      string foo;
+      if (JACK_CONNECTIONS::list_connections(&foo) == true)
+	set_last_string(foo);
+      else
+	set_last_error("Unable to a list of JACK connections.");
+      break;
+    }
+
   } // <-- switch-case
+
 
   if (action_reconnect == true) {
     if (is_selected() == false ||

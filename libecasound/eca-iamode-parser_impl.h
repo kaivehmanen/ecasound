@@ -172,7 +172,13 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_dump_ao_position,
     ec_dump_ao_length,
     ec_dump_ao_open_state,
-    ec_dump_cop_value
+    ec_dump_cop_value,
+    // --
+    ec_jack_connect,
+    ec_jack_disconnect,
+    ec_jack_list_connections,
+    // --
+    ec_invalid
   };
 };
 

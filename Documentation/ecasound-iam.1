@@ -1,4 +1,4 @@
-.TH "ecasound-iam" "1" "12\&.07\&.2008" "" "Multimedia software"
+.TH "ecasound-iam" "1" "19\&.09\&.2008" "" "Multimedia software"
 
 .PP 
 .SH "NAME"
@@ -530,6 +530,28 @@ ecasound 2\&.4\&.2\&. \fI[f]\fP
 .IP "ctrlp-set"
 Sets the selected controller parameter value to \&'value\&'\&. This command was introduced in 
 ecasound 2\&.4\&.2\&. \fI[-]\fP
+.IP 
+.SH "JACK CONNECTION MANAGEMENT"
+If Ecasound is compiled with support for JACK audio server,
+the following set of commands is provided for controlling connections 
+between JACK ports\&.
+.IP 
+startdir()
+.IP 
+.IP "jack-connect \&'src-port\&' \&'dest-port\&'"
+Make a connection between the two ports given as parameters\&. This command
+is similar to the \&'jack_connect\&' command line tool that is distributed
+with JACK package\&. \fI[-]\fP
+.IP 
+.IP "jack-disconnect \&'src-port\&' \&'dest-port\&'"
+Disconnect the two ports given as parameters\&. This command is similar 
+to the \&'jack_disconnect\&' command line tool that is distributed
+with JACK package\&. \fI[-]\fP
+.IP 
+.IP "jack-list-connections"
+Returns a list of all JACK ports and a list of connections 
+for each port\&. This command is similar to the \&'jack_lsp\&' command
+line tool (e\&.g\&. \&'jack_lsp -c\&') that is distributed with JACK package\&. \fI[s]\fP
 .IP 
 .SH "INTERNAL COMMANDS"
 Internal commands are not directly aimed at normal use\&. They

@@ -22,6 +22,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <map>
 #include <vector>
 #include <string>
@@ -67,9 +71,10 @@ const map<string,int>& ECA_IAMODE_PARSER::registered_commands(void)
       register_commands_ctrl();
       register_commands_ctrlp();
       register_commands_dump();
+      register_commands_external();
     }
   }
-  return(*cmd_map_repp);
+  return *cmd_map_repp;
 }
 
 vector<string> ECA_IAMODE_PARSER::registered_commands_list(void)

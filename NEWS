@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 190908) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 200908) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -29,6 +29,9 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
 		 replaces old interfaces 'jack_auto', 'jack_generic' 
 		 and 'jack_alsa'; see ecasound(1) for more details
+	- added: eiam - new commands 'jack-connect', 'jack-disconnect'
+	 	 and 'jack-list-connections'; see ecasound-iam(1) for
+		 details
 	- changed: deprecated 'jack_auto', 'jack_generic' and
 	           'jack_alsa'
 	- changed: numbering of JACK ports created with 'jack' and

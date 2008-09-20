@@ -188,7 +188,8 @@ ecasound_general_include = 	\
 			generic-controller.h \
 			eca-samplerate-aware.h \
 			eca-audio-format.h \
-			eca-audio-time.h
+			eca-audio-time.h \
+			jack-connections.h
 
 ecasound_extra_include = \
 			ladspa.h
@@ -273,6 +274,12 @@ else
 ecasound_audioio2_src = 
 endif
 
+if ECA_AM_COMPILE_JACK
+jack_connections_src =  jack-connections.cpp
+else
+jack_connections_src =  
+endif
+
 ecasound_midi_src =	\
 			midi-server.cpp \
 			midi-client.cpp \
@@ -328,6 +335,7 @@ ecasound_general_src = 	eca-chain.cpp \
 
 ecasound_common1_src = 	$(ecasound_audioio1_src) \
 			$(ecasound_audioio2_src) \
+			$(jack_connections_src) \
 			$(ecasound_midi_src) \
 			$(ecasound_general_src)
 

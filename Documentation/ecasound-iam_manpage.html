@@ -5,7 +5,7 @@
 <body>
 <hr>
 <h1>ecasound-iam</h1>
-<h2>12.07.2008</h2>
+<h2>19.09.2008</h2>
 
 <html><head>
 <link rev="made" href="mailto:kvehmanen -at- eca -dot- cx">
@@ -22,7 +22,7 @@
 <hr>
 <h1>ecasound-iam(1)</h1>
 <h2> Multimedia software</h2>
-<h2>12.07.2008</h2>
+<h2>19.09.2008</h2>
 
 
 <p>
@@ -569,6 +569,30 @@ ecasound 2.4.2. <em>[f]</em>
 <p><dt><strong>ctrlp-set</strong><dd>
 Sets the selected controller parameter value to 'value'. This command was introduced in 
 ecasound 2.4.2. <em>[-]</em>
+<p>
+</dl>
+<p>
+<h2>JACK CONNECTION MANAGEMENT</h2>
+If Ecasound is compiled with support for <a href="http://jackaudio.org/">JACK audio server</a>,
+the following set of commands is provided for controlling connections 
+between JACK ports.
+<p>
+startdir()
+<p>
+<p><dt><strong>jack-connect 'src-port' 'dest-port'</strong><dd>
+Make a connection between the two ports given as parameters. This command
+is similar to the 'jack_connect' command line tool that is distributed
+with JACK package. <em>[-]</em>
+<p>
+<p><dt><strong>jack-disconnect 'src-port' 'dest-port'</strong><dd>
+Disconnect the two ports given as parameters. This command is similar 
+to the 'jack_disconnect' command line tool that is distributed
+with JACK package. <em>[-]</em>
+<p>
+<p><dt><strong>jack-list-connections</strong><dd>
+Returns a list of all JACK ports and a list of connections 
+for each port. This command is similar to the 'jack_lsp' command
+line tool (e.g. 'jack_lsp -c') that is distributed with JACK package. <em>[s]</em>
 <p>
 </dl>
 <p>

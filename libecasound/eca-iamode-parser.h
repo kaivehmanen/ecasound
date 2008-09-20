@@ -47,6 +47,7 @@ class ECA_IAMODE_PARSER : protected ECA_IAMODE_PARSER_COMMANDS {
   static void register_commands_ctrl(void);
   static void register_commands_ctrlp(void);
   static void register_commands_dump(void);
+  static void register_commands_external(void);
 
   private:
 

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (12.07.2008)
+       (19.09.2008)
        ()
        (Multimedia software)
 
@@ -552,6 +552,31 @@ Sets the selected controller parameter value to 'value'. This command was introd
 ecasound 2.4.2. em([-])
 
 enddit()
+
+manpagesection(JACK CONNECTION MANAGEMENT)
+If Ecasound is compiled with support for url(JACK audio server)(http://jackaudio.org/),
+the following set of commands is provided for controlling connections 
+between JACK ports.
+
+startdir()
+
+dit(jack-connect 'src-port' 'dest-port')
+Make a connection between the two ports given as parameters. This command
+is similar to the 'jack_connect' command line tool that is distributed
+with JACK package. em([-])
+
+dit(jack-disconnect 'src-port' 'dest-port')
+Disconnect the two ports given as parameters. This command is similar 
+to the 'jack_disconnect' command line tool that is distributed
+with JACK package. em([-])
+
+dit(jack-list-connections)
+Returns a list of all JACK ports and a list of connections 
+for each port. This command is similar to the 'jack_lsp' command
+line tool (e.g. 'jack_lsp -c') that is distributed with JACK package. em([s])
+
+enddit()
+
 
 manpagesection(INTERNAL COMMANDS)
 Internal commands are not directly aimed at normal use. They
