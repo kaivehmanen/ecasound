@@ -1,9 +1,11 @@
 ------------------------------------------------------------------------
-Status: FROZEN
+Status: PARTIALLY-IMPLEMENTED
 
 (edi-35): JACK support to ecasound's interactive mode (EIAM)
 	 - submitted: kaiv, 16.11.2002
          - frozen: kaiv, 20.08.2003
+	 - unfrozen: kaiv, 20.09.2008
+	 - partially implemented: kaiv, 20.09.2008 (2.6.x)
 
 ------------------------------------------------------------------------
 Reasons for the frozen status:

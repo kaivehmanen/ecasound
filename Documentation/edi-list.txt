@@ -64,6 +64,11 @@ Note! See README for a list of defined developer tags (kaiv -> me).
          - submitted: kaiv, 23.10.2002
 (edi-34): Better checks for parsing operator arguments.
 	 - submitted: jhalttun, 28.10.2002
+(edi-35): JACK support to ecasound's interactive mode (EIAM)
+	 - submitted: kaiv, 16.11.2002
+         - frozen: kaiv, 20.08.2003
+	 - unfrozen: kaiv, 20.09.2008
+	 - partially implemented: kaiv, 20.09.2008 (2.6.x)
 (edi-36): Addition of position markers.
 	 - submitted: julien, 17.03.2003
 (edi-37): Porting Steve Harris' dither code from JACK to ecasound
@@ -84,9 +89,6 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 (edi-19): Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
 	- frozen: kaiv, 20.08.2003	
-(edi-35): JACK support to ecasound's interactive mode (EIAM)
-	 - submitted: kaiv, 16.11.2002
-         - frozen: kaiv, 20.08.2003
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]
@@ -179,6 +181,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+20.09.2008 - edi-35 unfrozen, now partially implemented
 03.03.2008 - edi-40 closed
 07.07.2004 - edi-32 closed
 13.05.2004 - edi-40 added, edi-14 closed

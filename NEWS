@@ -26,6 +26,7 @@ Howto for reading the entries:
 -----------------------------------------------------------------------
 
 xx0y2008 (v2.6.0) -** stable release **-
+	- edi-entries: edi-35 partially implemented
 	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
 		 replaces old interfaces 'jack_auto', 'jack_generic' 
 		 and 'jack_alsa'; see ecasound(1) for more details
