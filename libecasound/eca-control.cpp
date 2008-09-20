@@ -93,47 +93,47 @@ ECA_CONTROL::~ECA_CONTROL(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_CONTROL destructor");
 }
 
-void ECA_CONTROL::command(const string& cmd)
+void ECA_CONTROL::command(const string& cmd_and_args)
 {
   clear_last_values();
   clear_action_arguments();
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "command: " + cmd);
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "processing cmd and arg: " + cmd_and_args);
 
-  vector<string> cmds = kvu_string_to_tokens_quoted(cmd);
-  vector<string>::iterator p = cmds.begin();
-  if (p != cmds.end()) {
-
+  vector<string> tokens = kvu_string_to_tokens_quoted(cmd_and_args);
+  vector<string>::iterator cmd = tokens.begin();
+  if (cmd != tokens.end()) {
     const std::map<std::string,int>& cmdmap = ECA_IAMODE_PARSER::registered_commands();
-    if (cmdmap.find(*p) == cmdmap.end()) {
+    if (cmdmap.find(*cmd) == cmdmap.end()) {
       // ---
       // *p is not recognized as a iamode command
       // ---
-      if (p->size() > 0 && (*p)[0] == '-') {
+      if (cmd->size() > 0 && (*cmd)[0] == '-') {
 	//  std::cerr << "Note! Direct use of EOS-options (-prefix:arg1,...,argN)" << " as iactive-mode commands is considered deprecated. " << "\tUse the notation 'cs-option -prefix:a,b,x' instead." << std::endl;
-	if (*p == "-i")
+	if (*cmd == "-i")
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
 		      "WARNING: syntax variant '-i file.ext' not supported, please use 'ai-add file.ext' instead.");
-	else if (*p == "-o")
+	else if (*cmd == "-o")
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
 		      "WARNING: syntax variant '-o file.ext' not supported, please use 'ai-add file.ext' instead.");
-	else
-	  chainsetup_option(cmd);
+	else {
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, "passiong to cs-option: " + cmd_and_args);
+	  chainsetup_option(cmd_and_args);
+	}
       }
       else {
 	set_last_error("Unknown command!");
       }
     }
     else {
-      int action_id = ECA_IAMODE_PARSER::command_to_action_id(*p);
+      int action_id = ECA_IAMODE_PARSER::command_to_action_id(*cmd);
       if (action_id == ec_help) {
 	show_controller_help();
       }
       else {
-	string first = *p;
-	++p;
-	if (p != cmds.end()) {
-	  set_action_argument(kvu_vector_to_string(vector<string> (p, cmds.end()), " "));
+	vector<string>::iterator args = cmd + 1;
+	if (args != tokens.end()) {
+	  set_action_argument(vector<string> (args, tokens.end()));
 	}
 	action(action_id);
       }
@@ -142,6 +142,13 @@ void ECA_CONTROL::command(const string& cmd)
 }
 
 void ECA_CONTROL::set_action_argument(const string& s)
+{
+  action_args_rep.resize(0);
+  action_args_rep.push_back(s);
+  action_arg_f_set_rep = false;
+}
+
+void ECA_CONTROL::set_action_argument(const std::vector<std::string>& s)
 {
   action_args_rep = s;
   action_arg_f_set_rep = false;
@@ -168,21 +175,48 @@ double ECA_CONTROL::first_action_argument_as_float(void) const
 {
   if (action_arg_f_set_rep == true)
     return action_arg_f_rep;
+  
+  if (action_args_rep.size() == 0)
+    return 0.0f;
 
-  return atof(action_args_rep.c_str());
+  return atof(action_args_rep[0].c_str());
+}
+
+string ECA_CONTROL::first_action_argument_as_string(void) const
+{
+  if (action_args_rep.size() == 0)
+    return std::string();
+
+  return action_args_rep[0];
+}
+
+const vector<string>& ECA_CONTROL::action_arguments_as_vector(void) const
+{
+  return action_args_rep;
+}
+
+int ECA_CONTROL::first_action_argument_as_int(void) const
+{
+  return first_action_argument_as_int();
 }
 
 long int ECA_CONTROL::first_action_argument_as_long_int(void) const
 {
-  return atol(action_args_rep.c_str());
+  if (action_args_rep.size() == 0)
+    return 0;
+
+  return atol(action_args_rep[0].c_str());
 }
 
 SAMPLE_SPECS::sample_pos_t ECA_CONTROL::first_action_argument_as_samples(void) const
 {
+  if (action_args_rep.size() == 0)
+    return 0;
+
 #ifdef HAVE_ATOLL
-  return atoll(action_args_rep.c_str());
+  return atoll(action_args_rep[0].c_str());
 #else
-  return atol(action_args_rep.c_str());
+  return atol(action_args_rep[0].c_str());
 #endif
 }
 
@@ -239,7 +273,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
 
   /* case 1: action requiring arguments, but not arguments available */
   if (action_arg_f_set_rep == false && 
-      action_args_rep.size() == 0 &&
+      first_action_argument_as_string().size() == 0 &&
       action_requires_params(action_id)) {
     set_last_error("Can't perform requested action; argument omitted.");
     action_ok = false;
@@ -345,14 +379,15 @@ void ECA_CONTROL::action(int action_id)
     }
   case ec_debug:
     {
-      int level = atoi(action_args_rep.c_str());
+      int level = first_action_argument_as_int();
       ECA_LOGGER::instance().set_log_level_bitmask(level);
       set_last_string("Debug level set to " + kvu_numtostr(level) + ".");
       break;
     }
   case ec_resource_file:
     {
-      session_repp->interpret_general_option(string("-R:") + action_args_rep);
+      session_repp->interpret_general_option(string("-R:") + 
+					     first_action_argument_as_string());
       break;
     }
 
@@ -361,23 +396,23 @@ void ECA_CONTROL::action(int action_id)
     // ---
   case ec_cs_add:
     {
-      add_chainsetup(action_args_rep);
+      add_chainsetup(first_action_argument_as_string());
       break;
     }
   case ec_cs_remove: { remove_chainsetup(); break; }
   case ec_cs_list: { set_last_string_list(chainsetup_names()); break; }
-  case ec_cs_select: { select_chainsetup(action_args_rep); break; }
+  case ec_cs_select: { select_chainsetup(first_action_argument_as_string()); break; }
   case ec_cs_selected: { set_last_string(selected_chainsetup()); break; }
   case ec_cs_index_select: { 
-    if (action_args_rep.size() > 0) {
-      select_chainsetup_by_index(atoi(action_args_rep.c_str()));
+    if (first_action_argument_as_string().size() > 0) {
+      select_chainsetup_by_index(first_action_argument_as_int());
     }
     break; 
   }
   case ec_cs_edit: { edit_chainsetup(); break; }
-  case ec_cs_load: { load_chainsetup(action_args_rep); break; }
+  case ec_cs_load: { load_chainsetup(first_action_argument_as_string()); break; }
   case ec_cs_save: { save_chainsetup(""); break; }
-  case ec_cs_save_as: { save_chainsetup(action_args_rep); break; }
+  case ec_cs_save_as: { save_chainsetup(first_action_argument_as_string()); break; }
   case ec_cs_is_valid: { 
     if (is_valid() == true) 
       set_last_integer(1);
@@ -397,8 +432,8 @@ void ECA_CONTROL::action(int action_id)
     }
   case ec_cs_connected: { set_last_string(connected_chainsetup()); break; }
   case ec_cs_disconnect: { disconnect_chainsetup(); break; }
-  case ec_cs_set_param: { set_chainsetup_parameter(action_args_rep); break; }
-  case ec_cs_set_audio_format: { set_chainsetup_sample_format(action_args_rep); break; }
+  case ec_cs_set_param: { set_chainsetup_parameter(first_action_argument_as_string()); break; }
+  case ec_cs_set_audio_format: { set_chainsetup_sample_format(first_action_argument_as_string()); break; }
   case ec_cs_status: { 
     set_last_string(chainsetup_status()); 
     break; 
@@ -424,7 +459,8 @@ void ECA_CONTROL::action(int action_id)
   case ec_cs_toggle_loop: { toggle_chainsetup_looping(); break; } 
   case ec_cs_option: 
     {
-      vector<string> temp = kvu_string_to_tokens_quoted(action_args_rep);
+      /* FIX: use vectorized arg directly */
+      vector<string> temp = kvu_string_to_tokens_quoted(first_action_argument_as_string());
       selected_chainsetup_repp->interpret_options(temp);
       if (selected_chainsetup_repp->interpret_result() != true) {
 	set_last_error(selected_chainsetup_repp->interpret_result_verbose());
@@ -435,16 +471,16 @@ void ECA_CONTROL::action(int action_id)
   // ---
   // Chains
   // ---
-  case ec_c_add: { add_chains(kvu_string_to_vector(action_args_rep, ',')); break; }
+  case ec_c_add: { add_chains(kvu_string_to_vector(first_action_argument_as_string(), ',')); break; }
   case ec_c_remove: { remove_chains(); break; }
   case ec_c_list: { set_last_string_list(chain_names()); break; }
-  case ec_c_select: { select_chains(kvu_string_to_vector(action_args_rep, ',')); break; }
+  case ec_c_select: { select_chains(kvu_string_to_vector(first_action_argument_as_string(), ',')); break; }
   case ec_c_selected: { set_last_string_list(selected_chains()); break; }
-  case ec_c_index_select: { select_chains_by_index(kvu_string_to_int_vector(action_args_rep, ',')); break; }
-  case ec_c_deselect: { deselect_chains(kvu_string_to_vector(action_args_rep, ',')); break; }
+  case ec_c_index_select: { select_chains_by_index(kvu_string_to_int_vector(first_action_argument_as_string(), ',')); break; }
+  case ec_c_deselect: { deselect_chains(kvu_string_to_vector(first_action_argument_as_string(), ',')); break; }
   case ec_c_select_add: 
     { 
-      select_chains(kvu_string_to_vector(action_args_rep + "," +
+      select_chains(kvu_string_to_vector(first_action_argument_as_string() + "," +
 					 kvu_vector_to_string(selected_chains(), ","), ',')); 
       break; 
     }
@@ -456,7 +492,7 @@ void ECA_CONTROL::action(int action_id)
 	set_last_error("When renaming chains, only one chain canbe selected.");
       }
       else {
-	rename_chain(action_args_rep); 
+	rename_chain(first_action_argument_as_string()); 
       }
       break;
     }
@@ -483,15 +519,15 @@ void ECA_CONTROL::action(int action_id)
     // ---
     // Audio input objects
     // ---
-  case ec_ai_add: { add_audio_input(action_args_rep); break; }
+  case ec_ai_add: { add_audio_input(first_action_argument_as_string()); break; }
   case ec_ai_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_input_repp, "i")); break; }
   case ec_ai_remove: { remove_audio_input(); break; }
   case ec_ai_list: { set_last_string_list(audio_input_names()); break; }
-  case ec_ai_select: { select_audio_input(action_args_rep); break; }
+  case ec_ai_select: { select_audio_input(first_action_argument_as_string()); break; }
   case ec_ai_selected: { set_last_string(get_audio_input()->label()); break; }
   case ec_ai_index_select: { 
-    if (action_args_rep.size() > 0) {
-	select_audio_input_by_index(atoi(action_args_rep.c_str()));
+    if (first_action_argument_as_string().size() > 0) {
+	select_audio_input_by_index(first_action_argument_as_int());
     }
     break; 
   }
@@ -527,17 +563,15 @@ void ECA_CONTROL::action(int action_id)
     // ---
     // Audio output objects
     // ---
-  case ec_ao_add: { if (action_args_rep.size() == 0) add_default_output(); else add_audio_output(action_args_rep); break; }
+  case ec_ao_add: { if (first_action_argument_as_string().size() == 0) add_default_output(); else add_audio_output(first_action_argument_as_string()); break; }
   case ec_ao_add_default: { add_default_output(); break; }
   case ec_ao_describe: { set_last_string(ECA_OBJECT_FACTORY::audio_object_to_eos(selected_audio_output_repp, "o")); break; }
   case ec_ao_remove: { remove_audio_output(); break; }
   case ec_ao_list: { set_last_string_list(audio_output_names()); break; }
-  case ec_ao_select: { select_audio_output(action_args_rep); break; }
+  case ec_ao_select: { select_audio_output(first_action_argument_as_string()); break; }
   case ec_ao_selected: { set_last_string(get_audio_output()->label()); break; }
   case ec_ao_index_select: { 
-    if (action_args_rep.size() > 0) {
-      select_audio_output_by_index(atoi(action_args_rep.c_str()));
-    }
+    select_audio_output_by_index(first_action_argument_as_int());
     break; 
   }
   case ec_ao_attach: { attach_audio_output(); break; }
@@ -570,7 +604,7 @@ void ECA_CONTROL::action(int action_id)
     // ---
     // Chain operators
     // ---
-  case ec_cop_add: { add_chain_operator(action_args_rep); break; }
+  case ec_cop_add: { add_chain_operator(first_action_argument_as_string()); break; }
   case ec_cop_describe: 
     { 
       const CHAIN_OPERATOR *t = get_chain_operator();
@@ -579,11 +613,12 @@ void ECA_CONTROL::action(int action_id)
     }
   case ec_cop_remove: { remove_chain_operator(); break; }
   case ec_cop_list: { set_last_string_list(chain_operator_names()); break; }
-  case ec_cop_select: { select_chain_operator(atoi((action_args_rep).c_str())); break; }
+  case ec_cop_select: { select_chain_operator(first_action_argument_as_int()); break; }
   case ec_cop_selected: { set_last_integer(selected_chain_operator()); break; }
   case ec_cop_set: 
     { 
-      vector<string> a = kvu_string_to_vector(action_args_rep, ',');
+      /* FIX: add a helper function to vectorize */
+      vector<string> a = kvu_string_to_vector(first_action_argument_as_string(), ',');
       if (a.size() < 3) {
 	set_last_error("Not enough parameters!");
 	break;
@@ -611,7 +646,7 @@ void ECA_CONTROL::action(int action_id)
     // Chain operator parameters
     // ---
   case ec_copp_list: { set_last_string_list(chain_operator_parameter_names()); break; }
-  case ec_copp_select: { select_chain_operator_parameter(atoi((action_args_rep).c_str())); break; }
+  case ec_copp_select: { select_chain_operator_parameter(first_action_argument_as_int()); break; }
   case ec_copp_selected: { set_last_integer(selected_chain_operator_parameter()); break; }
   case ec_copp_set: { set_chain_operator_parameter(first_action_argument_as_float()); break; }
   case ec_copp_get: { set_last_float(get_chain_operator_parameter()); break; }
@@ -619,7 +654,7 @@ void ECA_CONTROL::action(int action_id)
     // ---
     // Controllers
     // ---
-  case ec_ctrl_add: { add_controller(action_args_rep); break; }
+  case ec_ctrl_add: { add_controller(first_action_argument_as_string()); break; }
   case ec_ctrl_describe: 
     { 
       const GENERIC_CONTROLLER *t = get_controller();
@@ -628,7 +663,7 @@ void ECA_CONTROL::action(int action_id)
     }
   case ec_ctrl_remove: { remove_controller(); break; }
   case ec_ctrl_list: { set_last_string_list(controller_names()); break; }
-  case ec_ctrl_select: { select_controller(atoi((action_args_rep).c_str())); break; }
+  case ec_ctrl_select: { select_controller(first_action_argument_as_int()); break; }
   case ec_ctrl_selected: { set_last_integer(selected_controller()); break; }
   case ec_ctrl_status: 
     { 
@@ -641,7 +676,7 @@ void ECA_CONTROL::action(int action_id)
     // Controller parameters
     // ---
   case ec_ctrlp_list: { set_last_string_list(controller_parameter_names()); break; }
-  case ec_ctrlp_select: { select_controller_parameter(atoi((action_args_rep).c_str())); break; }
+  case ec_ctrlp_select: { select_controller_parameter(first_action_argument_as_int()); break; }
   case ec_ctrlp_selected: { set_last_integer(selected_controller_parameter()); break; }
   case ec_ctrlp_get: { set_last_float(get_controller_parameter()); break; }
   case ec_ctrlp_set: { set_controller_parameter(first_action_argument_as_float()); break; }
@@ -674,8 +709,8 @@ void ECA_CONTROL::action(int action_id)
     wellformed_mode_rep = true;
     break; 
   }
-  case ec_int_set_float_to_string_precision: { set_float_to_string_precision(atoi(action_args_rep.c_str())); break; }
-  case ec_int_set_log_history_length: { ECA_LOGGER::instance().set_log_history_length(atoi(action_args_rep.c_str())); break; }
+  case ec_int_set_float_to_string_precision: { set_float_to_string_precision(first_action_argument_as_int()); break; }
+  case ec_int_set_log_history_length: { ECA_LOGGER::instance().set_log_history_length(first_action_argument_as_int()); break; }
   case ec_int_version_string: { set_last_string(ecasound_library_version); break; }
   case ec_int_version_lib_current: { set_last_integer(ecasound_library_version_current); break; }
   case ec_int_version_lib_revision: { set_last_integer(ecasound_library_version_revision); break; }
@@ -684,7 +719,7 @@ void ECA_CONTROL::action(int action_id)
   // ---
   // Dump commands
   // ---
-  case ec_dump_target: { ctrl_dump_rep.set_dump_target(action_args_rep); break; }
+  case ec_dump_target: { ctrl_dump_rep.set_dump_target(first_action_argument_as_string()); break; }
   case ec_dump_status: { ctrl_dump_rep.dump_status(); break; }
   case ec_dump_position: { ctrl_dump_rep.dump_position(); break; }
   case ec_dump_length: { ctrl_dump_rep.dump_length(); break; }
