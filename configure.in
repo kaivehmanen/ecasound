@@ -744,7 +744,7 @@ dnl Autotools and libtool
 dnl --
 AC_LANG_C
 dnl do not add 'AC_DISABLE_SHARED' as pyecasound needs shared
-5~dnl objects at link time (note that all the major libs are static)
+dnl objects at link time (note that all the major libs are static)
 AC_PROG_LIBTOOL
 AC_LANG_CPLUSPLUS
 
