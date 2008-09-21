@@ -198,7 +198,10 @@ const vector<string>& ECA_CONTROL::action_arguments_as_vector(void) const
 
 int ECA_CONTROL::first_action_argument_as_int(void) const
 {
-  return first_action_argument_as_int();
+  if (action_args_rep.size() == 0)
+    return 0;
+
+  return atoi(action_args_rep[0].c_str());
 }
 
 long int ECA_CONTROL::first_action_argument_as_long_int(void) const
