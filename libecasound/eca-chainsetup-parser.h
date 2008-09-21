@@ -37,7 +37,7 @@ class ECA_CHAINSETUP_PARSER {
   void interpret_option(const std::string& arg);
   void interpret_global_option(const std::string& arg);
   void interpret_object_option(const std::string& arg);
-  void interpret_options(std::vector<std::string>& opts);
+  void interpret_options(const std::vector<std::string>& opts);
 
   void reset_interpret_status(void);
   void preprocess_options(std::vector<std::string>& opts) const;

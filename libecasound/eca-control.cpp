@@ -463,9 +463,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_cs_toggle_loop: { toggle_chainsetup_looping(); break; } 
   case ec_cs_option: 
     {
-      /* FIX: use vectorized arg directly */
-      vector<string> temp = kvu_string_to_tokens_quoted(first_action_argument_as_string());
-      selected_chainsetup_repp->interpret_options(temp);
+      selected_chainsetup_repp->interpret_options(action_arguments_as_vector());
       if (selected_chainsetup_repp->interpret_result() != true) {
 	set_last_error(selected_chainsetup_repp->interpret_result_verbose());
       }
@@ -621,7 +619,6 @@ void ECA_CONTROL::action(int action_id)
   case ec_cop_selected: { set_last_integer(selected_chain_operator()); break; }
   case ec_cop_set: 
     { 
-      /* FIX: add a helper function to vectorize */
       vector<string> a = kvu_string_to_vector(first_action_argument_as_string(), ',');
       if (a.size() < 3) {
 	set_last_error("Not enough parameters!");

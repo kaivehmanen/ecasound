@@ -270,7 +270,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void interpret_option(const string& arg);
   void interpret_global_option(const string& arg);
   void interpret_object_option(const string& arg);
-  void interpret_options(vector<string>& opts);
+  void interpret_options(const vector<string>& opts);
 
   /*@}*/
 

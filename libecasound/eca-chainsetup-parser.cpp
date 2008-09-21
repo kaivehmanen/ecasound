@@ -129,7 +129,7 @@ void ECA_CHAINSETUP_PARSER::interpret_object_option (const string& arg)
 /**
  * Interpret a vector of options.
  */
-void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<string>& opts)
+void ECA_CHAINSETUP_PARSER::interpret_options(const std::vector<string>& opts)
 {
   int optcount = static_cast<int>(opts.size());
   int global_matches = 0;
@@ -140,7 +140,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(std::vector<string>& opts)
   /*
    * phase1: parse global options only */
 
-  std::vector<string>::iterator p = opts.begin();
+  std::vector<string>::const_iterator p = opts.begin();
   while(p != opts.end()) {
     interpret_global_option(*p);
 

@@ -2199,7 +2199,7 @@ void ECA_CHAINSETUP::interpret_object_option (const string& arg)
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::interpret_options(vector<string>& opts)
+void ECA_CHAINSETUP::interpret_options(const vector<string>& opts)
 {
   // --------
   DBC_REQUIRE(is_enabled() != true);

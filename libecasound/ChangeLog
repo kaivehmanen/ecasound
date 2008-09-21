@@ -1,3 +1,10 @@
+2008-09-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-chainsetup-parser.cpp (interpret_options): Now takes a const
+	vector.
+	* eca-chainsetup.cpp (interpret_options): Now takes a const
+	vector.
+
 2008-08-20  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* jack-connection.h (file added): 
