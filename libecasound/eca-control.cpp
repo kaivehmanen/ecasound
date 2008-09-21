@@ -736,7 +736,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_dump_ao_open_state: { ctrl_dump_rep.dump_audio_output_open_state(); break; }
   case ec_dump_cop_value: 
     { 
-      vector<string> temp = kvu_string_to_tokens_quoted(first_action_argument_as_string());
+      vector<string> temp = kvu_string_to_vector(first_action_argument_as_string(), ',');
       if (temp.size() > 1) {
 	ctrl_dump_rep.dump_chain_operator_value(atoi(temp[0].c_str()),
 						atoi(temp[1].c_str()));
