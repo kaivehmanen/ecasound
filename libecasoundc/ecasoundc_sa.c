@@ -13,7 +13,7 @@
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
- * Copyright (C) 2000-2006 Kai Vehmanen
+ * Copyright (C) 2000-2006,2008 Kai Vehmanen
  * Copyright (C) 2003 Michael Ewe
  * Copyright (C) 2001 Aymeric Jeanneau
  *
@@ -56,6 +56,7 @@
 #include <stdlib.h>       /* ANSI-C: calloc(), free() */
 #include <string.h>       /* ANSI-C: strlen() */
 #include <errno.h>        /* ANSI-C: errno */
+#include <stdbool.h>
 
 #include <fcntl.h>        /* POSIX: fcntl() */
 #include <sys/poll.h>     /* XPG4-UNIX: poll() */
@@ -159,6 +160,8 @@ struct eci_parser {
 
   int token_phase_rep;
   int buffer_current_rep;
+
+  bool sync_lost_rep;
 
   char buffer_repp[ECI_MAX_PARSER_BUF_SIZE];
 };
@@ -337,6 +340,7 @@ eci_handle_t eci_init_r(void)
       eci_rep->parser_repp->last_counter_rep = 0;
       eci_rep->parser_repp->token_phase_rep = ECI_TOKEN_PHASE_NONE;
       eci_rep->parser_repp->buffer_current_rep = 0;
+      eci_rep->parser_repp->sync_lost_rep = false;
       eci_impl_clean_last_values(eci_rep->parser_repp);
 
       /*
@@ -497,6 +501,7 @@ void eci_command_r(eci_handle_t ptr, const char* command)
   if (eci_rep->commands_counter_rep - 1 !=
       eci_rep->parser_repp->last_counter_rep) {
     eci_impl_dump_parser_state(ptr, "sync error");
+    eci_rep->parser_repp->sync_lost_rep = true;
   }
   
   if (eci_rep->commands_counter_rep >=
@@ -510,6 +515,7 @@ void eci_command_r(eci_handle_t ptr, const char* command)
   if (eci_rep->commands_counter_rep >
       eci_rep->parser_repp->last_counter_rep) {
     fprintf(stderr, "%s", eci_str_sync_lost);
+    eci_rep->parser_repp->sync_lost_rep = true;
   }
 }
 
@@ -692,6 +698,9 @@ int eci_error_r(eci_handle_t ptr)
   int res;
 
   eci_impl_check_handle(eci_rep);
+
+  if (eci_rep->parser_repp->sync_lost_rep == true)
+    return 1;
 
   res = (eci_rep->parser_repp->last_type_repp[0] == 'e') ? 1 : 0;
 
@@ -884,6 +893,7 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
     else {
       if (res < 0) {
 	ECI_DEBUG_1("(ecasoundc_sa) timeout when reading return values (attempts=%d)!\n", attempts);
+	eci_rep->parser_repp->sync_lost_rep = true;
 	break;
       }
     }
@@ -893,6 +903,7 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
   if (eci_rep->commands_counter_rep !=
       eci_rep->parser_repp->last_counter_rep) {
     eci_impl_dump_parser_state(eci_rep, "read() error");
+    eci_rep->parser_repp->sync_lost_rep = true;
   }
 }
 
