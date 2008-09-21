@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // ecasignalview.cpp: A simple command-line tools for monitoring
 //                    signal amplitude.
-// Copyright (C) 1999-2005,2007 Kai Vehmanen
+// Copyright (C) 1999-2005,2007,2008 Kai Vehmanen
 // Copyright (C) 2005 Jeffrey Cunningham
 //
 // This program is free software; you can redistribute it and/or modify
@@ -99,7 +99,7 @@ void ecasv_fill_defaults(void);
 std::string ecasv_cop_to_string(ECA_CONTROL_INTERFACE* cop);
 void ecasv_output_init(void);
 void ecasv_output_cleanup(void);
-void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci,
+int ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci,
 													 std::vector<struct ecasv_channel_stats>* chstats);
 void ecasv_update_chstats(std::vector<struct ecasv_channel_stats>* chstats,
 													int ch, double value);
@@ -146,6 +146,7 @@ struct termios old_term, new_term;
 
 int main(int argc, char *argv[])
 {
+  int res;
   struct sigaction es_handler;
   es_handler.sa_handler = ecasv_signal_handler;
   sigemptyset(&es_handler.sa_mask);
@@ -223,7 +224,9 @@ int main(int argc, char *argv[])
   int rv=0;                                  // jkc: addition
   while(! done ) {
     kvu_sleep(secs, msecs * 1000000);
-    ecasv_print_vu_meters(&eci, &chstats);
+    res = ecasv_print_vu_meters(&eci, &chstats);
+    if (res < 0) 
+      break;
 
 #if defined(ECASV_USE_CURSES)
     // jkc: addition until noted
@@ -398,8 +401,10 @@ void reset_stats_fcn(vector<struct ecasv_channel_stats>* chstats)
 }
 // jkc: end of addition
 
-void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_channel_stats>* chstats)
+int ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_channel_stats>* chstats)
 {
+  int result = 0;
+  
   /* check wheter to reset peaks */
   if (reset_stats) {
     reset_stats = 0;
@@ -413,6 +418,12 @@ void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_chann
   for(int n = 0; n < ecasv_chcount; n++) {
     eci->command("copp-select " + kvu_numtostr(n + 1));
     eci->command("copp-get");
+
+    if (eci->error()) {
+      result = -1;
+      break;
+    }
+
     double value = eci->last_float();
 
     ecasv_update_chstats(chstats, n, value);
@@ -444,6 +455,8 @@ void ecasv_print_vu_meters(ECA_CONTROL_INTERFACE* eci, vector<struct ecasv_chann
 #else
   cout << ecasv_cop_to_string(eci) << endl;
 #endif
+
+  return result;
 }
 
 void ecasv_update_chstats(vector<struct ecasv_channel_stats>* chstats, int ch, double value)

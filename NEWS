@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 200908) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 210908) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -43,6 +43,11 @@ xx0y2008 (v2.6.0) -** stable release **-
         - fixed: avoid denormal numbers in '-ete' (leads to unusually
 		 high CPU load)
 	- fixed: dump-cop-value did not work as documented
+	- fixed: ECI - signal an error (e.g. eci_error() returns true)
+		 if connection is lost to engine process (sync lost
+	 	 or an other error)
+	- fixed: ecasignalview - exit if engine reports an error
+		 during operation
 24082008 (v2.5.2) -** stable release **-
 	- fixed: bug in channel routing of LADSPA plugins that have
 		 more audio output ports than input ports
