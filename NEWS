@@ -35,7 +35,7 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- added: eiam - new commands 'jack-connect', 'jack-disconnect'
 	 	 and 'jack-list-connections'; see ecasound-iam(1) for
 		 details
-	- added: 'jack_multi', see ecasound(1)
+	- added: 'jack_multi', see ecasound(1); closes sffeat:1415822
 	- changed: deprecated 'jack_auto', 'jack_generic' and
 	           'jack_alsa'
 	- changed: numbering of JACK ports created with 'jack' and
