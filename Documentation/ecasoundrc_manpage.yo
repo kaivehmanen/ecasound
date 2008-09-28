@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasoundrc)
        (5)
-       (13.08.2007)
+       (27.09.2008)
        ()
        (Multimedia software)
 
@@ -113,10 +113,6 @@ startdit()
 	Should ecasound try to query environment variable "EDITOR".
 	Defaults to em(true).
 
-	dit(ext-cmd-wave-editor)
-	Command line for executing an external wave editor. Defaults
-	to em(snd).
-
 	dit(ext-cmd-mp3-input)
 	Command for starting mp3 input. Ecasound expects that signed,
 	16bit, stereo audio samples are written to standard output.
@@ -209,6 +205,14 @@ startdit()
 	parameters. Note! FAAC must be compiled with MP4 support. Double-quotes 
 	and backslash-espacing can be used to include white-space to 
 	individual parameters. Defaults to em(faac -P -o %f -R %s -B %b -C %c -).
+
+enddit()
+
+manpagesection(DEPRECATED)
+
+startdit()
+
+	dit(ext-cmd-wave-editor)
 
 enddit()
 

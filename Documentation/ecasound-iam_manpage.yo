@@ -411,10 +411,6 @@ dit(ai-get-format, ao-get-format)
 Returns the audio format of the selected audio input/output as a
 formatted string. See documentation for '-f' command-line option. em([s])
 
-dit(ai-wave-edit, ao-wave-edit) 
-The currently selected audio object is loaded into an external
-wave editor (see ecasoundrc (5)). em([-])
-
 dit(ai-list, ao-list)
 Returns a list of all input/output objects. em([S])
 
@@ -733,12 +729,19 @@ lower_bound_flag,lower_bound,toggled_flag,integer_flag,
 logarithmic_flag,output_flag'
 
 For exact descriptions of these fields, please see
-the header file emph(ecasound/libecasound/eca-operator.h).
+the header file em(ecasound/libecasound/eca-operator.h).
+
+manpagesection(DEPRECATED COMMANDS)
+Use of following commands is deprecated. They still work in
+current version of Ecasound, but will be dropped in 
+the future:
+
+quote(
+   ai-wave-edit, ao-wave-edit
+)
 
 manpageseealso()
-
 	ecasound (1), ecatools (1), ecasoundrc (5)
 
 manpageauthor()
-
 	Kai Vehmanen, <email(kvehmanen -at- eca -dot- cx)>
