@@ -846,30 +846,32 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   string result;
   vector<CHAIN*>::const_iterator chain_citer;
 
-  result += "\n -> Objects: " + kvu_numtostr(cs->inputs.size());
+  result += "\n -> Objects.: " + kvu_numtostr(cs->inputs.size());
   result += " inputs, " + kvu_numtostr(cs->outputs.size());
   result += " outputs, " + kvu_numtostr(cs->chains.size());
   result += " chains";
 
   // FIXME: add explanations on why the chainsetup cannot be
   //        connected
+  
+  result += "\n -> State...: ";
 
   if (cs->is_locked()) {
-    result += "\n -> State:   connected to engine (engine status: ";
+    result += "connected to engine (engine status: ";
     result += engine_status() + ")";
   }
   else if (cs->is_enabled() && is_engine_started() == true) {
-    result += "\n -> State:   connected (engine status: ";
+    result += "connected (engine status: ";
     result += engine_status() + ")";
   }
   else if (cs->is_enabled())
-    result += "\n -> State:   connected (engine not yet running)";
+    result += "connected (engine not yet running)";
   else if (cs->is_valid()) 
-    result += "\n -> State:   valid (can be connected)";
+    result += "valid (can be connected)";
   else
-    result += "\n -> State:   not valid (cannot be connected)";
+    result += "not valid (cannot be connected)";
   
-  result += "\n -> Position:  ";
+  result += "\n -> Position.:  ";
   result += kvu_numtostr(cs->position_in_seconds_exact(), 3);
   result += " / ";
   if (cs->length_set())
@@ -877,7 +879,7 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   else
     result += "inf";
 
-  result += "\n -> Options: ";
+  result += "\n -> Options.: ";
   result += cs->options_to_string();
 
   for(chain_citer = cs->chains.begin();
