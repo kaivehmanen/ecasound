@@ -308,12 +308,9 @@ dit(c-rename 'new_name')
 Renames the selected chain. When using this command, exactly one chain must
 be selected. em([-])
 
-dit(c-muting)
+dit(c-muting, c-mute)
 Toggle chain muting. When chain is muted, all data that goes through
 is muted. em([-])
-
-dit(c-mute)
-Toggle chain muting. Note! Deprecated, use em(c-muting) instead. em([-])
 
 dit(c-bypass)
 Toggle chain bypassing. When chain is bypassed, sample data is passed 
@@ -566,7 +563,7 @@ If Ecasound is compiled with support for url(JACK audio server)(http://jackaudio
 the following set of commands is provided for controlling connections 
 between JACK ports.
 
-startdir()
+startdit()
 
 dit(jack-connect 'src-port' 'dest-port')
 Make a connection between the two ports given as parameters. This command
@@ -584,7 +581,6 @@ for each port. This command is similar to the 'jack_lsp' command
 line tool (e.g. 'jack_lsp -c') that is distributed with JACK package. em([s])
 
 enddit()
-
 
 manpagesection(INTERNAL COMMANDS)
 Internal commands are not directly aimed at normal use. They
@@ -722,7 +718,6 @@ operator and parameter index values (1...n). em([-])
 enddit()
 
 manpagesection(OPERATOR DESCRIPTIONS)
-
 The em(map-xxx-list) commands return a string containing all registered
 objects of the given type em(xxx). Each line of the output describes
 one registered type. The used syntax is:
