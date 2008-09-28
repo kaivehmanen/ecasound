@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (25.09.2008)
+       (27.09.2008)
        ()
        (Multimedia software)
 
@@ -33,12 +33,17 @@ condition is returned.
 manpagesection(Real-time commands)
 It's not possible to use all EIAM commands to modify and control 
 objects that belong to a connected chainsetup. Commands that 
-do NOT support this are: 'cs-remove', 'cs-set-length', 'cs-set-length-samples',
-'cs-toggle-loop', 'cs-set-param', 'cs-option', 'c-add', 'c-remove',
-'c-rename', 'c-clear', 'ai-add', 'ai-remove', 'ai-attach', 'ai-forward',
-'ai-rewind', 'ai-set-position', 'ai-set-position-samples', 'ai-wave-edit',
-'ao-add', 'ao-add-default', 'ao-remove', 'ao-attach', 'ao-forward',
-'ao-rewind', 'ao-set-position', 'ao-set-position-samples' and 'ao-wave-edit'.
+do NOT support this are: 
+
+quote(
+   cs-remove, cs-set-length, cs-set-length-samples, cs-toggle-loop, 
+   cs-set-param,  cs-option,  
+   c-add,  c-remove, c-rename, c-clear,  
+   ai-add, ai-remove, ai-attach,  ai-forward, ai-rewind,  ai-set-position,  
+   ai-set-position-samples,  
+   ao-add, ao-add-default,  ao-remove,  ao-attach,  ao-forward, ao-rewind,  
+   ao-set-position,  ao-set-position-samples.
+)
 
 If one of these commands is issued when a chainsetup is connected,
 ecasound will first stop and disconnect the chainsetup, process
