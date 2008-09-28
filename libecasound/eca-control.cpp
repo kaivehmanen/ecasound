@@ -747,6 +747,7 @@ void ECA_CONTROL::action(int action_id)
     // ---
     // Commands with external dependencies
     // ---
+#if ECA_COMPILE_JACK
   case ec_jack_connect: 
     {
       const vector<string>& params = action_arguments_as_vector();
@@ -761,7 +762,6 @@ void ECA_CONTROL::action(int action_id)
 	JACK_CONNECTIONS::disconnect(params[0].c_str(), params[1].c_str());
       break;
     }
-
   case ec_jack_list_connections:   
     {
       string foo;
@@ -771,6 +771,7 @@ void ECA_CONTROL::action(int action_id)
 	set_last_error("Unable to a list of JACK connections.");
       break;
     }
+#endif
 
   } // <-- switch-case
 

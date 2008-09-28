@@ -144,7 +144,7 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     else if (label() == "jack_multi") {
       int i;
       for(i = 0; i < channels(); i++) {
-	if (params_rep.size() > i + 1 &&
+	if (static_cast<int>(params_rep.size()) > i + 1 &&
 	    params_rep[i + 1].size() > 0) {
 	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		      "adding auto connection from " +

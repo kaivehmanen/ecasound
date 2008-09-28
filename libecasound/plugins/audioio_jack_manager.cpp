@@ -88,7 +88,6 @@ static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_
 
 static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
 static void eca_jack_process_mute(jack_nframes_t nframes, void* arg);
-static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
 #ifdef PROFILE_CALLBACK_EXECUTION
 static void eca_jack_process_profile_pre(void);
 static void eca_jack_process_profile_post(void);
@@ -499,6 +498,7 @@ static void eca_jack_process_mute(jack_nframes_t nframes, void* arg)
   }
 }
 
+#if ECA_JACK_TRANSPORT_API >= 3
 /**
  * Helper routine. Only called by eca_jack_process_callback() function.
  *
@@ -506,7 +506,6 @@ static void eca_jack_process_mute(jack_nframes_t nframes, void* arg)
  */
 static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
 {
-#if ECA_JACK_TRANSPORT_API >= 3
   AUDIO_IO_JACK_MANAGER* current = static_cast<AUDIO_IO_JACK_MANAGER*>(arg);
   jack_transport_state_t jackstate;
   jack_position_t jackpos;
@@ -576,8 +575,8 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
   if (need_mute == true) {
     eca_jack_process_mute(nframes, current);
   }
-#endif
 }
+#endif
 
 #ifdef PROFILE_CALLBACK_EXECUTION
 static void eca_jack_process_profile_pre(void)

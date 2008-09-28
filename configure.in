@@ -1322,7 +1322,7 @@ fi
 if test x$jack_support = xyes ; then
 	echo "JACK support:           yes"
 else
-9	echo "JACK support:           no"
+	echo "JACK support:           no"
 fi
 if test x$samplerate_support = xyes ; then
 	echo "Libsamplerate support   yes"
