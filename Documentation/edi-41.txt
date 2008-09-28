@@ -3,6 +3,7 @@ Status: OPEN/CLOSED/FROZEN
 
 (edi-41): Addition of "bus" concept.
          - submitted: kaiv, 13.11.2005
+	 - migrated to sf.net -> sffeat:2134191
 
 ------------------------------------------------------------------------
 Details:

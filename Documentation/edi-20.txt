@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-20) Ewf-v2 format.
 	- submitted: kaiv, 26.11.2001
+	- migrated to sf.net: sffeat:2134162
 
 ------------------------------------------------------------------------
 Details:

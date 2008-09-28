@@ -5,23 +5,17 @@
 -----------------------------------------------------------------------
 [ Ecasound Development Items - (edi-x) codes ]
 
-The Ecasound Development Item concept is used for keeping track of 
-bugs, open issues, enhancement proposals, and other similar issues.
-Each new EDI item is given a unique number. The resulting
-tag '(edi-xxx)' can then be used as a reference in mailing list 
-discussions, changelogs, etc. 
-
-To submit a new EDI-item, send a mail the 'ecasound-list' mailing
-list. For a full list of EDI items, see 'Documentation/edi-list.txt'.
-
-Another database of feature/development ideas is maintained
-at the sourceforge.net bug tracker:
+The Ecasound Development Item concept was used for keeping track of 
+bugs, open issues, enhancement proposals, and other similar issues
+for Ecasound develoment through years 2002-08. In September 2008,
+all remaining items were transfered to the web based tracker
+at sourceforge.net:
 
   - https://sourceforge.net/tracker/?group_id=4605&atid=104605
 
-There is currently no good split between what goes where, so feel
-free to use whichever you feel more comfortable with, and crosslink
-if/when needed between the bug tracker and this EDI list.
+Each new EDI item is identified by a unique number. The resulting
+tag '(edi-xxx)' is used as a reference in mailing list discussions, 
+changelogs, etc. 
 
 -----------------------------------------------------------------------
 [ Meta: Syntax ]
@@ -34,61 +28,79 @@ if/when needed between the bug tracker and this EDI list.
 Note! See README for a list of defined developer tags (kaiv -> me).
 
 -----------------------------------------------------------------------
-[ Section: Bugs, problems ]
+[ Section: Bugs, problems -> transfered to sourceforge.net tracker ]
 
 (edi-25): Distortion with multitap delay -etm if delay length changes
 	  dynamically.
         - submitted: rjpoelstra, 27.01.2002
+        - migrated to sf.net -> sfbug:2134149
 
 -----------------------------------------------------------------------
-[ Section: Enhancements, new features ]
+[ Section: Enhancements, new features  -> transfered to sourceforge.net tracker in 2008/09 ]
 
 (edi-5): Threshold parameter to -eca.
 	- submitted: ecasound-list daemon :), 2001
+        - migrated to sf.net -> sffeat:2134151
 (edi-7): Adding a 'loop x times' option to the ewf file format.
 	- submitted: nolan_d, 09.07.2001
 	- partially implemented: kaiv, 11.07.2008 (combination of 'select' 
 	  and 'audioloop' provides similar functionality)
+        - migrated to sf.net -> sffeat:2134153
 (edi-9): Adding and removing audio and chainop objects on-the-fly. 
 	- submitted: jhalttun, xx.06.2001
+        - migrated to sf.net -> sffeat:2134154
 (edi-16): More flexible system for assigning controllers of 
           controllers (-kx).
 	- submitted: jhalttun, 02.09.2001
+	- migrated to sf.net -> sffeat:2134159
 (edi-20): Ewf-v2 format.
 	- submitted: kaiv, 26.11.2001
+	- migrated to sf.net -> sffeat:2134162
 (edi-23): Extending the max_buffers audio i/o parameter
 	- submitted: kaiv, 22.02.2002
+	- migrated to sf.net -> sffeat:2134167
 (edi-26): Logarithmic linear envelopes
         - submitted: jhall, 23.04.2002
+	- migrated to sf.net -> sffeat:2134171
 (edi-31): Support for dynamic sampling rate and buffersize changes.
          - submitted: kaiv, 23.10.2002
+   	 - migrated to sf.net -> sffeat:2134175
 (edi-34): Better checks for parsing operator arguments.
 	 - submitted: jhalttun, 28.10.2002
+  	 - migrated to sf.net -> sffeat:2134179
 (edi-35): JACK support to ecasound's interactive mode (EIAM)
 	 - submitted: kaiv, 16.11.2002
          - frozen: kaiv, 20.08.2003
 	 - unfrozen: kaiv, 20.09.2008
 	 - partially implemented: kaiv, 20.09.2008 (2.6.x)
+         - migrated to sf.net -> sffeat:2134183
 (edi-36): Addition of position markers.
 	 - submitted: julien, 17.03.2003
+  	 - migrated to sf.net -> sffeat:2134186
 (edi-37): Porting Steve Harris' dither code from JACK to ecasound
          - submitted: jhall, 17.03.2003
+         - migrated to sf.net -> sffeat:2134188
 (edi-39): Timestamped EIAM commands.
          - submitted: kaiv, 20.08.2003
+  	 - migrated to sf.net -> sffeat:2134189
 (edi-41): Addition of "bus" concept.
          - submitted: kaiv, 13.11.2005
+	 - migrated to sf.net -> sffeat:2134191
 (edi-42): Ability to split recording output into multiple files.
 	 - submitted: aolrich, 30.12.2005
+ 	 - migrated to sf.net -> sffeat:2134193
 
 -----------------------------------------------------------------------
-[ Section: Frozen ]
+[ Section: Frozen -> transfered to sourceforge.net tracker in 2008/09 ]
 
 (edi-4): 14bit MIDI-CCs controller source.
-	- submitted: kaiv, 17.08.2001
-	- frozen: kaiv, 20.08.2003
+	 - submitted: kaiv, 17.08.2001
+	 - frozen: kaiv, 20.08.2003
+ 	 - migrated to sf.net -> sffeat:2134195
 (edi-19): Separate file format for multitrack setups (.emt).
-	- submitted: kaiv, 18.10.2001
-	- frozen: kaiv, 20.08.2003	
+	 - submitted: kaiv, 18.10.2001
+	 - frozen: kaiv, 20.08.2003	
+ 	 - migrated to sf.net -> sffeat:2134201
 
 -----------------------------------------------------------------------
 [ Section: Closed items ]
@@ -181,6 +193,7 @@ Note! See README for a list of defined developer tags (kaiv -> me).
 -----------------------------------------------------------------------
 [ History (newest first) ]
 
+28.09.2008 - rampdown, all remaining items transfered to sourceforge.net
 20.09.2008 - edi-35 unfrozen, now partially implemented
 03.03.2008 - edi-40 closed
 07.07.2004 - edi-32 closed

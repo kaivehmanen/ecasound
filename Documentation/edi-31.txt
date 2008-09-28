@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-31): Support for dynamic sampling rate and buffersize changes.
          - submitted: kaiv, 23.10.2002
+   	 - migrated to sf.net -> sffeat:2134175
 
 ------------------------------------------------------------------------
 Details:

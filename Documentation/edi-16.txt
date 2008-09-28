@@ -4,6 +4,7 @@ Status: OPEN
 (edi-16): More flexible system for assigning controllers of 
           controllers (-kx).
         - submitted: jhalttun, 02.09.2001
+	- migrated to sf.net: sffeat:2134159
 
 ------------------------------------------------------------------------
 Details:

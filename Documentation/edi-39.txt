@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-39): Timestamped EIAM commands.
          - submitted: kaiv, 20.08.2003
+  	 - migrated to sf.net -> sffeat:2134189
 
 ------------------------------------------------------------------------
 Details:

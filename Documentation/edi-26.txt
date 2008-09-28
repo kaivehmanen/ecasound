@@ -3,6 +3,7 @@ Status: OPEN/CLOSED
 
 (edi-26): Logarithmic linear envelopes
         - submitted: jhall, 23.04.2002
+	- migrated to sf.net -> sffeat:2134171
 
 ------------------------------------------------------------------------
 Details:

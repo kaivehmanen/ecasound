@@ -8,7 +8,7 @@ Status: PARTIALLY-IMPLEMENTED
 	 - partially implemented: kaiv, 20.09.2008 (2.6.x)
 
 ------------------------------------------------------------------------
-Reasons for the frozen status:
+Reasons for not implementing:
 
 - duplicated effort with projects like 'qjackconnect',
   'jackd_plumbing', 'jackctl', and various others

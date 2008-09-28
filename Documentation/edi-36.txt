@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-36): Addition of position markers.
 	 - submitted: julien, 17.03.2003
+  	 - migrated to sf.net -> sffeat:2134186
 
 ------------------------------------------------------------------------
 Details:

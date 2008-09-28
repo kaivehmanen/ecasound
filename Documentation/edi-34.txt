@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-34): Better checks for parsing operator arguments.
 	 - submitted: jhalttun, 28.10.2002
+  	 - migrated to sf.net -> sffeat:2134179
 
 ------------------------------------------------------------------------
 Details:

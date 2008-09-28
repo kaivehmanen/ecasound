@@ -29,20 +29,9 @@ Ecasound has used the sourceforge.net bug tracker since Jan/2006:
   https://sourceforge.net/tracker/?group_id=4605&atid=104605
 
 This tracker is used to monitor longstanding bugs and 
-feature/improvement items.
-
-Ecasound Development Items - '(edi-x)' codes
------------------------------------------------------------------------
-
-The Ecasound Development Item concept is used for keeping track of 
-bugs, open issues, enhancement proposals, and other similar issues.
-For a full list of EDI items, see 'Documentation/edi-list.txt' or
-on the web at http://www.eca.cx/ecasound -> 'EDIs' menu item.
-
-There is currently no good split between what is an EDI item and
-what is tracked at sourceforge.net's tracker, so feel free to use 
-whichever you feel more comfortable with, and crosslink if/when 
-needed between the bug tracker and this EDI list.
+feature/improvement items. It replaces the old Ecasound Development
+Item practise (items marked with 'edi-x' tags) that was used
+between 2002-08.
 
 Known Bugs and Features (not in other issue trackers)
 -----------------------------------------------------------------------

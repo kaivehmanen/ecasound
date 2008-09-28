@@ -3,6 +3,7 @@ Status: OPEN
 
 (edi-23): Extending the max_buffers audio i/o parameter
 	 - submitted: kaiv, 22.02.2002
+         - migrated to sf.net: sffeat:2134167
 
 ------------------------------------------------------------------------
 Details:

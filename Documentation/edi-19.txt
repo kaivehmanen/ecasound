@@ -4,6 +4,7 @@ Status: FROZEN
 (edi-19) Separate file format for multitrack setups (.emt).
 	- submitted: kaiv, 18.10.2001
 	- frozen: kaiv, 20.08.2003
+ 	- migrated to sf.net -> sffeat:2134201
 
 ------------------------------------------------------------------------
 Reason for the frozen status:

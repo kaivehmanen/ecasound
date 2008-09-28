@@ -4,6 +4,7 @@ Status: OPEN
 (edi-25): Distortion with multitap delay -etm if delay length changes
 	  dynamically.
          - submitted: rjpoelstra, 27.01.2002
+         - migrated to sf.net: sfbug:2134149
 
 ------------------------------------------------------------------------
 Details:
