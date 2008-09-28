@@ -273,6 +273,8 @@ private:
   void start_forked_objects(void);
   void stop_forked_objects(void);
 
+  void state_change_to_finished(void);
+
   /*@}*/
 
   /** @name Private functions for observing and modifying position  */

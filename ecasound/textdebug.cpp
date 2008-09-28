@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // textdebug.cpp: Implementation of console logging subsystem.
-// Copyright (C) 1999-2002,2004-2005 Kai Vehmanen
+// Copyright (C) 1999-2002,2004-2005,2008 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -112,7 +112,8 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
       offset += 4;
 #endif
     }
-    else if (is_log_level_set(ECA_LOGGER::module_names) == true &&
+    else if (module_name.size() > 0 &&
+	     is_log_level_set(ECA_LOGGER::module_names) == true &&
 	     level != ECA_LOGGER::eiam_return_values) {
       *dostream_repp << "(" 
 		     << std::string(module_name.begin(), 

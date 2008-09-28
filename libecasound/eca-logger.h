@@ -131,6 +131,13 @@ class ECA_LOGGER {
         do { ECA_LOGGER::instance().msg(x, __FILE__, y); } while(0)
 
 /**
+ * Issue a log message, but do not print out the module prefix.
+ * A variant of ECA_LOG_MSG().
+ */
+#define ECA_LOG_MSG_NOPREFIX(x,y) \
+        do { ECA_LOGGER::instance().msg(x, std::string(), y); } while(0)
+
+/**
  * To make ECA_LOG_MSG work we need to include the 
  * public interface ECA_LOGGER_INTERFACE.
  */

@@ -1,3 +1,7 @@
+2008-09-28  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-logger.h (ECA_LOG_MSG_NOPREFIX): Added.
+
 2008-09-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-chainsetup-parser.cpp (interpret_options): Now takes a const

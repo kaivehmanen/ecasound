@@ -274,7 +274,7 @@ int ECA_ENGINE::exec(bool batch_mode)
 
   batchmode_enabled_rep = batch_mode;
 
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Engine init - Driver start");
+  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Engine - Driver start");
 
   int res = driver_repp->exec(this, csetup_repp);
   if (res < 0) {
@@ -519,7 +519,8 @@ void ECA_ENGINE::update_engine_state(void)
       // we are not allowed to call request_stop here
       command(ECA_ENGINE::ep_stop, 0.0f);
     }
-    finished_rep = true;
+
+    state_change_to_finished();
   }
   
   // --
@@ -956,6 +957,15 @@ void ECA_ENGINE::stop_forked_objects(void)
   priv_toggle_forked_objects(false, outputs_repp);
 }
 
+void ECA_ENGINE::state_change_to_finished(void)
+{
+  if (finished_rep != true) {
+    ECA_LOG_MSG_NOPREFIX(ECA_LOGGER::info, "");
+    ECA_LOG_MSG(ECA_LOGGER::subsystems, "Engine - Processing finished");
+  }
+  finished_rep = true;
+}
+
 void ECA_ENGINE::prepare_realtime_objects(void)
 {
   /* 1. prepare objects */
@@ -1144,7 +1154,7 @@ void ECA_ENGINE::posthandle_control_position(void)
 	  status() == ECA_ENGINE::engine_status_finished) {
 	command(ECA_ENGINE::ep_stop, 0.0f);
       }
-      finished_rep = true;
+      state_change_to_finished();
     }
   }
 }

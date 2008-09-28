@@ -43,6 +43,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 		   each prefix [dsacre]
         - changed: deprecated 'ai-wave-edit', 'ao-wave-edit' commands
 		   and the 'ext-cmd-wave-editor' ecasoundrc field
+	- changed: emit a 'subsystem' level trace message when 
+	 	   engine state changes to finished
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually
