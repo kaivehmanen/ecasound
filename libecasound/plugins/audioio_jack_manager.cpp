@@ -84,6 +84,7 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg);
 static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t *pos, void *arg);
 static void eca_jack_sync_start_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
 static void eca_jack_sync_start_live_seek_to(jack_transport_state_t state, jack_position_t *pos, void *arg);
+static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg);
 #endif
 
 static void eca_jack_process_engine_iteration(jack_nframes_t nframes, void *arg);
@@ -895,6 +896,7 @@ void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
 
     case 2: 
       {
+#if ECA_JACK_TRANSPORT_API >= 3
 	if (value == "notransport" || 
 	    value == "streaming") {
 	  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
@@ -918,6 +920,12 @@ void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
 	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		      "'recv' mode selected.");
 	}
+#else
+	mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
+	if (value != "notransport")
+	  ECA_LOG_MSG(ECA_LOGGER::info, 
+		      "WARNING: JACK transport support disabled at build time, using 'notransport'.");
+#endif /* ECA_JACK_TRANSPORT_API */
 	break;
       }
     }
