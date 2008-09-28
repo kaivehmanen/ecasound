@@ -846,7 +846,7 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   string result;
   vector<CHAIN*>::const_iterator chain_citer;
 
-  result += "\n -> Objects.: " + kvu_numtostr(cs->inputs.size());
+  result += "\n -> Objects..: " + kvu_numtostr(cs->inputs.size());
   result += " inputs, " + kvu_numtostr(cs->outputs.size());
   result += " outputs, " + kvu_numtostr(cs->chains.size());
   result += " chains";
@@ -854,7 +854,7 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   // FIXME: add explanations on why the chainsetup cannot be
   //        connected
   
-  result += "\n -> State...: ";
+  result += "\n -> State....: ";
 
   if (cs->is_locked()) {
     result += "connected to engine (engine status: ";
@@ -879,7 +879,7 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
   else
     result += "inf";
 
-  result += "\n -> Options.: ";
+  result += "\n -> Options..: ";
   result += cs->options_to_string();
 
   for(chain_citer = cs->chains.begin();
