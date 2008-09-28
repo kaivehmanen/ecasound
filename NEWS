@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 210908) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 280908) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
@@ -26,6 +26,8 @@ Howto for reading the entries:
 -----------------------------------------------------------------------
 
 xx0y2008 (v2.6.0) -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
 	- edi-entries: edi-35 partially implemented
 	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
 		 replaces old interfaces 'jack_auto', 'jack_generic' 
@@ -51,9 +53,13 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- fixed: ecasignalview - exit if engine reports an error
 		 during operation
 24082008 (v2.5.2) -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_5_2_relnotes.txt
 	- fixed: bug in channel routing of LADSPA plugins that have
 		 more audio output ports than input ports
 21082008 (v2.5.1) -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_5_1_relnotes.txt
 	- fixed: a last minute change in 2.5.0 that caused build errors
 	 	 with gcc-4.3.1 if ALSA support is disabled
 	- fixed: a change in 2.5.0 how process cleanup is initiated from 
@@ -66,6 +72,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	 	 ecasound's object maps causing some plugins to be
 		 unusable;  errors 
 16082008 (v2.5.0) -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_5_0_relnotes.txt
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
 		  new features are added
@@ -177,6 +185,8 @@ xx0y2008 (v2.6.0) -** stable release **-
  	- fixed: extra debugging, printed to stderr, for resource file 
 		 values was accidentally left enabled in the 2.4.6 release
 14082007 (v2.4.6)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_6_relnotes.txt
 	- added: new option '-R:path-to-resource-file' to use a custom
 		 resource file and disable querying of global and user
 		 resource files; as a special case, by setting this 
@@ -208,6 +218,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- fixed: segfault when removing a chain operator with multiple
 		 associated controllers; reported by Adam Linson
 07122006 (v2.4.5)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_5_relnotes.txt
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
 	- added: if libsndfile is found and supports flac (sndfile
@@ -285,6 +297,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	         returning lists of strings, reported by Brad Bowman,
 	         Joel Roth and Stuart Allie
 27012006 (v2.4.4)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_4_relnotes.txt
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
 	- added: ecasignalview - ability to pass ecasound options
@@ -324,6 +338,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- fixed: allow commas in ecasignalview input/output params;
 		 makes it again possible to specify ALSA devices, etc
 21082005 (v2.4.3)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_3_relnotes.txt
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
 	- added: runtime warning about possible problems when mixing 
@@ -345,6 +361,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- fixed: externally terminating, e.g. via JACK transport system, 
                  a batch chainsetup would cause a segfault
 07082005 (v2.4.2)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_2_relnotes.txt
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
 	         and ctrlp-set commands; the last two are RT-commands;
@@ -384,6 +402,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- fixed: ecasound daemon mode, correctly print hostnames without
 		 resolvable hostname
 08042005 (v2.4.1)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_1_relnotes.txt
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions
 	        older than 2.50, are no longer supported; these
@@ -434,6 +454,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	- fixed: do not print "Session created" even if -q option has
 		 been given (quiet output mode)
 12032005 (v2.4.0)  -** stable release **-
+	- more verbose description of change available at:
+                 http://eca.cx/relnotes/ecasound_v2_4_0_relnotes.txt
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
 	 	 them with a backslash (example: "ai-add foo\,bar.wav")
