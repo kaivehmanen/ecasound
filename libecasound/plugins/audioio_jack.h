@@ -2,6 +2,7 @@
 #define INCLUDED_AUDIOIO_JACK_H
 
 #include <string>
+#include <vector>
 
 #include "audioio-device.h"
 #include "sample-specs.h"
@@ -18,8 +19,8 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
 
  public:
 
-  virtual std::string name(void) const { return("JACK interface"); }
-  virtual std::string description(void) const { return(name()); }
+  virtual std::string name(void) const { return "JACK interface"; }
+  virtual std::string description(void) const { return name(); }
   virtual std::string parameter_names(void) const;
 
   AUDIO_IO_JACK (void);
@@ -32,8 +33,8 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   /** @name Function reimplemented from AUDIO_IO */
   /*@{*/
 
-  virtual int supported_io_modes(void) const { return(io_read | io_write); }
-  virtual bool locked_audio_format(void) const { return(true); }
+  virtual int supported_io_modes(void) const { return io_read | io_write; }
+  virtual bool locked_audio_format(void) const { return true; }
   
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
@@ -56,7 +57,7 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   virtual void stop(void);
 
   virtual long int latency(void) const;
-  virtual long int prefill_space(void) const { return(0); }
+  virtual long int prefill_space(void) const { return 0; }
 
   /*@}*/
 
@@ -68,7 +69,7 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
   AUDIO_IO_JACK_MANAGER* jackmgr_rep;
   int myid_rep;
 
-  std::string secondparam_rep, thirdparam_rep;
+  std::vector<std::string> params_rep;
   SAMPLE_SPECS::sample_pos_t curpos_rep;
 
  private:

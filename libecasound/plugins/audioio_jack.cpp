@@ -54,7 +54,6 @@ AUDIO_IO_JACK::AUDIO_IO_JACK (void)
   
   jackmgr_rep = 0;
   myid_rep = 0;
-  secondparam_rep = "";
 }
 
 AUDIO_IO_JACK::~AUDIO_IO_JACK(void)
@@ -93,17 +92,16 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   if (jackmgr_rep != 0) {
     string my_in_portname ("in"), my_out_portname ("out");
 
-    /* note: deprecated interface */
     if (label() == "jack" &&
-	thirdparam_rep.size() > 0) {
-      my_in_portname = my_out_portname = thirdparam_rep;
+	params_rep.size() > 2 && 
+	params_rep[2].size() > 0) {
+      my_in_portname = my_out_portname = params_rep[2];
     }
-    else if (label() == "jack_generic") {
-      my_in_portname = my_out_portname = secondparam_rep;
+    /* note: deprecated interface */
+    else if (label() == "jack_generic" &&
+	     params_rep.size() > 1) {
+      my_in_portname = my_out_portname = params_rep[1];
     }
-
-    // FIXME: required?
-    // if (workstring.size() == 0) workstring = label();
 
     jackmgr_rep->open(myid_rep);
 
@@ -138,9 +136,26 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     /* - make automatic connections */
 
     if (label() == "jack" &&
-	secondparam_rep.size() > 0) {
+	params_rep.size() > 1 &&
+	params_rep[1].size() > 0) {
       /* note: if 2nd param given, use it as the client to autoconnect to */
-      jackmgr_rep->auto_connect_jack_port_client(myid_rep, secondparam_rep, channels());
+      jackmgr_rep->auto_connect_jack_port_client(myid_rep, params_rep[1], channels());
+    }
+    else if (label() == "jack_multi") {
+      int i;
+      for(i = 0; i < channels(); i++) {
+	if (params_rep.size() > i + 1 &&
+	    params_rep[i + 1].size() > 0) {
+	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		      "adding auto connection from " +
+		      my_out_portname + "_" + kvu_numtostr(i + 1) + 
+		      " to " + 
+		      params_rep[i + 1]);
+	  jackmgr_rep->auto_connect_jack_port(myid_rep, i + 1, params_rep[i + 1]);
+	}
+
+
+      }
     }
     else if (label() == "jack_alsa") {
       /* note: deprecated feature: 'alsa_pcm' is hidden in the port
@@ -162,8 +177,10 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       }
     }
     /* note: deprecated interface, plain "jack" should be used now */
-    else if (label() == "jack_auto") {
-      jackmgr_rep->auto_connect_jack_port_client(myid_rep, secondparam_rep, channels());
+    else if (label() == "jack_auto" &&
+	     params_rep.size() > 1 &&
+	     params_rep[1].size() > 0) {
+      jackmgr_rep->auto_connect_jack_port_client(myid_rep, params_rep[1], channels());
     }
   }
 
@@ -242,8 +259,17 @@ std::string AUDIO_IO_JACK::parameter_names(void) const
   if (label() == "jack_generic")
     return "label,portname";
 
-  if (label() == "jack_auto")
+  else if (label() == "jack_auto")
     return "label,client";
+
+  else if (label() == "jack_multi") {
+    string paramlist = "label,";
+    int i;
+    for(i = 0; i < channels(); i++) {
+      paramlist += ",dstport" + kvu_numtostr(i + 1);
+    }
+    return paramlist;
+  }
 
   /* jack */
   return "label,client,portprefix";
@@ -251,22 +277,20 @@ std::string AUDIO_IO_JACK::parameter_names(void) const
 
 void AUDIO_IO_JACK::set_parameter(int param, std::string value)
 {
-  switch(param) 
-    {
-    case 1: { set_label(value); break; }
-    case 2: { secondparam_rep = value; break; }
-    case 3: { thirdparam_rep = value; break; }
-    }
+  if (param > static_cast<int>(params_rep.size()))
+    params_rep.resize(param);
+
+  params_rep[param - 1] = value;
+
+  if (param == 1) {
+    set_label(value);
+  }
 }
 
 std::string AUDIO_IO_JACK::get_parameter(int param) const
 {
-  switch(param) 
-    {
-    case 1: { return label(); }
-    case 2: { return secondparam_rep; }
-    case 3: { return thirdparam_rep; }
-    }  
+  if (param > 0 && param <= static_cast<int>(params_rep.size()))
+    return params_rep[param - 1];
 
-  return "";
+  return AUDIO_IO::get_parameter(param);
 }
