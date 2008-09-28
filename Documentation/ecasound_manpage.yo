@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (19.09.2008)
+       (28.09.2008)
        ()
        (Multimedia software)
 
@@ -31,7 +31,7 @@ Note! All options except those mentioned in em(ecasound options) and
 COMMENT(----------------------------------------------------------------)
 bf(ECASOUND OPTIONS)
 
-These options are parsed and handled by the ecasound frontbed binary and 
+These options are parsed and handled by the ecasound frontend binary and 
 are not passed to backend library. This means that these options may
 not work in other applications that use ecasound libraries for their
 functionality.
@@ -275,20 +275,20 @@ you need more flexible control over audio objects, you should
 use the em(.ewf) format.
 
 dit(-i[:]input-file-or-device[,params])
-Specifies a new input source that is connected to all selected chains.
-Connecting multiple inputs to the same chain isn't possible. Input
-can be a a file, device or some other audio object (see below). 
-If the input is a file, its type is determined using the file name 
-extension. If the object name contains any commas, the name must be 
-enclosed in backquotes to avoid confusing the parser. Currently supported 
-formats are RIFF WAVE files (.wav), audio-cd tracks (.cdr), ecasound 
-EWF files (.ewf), RAW audio data (.raw) and MPEG files (.mp2,.mp3). Also, 
-formats supported by the SGI audiofile library: AIFF (.aiff, .aifc, .aif) and 
-Sun/NeXT audio files (.au, .snd). MikMod is also supported (.xm, .mod, .s3m, 
-.it, etc). MIDI files (.mid) are supported using Timidity++. Similarly
-Ogg Vorbis (.ogg) can be read and written if ogg123 and vorbize tools
-are installed, FLAC files (.flac) with flac command-line tools or using
-libsndfile, and AAC files (.aac/.m4a/.mp4) with faad2/faac tools. Supported 
+Specifies a new input source that is connected to all selected chains (chains
+are selected with '-a:...'). Connecting multiple inputs to the same chain is 
+not possible, but one input can be connected to multiple chains. Input can be 
+a a file, device or some other audio object (see below). If the input is 
+a file, its type is determined using the file name extension. If the object 
+name contains any commas, the name must be enclosed in backquotes to avoid 
+confusing the parser. Currently supported formats are RIFF WAVE files (.wav), 
+audio-cd tracks (.cdr), ecasound EWF files (.ewf), RAW audio data (.raw) and 
+MPEG audio files (.mp2,.mp3). More audio formats are supported via libaudiofile
+and libsndfile libraries (see documentation below). MikMod is also supported (.xm, 
+.mod, .s3m, .it, etc). MIDI files (.mid) are supported using Timidity++. 
+Similarly Ogg Vorbis (.ogg) can be read, and written if ogg123 and vorbize tools
+are installed; FLAC files (.flac) with flac command-line tools or using
+libsndfile; and AAC files (.aac/.m4a/.mp4) with faad2/faac tools. Supported 
 realtime devices are OSS audio devices (/dev/dsp*), ALSA audio and loopback 
 devices and JACK audio subsystem. If no inputs are specified, the first 
 non-option (doesn't start with '-') command line argument is considered 
@@ -298,15 +298,15 @@ dit(-o[:]output-file-or-device[,params])
 Works in the same way as the -i option. If no outputs are specified,
 the default output device is used (see ~/.ecasoundrc). If the object 
 name contains any commas, the name must be enclosed in backquotes to 
-avoid confusing the parser. Note, you can't output to module formats 
-supported by MikMod (this should be obvious).
+avoid confusing the parser. Note, many object types do not support
+output (e.g. MikMod, MIDI and many others).
 
 em(OBJECT TYPE SPECIFIC NOTES)
-dit(ALSA devices)
+dit(ALSA devices - 'alsa')
 When using ALSA drivers, instead of a device filename, you need to
 use the following option syntax: bf(-i[:]alsa,pcm_device_name).
 
-dit(ALSA direct-hw and plugin access)
+dit(ALSA direct-hw and plugin access - 'alsahw', 'alsaplugin')
 It's also possible to use a specific card and device combination
 using the following notation: bf(-i[:]alsahw,card_number,device_number,subdevice_number).
 Another option is the ALSA PCM plugin layer. It works just like 
@@ -314,12 +314,12 @@ the normal ALSA pcm-devices, but with automatic channel count and
 sample format conversions. Option syntax is 
 bf(-i[:]alsaplugin,card_number,device_number,subdevice_number).
 
-dit(aRts input/output)
+dit(aRts input/output - 'arts')
 If enabled at compile-time, ecasound supports audio input and 
 output using aRts audio server. Option syntax is bf(-i:arts),
 bf(-o:arts).
 
-dit(Audio file sequecing)
+dit(Audio file sequencing - 'audioloop', 'select', 'playat')
 Ecasound provides a set of special audio object types that 
 can be used for temporal sequencing of audio files - i.e. looping,
 playing only a select portion of a file, playing file at a spefific
@@ -348,7 +348,7 @@ used. This will play "file.ext" after position reaches
 "2.25", or as samples (e.g. "25000sa"). Parameters 2...N are 
 passed as is to the child object.
 
-dit(Ecasound Wave Files (EWF) - .ewf)
+dit(Ecasound Wave Files (EWF) - '*.ewf')
 A special file format that allows to slice and loop full (or segments)
 of audio files. This format is specific to Ecasound.
 See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for more 
@@ -356,15 +356,16 @@ detailed information.
 
 See also audio object types 'audioloop', 'select' and 'playat'.
 
-dit(JACK input/outputs)
+dit(JACK input/outputs - Overview)
 JACK is a low-latency audio server that can be used to connect
 multiple independent audio application to each other.
 It is different from other audio server efforts in that
 it has been designed from the ground up to be suitable for low-latency
 professional audio work. 
 
-Ecasound provides multiple ways to communicate with JACK servers. 
-To create a JACK input or output object, one should use bf(-i jack) and 
+dit(JACK input/outputs - 'jack')
+Ecasound provides multiple ways to communicate with JACK 
+servers. To create a JACK input or output object, one should use bf(-i jack) and 
 bf(-o jack). These create JACK client ports "ecasound:in_N" and 
 "ecasound:out_n" respectively ('N' is replaced by the channel number).
 Ecasound automatically creates one JACK port for each channel (number
@@ -375,7 +376,8 @@ anywhere (e.g. to soundcard input/outputs, or to other apps). One thus
 has to connect the ports with an external program (e.g. "QJackCtl"
 or "jack_connect").
 
-For simple use scanerios, ecasound provides a way to autoconnect
+dit(JACK input/outputs - 'jack,clientname,portprefix')
+bf("jack,clientname") For simple use scanerios, ecasound provides a way to autoconnect
 the ecasound ports. This can be done with by giving the peer client
 name as the second parameter to the "jack" object, e.g. bf(-o jack,clientname).
 As an example, bf(-o jack,system) will create an output that is
@@ -383,38 +385,50 @@ automatically connected to outputs of the default system soundcard.
 The client parameter can be omitted, in which case no automatic
 connections are made.
 
-If one needs to change the port prefix (e.g. "in" in client
-name "ecasound:in_N"), the prefix can be specified as the third
-parameter to "jack" object, e.g. bf(-o jack,,fxout). Also the
-third parameter can be omitted, in which case the default prefixes
-"in" and "out" are used.
+If one needs to change the port prefix (e.g. "in" in client name 
+"ecasound:in_N"), the prefix can be specified as the third parameter to 
+"jack" object, e.g. bf(-o jack,,fxout). Also the third parameter can be 
+omitted, in which case the default prefixes "in" and "out" are used.
 
+dit(JACK input/outputs - 'jack_multi')
+A variant of 'jack' object type is 'jack_multi'. The full object syntax
+is bf(jack_multi,destport1,...,destportN). When a 'jack_multi' object
+is connected to a JACK server, first channel of the object is connected
+to JACK port 'destport1', second to 'destport2' and so forth. For
+instance "-f:32,2,44100 -o jack_multi,foo:in,bar:in"
+creates a stereo ecasound output object, with its left and right
+channels routed to two difference JACK clients. The destination ports
+must be active when the ecasound engine is launched, or otherwise 
+the connections cannot be established. If destination ports are not
+specified for all channels, or zero length strings are given, those
+ports are not connected at launch by ecasound.
+
+dit(JACK input/outputs - 'jack_alsa', 'jack_auto', 'jack_generic' (**deprecated since 2.6.0**))
+Ecasound 2.5 and older supported "jack_alsa", "jack_auto" and "jack_generic" object 
+types, but these are now replaced by a more generic "jack" interface, and thus are
+now deprecated (they work but are no longer documented).
+
+dit(JACK input/outputs - client options)
 Additionally global JACK options can be set using 
 bf(-G:jack,client_name,operation_mode) option. 'client_name' 
 is the name used when registering ecasound to the JACK system. 
 If 'operation_mode' is "notransport",  ecasound will ignore 
 any transport state changes in the JACK-system; in mode 
-"send" it will send all start, stop and 
-position-change events to other JACK clients; in 
-mode "recv" ecasound will follow JACK start, stop and 
-position-change events; and mode "sendrecv" (the default) which 
-is a combination of the two previous modes.
+"send" it will send all start, stop and position-change events to 
+other JACK clients; in mode "recv" ecasound will follow JACK start, 
+stop and position-change events; and mode "sendrecv" (the default) 
+which is a combination of the two previous modes.
 
 More details about ecasound's JACK support can be found
 from Ecasound User's Guide.
 
-bf(Depracated interfaces) Ecasound 2.5 and older supported
-"jack_alsa", "jack_auto" and "jack_generic" object types, but these 
-are now replaced by a more generic "jack" interface, and thus are
-now deprecated (they work but are no longer documented).
-
-dit(Libaudiofile)
+dit(Libaudiofile - 'audiofile')
 If libaudiofile support was enabled at compile-time, this
 option allows you to force Ecasound to use libaudiofile 
 for reading/writing a certain audio file. Option syntax 
 is bf(-i:audiofile,foobar.ext) (same for bf(-o)).
 
-dit(Libsndfile)
+dit(Libsndfile - 'sndfile')
 If libsndfile support was enabled at compile-time, this
 option allows you to force Ecasound to use libsndfile 
 for reading/writing a certain audio file. Option syntax 
@@ -423,7 +437,7 @@ The optional third parameter "format" can be used to
 override the audio format (for example you can create an
 AIFF file with filename "foo.wav").
 
-dit(Loop device) 
+dit(Loop device - 'loop') 
 Loop devices make it possible to route (loop back) data between 
 chains. Option syntax is bf(-[io][:]loop,tag). If you add
 a loop output with tag '1', all data written to this output is routed
@@ -435,20 +449,20 @@ device to multiple chains and this way split/mix the signal.
 Note: this 'loop' device is different from 'audioloop' (latter
 added to ecasound v2.5.0).
 
-dit(Mikmod)
+dit(Mikmod - 'mikmod')
 If mikmod support was enabled at compile-time, this
 option allows you to force Ecasound to use Mikmod 
 for reading/writing a certain module file. Option syntax 
 is bf(-i:mikmod,foobar.ext).
 
-dit(Null inputs/outputs)
+dit(Null inputs/outputs - 'null')
 If you specify "null" or "/dev/null" as the input or output, 
 a null audio device is created. This is useful if you just want
 to analyze sample data without writing it to a file. There's 
 also a realtime variant, "rtnull", which behaves just like "null" 
 objects, except all i/o is done at realtime speed.
 
-dit(Resample - access object of different sample rates)
+dit(Resample - 'resample')
 Object type 'resample' can be used to resample audio 
 object's audio data to match the sampling rate used
 in the active chainsetup. For example, 
@@ -470,7 +484,7 @@ use 'resample-hq' to use the highest quality resampling algorithm
 available. To force ecasound to use the internal resampler, 
 'resampler-lq' (low-quality) can be used.
 
-dit(Reverse - process audio data backwards)
+dit(Reverse - 'reverse')
 Object type 'reverse' can be used to reverse audio 
 data coming from an audio object. As an example, 
 bf(ecasound -i reverse,foo.wav -o /dev/dsp) will play 
@@ -484,13 +498,13 @@ Parameters 3...N are passed as is to the child object (i.e.
 "-i reverse,foo.wav,bar1,bar2" will pass parameters
 "bar1,bar2" to the "foo.wav" object.
 
-dit(System standard streams and named pipes)
+dit(System standard streams and named pipes - 'stdin', 'stdout')
 You can use standard streams (stdin and stdout) by giving bf(stdin)
 or bf(stdout) as the file name. Audio data is assumed to be in
 raw/headerless (.raw) format. If you want to use named pipes, 
 create them with the proper file name extension before use.
 
-dit(Tone generator)
+dit(Tone generator - 'tone')
 To generate a test tone, input bf(-i:tone,type,freq,duration-secs) 
 can be used. Parameter 'type' specifies the tone type: currently
 only 'sine' is supported. The 'freq' parameter sets the frequency 
@@ -499,7 +513,7 @@ stream. Specifying zero, or a negative value, as the duration will
 produce an infinite stream. This feature was first added to Ecasound 
 2.4.7.
 
-dit(Typeselect - overriding object type settings)
+dit(Typeselect - 'typeselect')
 The special 'typeselect' object type can be used to override 
 how ecasound maps filename extensions and object types. For 
 instance bf(ecasound -i typeselect,.mp3,an_mp3_file.wav -o /dev/dsp).
@@ -832,7 +846,7 @@ LADSPA plugins.
 
 enddit()
 
-bf(GATE SETUP)
+em(GATE SETUP)
 
 startdit()
 
@@ -861,7 +875,7 @@ buffer lengths and start/stop levels to get reliable settings for your equipment
 enddit()
 
 COMMENT(----------------------------------------------------------------)
-bf(CONTROL ENVELOPE SETUP)
+em(CONTROL ENVELOPE SETUP)
 startdit()
 
 Controllers can be used to dynamically change effect parameters
@@ -945,7 +959,7 @@ enddit()
 COMMENT(----------------------------------------------------------------)
 bf(INTERACTIVE MODE)
 
-See em(ecasound-iam man page).
+See em(ecasound-iam(1)) man page.
 
 manpagesection(ENVIRONMENT)
 
