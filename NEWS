@@ -47,6 +47,9 @@ xx0y2008 (v2.6.0) -** stable release **-
 	 	   engine state changes to finished
 	- changed: interactive mode - minor update to 'status' command
 	  	   output
+	- changed: compile libecasoundc as PIC code to make it possible
+		   to use it from shared libraries; fixes problems 
+		   with e.g. Audio::Ecasound on amd64 architecture
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually
