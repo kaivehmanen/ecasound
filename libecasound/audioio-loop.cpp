@@ -37,7 +37,7 @@
 using std::string;
 
 LOOP_DEVICE::LOOP_DEVICE(string tag) 
-  :  AUDIO_IO("loop," + tag, io_readwrite),
+  :  AUDIO_IO("loop", io_readwrite),
      tag_rep(tag),
      sbuf(buffersize(), 0)
 { 
