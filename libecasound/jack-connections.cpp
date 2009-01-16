@@ -30,6 +30,7 @@
 #include <jack/jack.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include <kvu_numtostr.h>
 
