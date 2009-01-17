@@ -14,9 +14,9 @@ EXTRA_DIST 			= eci.py pyeca.py ecacontrol.py \
 # ----------------------------------------------------------------------
 
 if ECA_AM_DEBUG_MODE
-ecasoundc_libs 			= -L$(top_builddir)/libecasoundc/.libs -lecasoundc_debug
+ecasoundc_libs 			= ${top_builddir}/libecasoundc/libecasoundc_debug.la
 else
-ecasoundc_libs 			= -L$(top_builddir)/libecasoundc/.libs -lecasoundc
+ecasoundc_libs 			= ${top_builddir}/libecasoundc/libecasoundc.la
 endif
 
 if ECA_AM_PYECASOUND_INSTALL
@@ -65,7 +65,7 @@ if ECA_AM_PYECASOUND_CEXT
 all: pyecasound.so
 
 pyecasound.so: pyecasound.lo
-	$(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) ${libpyecasound_la_LDFLAGS} -shared -nostartfiles -o pyecasound.so pyecasound.lo ${top_builddir}/libecasoundc/ecasoundc_sa.lo
+	$(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) ${libpyecasound_la_LDFLAGS} -shared -nostartfiles -o pyecasound.so pyecasound.lo ${top_builddir}/libecasoundc/libecasoundc_debug.la
 endif
 
 # ----------------------------------------------------------------------
