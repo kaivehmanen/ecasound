@@ -65,7 +65,7 @@ if ECA_AM_PYECASOUND_CEXT
 all: pyecasound.so
 
 pyecasound.so: pyecasound.lo
-	$(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) ${libpyecasound_la_LDFLAGS} -shared -nostartfiles -o pyecasound.so pyecasound.lo ${top_builddir}/libecasoundc/libecasoundc_debug.la
+	$(LIBTOOL) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) ${libpyecasound_la_LDFLAGS} -shared -nostartfiles -o pyecasound.so pyecasound.lo $(ecasoundc_libs)
 endif
 
 # ----------------------------------------------------------------------
