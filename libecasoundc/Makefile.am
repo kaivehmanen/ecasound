@@ -62,9 +62,9 @@ libecasoundc_la_CXXFLAGS = -prefer-pic
 libecasoundc_la_LIBADD =
 libecasoundc_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasoundc_debug_la_SOURCES = $(libecasoundc_la_SOURCES)
-libecasoundc_debug_la_CFLAGS = -prefer-pic
-libecasoundc_debug_la_CXXFLAGS = -prefer-pic
-libecasoundc_debug_la_LIBADD =
+libecasoundc_debug_la_CFLAGS = $(libecasoundc_la_CFLAGS)
+libecasoundc_debug_la_CXXFLAGS = $(libecasoundc_la_CXXFLAGS)
+libecasoundc_debug_la_LIBADD = $(libecasoundc_la_LIBADD)
 libecasoundc_debug_la_LDFLAGS = $(libecasoundc_la_LDFLAGS)
 
 libecasoundc_tester_SOURCES = libecasoundc_tester.c
