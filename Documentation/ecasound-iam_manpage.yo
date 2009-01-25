@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (27.09.2008)
+       (23.01.2009)
        ()
        (Multimedia software)
 
@@ -18,21 +18,21 @@ This is called the ecasound interactive mode (EIAM). All programs
 linked to ecasound library can use this facility.
 
 manpagesection(ECI API and return types)
-A special case of EIAM use is ecasound's control interface (ECI), 
-which is a small library providing easy access to the EIAM 
-commands from outside of libecasound. When issuing EIAM commands using 
-ECI, it's possible that commands also return information. Currently
-supported return value types are: string [s], list of strings [S] 
+A special case of interactive mode use is ecasound's control interface (ECI), 
+which is a small library providing easy access to the interactive
+mode commands from outside of libecasound. When issuing inter commands using 
+the control interface, it's possible that commands also return information. 
+Currently supported return value types are: string [s], list of strings [S] 
 (elements separated by commas; escaped if necessary), integer [i], 
 long integer [li] and floating-point number [f]. These definitions are 
 used throughout this document. Commands that return nothing (void) are 
 marked with [-]. Additionally, return type [e] marks an error condition. 
-When an EIAM results in an error, a error string explaining the 
-condition is returned.
+When an interactive mode command results in an error, an error string 
+explaining the condition is returned.
 
 manpagesection(Real-time commands)
-It's not possible to use all EIAM commands to modify and control 
-objects that belong to a connected chainsetup. Commands that 
+It's not possible to use all interactive mode commands to modify and 
+control objects that belong to a connected chainsetup. Commands that 
 do NOT support this are: 
 
 quote(
@@ -257,8 +257,8 @@ Note that session level options (such as setting debug level)
 can not be used with 'cs-option' (i.e. only options that modify
 chainsetups).
 
-Note! EIAM implicitly interprets all strings beginning 
-with a '-' as "cs-option string".
+Note! Ecasound interactive mode implicitly interprets all strings 
+beginning with a '-' as "cs-option string".
 enddit()
 
 manpagesection(CHAINS)
@@ -584,7 +584,7 @@ are primarily meant for use in scripting and frontends.
 
 startdit()
 dit(int-cmd-list)
-Returns a list of all registered EIAM commands. em([S])
+Returns a list of all registered interactive mode commands. em([S])
 
 dit(int-log-history)
 Returns recent log messages sent by libecasound modules. This
@@ -604,16 +604,16 @@ Sets the log history length. Defaults to 0 items.
 This command was introduced in ecasound 2.4.0. em([-])
 
 dit(int-cmd-version-string)
-Returns EIAM parser version string. em([s])
+Returns ecasound interactive mode parser version string. em([s])
 
 dit(int-cmd-version-lib-current)
-Returns EIAM library interface version (libtool). em([i])
+Returns ecasound interactive mode library interface version (libtool). em([i])
 
 dit(int-cmd-version-lib-revision)
-Returns EIAM library interface revision (libtool). em([i])
+Returns ecasound interactive mode library interface revision (libtool). em([i])
 
 dit(int-cmd-version-lib-age)
-Returns EIAM library interface age (libtool). em([i])
+Returns ecasound interactive mode library interface age (libtool). em([i])
 
 enddit()
 
