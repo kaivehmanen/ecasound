@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-timidity.cpp: Interface class for Timidity++ input.
-// Copyright (C) 2000,2002,2004-2006,2008 Kai Vehmanen
+// Copyright (C) 2000,2002,2004-2006,2008,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,8 +31,9 @@ string TIMIDITY_INTERFACE::default_timidity_cmd = "timidity -Or1S -id -s %s -o -
 void TIMIDITY_INTERFACE::set_timidity_cmd(const std::string& value) { TIMIDITY_INTERFACE::default_timidity_cmd = value; }
 
 TIMIDITY_INTERFACE::TIMIDITY_INTERFACE(const std::string& name)
+  : triggered_rep(false),
+    finished_rep(false)
 {
-  finished_rep = false;
 }
 
 TIMIDITY_INTERFACE::~TIMIDITY_INTERFACE(void)
@@ -65,6 +66,7 @@ void TIMIDITY_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   set_channels(2);
 
   triggered_rep = false;
+  finished_rep = false;
 
   AUDIO_IO::open();
 }

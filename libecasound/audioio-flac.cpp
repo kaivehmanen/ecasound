@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-flac.cpp: Interface to FLAC decoders and encoders using UNIX 
 //                   pipe i/o.
-// Copyright (C) 2004-2006,2008 Kai Vehmanen
+// Copyright (C) 2004-2006,2008,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,9 +43,10 @@ void FLAC_FORKED_INTERFACE::set_input_cmd(const std::string& value) { FLAC_FORKE
 void FLAC_FORKED_INTERFACE::set_output_cmd(const std::string& value) { FLAC_FORKED_INTERFACE::default_output_cmd = value; }
 
 FLAC_FORKED_INTERFACE::FLAC_FORKED_INTERFACE(const std::string& name)
+  : triggered_rep(false),
+    finished_rep(false)
 {
   set_label(name);
-  finished_rep = false;
 }
 
 FLAC_FORKED_INTERFACE::~FLAC_FORKED_INTERFACE(void)
@@ -59,7 +60,9 @@ FLAC_FORKED_INTERFACE::~FLAC_FORKED_INTERFACE(void)
 void FLAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
   std::string urlprefix;
+
   triggered_rep = false;
+  finished_rep = false;
 
   /**
    * FIXME: we have no idea about the audio format of the 

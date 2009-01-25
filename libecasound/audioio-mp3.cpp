@@ -323,10 +323,10 @@ static bool mpg123_detect_by_content(const char* filename, struct frame* frp)
  **************************************************************/
 
 MP3FILE::MP3FILE(const std::string& name)
+  :  finished_rep(false),
+     triggered_rep(false)
 {
   set_label(name);
-  finished_rep = false;
-  triggered_rep = false;
   filedes_rep = -1;
   filehandle_rep = 0;
   mono_input_rep = false;

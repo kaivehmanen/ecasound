@@ -44,9 +44,10 @@ void AAC_FORKED_INTERFACE::set_input_cmd(const std::string& value) { AAC_FORKED_
 void AAC_FORKED_INTERFACE::set_output_cmd(const std::string& value) { AAC_FORKED_INTERFACE::default_output_cmd = value; }
 
 AAC_FORKED_INTERFACE::AAC_FORKED_INTERFACE(const std::string& name)
+  : triggered_rep(false),
+    finished_rep(false)
 {
   set_label(name);
-  finished_rep = false;
 }
 
 AAC_FORKED_INTERFACE::~AAC_FORKED_INTERFACE(void)
@@ -60,6 +61,8 @@ AAC_FORKED_INTERFACE::~AAC_FORKED_INTERFACE(void)
 void AAC_FORKED_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
   std::string urlprefix;
+
+  finished_rep = false;
   triggered_rep = false;
 
   /**

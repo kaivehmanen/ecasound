@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-ogg.cpp: Interface for ogg vorbis decoders and encoders.
-// Copyright (C) 2000-2002,2004-2006,2008 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2006,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -40,9 +40,10 @@ void OGG_VORBIS_INTERFACE::set_input_cmd(const std::string& value) { OGG_VORBIS_
 void OGG_VORBIS_INTERFACE::set_output_cmd(const std::string& value) { OGG_VORBIS_INTERFACE::default_output_cmd = value; }
 
 OGG_VORBIS_INTERFACE::OGG_VORBIS_INTERFACE(const std::string& name)
+  : triggered_rep(false),
+    finished_rep(false)
 {
   set_label(name);
-  finished_rep = false;
   bitrate_rep = OGG_VORBIS_INTERFACE::default_output_default_bitrate;
 }
 
@@ -57,7 +58,9 @@ OGG_VORBIS_INTERFACE::~OGG_VORBIS_INTERFACE(void)
 void OGG_VORBIS_INTERFACE::open(void) throw (AUDIO_IO::SETUP_ERROR &)
 {
   std::string urlprefix;
+
   triggered_rep = false;
+  finished_rep = false;
 
   if (io_mode() == io_read) {
     struct stat buf;
