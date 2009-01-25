@@ -2,7 +2,7 @@
 // audioio-tone.cpp: Tone generator
 //
 // Adaptation to Ecasound:
-// Copyright (C) 2007,2008 Kai Vehmanen (adaptation to Ecasound)
+// Copyright (C) 2007-2009 Kai Vehmanen (adaptation to Ecasound)
 //
 // Sources for sine generation (cmt-src-1.15/src/sine.cpp):
 //
@@ -162,8 +162,12 @@ void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
       (position_in_samples() + buffersize()) 
       >= ECA_AUDIO_POSITION::length_in_samples()) {
     /* over requested duration, adjust buffersize */
-    sbuf->length_in_samples(ECA_AUDIO_POSITION::length_in_samples() 
-			    - position_in_samples());
+    SAMPLE_BUFFER::buf_size_t partialbuflen = 
+      ECA_AUDIO_POSITION::length_in_samples() 
+      - position_in_samples();
+    if (partialbuflen < 0)
+      partialbuflen = 0;
+    sbuf->length_in_samples(partialbuflen);
     finished_rep = true;
   }
   else
