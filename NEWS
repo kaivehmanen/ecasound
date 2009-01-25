@@ -26,15 +26,14 @@ Howto for reading the entries:
 -----------------------------------------------------------------------
 
 xx0y2008 (v2.6.0) -** stable release **-
-	- more verbose description of change available at:
+	- key changes are described in more detail at:
                  http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
-	- edi-entries: edi-35 partially implemented
 	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
 		 replaces old interfaces 'jack_auto', 'jack_generic' 
 		 and 'jack_alsa'; see ecasound(1) for more details
 	- added: eiam - new commands 'jack-connect', 'jack-disconnect'
 	 	 and 'jack-list-connections'; see ecasound-iam(1) for
-		 details
+		 details; closes sffeat:2134183
 	- added: 'jack_multi', see ecasound(1); closes sffeat:1415822
 	- changed: deprecated 'jack_auto', 'jack_generic' and
 	           'jack_alsa'
@@ -49,7 +48,8 @@ xx0y2008 (v2.6.0) -** stable release **-
 	  	   output
 	- changed: compile libecasoundc as PIC code to make it possible
 		   to use it from shared libraries; fixes problems 
-		   with e.g. Audio::Ecasound on amd64 architecture
+		   with e.g. Audio::Ecasound on amd64 architecture ;
+		   closes sfbug:2505551
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually
@@ -62,6 +62,10 @@ xx0y2008 (v2.6.0) -** stable release **-
 		 during operation
 	- fixed: ECI - loop devices saved with incorrect syntax, affects
 		 cs-save, cs-save-as and cs-edit
+	- fixed: problems when seeking back to start with setups using
+		 loop devices; closes sfbug:2527049
+	- fixed: segfault if using a tone generator input with a fixed
+		 lenght, and a seek past the end of stream was performed
 24082008 (v2.5.2) -** stable release **-
 	- more verbose description of change available at:
                  http://eca.cx/relnotes/ecasound_v2_5_2_relnotes.txt
