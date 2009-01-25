@@ -73,8 +73,9 @@ bool LOOP_DEVICE::finished(void) const
 SAMPLE_SPECS::sample_pos_t LOOP_DEVICE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   writes_rep = 0;
-  filled_rep = 0;
   empty_rounds_rep = 0;
+  filled_rep = false;
+  finished_rep = false;
   return pos;
 } 
 
@@ -84,8 +85,10 @@ void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer)
   if (empty_rounds_rep == 0) {
     if (filled_rep == true) {
       buffer->copy(sbuf);
-      DBC_CHECK(writes_rep == registered_outputs_rep);
-      writes_rep = 0;
+      /* note: read_buffer() should never be called in the middle
+       *       of the 'X * write_buffer()' sequence (where X is the number
+       *       of chain outputs connected to this loop device */
+      DBC_CHECK(writes_rep == 0);
     }
     else {
       buffer->make_silent();
@@ -103,7 +106,7 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
 {
   ++writes_rep;
 
-  /* first write after an read (or reset) */
+  /* first write of a new engine iteration (and after a read) */
   if (writes_rep == 1) {
     change_position_in_samples(buffer->length_in_samples());
     extend_position();
@@ -111,16 +114,15 @@ void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)
     sbuf.make_silent();
   }
 
+  /* check if this is the last write for this engine iteration */
+  if (writes_rep == registered_outputs_rep)
+    writes_rep = 0;
+
   /* store data from 'buffer' */
   if (buffer->is_empty() != true) {
     empty_rounds_rep = 0;
     sbuf.add_with_weight(*buffer, registered_outputs_rep);
     filled_rep = true;
-
-    if (writes_rep > registered_outputs_rep) {
-      ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "WARNING: Multiple writes without reads!");
-    }
   }
   /* empty 'buffer' */
   else {
@@ -135,7 +137,7 @@ void LOOP_DEVICE::set_parameter(int param,
 {
   switch (param) {
   case 1: 
-    set_label(value);
+    AUDIO_IO::set_parameter(param, value);
     break;
 
   case 2: 
@@ -148,7 +150,7 @@ string LOOP_DEVICE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return label();
+    return AUDIO_IO::get_parameter(param);
 
   case 2: 
     return tag_rep;
