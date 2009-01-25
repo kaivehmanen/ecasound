@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2005,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -889,11 +889,14 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
 /**
  * Sets the length of buffer in samples.
  *
- * Note! If length is increased, the added samples
+ * Note: if length is increased, the added samples
  *       are muted.
  */
 void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
 {
+  DBC_REQUIRE(len >= 0);
+  DBC_CHECK(buffersize_rep <= reserved_samples_rep);
+
   if (len > reserved_samples_rep) {
 
     DBC_CHECK(impl_repp->rt_lock_rep != true);
@@ -901,8 +904,11 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
 
     reserved_samples_rep = len * 2;
     for(size_t n = 0; n < buffer.size(); n++) {
-      delete[] buffer[n];
+      sample_t *prev_buffer = buffer[n];
       buffer[n] = new sample_t [reserved_samples_rep];
+      for (buf_size_t m = 0; m < buffersize_rep; m++)
+	buffer[n][m] = prev_buffer[m];
+      delete[] prev_buffer;
     }
 
     if (impl_repp->old_buffer_repp != 0) {
@@ -913,7 +919,8 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
 
   if (len > buffersize_rep) {
     for(size_t n = 0; n < buffer.size(); n++) {
-      for(buf_size_t m = buffersize_rep; m < len; m++) {
+      /* note: mute starting from 'buffersize_rep' */
+      for(buf_size_t m = buffersize_rep; m < reserved_samples_rep; m++) {
 	buffer[n][m] = SAMPLE_SPECS::silent_value;
       }
     }
