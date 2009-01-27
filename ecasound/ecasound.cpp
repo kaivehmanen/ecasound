@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecasound.cpp: Console mode user interface to ecasound.
-// Copyright (C) 2002-2008 Kai Vehmanen
+// Copyright (C) 2002-2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -79,7 +79,7 @@ static struct ecasound_state ecasound_state_global =
     0,        /* ECA_SESSION */
     0,        /* launchcmds, std::vector<std::string> */
     0,        /* pthread_t - daemon_thread */
-    0,        /* pthread_mutex_t - lock */
+    0,        /* pthread_mutex_t - lock protecting 'control' object */
     0,        /* sig_wait_t - exit_request */
     0,        /* sigset_t */
     ECASOUND_RETVAL_SUCCESS, /* int - return value */
@@ -167,9 +167,7 @@ int main(int argc, char *argv[])
 
   if (state->daemon_mode == true) {
     /* wait until daemon thread has exited */
-    if (state->interactive_mode == true) {
-      state->exit_request = 1;
-    }
+    state->exit_request = 1;
     pthread_join(*state->daemon_thread, NULL);
   }
 
@@ -299,6 +297,31 @@ static int ecasound_pass_at_launch_commands(struct ecasound_state* state)
   return 0;
 }
 
+static void ecasound_check_for_quit(struct ecasound_state* state, const string& cmd)
+{
+  if (cmd == "quit" || cmd == "q") {
+    state->console->print("---\necasound: Exiting...");
+    state->exit_request = 1;
+    ECA_LOGGER::instance().flush();
+  }
+}
+
+static void ecasound_lock_ctrl_if_needed(struct ecasound_state* state)
+{
+  if (state->daemon_mode == true) {
+    int res = pthread_mutex_lock(state->lock);
+    DBC_CHECK(res == 0);
+  }
+}
+
+static void ecasound_unlock_ctrl_if_needed(struct ecasound_state* state)
+{
+  if (state->daemon_mode == true) {
+    int res = pthread_mutex_unlock(state->lock);
+    DBC_CHECK(res == 0);
+  }
+}
+
 /**
  * The main processing loop.
  */
@@ -311,63 +334,85 @@ void ecasound_main_loop(struct ecasound_state* state)
 
   if (state->interactive_mode == true) {
 
+    /* case 1: interactive mode */
+
     while(state->exit_request == 0) {
       state->console->read_command("ecasound ('h' for help)> ");
       const string& cmd = state->console->last_command();
       if (cmd.size() > 0 && state->exit_request == 0) {
 
-	if (state->daemon_mode == true) {
-	  int res = pthread_mutex_lock(state->lock);
-	  DBC_CHECK(res == 0);
-	}
-
+	ecasound_lock_ctrl_if_needed(state);
 	ctrl->command(cmd);
 	ctrl->print_last_value();
+	ecasound_unlock_ctrl_if_needed(state);
 
-	if (state->daemon_mode == true) {
-	  int res = pthread_mutex_unlock(state->lock);
-	  DBC_CHECK(res == 0);
-	}
-
-	if (cmd == "quit" || cmd == "q") {
-	  state->console->print("---\necasound: Exiting...");
-	  state->exit_request = 1;
-	  ECA_LOGGER::instance().flush();
-	}
+	ecasound_check_for_quit(state, cmd);
       }
     }
   }
   else {
-    /* non-interactive mode */
 
-    if (state->daemon_mode == true) {
-      int res = pthread_mutex_lock(state->lock);
-      DBC_CHECK(res == 0);
-    }
+    /* case 2: non-interactive mode */
 
+    /* FIXME: to be split into separate functions */
+
+    ecasound_lock_ctrl_if_needed(state);
     if (ctrl->is_selected() == true && 
 	ctrl->is_valid() == true) {
       ctrl->connect_chainsetup();
     }
+    ecasound_unlock_ctrl_if_needed(state);
 
+    if (state->daemon_mode != true) {
 
-    if (ctrl->is_connected() == true) {
-      if (!state->exit_request) {
-	int res = ctrl->run(!state->keep_running_mode);
-	if (res < 0) {
-	  state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
-	  cerr << "ecasound: Warning! Errors detected during processing." << endl;
+      /* case: 2.1: non-interactive, daemon inactive */
+
+      if (ctrl->is_connected() == true) {
+	if (!state->exit_request) {
+	  int res = ctrl->run(!state->keep_running_mode);
+	  if (res < 0) {
+	    state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
+	    cerr << "ecasound: Warning! Errors detected during processing." << endl;
+	  }
 	}
+      }
+      else {
+	ctrl->print_last_value();
+	state->retval = ECASOUND_RETVAL_START_ERROR;
       }
     }
     else {
-      ctrl->print_last_value();
-      state->retval = ECASOUND_RETVAL_START_ERROR;
-    }
 
-    if (state->daemon_mode == true) {
-      int res = pthread_mutex_unlock(state->lock);
-      DBC_CHECK(res == 0);
+      /* case: 2.2: non-interactive, daemon active */
+
+      int res = -1;
+
+      ecasound_lock_ctrl_if_needed(state);
+      if (ctrl->is_connected() == true) {
+	res = ctrl->start();
+      }
+      ecasound_unlock_ctrl_if_needed(state);
+
+      /* note: if keep_running_mode is enabled, we do not 
+       *       exit even if there are errors during startup */
+      if (state->keep_running_mode != true &&
+	  res < 0) {
+	state->retval = ECASOUND_RETVAL_START_ERROR;
+	state->exit_request = 1;
+      }
+
+      while(state->exit_request == 0) {
+	
+	if (state->keep_running_mode != true &&
+	    ctrl->is_finished() == true)
+	  break;
+	
+	/* note: sleep for one second and let the daemon thread
+	 *       access the ECA_CONTROL object for a while */
+	kvu_sleep(1, 0);
+      }
+
+      ecasound_check_for_quit(state, "quit");
     }
   }
   // cerr << endl << "ecasound: mainloop exiting..." << endl;
@@ -472,7 +517,7 @@ void ecasound_print_usage(void)
 void ecasound_print_version_banner(void)
 {
   cout << "ecasound v" << ecasound_library_version << endl;
-  cout << "Copyright (C) 1997-2008 Kai Vehmanen and others." << endl;
+  cout << "Copyright (C) 1997-2009 Kai Vehmanen and others." << endl;
   cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
   cout << "General Public License. For more information about these matters, see" << endl; 
