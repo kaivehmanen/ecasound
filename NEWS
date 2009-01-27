@@ -1,8 +1,8 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 280908) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 270109) **
 -----------------------------------------------------------------------
 
-About the version numbers... "vX.Y[.Z[.R]][-extraT]" :
+About the version numbers... "vX.Y[.Z[.R]][+extraT]" :
 
   X = major version  - incremented after major redesigns
   Y = minor version  - incremented when new features are added
@@ -25,15 +25,15 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
-xx0y2008 (v2.6.0) -** stable release **-
-	- key changes are described in more detail at:
-                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
+xx0y2009 (v2.6.0) -** stable release **-
+	- note: key changes are described in more detail at:
+                http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
 	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
 		 replaces old interfaces 'jack_auto', 'jack_generic' 
 		 and 'jack_alsa'; see ecasound(1) for more details
-	- added: eiam - new commands 'jack-connect', 'jack-disconnect'
-	 	 and 'jack-list-connections'; see ecasound-iam(1) for
-		 details; closes sffeat:2134183
+	- added: interactive mode - new commands 'jack-connect', 
+		 'jack-disconnect' and 'jack-list-connections'; see 
+		 ecasound-iam(1) for details; closes sffeat:2134183
 	- added: 'jack_multi', see ecasound(1); closes sffeat:1415822
 	- changed: deprecated 'jack_auto', 'jack_generic' and
 	           'jack_alsa'
@@ -54,18 +54,29 @@ xx0y2008 (v2.6.0) -** stable release **-
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually
 		 high CPU load)
-	- fixed: dump-cop-value did not work as documented
+	- fixed: 'dump-cop-value' did not work as documented
 	- fixed: ECI - signal an error (e.g. eci_error() returns true)
 		 if connection is lost to engine process (sync lost
 	 	 or an other error)
 	- fixed: ecasignalview - exit if engine reports an error
 		 during operation
-	- fixed: ECI - loop devices saved with incorrect syntax, affects
-		 cs-save, cs-save-as and cs-edit
+	- fixed: interactive mode - loop devices saved with incorrect 
+		 syntax, affects cs-save, cs-save-as and cs-edit ; see
+	 	 http://eca.cx/ecasound-list/2009/01/0058.html
 	- fixed: problems when seeking back to start with setups using
 		 loop devices; closes sfbug:2527049
 	- fixed: segfault if using a tone generator input with a fixed
 		 lenght, and a seek past the end of stream was performed
+        - fixed: aac/ogg/mikmod/mid inputs - once object reached state 
+		 'finished' (all samples played), it cannot be played 
+		 again by reconnectin the chainsetup
+	- fixed: combination of '--daemon' and '-C' (disable interactive
+		 mode) had a bug that prevented processing of commands
+		 received over the daemon socket while the engine 
+		 was running the batchmode
+	- fixed: a nasty bug in 'playat' implementation causing audible
+		 artifacts ; see 
+		 http://eca.cx/ecasound-list/2009/01/0089.html
 24082008 (v2.5.2) -** stable release **-
 	- more verbose description of change available at:
                  http://eca.cx/relnotes/ecasound_v2_5_2_relnotes.txt

@@ -19,9 +19,9 @@ Active development areas
 -----------------------------------------------------------------------
 
 - improvements to JACK usage; some candidate features to implement:
-    - jack_multi object 
+    - jack_multi object, sffeat:1415822
     - interactive mode commands like jack-connect, jack-disconnect, 
-      see 'edi-35'
+      see sffeat:2134183
 - tools for robustness
     - components that help in testing like an internal test
       tone generator
@@ -32,7 +32,7 @@ Active development areas
 not roadmapped, but if time permits
 
 - improve support for use-scenarios involving audio file sequencing 
-    - improvements to the .ewf file format
+    - first set of improvements in 2.5.0
 - integration with other audio apps
     - LADSPA: RDF plugin metadata
     - LV2 plugin support
