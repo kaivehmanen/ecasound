@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (28.09.2008)
+       (27.01.2009)
        ()
        (Multimedia software)
 
@@ -532,7 +532,7 @@ bf(MIDI SETUP)
 startdit()
 dit(MIDI I/O devices - general)
 If no MIDI-device is specified, the default MIDI-device is 
-used (see ecasoundrc ).
+used (see ecasoundrc(5)).
 
 dit(-Md:rawmidi,device_name)
 Add a rawmidi MIDI I/O device to the setup. 'device_name' can be anything 
@@ -547,11 +547,20 @@ a port to connect to. It can be numerical (e.g. 128:1), or a client
 name (e.g. "KMidimon").
 
 dit(-Mms:device_id)
-Sends MMC start and stop to MIDI device-id 'device_id'.
+Sends MMC start ("Deferred Play") and stop ("Stop") with 
+device ID 'device_id'. Messages can be broadcast to all devices
+by using device ID of '127'.
+
+While Ecasound does not directly support syncing transport state 
+to incoming MMC messages, this can be achieved by connecting Ecasound
+to JACK input/outputs, and using a tool such as JackMMC and JackCtlMMC (
+see <http://jackctlmmc.sourceforge.net/>) to convert MMC messages
+into JACK transport change events.
 
 dit(-Mss)
-Sends MIDI-sync to the selected MIDI-device. Note! Ecasound will not
-send em(MIDI-clock), but only em(start) and em(stop) messages.
+Sends MIDI-sync (i.e. "MIDI Start" and "MIDI Stop" system realtime 
+messages) .to the selected MIDI-device. Notice that as Ecasound will 
+not send em(MIDI-clock), but only the em(start) and em(stop) messages.
 
 enddit()
 
