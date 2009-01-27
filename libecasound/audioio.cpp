@@ -51,7 +51,8 @@ AUDIO_IO::SETUP_ERROR::SETUP_ERROR(AUDIO_IO::SETUP_ERROR::Error_type type,
 
 AUDIO_IO::~AUDIO_IO(void)
 {
-  DBC_CHECK(is_open() != true);
+  if (is_open() == true)
+    close();
 }
 
 AUDIO_IO::AUDIO_IO(const string& name, 
