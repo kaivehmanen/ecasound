@@ -35,6 +35,10 @@ xx0y2009 (v2.6.0) -** stable release **-
 		 'jack-disconnect' and 'jack-list-connections'; see 
 		 ecasound-iam(1) for details; closes sffeat:2134183
 	- added: 'jack_multi', see ecasound(1); closes sffeat:1415822
+	- added: ecasound options '--server', '--server-tcp-port' and
+		  '--no-server'; these replace the misleading old
+		  options '--daemon', '--nodaemon' and '--daemon-port', 
+		  which are now deprecated
 	- changed: deprecated 'jack_auto', 'jack_generic' and
 	           'jack_alsa'
 	- changed: numbering of JACK ports created with 'jack' and

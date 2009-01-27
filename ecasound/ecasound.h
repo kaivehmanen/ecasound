@@ -39,13 +39,13 @@ struct ecasound_state {
   ECA_NETECI_SERVER* eciserver;
   ECA_SESSION* session;
   std::vector<std::string>* launchcmds;
-  pthread_t* daemon_thread;
+  pthread_t* neteci_thread;
   pthread_mutex_t* lock;
   sig_atomic_t exit_request;
   sigset_t* signalset;
   int retval;
-  int daemon_port;
-  bool daemon_mode;
+  int neteci_tcp_port;
+  bool neteci_mode;
   bool keep_running_mode;
   bool cerr_output_only_mode;
   bool interactive_mode;

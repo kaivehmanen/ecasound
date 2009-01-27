@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-neteci-server.c: NetECI server implementation.
-// Copyright (C) 2002,2004 Kai Vehmanen
+// Copyright (C) 2002,2004,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -110,7 +110,7 @@ void ECA_NETECI_SERVER::run(void)
   else {
     ECA_LOG_MSG(ECA_LOGGER::info, 
 		"Unable to start NetECI server. Please check that no other program is using the TCP port "
-		+ kvu_numtostr(state_repp->daemon_port)
+		+ kvu_numtostr(state_repp->neteci_tcp_port)
 		+ ".");
   }
   close_server_socket();
@@ -143,7 +143,7 @@ void ECA_NETECI_SERVER::create_server_socket(void)
     srvfd_rep = socket(PF_INET, SOCK_STREAM, 0);
     if (srvfd_rep >= 0) {
       addr_in_rep.sin_family = AF_INET;
-      addr_in_rep.sin_port = htons(state_repp->daemon_port);
+      addr_in_rep.sin_port = htons(state_repp->neteci_tcp_port);
       addr_in_rep.sin_addr.s_addr = INADDR_ANY;
       
       addr_repp = reinterpret_cast<struct sockaddr*>(&addr_in_rep);

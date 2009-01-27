@@ -55,7 +55,7 @@
  */
 
 static void ecasound_create_eca_objects(struct ecasound_state* state, COMMAND_LINE& cline);
-static void ecasound_launch_daemon(struct ecasound_state* state);
+static void ecasound_launch_neteci(struct ecasound_state* state);
 static int ecasound_pass_at_launch_commands(struct ecasound_state* state);
 static void ecasound_main_loop(struct ecasound_state* state);
 void ecasound_parse_command_line(struct ecasound_state* state, 
@@ -78,13 +78,13 @@ static struct ecasound_state ecasound_state_global =
     0,        /* ECA_NETECI_SERVER */
     0,        /* ECA_SESSION */
     0,        /* launchcmds, std::vector<std::string> */
-    0,        /* pthread_t - daemon_thread */
+    0,        /* pthread_t - NetECI_thread */
     0,        /* pthread_mutex_t - lock protecting 'control' object */
     0,        /* sig_wait_t - exit_request */
     0,        /* sigset_t */
     ECASOUND_RETVAL_SUCCESS, /* int - return value */
-    2868,     /* int - default daemon mode TCP-port */
-    false,    /* daemon mode */
+    2868,     /* int - default NetECI mode TCP-port */
+    false,    /* NetECI (TCP control) mode */
     false,    /* keep_running mode */
     false,    /* cerr-output-only mode */
     false,    /* interactive mode */
@@ -149,10 +149,10 @@ int main(int argc, char *argv[])
     ecasound_create_eca_objects(state, *clineout);
     delete clineout; clineout = 0;
 
-    /* 7. start ecasound daemon */
+    /* 7. enable control over socket connection  */
     if (state->retval == ECASOUND_RETVAL_SUCCESS) {
-      if (state->daemon_mode == true) {
-	ecasound_launch_daemon(state);
+      if (state->neteci_mode == true) {
+	ecasound_launch_neteci(state);
       }
     }
 
@@ -165,10 +165,10 @@ int main(int argc, char *argv[])
     }
   }
 
-  if (state->daemon_mode == true) {
-    /* wait until daemon thread has exited */
+  if (state->neteci_mode == true) {
+    /* wait until the NetECI thread has exited */
     state->exit_request = 1;
-    pthread_join(*state->daemon_thread, NULL);
+    pthread_join(*state->neteci_thread, NULL);
   }
 
   /* note: if we exist due to a signal, we never reach 
@@ -221,7 +221,7 @@ void ecasound_exit_cleanup(void)
     if (state->launchcmds != 0) { delete state->launchcmds; state->launchcmds = 0; }
     if (state->eciserver != 0) { delete state->eciserver; state->eciserver = 0; }
     if (state->console != 0) { delete state->console; state->console = 0; }
-    if (state->daemon_thread != 0) { delete state->daemon_thread; state->daemon_thread = 0; }
+    if (state->neteci_thread != 0) { delete state->neteci_thread; state->neteci_thread = 0; }
     if (state->lock != 0) { delete state->lock; state->lock = 0; }
     if (state->signalset != 0) { delete state->signalset; state->signalset = 0; }
   }
@@ -252,29 +252,29 @@ void ecasound_create_eca_objects(struct ecasound_state* state,
 }
 
 /**
- * Launches a background daemon that allows NetECI 
+ * Launches a background thread that allows NetECI 
  * clients to connect to the current ecasound
  * session.
  */
-void ecasound_launch_daemon(struct ecasound_state* state)
+void ecasound_launch_neteci(struct ecasound_state* state)
 {
   DBC_REQUIRE(state != 0);
   // DBC_REQUIRE(state->console != 0);
 
   // state->console->print("ecasound: starting the NetECI server.");
 
-  state->daemon_thread = new pthread_t;
+  state->neteci_thread = new pthread_t;
   state->lock = new pthread_mutex_t;
   pthread_mutex_init(state->lock, NULL);
   state->eciserver = new ECA_NETECI_SERVER(state);
 
-  int res = pthread_create(state->daemon_thread, 
+  int res = pthread_create(state->neteci_thread, 
 			   NULL,
 			   ECA_NETECI_SERVER::launch_server_thread, 
 			   reinterpret_cast<void*>(state->eciserver));
   if (res != 0) {
-    cerr << "ecasound: Warning! Unable to create daemon thread." << endl;
-    delete state->daemon_thread;  state->daemon_thread = 0;
+    cerr << "ecasound: Warning! Unable to create a thread for control over socket connection (NetECI)." << endl;
+    delete state->neteci_thread;  state->neteci_thread = 0;
     delete state->lock;  state->lock = 0;
     delete state->eciserver; state->eciserver = 0;
   }
@@ -308,7 +308,7 @@ static void ecasound_check_for_quit(struct ecasound_state* state, const string& 
 
 static void ecasound_lock_ctrl_if_needed(struct ecasound_state* state)
 {
-  if (state->daemon_mode == true) {
+  if (state->neteci_mode == true) {
     int res = pthread_mutex_lock(state->lock);
     DBC_CHECK(res == 0);
   }
@@ -316,7 +316,7 @@ static void ecasound_lock_ctrl_if_needed(struct ecasound_state* state)
 
 static void ecasound_unlock_ctrl_if_needed(struct ecasound_state* state)
 {
-  if (state->daemon_mode == true) {
+  if (state->neteci_mode == true) {
     int res = pthread_mutex_unlock(state->lock);
     DBC_CHECK(res == 0);
   }
@@ -363,9 +363,9 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
     ecasound_unlock_ctrl_if_needed(state);
 
-    if (state->daemon_mode != true) {
+    if (state->neteci_mode != true) {
 
-      /* case: 2.1: non-interactive, daemon inactive */
+      /* case: 2.1: non-interactive, NetECI not in use */
 
       if (ctrl->is_connected() == true) {
 	if (!state->exit_request) {
@@ -383,7 +383,7 @@ void ecasound_main_loop(struct ecasound_state* state)
     }
     else {
 
-      /* case: 2.2: non-interactive, daemon active */
+      /* case: 2.2: non-interactive, NetECI active */
 
       int res = -1;
 
@@ -407,7 +407,7 @@ void ecasound_main_loop(struct ecasound_state* state)
 	    ctrl->is_finished() == true)
 	  break;
 	
-	/* note: sleep for one second and let the daemon thread
+	/* note: sleep for one second and let the NetECI thread
 	 *       access the ECA_CONTROL object for a while */
 	kvu_sleep(1, 0);
       }
@@ -454,8 +454,10 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 	state->cerr_output_only_mode = true;
       }
       
-      else if (cline.current() == "--daemon") {
-	state->daemon_mode = true;
+      else if (cline.current() == "--server" ||
+	       cline.current() == "--daemon") {
+	/* note: --daemon* deprecated as of 2.6.0 */
+	state->neteci_mode = true;
       }
 
       else if (cline.current().find("-E") != string::npos) {
@@ -467,18 +469,21 @@ void ecasound_parse_command_line(struct ecasound_state* state,
 	}
       }
 
-      else if (cline.current().find("--daemon-port") != string::npos) {
+      else if (cline.current().find("--server-tcp-port") != string::npos ||
+	       cline.current().find("--daemon-port") != string::npos) {
 	std::vector<std::string> argpair = 
 	  kvu_string_to_vector(cline.current(), '=');
 	if (argpair.size() > 1) {
-	  /* --daemon-port=XXXX */
-	  state->daemon_port = atoi(argpair[1].c_str());
+	  /* --server-tcp-port=XXXX */
+	  /* note: --daemon* deprecated as of 2.6.0 */
+	  state->neteci_tcp_port = atoi(argpair[1].c_str());
 	}
       }
 
-
-      else if (cline.current() == "--nodaemon") {
-	state->daemon_mode = false;
+      else if (cline.current() == "--no-server" ||
+	       cline.current() == "--nodaemon") {
+	/* note: --daemon deprecated as of 2.6.0 */
+	state->neteci_mode = false;
       }
 
       else if (cline.current() == "-h" ||

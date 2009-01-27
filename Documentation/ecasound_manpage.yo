@@ -28,6 +28,8 @@ manpageoptions()
 Note! All options except those mentioned in em(ecasound options) and 
       em(Global options), can be used in ecasound chainsetup files (.ecs).
 
+startdit()
+
 COMMENT(----------------------------------------------------------------)
 bf(ECASOUND OPTIONS)
 
@@ -76,24 +78,32 @@ not support the '-E' option, and also that the launch
 commands are not saved as part of chainsetup or session
 state.
 
-dit(--daemon)
-Enable ecasound's daemon mode. If this option is given,
-ecasound will allow clients to connect to the running 
-ecasound session using a TCP/IP network connection.
-The clients can both observe and control the session. 
+dit(--server)
+Enables the so called NetECI mode, in which ecasound can
+be controlled remotely over a socket connection. When
+activated, clients can connect to the running ecasound 
+session, and use interactive mode commands to control and
+observe ecasound processing.
 
-em(Warning!) As there is no access control implemented,
-be sure to block ecasound's port in your firewall 
-if the machine running ecasound is connected to 
-a public network! Otherwise anyone can connect to 
-your ecasound sessions.
+One example client using this feature is ecamonitor(1). This
+utility is included in the Ecasound distribution package (requires
+a working Python environment).
 
-dit(--daemon-port)
+em(Warning!) If the machine running ecasound, is connected to 
+a public network, be sure to block ecasound's port in your 
+firewall! As there is no access control implemented for incoming
+connections, anyone can otherwise connect, control and observe your 
+ecasound sessions.
+This option replaces '--daemon' (deprecated in 2.6.0).
+
+dit(--server-tcp-port=NNN)
 Set the TCP port used by the daemon mode. By default
 ecasound will use port number em(2868).
+This option replaces '--daemon-port' (deprecated in 2.6.0).
 
-dit(--nodaemon)
+dit(--no-server)
 Disable ecasound's daemon mode. This is the default.
+This option replaces '--nodaemon' (deprecated in 2.6.0).
 
 dit(--keep-running,-K)
 Do not exit when processing is finished/stopped. Only affects
@@ -105,6 +115,8 @@ Show this help.
 
 dit(--version)
 Print version info.
+
+enddit()
 
 COMMENT(----------------------------------------------------------------)
 bf(GLOBAL OPTIONS)
@@ -969,6 +981,8 @@ COMMENT(----------------------------------------------------------------)
 bf(INTERACTIVE MODE)
 
 See em(ecasound-iam(1)) man page.
+
+enddit()
 
 manpagesection(ENVIRONMENT)
 
