@@ -285,32 +285,28 @@ void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x)
  * @pre start_pos <= end_pos
  * @pre to_pos < length_in_samples()
  */
-void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& x, 
-			       buf_size_t start_pos,
-			       buf_size_t end_pos,
-			       buf_size_t to_pos) 
+void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& src, 
+			       buf_size_t src_start_pos,
+			       buf_size_t src_end_pos,
+			       buf_size_t dst_to_pos) 
 {
   // ---
-  DBC_REQUIRE(start_pos <= end_pos);
-  DBC_REQUIRE(to_pos < length_in_samples());
+  DBC_REQUIRE(src_start_pos <= src_end_pos);
+  DBC_REQUIRE(dst_to_pos < length_in_samples());
   // ---
 
-  int min_c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
+  int min_c_count = (channel_count_rep <= src.channel_count_rep) ? channel_count_rep : src.channel_count_rep;
 
-  if (start_pos >= x.length_in_samples()) start_pos = x.length_in_samples();
-  if (end_pos >= x.length_in_samples()) end_pos = x.length_in_samples();
-
-  buf_size_t to_index = to_pos;
+  if (src_end_pos > src.length_in_samples())
+    src_end_pos = src.length_in_samples();
 
   for(channel_size_t q = 0; q < min_c_count; q++) {
-    for(buf_size_t s = start_pos; 
-	  s < end_pos && 
-	  s < x.length_in_samples() &&
-	  to_index < length_in_samples() &&
-	  to_index < x.length_in_samples();
-	s++) {
-      buffer[q][to_index] = x.buffer[q][s];
-      ++to_index;
+    buf_size_t dst_i = dst_to_pos;
+    for(buf_size_t src_i = src_start_pos; 
+	  src_i < src_end_pos && 
+	  dst_i < length_in_samples();
+	src_i++, dst_i++) {
+      buffer[q][dst_i] = src.buffer[q][src_i];
     }
   }
 }

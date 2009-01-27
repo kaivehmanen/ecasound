@@ -155,7 +155,7 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
   if (child_looping_rep != true)
     set_length_in_samples(child_offset_rep.samples() + child_length_rep.samples());
 
-  //dump_child_debug();
+  //dump_child_debug("open");
 
   tmp_buffer.number_of_channels(child()->channels());
   tmp_buffer.length_in_samples(child()->buffersize());
@@ -194,16 +194,18 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
    *       position_in_samples value
    */
 
-  //dump_child_debug();
+  //dump_child_debug("read_buffer");
 
   if (position_in_samples() + buffersize() <= child_offset_rep.samples()) {
     // ---
     // case 1: child not active yet
     // ---
-    sbuf->make_silent();
     /* ensure that channel count matches that of child */
     sbuf->number_of_channels(child()->channels());
+    sbuf->length_in_samples(buffersize());
+    sbuf->make_silent();
     change_position_in_samples(buffersize());
+    //dump_child_debug("case1-out");
   }
   else if (position_in_samples() < child_offset_rep.samples()) {
     // ---
@@ -226,23 +228,26 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
     if (segment > buffersize())
       segment = buffersize();
 
+    // dump_child_debug("case2-in");
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		"child-object '" + child()->label() + "' activated.");
 
     /* step: read segment of audio and copy it to the correct 
      *       location */
-    long int save_bsize = child()->buffersize();
+    long int save_bsize = buffersize();
     DBC_CHECK(save_bsize == buffersize());
     child()->set_buffersize(segment);
     child()->read_buffer(&tmp_buffer);
+    /* ensure that channel count matches that of child */
+    sbuf->number_of_channels(child()->channels());
+    sbuf->length_in_samples(buffersize());
     sbuf->copy_range(tmp_buffer, 
 		     0,
 		     tmp_buffer.length_in_samples(), 
 		     buffersize() - segment);
-    /* ensure that channel count matches that of child */
-    sbuf->number_of_channels(child()->channels());
     child()->set_buffersize(save_bsize);
     change_position_in_samples(buffersize());
+    //dump_child_debug("case2-out");
   }
   else {
     // ---
@@ -258,16 +263,20 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 	(child_length_rep.samples() + child_start_pos_rep.samples()) &&
 	child_looping_rep != true &&
 	child()->finite_length_stream() == true) {
-	// ---
-	// case 3a: not looping, reaching child file end during the next read
-	// ---
+      // ---
+      // case 3a: not looping, reaching child file end during the next read
+      // ---
+      
+      /* note: max samples to included (assuming child object does
+       *       not reach end-of-stream */
+      sample_pos_t samples_to_include =
+	(child_length_rep.samples() + child_start_pos_rep.samples()) 
+	- chipos1;
 
+      //dump_child_debug("case3a-in");
+      child()->set_buffersize(buffersize());
       child()->read_buffer(sbuf);
 
-      sample_pos_t over_child_eof = 
-	chipos2 - (child_length_rep.samples() + child_start_pos_rep.samples());
-      
-      DBC_CHECK(over_child_eof >= 0);
       DBC_CHECK((child()->finished() == true &&
 		 buffersize() > sbuf->length_in_samples()) ||
 		child()->finished() != true);
@@ -276,9 +285,13 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
        * and sbuf is shorter than buffersize() or otherwise we
        * need to drop some of the samples read so at to not
        * go beyond set length */
-      sample_pos_t data_left = buffersize() - over_child_eof;
-      sbuf->length_in_samples(data_left);
+      if (sbuf->length_in_samples() > 
+	  samples_to_include) {
+	sample_pos_t data_left = sbuf->length_in_samples() - samples_to_include;
+	sbuf->length_in_samples(data_left);
+      }
       change_position_in_samples(sbuf->length_in_samples());
+      //dump_child_debug("case3a-out");
     }
     else if (chipos2 < chipos1 &&
 	     child_looping_rep == true) {
@@ -286,6 +299,7 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       // case 3b: looping, we will run out of data during read
       // ---
 
+      child()->set_buffersize(buffersize());
       child()->read_buffer(sbuf);
       
       sample_pos_t over_child_eof = chipos2 - child_start_pos_rep.samples();
@@ -300,21 +314,22 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       child()->seek_position_in_samples(chistartpos);
 
       if (over_child_eof > 0) {
-	long int save_bsize = child()->buffersize();
+	long int save_bsize = buffersize();
 	DBC_CHECK(save_bsize == buffersize());
 	child()->set_buffersize(over_child_eof);
-	tmp_buffer.number_of_channels(channels());
 	child()->read_buffer(&tmp_buffer);
 	DBC_CHECK(tmp_buffer.length_in_samples() == over_child_eof);
-	child()->set_buffersize(save_bsize);
 	DBC_CHECK((buffersize() - over_child_eof) < buffersize());
 	sbuf->length_in_samples(buffersize());
+	sbuf->number_of_channels(channels());
 	sbuf->copy_range(tmp_buffer, 
 			 0,
 			 tmp_buffer.length_in_samples(), 
 			 buffersize() - over_child_eof);
+	child()->set_buffersize(save_bsize);
       }
       change_position_in_samples(buffersize());
+      //dump_child_debug("case3b-out");
     }
     else {
       // ---
@@ -328,7 +343,11 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
        *       samples will be read */
 
       change_position_in_samples(sbuf->length_in_samples());
+
+      //dump_child_debug("case3c-out");
     }
+
+    // dump_child_debug("case3-e");
   }
 
   /* note: as we are looping indefinitely, so our length must
@@ -337,12 +356,19 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       (child_length_set_by_client_rep != true &&
       child()->finite_length_stream() != true))
     extend_position();
+
+  DBC_ENSURE(sbuf->number_of_channels() == channels());
+  DBC_ENSURE(sbuf->length_in_samples() <= buffersize());
 }
 
-void AUDIO_SEQUENCER_BASE::dump_child_debug(void)
+void AUDIO_SEQUENCER_BASE::dump_child_debug(const char *tag)
 {
+  sample_pos_t chipos1 = 
+    priv_public_to_child_pos(position_in_samples());
+  cout << "TAG:" << tag << endl;
   cout << "global position (in samples): " << position_in_samples() << endl;
   cout << "child-pos: " << child()->position_in_samples() << endl;
+  cout << "child-derived-pos: " << chipos1 << endl;
   cout << "child-offset: " << child_offset_rep.samples() << endl;
   cout << "child-startpos: " << child_start_pos_rep.samples() << endl;
   cout << "child-length: " << child_length_rep.samples() << endl;

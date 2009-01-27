@@ -147,7 +147,7 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
 
 protected:
 
-  void dump_child_debug(void);    
+  void dump_child_debug(const char *tag);    
   void set_child_length_private(const ECA_AUDIO_TIME& v);
   SAMPLE_SPECS::sample_pos_t priv_public_to_child_pos(SAMPLE_SPECS::sample_pos_t pubpos) const;
 
