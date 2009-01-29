@@ -5,7 +5,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{05082008}
+\date{29012009}
 \begin{document}
 
 \maketitle
@@ -30,6 +30,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 29.01.2009 - Updated ``JACK Audio Server'' section to match 
+                   the changes in 2.6.0 release.
 \item 05.08.2008 - Fixed a bug in example of loop device usage.
 \item 09.03.2008 - Updated the EWF file section. Replace uses of ``/dev/dsp''
                    with ``alsa'' in many examples.
@@ -800,52 +802,76 @@ article on Oreillynet -
 \section{JACK Audio Server}
 \label{JACK Audio Server}
 
-JACK is a low-latency audio server, written primarily for the
-GNU/Linux operating system. It can connect a number of different
-applications to an audio device, as well as allowing them to share
-audio between themselves. Its clients can run in their own processes
-(ie. as normal applications), or they can run within the JACK
-server (ie. as a ``plugin'').
+JACK is system for handling real-time, low latency audio.
+It allows multiple independent applications to access the system
+audio hardware and also to route audio between applications.
 
 JACK is different from other audio server efforts in that it has been
 designed from the ground up to be suitable for professional audio
 work. This means that it focuses on two key areas: synchronous
 execution of all clients, and low latency operation. 
 
-If compiled with JACK support enabled (the ``--with-jack'' configure
-option), Ecasound can be used with JACK, both for input and output
-as well as transport control.
+Note that Ecasound must be compiled with JACK support enabled 
+(the ``--with-jack'' configure option) to take advantage of
+the functionality described in this section.
 
 \subsection{Basic Input and Output}
 
 Let's start with how to play a file using Ecasound and JACK:
 
 \begin{verbatim}
-ecasound -i foo.wav -o jack_alsa
+ecasound -i foo.wav -o jack,system
 \end{verbatim}
 
 This will create a separate JACK output port for each channel
-of foo.wav, and automatically connect these Ecasound ports to
-the ALSA PCM output ports in the JACK server. The connections
-are as follows:
+of ``foo.wav'', and automatically connect these Ecasound ports to
+the JACK system PCM output ports. 
+
+Note that ecasound does not allow to mix objects with different 
+sampling rates (without explicitly inserting ``samplerate'' 
+conversion objects). That means that if sampling rate of ``foo.wav''
+does not match the current JACK system rate, the above command
+wil fail.
+
+The connections creadted are as follows:
 
 \begin{verbatim}
-ecasound:out_1    -->       alsa_pcm:playback_1
-ecasound:out_2    -->       alsa_pcm:playback_2
+ecasound:out_1    -->       system:playback_1
+ecasound:out_2    -->       system:playback_2
+\end{verbatim}
+
+If ``foo.wav'' was a four channel file, the same command would 
+connect all channels:
+
+\begin{verbatim}
+ecasound:out_1    -->       system:playback_1
+ecasound:out_2    -->       system:playback_2
+ecasound:out_3    -->       system:playback_3
+ecasound:out_4    -->       system:playback_4
 \end{verbatim}
 
 To record a file, you'd issue:
 
 \begin{verbatim}
-ecasound -f:32,2,44100 -i jack_alsa -o foo.wav
+ecasound -f:,2 -i jack,system -o foo.wav
+ecasound -f:f32,2,44100 -i jack,system -o foo.wav
 \end{verbatim}
 
 Here we use ``-f:bits,channels,srate'' to set how many channels 
-to record from the soundcard using JACK. As JACK always uses
-32bit samples, and the sampling rate must match the one used
-by the JACK server, the channel count is the only configurable
-parameter. You can use another ``-f:x,y,z'' before ``-o foo.wav''
-if you want to write the file in a different format.
+to record from the sound device using JACK. As described in 
+the ecasound(1) man page, the parameters to ``-f'' may be overridden
+by the audio objects. In case of JACK, the server always sets
+the sampling rate, and also the sample format is fixed to 32bit
+floats. Because of this, the above two examples achieve the same 
+result (but you may find the latter command more readable). 
+
+It is possible to add another ``-f'' before ``-o foo.wav''
+if you want to write the file in a different format. For 
+example to convert the sample format to 16bit fixed:
+
+\begin{verbatim}
+ecasound -f:f32,2 -i jack,system -f:s16,2 -o foo.wav
+\end{verbatim}
 
 \subsection{More Advanced Port Creation}
 
@@ -854,23 +880,18 @@ to create input and output ports:
 
 \begin{verbatim}
 ecasound -i foo.wav -o jack
-ecasound -i foo.wav -o jack_auto,remote_client
-ecasound -i foo.wav -o jack_generic,local_portprefix
+ecasound -i foo.wav -o jack,remote_client
+ecasound -i foo.wav -o jack,remote_client,local_portprefix
+ecasound -i foo.wav -o jack,,local_portprefix
+ecasound -i foo.wav -o jack_multi,remote_client:port_1,system:port_2
 ecasound -i jack                          -o foo.wav
-ecasound -i jack_auto,remote_client       -o foo.wav
-ecasound -i jack_generic,local_portprefix -o foo.wav
+ecasound -i jack,remote_client            -o foo.wav
+ecasound -i jack,local_portprefix -o foo.wav
 \end{verbatim}
 
-``jack'' and ``jack\_auto'' both create a set of input
-(ecasound:in\_X) and/or output (ecasound:out\_X) ports.
-In the former case, Ecasound doesn't make any implicit
-connections, but in the latter case the created ports
-are automatically connected to the matching ports 
-of the specified client (client:in\_X or client:out\_X).
-
-If you want to create ports with a custom port name
-(ie. not ``in\_X'' or ``out\_X''), you can use 
-``jack\_generic''.
+See ecasound(1) manual page for descriptions of 
+the ``jack\_multi'' audio object and the variants 
+of ``jack'' usage.
 
 \subsection{Transport Control}
 
@@ -904,7 +925,7 @@ By default, Ecasound doesn't react to outside transport
 control. To enable this:
 
 \begin{verbatim}
-ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,recv
+ecasound -c -i foo.wav -o jack,system -G:jack,eca_slave,recv
 \end{verbatim}
                                                                
 After giving an initial ``engine-launch'' to Ecasound, you should
@@ -915,7 +936,7 @@ To combine external control with the ability to control
 the transport from ecasound's user-interface:
 
 \begin{verbatim}
-ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,sendrecv
+ecasound -c -i foo.wav -o jack,system -G:jack,eca_slave,sendrecv
 \end{verbatim}
 
 \subsection{JACK and Ecasound states}
@@ -963,6 +984,13 @@ check if communication with JACK does not work.
 Future versions of Ecasound will hopefully solve this 
 problem. This issue is covered by Ecasound development item 
 ``edi-31 - Support for dynamic sampling rate and buffersize changes.''.
+
+\subsection{Deprecated JACK input/output syntax}
+Ecasound 2.5 and older supported ``jack\_alsa'', ``jack\_auto'' 
+and ``jack\_generic'' object types, but these are now replaced 
+by a more generic ``jack'' interface. The old variants this
+work, but are now considered deprecated (they work but may be
+removed in a future Ecasound release).
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
