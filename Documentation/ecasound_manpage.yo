@@ -260,16 +260,17 @@ For available options, see "OBJECT TYPE SPECIFIC NOTES" below.
 
 dit(-f:sample_format,channel,sample-rate,interleaving)
 Sets the audio stream parameters for subsequent audio objects.
-To set different parameters for different audio object, multiple
-'-f' options need to be specified, with each '-f' preceding
-the audio objects (the "-i" and "-o" options).
+To set different parameters for different audio objects, multiple
+'-f' options have to be specified (note the ordering, the '-f'
+options should precede the audio objects for them to have any
+effect). See documentation for '-i' and '-o' options.
 
 When an audio object is opened (e.g. a file or sound device
 is opened, or connection is made to a sound server), the audio
 stream parameters are passed to the object. It should be noted that
 not all audio objects allow to set any or all of the parameters.
 For instance when opening existing audio files, many file formats 
-have a header defining describing the file audio parameters. In 
+have a header describing the file audio parameters. In 
 these cases the audio file header overrides the parameters
 passed with '-f' option. Similarly when creating JACK inputs and
 outputs, the JACK server mandates the sampling rate and sample
