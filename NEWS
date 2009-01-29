@@ -54,6 +54,12 @@ xx0y2009 (v2.6.0) -** stable release **-
 		   to use it from shared libraries; fixes problems 
 		   with e.g. Audio::Ecasound on amd64 architecture ;
 		   closes sfbug:2505551
+	- changed: ecasound option -f now accepts empty arguments for 
+		   sample format, channel count and sampling rate; empty
+		   argument states that ecasound can pick a suitable
+		   value, either the default value or e.g. the JACK 
+		   system sampling rate; updated documentation, see
+		   ecasound(1)
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually

@@ -290,6 +290,16 @@ static int kvu_test_2(void)
     ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_argument_number (arg2-1)"); 
   }
 
+  if (kvu_get_number_of_arguments("-f:,,") != 3)
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments (empty args)"); 
+  if (kvu_get_number_of_arguments("-f:a,") != 2)
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments (valid+null)"); 
+  if (kvu_get_number_of_arguments("-f:,a") != 2)
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments (null+valid)"); 
+  if (kvu_get_number_of_arguments("-f:") != 0)
+    ECA_TEST_FAIL(1, "kvu_test_2 kvu_get_number_of_arguments (no args)"); 
+
+
   /* search and replace: */
 
   if (kvu_string_search_and_replace("foo bar", 'f', 'b')

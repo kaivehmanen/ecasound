@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_utils.cpp: Miscellaneous helper routines
-// Copyright (C) 1999-2004 Kai Vehmanen
+// Copyright (C) 1999-2004,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -550,7 +550,7 @@ int kvu_get_number_of_arguments(const string& arg)
 vector<string> kvu_get_arguments(const string& argu)
 {
   vector<string> resvec;
-
+  char* locale_save;
   string::const_iterator b = kvu_priv_find_next_instance(argu, argu.begin(), ':');
   string::const_iterator e;
 
@@ -562,22 +562,38 @@ vector<string> kvu_get_arguments(const string& argu)
     ++b;
 
 #if HAVE_SETLOCALE
-  setlocale (LC_NUMERIC, "POSIX");
+  locale_save = setlocale (LC_NUMERIC, "POSIX");
+#else
+  locale_save = NULL;
 #endif
 
-  for(; b != argu.end(); b++) {
+  for(; b != argu.end();) {
     e = kvu_priv_find_next_instance(argu, b, ',');
     string target = string(b, e);
-    if (target.size() > 0) {
-      // strip backslash-commas (and leave the commas in place)      
-      kvu_priv_strip_escapes(&target, ",");
-      kvu_priv_strip_escapes(&target, ":");
-      kvu_string_strip_outer_quotes(&target, '"');
-      resvec.push_back(target);
-    }
-    if (e == argu.end()) break;
+
+    /* strip backslash-commas (and leave the commas in place) */
+    kvu_priv_strip_escapes(&target, ",");
+    kvu_priv_strip_escapes(&target, ":");
+    kvu_string_strip_outer_quotes(&target, '"');
+    resvec.push_back(target);
+
+    if (e == argu.end()) 
+      break;
+
     b = e;
+    ++b;
+    
+    /* special case in which last argument is empty */
+    if (b == argu.end() &&
+	*e == ',')
+      resvec.push_back("");
   }
+
+#if HAVE_SETLOCALE
+  /* restore original locale */
+  if (locale_save)
+    setlocale (LC_NUMERIC, locale_save);
+#endif
 
   return resvec;
 }

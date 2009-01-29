@@ -569,11 +569,13 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const string& argu)
       ECA_AUDIO_FORMAT active_sinfo;
       int channels = atoi(kvu_get_argument_number(2, argu).c_str());
       long int srate = atol(kvu_get_argument_number(3, argu).c_str());
+      string sample_fmt = 
+	kvu_get_argument_number(1, argu);
 
       /* initialize to current defaults */
       active_sinfo.set_audio_format(csetup_repp->default_audio_format());
-
-      active_sinfo.set_sample_format_string(kvu_get_argument_number(1, argu));
+      if (sample_fmt.size() > 0) 
+	active_sinfo.set_sample_format_string(sample_fmt);
       if (channels > 0)
 	active_sinfo.set_channels(channels);
       if (srate > 0)
