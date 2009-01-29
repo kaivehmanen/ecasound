@@ -10,44 +10,14 @@ feature requests:
 
    - https://sourceforge.net/tracker/?group_id=4605&atid=104605
 
-This tracker is used to monitor longstanding bugs and 
-feature/improvement items. It replaces the old Ecasound Development
-Item practise (items marked with 'edi-x' tags) that was used
-between 2002-08.
+This same tracker is used for both longstanding bugs, as well as
+for keeping tracking of feature/improvement requests. It replaces 
+the old Ecasound Development Item practise (items marked with 'edi-x' 
+tags) that was used during years 2002-08.
 
 Active development areas
 -----------------------------------------------------------------------
 
-- improvements to JACK usage; some candidate features to implement:
-    - jack_multi object, sffeat:1415822
-    - interactive mode commands like jack-connect, jack-disconnect, 
-      see sffeat:2134183
-- tools for robustness
-    - components that help in testing like an internal test
-      tone generator
-- streamline the ECI C implementation
-    - get rid of the ugly static parsing buffers
-    - bugfixing and robustness
-
-not roadmapped, but if time permits
-
-- improve support for use-scenarios involving audio file sequencing 
-    - first set of improvements in 2.5.0
-- integration with other audio apps
-    - LADSPA: RDF plugin metadata
-    - LV2 plugin support
-    - LASH session management
-    - OSC
-- core sound processing
-    - dithering 
-    - logarithmic envelopes
-
-Help - developer in trouble
------------------------------------------------------------------------
-
-- Please report if Ecasound does not compile out-of-the-box on your 
-  system!
-
-- Ecasound compiles on FreeBSD (3.1-4.7), Solaris (2.6-2.8), 
-  Mac OS X (10.3-10.4.2) and Cygwin (1.3.20) -- How about other 
-  UNIX platforms... other BSDs, IRIX, AIX, HPUX?
+Probably the best way to follow active development is to
+subscribe to the ecasound-list mailing list (see the "Mailing
+lists" section in README).
