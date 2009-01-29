@@ -259,27 +259,47 @@ Sets options for audio object manager type 'mgrtype'.
 For available options, see "OBJECT TYPE SPECIFIC NOTES" below.
 
 dit(-f:sample_format,channel,sample-rate,interleaving)
-Sets default sampling parameters. These are used for all following
-input and output files or until another -f is specified. If no -f
-option is present, ecasound will use the default audio parameters (see
-ecasoundrc man page). Notice that when opening existing audio objects, 
-either for input or output, the default audio parameters set with -f are
-ignored if objects provide sufficient header information (as
-is the case for wav, aiff, etc formats). For output objects, the
--x option can be used to completely overwrite existing files 
-(in other words, with -x, default audio parameters set with -f are used).
+Sets the audio stream parameters for subsequent audio objects.
+To set different parameters for different audio object, multiple
+'-f' options need to be specified, with each '-f' preceding
+the audio objects (the "-i" and "-o" options).
 
-Sample format is given as a a formatted string. The first letter is 
+When an audio object is opened (e.g. a file or sound device
+is opened, or connection is made to a sound server), the audio
+stream parameters are passed to the object. It should be noted that
+not all audio objects allow to set any or all of the parameters.
+For instance when opening existing audio files, many file formats 
+have a header defining describing the file audio parameters. In 
+these cases the audio file header overrides the parameters
+passed with '-f' option. Similarly when creating JACK inputs and
+outputs, the JACK server mandates the sampling rate and sample
+format.
+
+If no '-f' option is specified, or some of the argument fields
+are left empty (e.g. '-f:,2,44100'), ecasound will use default values. These 
+default values are defined in ecasoundrc configuration file. See
+ecasoundrc(5) manual page. 
+
+Note that ecasound opens out files by default in update mode. 
+Unless option '-x' (overwrite outputs) option is given, 
+audio parameters of an existing audio file take preference over
+the params set with '-f'.
+
+Sample format is given as a formatted string. The first letter is 
 either "u", "s" and "f" (unsigned, signed, floating point). The 
 following number specifies sample size in bits. If sample is 
 little endian, "_le" is added to the end. Similarly if big endian, 
 "_be" is added. If endianess is not specified, host byte-order is used. 
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le", "s32_be", "f32_le" 
-and "f32_be".
+and "f32_be". An empty string "" picks the system default sample
+format.
 
-The 4th parameter 'interleaving' should either be 'i' (default) for
-interleaved stream format, or 'n' for noninterleaved.
+The 4th parameter defines the channel layout. The available
+options are 'i' (interleaved' and 'n' (noninterleaved). With 
+the noninterleaved setting, ecasound will process samples
+one channel at a time, and the blocksize is set with '-b'.
+The default setting is 'i'.
 
 dit(-y:seconds)
 Sets starting position for last specified input/output. If 
