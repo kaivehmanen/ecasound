@@ -232,6 +232,9 @@ ECA_AUDIO_FORMAT::Sample_format ECA_AUDIO_FORMAT::string_to_sample_format(const 
   else if (str == "f32") sfmt = sfmt_f32;
   else if (str == "f32_le") sfmt = sfmt_f32_le;
   else if (str == "f32_be") sfmt = sfmt_f32_be;
+  else if (str == "f64") sfmt = sfmt_f64;
+  else if (str == "f64_le") sfmt = sfmt_f64_le;
+  else if (str == "f64_be") sfmt = sfmt_f64_be;
   else if (str == "8") sfmt = sfmt_u8;
   else if (str == "16") sfmt = sfmt_s16;
   else if (str == "24") sfmt = sfmt_s24;
