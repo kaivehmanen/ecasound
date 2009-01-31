@@ -1,24 +1,48 @@
+// ------------------------------------------------------------------------
+// ecasound.cpp: Console mode user interface to ecasound.
+// Copyright (C) 2000,2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
 #include "eca-comhelp.h"
 
-/* FIXME: get chainop list from libecasound! */
+/* FIXME: get chainop list from libecasound!
+ *   - 2009/Jan: or maybe not, people should just be pointed to 
+ *               ecasound(1) */
 
 static const char* ecasound_parameter_help_rep =
 "USAGE: ecasound [options] \n"
 "     -c                       enable interactive mode \n"
-"     -C                       disable interactive mode \n"
+"     -C                       disable interactive mode (batchmode)\n"
 "     -d:debug_level           show debug info \n"
-"     -D                       print all debug info to stderr\n"
-"     -q                       quiet mode, no output \n"
+"     -D                       print all trace messages to stderr\n"
+"     -q                       quiet mode, no output\n"
 "     -s[:]file.ecs            load chainsetup from 'file' \n"
 "     -E \"foo1 ; foo 2\"      execute interactive commands at start\n"
-"     --daemon                 enable ecasound's daemon mode\n"
-"     --daemon-port=XXX        use TCP port XXX\n"
-"     --nodaemon               disable the daemon mode (default)\n"
+"     --server                 enable ecasound's network control mode\n"
+"     --server-tcp-port=XXX    use TCP port XXX\n"
+"     --no-server              disable the daemon mode (default)\n"
 "     --keep-running (or -K)   do not exit from batchmode\n"
 "     --help (or -h)           show this help\n"
 "     --version                print version info\n"
 " --- \n"
-"     -b:buffersize            size of sample buffer in samples \n"
+"     -b:buffersize            size of sample buffer in samples\n"
 "     -B:mode                  buffering mode\n"
 "     -m:mixmode               mixmode\n"
 "     -n:name                  set chainsetup name\n"
@@ -26,16 +50,16 @@ static const char* ecasound_parameter_help_rep =
 "     -sr:sample_rate          set internal sample rate\n"
 "     -x                       truncate outputs\n"
 "     -X                       open outputs for update (default)\n"
-"     -z:feature               enable feature 'feature'\n"
+"     -z:feature               enable feature 'feature',  see ecasound(1)\n"
 " --- \n"
 "     -t:seconds               processing time in seconds\n"
 "     -tl                      enable looping\n"
 " --- \n"
 "     -a:name1,name2, ...      select/create chains ('all' reserved)\n"
-"     -f:type,channels,srate   default file format (for all following inputs/outputs)\n"
-"     -i[:]infile              specify a new infile (assigned to active chains)\n"
-"     -o[:]outfile             specify a new outfile (assigned to active chains)\n"
-"     -y:seconds               set start position for last specified input/output\n"
+"     -f:type,channels,srate   set file format (for all following inputs/outputs)\n"
+"     -i[:]infile              specify an input (assigned to active chains)\n"
+"     -o[:]outfile             specify an input (assigned to active chains)\n"
+"     -y:seconds               set start position for preceding input/output\n"
 " --- \n"
 "     -Md:rawmidi,midi_device  set MIDI-device\n"
 "     -Mms:device_id           send MMC start/stop\n"
@@ -74,8 +98,8 @@ static const char* ecasound_parameter_help_rep =
 "     -efr:center-freq,width   bandreject filter\n"
 "     -efs:center-freq,width   resonator filter\n"
 "     -ei:change-%             pitch shifter\n"
-"     -el:name,params          LADSPA-plugin 'name'\n"
-"     -eli:id_number,params    LADSPA-plugin 'id_number'\n"
+"     -el:name,par1,...,parN   LADSPA-plugin 'name'\n"
+"     -eli:id,par1,...,parnN   LADSPA-plugin with numeric 'id'\n"
 "     -enm:threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec ...\n"
 "                              noise gate\n"
 "     -erc:from-channel,to-channel ...\n"
@@ -129,10 +153,17 @@ static const char* ecasound_parameter_help_rep =
 "     -kx                      use last specified controller as\n"
 "                              controller target\n"
 "\n"
-"For a more detailed documentation, see ecasound(1) man page.\n"
+"Note that this is only a partial list of available options. For\n"
+"a complete list of available options, as well as more detailed\n"
+"descriptions of of their use, see ecasound(1) manual page and\n"
+"the documentation at ecasound's website. Documentation is available\n"
+"online at:\n"
+" - http://eca.cx/ecasound/Documentation/ecasound_manpage.html\n"
+" - http://eca.cx/ecasound/Documentation/examples.html\n"
+"\n"
 "Report bugs to ecasound-list mailing list (http://www.eca.cx/contact).\n";
 
 const char* ecasound_parameter_help(void)
 {
-  return(ecasound_parameter_help_rep);
+  return ecasound_parameter_help_rep;
 }
