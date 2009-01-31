@@ -218,21 +218,21 @@ See also section on <a href="#rtjack">JACK</a> below.
 </p>
 
 <blockquote>
-<pre class="codepre">1. ecasound -i foo.wav -o jack_alsa
+<pre class="codepre">1. ecasound -i foo.wav -o jack,system
 2. ecasound -i foo.wav -o jack</pre>
 </blockquote>
 
 <p>
 This will create a separate JACK output port for each channel
 of foo.wav, and automatically connect these Ecasound ports to
-the ALSA PCM output ports in the JACK server.  The second
+the system PCM output ports in the JACK server.  The second
 example will create JACK output ports, but does not establish
 any connections (you have to do this yourself with jack_connect,
 qjackconnet, qjackctl, or other similar tool).
 </p>
 
 <blockquote>
-<pre class="codepre">3. ecasound -c -i foo.wav -o jack_alsa -G:jack,eca_slave,recv</pre>
+<pre class="codepre">3. ecasound -c -i foo.wav -o jack,system -G:jack,eca_slave,recv</pre>
 </blockquote>
 
 <p>
@@ -241,6 +241,13 @@ to other JACK clients) is set to "eca_slave", and ecasound is
 configured to react to incoming transport changes (play, stop,
 seek, etc). By default ecasound both sends and reacts to 
 transport events.
+</p>
+
+<p>
+Version note: the above describes the updated JACK interface 
+introduced in Ecasound 2.6. The old interfaces, "jack_alsa", "jack_auto"
+and "jack_generic" are deprecated, but still available in current
+versions of Ecasound.
 </p>
 
 <!-- ###  new section ### -->
