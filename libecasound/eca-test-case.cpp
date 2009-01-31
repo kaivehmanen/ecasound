@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-test-case.cpp: Abstract interface for implementing 
 //                    test cases for component testing.
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,17 +38,15 @@ ECA_TEST_CASE::~ECA_TEST_CASE(void)
 {
 }
 
-/**
- * Runs the test case.
- */
-void ECA_TEST_CASE::run(void)
+void ECA_TEST_CASE::run_common_before(void)
 {
   failures_rep.clear();
   success_rep = false;
   DBC_CHECK(failures_rep.size() == 0);
+}
 
-  do_run(); /* actual test implemention defined in a subclass */
-
+void ECA_TEST_CASE::run_common_after(void)
+{
   if (failures_rep.size() > 0) {
     success_rep = false;
   }
@@ -55,11 +56,37 @@ void ECA_TEST_CASE::run(void)
 }
 
 /**
+ * Runs the test case.
+ */
+void ECA_TEST_CASE::run(void)
+{
+  run_common_before();
+
+  /* actual test implemention defined in a subclass */
+  do_run();
+
+  run_common_after();
+}
+
+/**
+ * Runs the test cases passing a name argument.
+ */
+void ECA_TEST_CASE::run(const std::string &name)
+{
+  run_common_before();
+
+  /* actual test implemention defined in a subclass */
+  do_run(name);
+
+  run_common_after();
+}
+
+/**
  * Returns the test case name.
  */
 string ECA_TEST_CASE::name(void) const
 {
-  return(do_name());
+  return do_name();
 }
 
 /**
@@ -67,7 +94,7 @@ string ECA_TEST_CASE::name(void) const
  */
 bool ECA_TEST_CASE::success(void) const
 {
-  return(success_rep);
+  return success_rep;
 }
 
 /**
@@ -77,7 +104,12 @@ bool ECA_TEST_CASE::success(void) const
  */
 const std::list<std::string>& ECA_TEST_CASE::failures(void) const
 {
-  return(failures_rep);
+  return failures_rep;
+}
+
+void ECA_TEST_CASE::do_run(const std::string& name)
+{
+  do_run();
 }
 
 /**

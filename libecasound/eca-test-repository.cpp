@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-test-repository.cpp: A testing subsystem implemented as a
 //                          singleton class.
-// Copyright (C) 2002,2003 Kai Vehmanen
+// Copyright (C) 2002,2003,2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,28 +83,46 @@ ECA_TEST_REPOSITORY::~ECA_TEST_REPOSITORY(void)
 {
 }
 
+void ECA_TEST_REPOSITORY::do_run_worker(ECA_TEST_CASE* testcase)
+{
+  ECA_LOG_MSG(ECA_LOGGER::info, "Running test case '" + testcase->name() + "'.");
+  testcase->run();
+  if (testcase->success() != true) {
+    string errormsg = (string("Test case ") + testcase->name() + string(" FAILED."));
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, errormsg);
+    ECA_TEST_FAILURE(errormsg);
+    const list<string>& failures = testcase->failures();
+    list<string>::const_iterator q = failures.begin();
+    int m = 1;
+    while(q != failures.end()) {
+      ECA_TEST_FAILURE(testcase->name() + ":" + kvu_numtostr(m++) + ". " + *q);
+      ++q;
+    }
+  }
+  else {
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Test case '" + testcase->name() + "' passed.");
+  }
+}
+
+void ECA_TEST_REPOSITORY::do_run(const std::string& name)
+{
+  list<ECA_TEST_CASE*>::const_iterator p = test_cases_rep.begin();
+  while(p != test_cases_rep.end()) {
+    if ((*p)->name() == name) {
+      do_run_worker(*p);
+      return;
+    }
+    ++p;
+  }
+
+  ECA_TEST_FAILURE("Test case with name '" + name + "' not found.");
+}
+
 void ECA_TEST_REPOSITORY::do_run(void)
 {
   list<ECA_TEST_CASE*>::const_iterator p = test_cases_rep.begin();
-  int n = 0;
   while(p != test_cases_rep.end()) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Running test case '" + (*p)->name() + "'.");
-    (*p)->run();
-    if ((*p)->success() != true) {
-      string errormsg = (string("Test case ") + (*p)->name() + string(" FAILED."));
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, errormsg);
-      ECA_TEST_FAILURE(kvu_numtostr(++n) + ". " + errormsg);
-      const list<string>& failures = (*p)->failures();
-      list<string>::const_iterator q = failures.begin();
-      int m = 1;
-      while(q != failures.end()) {
-	ECA_TEST_FAILURE(kvu_numtostr(n) + "." + kvu_numtostr(m++) + ". " + *q);
-	++q;
-      }
-    }
-    else {
-      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Test case '" + (*p)->name() + "' passed.");
-    }
+    do_run_worker(*p);
     ++p;
   }
 }

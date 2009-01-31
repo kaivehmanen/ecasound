@@ -38,9 +38,12 @@ class ECA_TEST_REPOSITORY : public ECA_TEST_CASE {
   protected:
 
   virtual void do_run(void);
+  virtual void do_run(const std::string& name);
   virtual std::string do_name(void) const { return("ECA_TEST_REPOSITORY"); }
 
   private:
+
+  void do_run_worker(ECA_TEST_CASE* testcase);
 
   static ECA_TEST_REPOSITORY* interface_impl_repp;
   static pthread_mutex_t lock_rep;

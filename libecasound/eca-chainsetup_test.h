@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup_test.h: Unit test for ECA_CHAINSETUP
-// Copyright (C) 2002 Kai Vehmanen
+// Copyright (C) 2002,2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +44,7 @@ protected:
 
 public:
 
-  virtual ~ECA_CHAINSETUP(void) { }
+  virtual ~ECA_CHAINSETUP_TEST(void) { }
 
 private:
 
@@ -54,7 +57,7 @@ void ECA_CHAINSETUP_TEST::do_run(void)
   do_run_save_and_restore();
 }
 
-void ECA_CHAINSETUP::do_run_save_and_restore(void)
+void ECA_CHAINSETUP_TEST::do_run_save_and_restore(void)
 {
   /**
    * FIXME:

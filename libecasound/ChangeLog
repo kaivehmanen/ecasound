@@ -1,3 +1,10 @@
+2009-01-31  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-test-case.h (run): A new overloaded function taking 
+	a string argument added.
+	* eca-chainsetup-parser.h (interpret_audio_format): Corrected
+	function signature, may throw an exception.
+	
 2008-09-28  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-logger.h (ECA_LOG_MSG_NOPREFIX): Added.

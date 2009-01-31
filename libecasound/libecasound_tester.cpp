@@ -33,10 +33,13 @@ using namespace std;
  */
 
 int main(int argc, char *argv[]) {
+
+  ECA_LOGGER::instance().set_log_level_bitmask(ECA_LOGGER::errors | ECA_LOGGER::info);
+
   /**
    * Uncomment to enable libecasound log messages
    */
-  // ECA_LOGGER::instance().set_log_level_bitmask(63);
+  //ECA_LOGGER::instance().set_log_level(ECA_LOGGER::user_objects, true);
 
   ECA_TEST_REPOSITORY& repo = ECA_TEST_REPOSITORY::instance();
 
@@ -50,7 +53,12 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
-  repo.run();
+  if (argc > 1)
+    /* note: run one test case */
+    repo.run(std::string(argv[1]));
+  else
+    /* note: run all test cases */
+    repo.run();
 
   cerr << "-------------------------------------------------------------------------" << endl;
   cerr << "libecasound_tester summary:" << endl;

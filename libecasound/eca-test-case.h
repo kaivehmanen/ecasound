@@ -41,10 +41,11 @@ class ECA_TEST_CASE {
   /** @name Public interface for running tests */
 
   void run(void);
+  void run(const std::string &name);
 
   /*@}*/
 
-  /** @name Public interface for queryign test results */
+  /** @name Public interface for queryng test results */
 
   std::string name(void) const;
   bool success(void) const;
@@ -67,10 +68,14 @@ class ECA_TEST_CASE {
 
   virtual std::string do_name(void) const = 0;
   virtual void do_run(void) = 0;
+  virtual void do_run(const std::string& name);
 
   /*@}*/
 
   private:
+
+  void run_common_before(void);
+  void run_common_after(void);
 
   std::list<std::string> failures_rep;
   bool success_rep;
