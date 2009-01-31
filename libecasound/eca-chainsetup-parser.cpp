@@ -574,8 +574,19 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const string& argu)
 
       /* initialize to current defaults */
       active_sinfo.set_audio_format(csetup_repp->default_audio_format());
-      if (sample_fmt.size() > 0) 
-	active_sinfo.set_sample_format_string(sample_fmt);
+      
+      try {
+	if (sample_fmt.size() > 0) 
+	  active_sinfo.set_sample_format_string(sample_fmt);
+      }
+      catch(ECA_ERROR& e) {
+	interpret_set_result(false, 
+			     string("Unable to parse sample format '") +
+			     sample_fmt + "' passed to -f.");
+	istatus_rep = true;
+	return;
+      }
+
       if (channels > 0)
 	active_sinfo.set_channels(channels);
       if (srate > 0)
