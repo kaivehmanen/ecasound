@@ -53,6 +53,8 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
 #include "eca-session_test.h"
 #include "eca-object-factory_test.h"
 #include "eca-sample-conversion_test.h"
+#include "eca-chainsetup_test.h"
+#include "eca-chainsetup-parser_test.h"
 
 /** 
  * Class constructor.
@@ -67,6 +69,8 @@ ECA_TEST_REPOSITORY::ECA_TEST_REPOSITORY(void)
   test_cases_rep.push_back(new ECA_CONTROL_TEST());
   test_cases_rep.push_back(new ECA_OBJECT_FACTORY_TEST());
   test_cases_rep.push_back(new ECA_SAMPLE_CONVERSION_TEST());
+  test_cases_rep.push_back(new ECA_CHAINSETUP_TEST());
+  test_cases_rep.push_back(new ECA_CHAINSETUP_PARSER_TEST());
 }
 
 /** 
