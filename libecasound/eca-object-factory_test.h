@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-object-factory_test.h: Unit test for ECA_OBJECT_FACTORY
-// Copyright (C) 2002,2008 Kai Vehmanen
+// Copyright (C) 2002,2008,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class ECA_OBJECT_FACTORY_TEST : public ECA_TEST_CASE {
 
 protected:
 
-  virtual string do_name(void) const { return("Unit test for ECA_OBJECT_FACTORY"); }
+  virtual string do_name(void) const { return("ECA_OBJECT_FACTORY_TEST"); }
   virtual void do_run(void);
 
 public:
@@ -96,8 +96,10 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
 		       + "\" from keyword \"" + *p + "\"");
     }
     else {
-      cerr << "libecasound_tester: Object type \"" << obj->name() 
-	   << "\" succesfully created." << endl;
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		  "libecasound_tester: Object type \"" +
+		  obj->name() +
+		  "\" succesfully created.");
       
       T* target = dynamic_cast<T*>(obj->new_expr());
       test_object_types<T>(obj, target, "new_expr");
@@ -172,27 +174,27 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
 
 void ECA_OBJECT_FACTORY_TEST::do_run(void)
 {
-  cerr << "libecasound_tester: object factories - rt-map" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - rt-map");
 
   ECA_OBJECT_MAP& rt_map = ECA_OBJECT_FACTORY::audio_io_rt_map();
   test_map<AUDIO_IO_DEVICE>(rt_map);
 
-  cerr << "libecasound_tester: object factories - nonrt-map" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - nonrt-map");
 
   ECA_OBJECT_MAP& nonrt_map = ECA_OBJECT_FACTORY::audio_io_nonrt_map();
   test_map<AUDIO_IO>(nonrt_map);
 
-  cerr << "libecasound_tester: object factories - chainop-map" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - chainop-map");
 
   ECA_OBJECT_MAP& chainop_map = ECA_OBJECT_FACTORY::chain_operator_map();
   test_map<CHAIN_OPERATOR>(chainop_map);
 
-  cerr << "libecasound_tester: object factories - LADSPA-map" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - LADSPA-map");
 
   ECA_OBJECT_MAP& ladspa_map = ECA_OBJECT_FACTORY::ladspa_plugin_map();
   test_map<EFFECT_LADSPA>(ladspa_map);
 
-  cerr << "libecasound_tester: object factories - LADSPA-id-map" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - LADSPA-id-map");
 
   ECA_OBJECT_MAP& ladspa_id_map = ECA_OBJECT_FACTORY::ladspa_plugin_id_map();
   test_map<EFFECT_LADSPA>(ladspa_id_map);
@@ -202,10 +204,10 @@ void ECA_OBJECT_FACTORY_TEST::do_run(void)
       ECA_TEST_FAILURE("LADSPA plugin name and id maps have different number of plugins!");
   }
 
-  cerr << "libecasound_tester: object factories - preset-map" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - preset-map");
 
   ECA_PRESET_MAP& preset_map = ECA_OBJECT_FACTORY::preset_map();
   test_map<PRESET>(preset_map);
 
-  cerr << "libecasound_tester: object factory test done" << endl;
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factory test done");
 }
