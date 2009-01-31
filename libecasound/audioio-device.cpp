@@ -32,6 +32,9 @@ AUDIO_IO_DEVICE::AUDIO_IO_DEVICE(void)
 
 AUDIO_IO_DEVICE::~AUDIO_IO_DEVICE(void)
 {
+  if (is_open() == true)
+    close();
+
   DBC_CHECK(is_prepared() != true);
   DBC_CHECK(is_running() != true);
 }
