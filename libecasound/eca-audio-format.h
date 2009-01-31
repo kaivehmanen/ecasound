@@ -191,7 +191,6 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
   bool ileaved_rep;
   SAMPLE_SPECS::channel_t channels_rep;
   size_t align_rep;            // the size of one sample value in bytes
-  Sample_format sfmt_rep;
   Sample_coding sc_rep;
   Sample_endianess se_rep;
 };
