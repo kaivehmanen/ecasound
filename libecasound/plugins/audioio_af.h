@@ -36,6 +36,7 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   virtual string get_parameter(int param) const;
 
   virtual int supported_io_modes(void) const { return (io_read | io_write); }
+  virtual bool supports_seeking(void) const { return (io_mode() == io_read); }
   virtual string parameter_names(void) const { return "filename,opt_filename"; }
   virtual bool locked_audio_format(void) const { return true; }
   

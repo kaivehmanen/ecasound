@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003-2004,2006-2007 Kai Vehmanen
+// Copyright (C) 2003-2004,2006-2007,2009 Kai Vehmanen
 // Copyright (C) 2004 Jesse Chappell
 //
 // Attributes:
@@ -191,8 +191,6 @@ int SNDFILE_INTERFACE::find_file_format(const std::string& fname)
 
 void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  AUDIO_IO::open();
-
   SF_INFO sfinfo;
 
   string real_filename = label();
@@ -323,6 +321,8 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   /* we need to reserve extra memory as we using 32bit 
    * floats as the internal sample unit */
   reserve_buffer_space((sizeof(float) * channels()) * buffersize());
+
+  AUDIO_IO::open();
 }
 
 void SNDFILE_INTERFACE::close(void)
@@ -413,8 +413,29 @@ void SNDFILE_INTERFACE::write_buffer(SAMPLE_BUFFER* sbuf)
 SAMPLE_SPECS::sample_pos_t SNDFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   // FIXME: check if format supports seeking
-  sf_seek(snd_repp, pos, SEEK_SET);
+
   finished_rep = false;
+
+  sf_count_t res =
+    sf_seek(snd_repp, pos, SEEK_SET);
+
+  if (res != pos) {
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"invalid seek for file " +
+		opt_filename_rep + 
+		", req was to " +
+		kvu_numtostr(pos) + 
+		", result was " +
+		kvu_numtostr(res));
+    if (res < 0) {
+      res = sf_seek(snd_repp, 0, SEEK_CUR);
+      DBC_CHECK(res >= 0);
+      if (res >= 0)
+	pos = res;
+      else
+	pos = position_in_samples();
+    }
+  }
   return pos;
 }
 

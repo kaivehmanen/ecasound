@@ -77,8 +77,6 @@ AUDIOFILE_INTERFACE* AUDIOFILE_INTERFACE::clone(void) const
 
 void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  AUDIO_IO::open();
-
   string real_filename = label();
   if (real_filename == "audiofile") {
     real_filename = opt_filename_rep;
@@ -164,7 +162,12 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       if (afhandle == AF_NULL_FILEHANDLE) 
 	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-AF: Can't open file \"" + real_filename
 			  + "\" using libaudiofile."));
-     break;
+
+      /* note: as seeking is not supported for outputs, we also reset
+       *       position to 0 at open() */
+      set_position_in_samples(0);
+
+      break;
     }
   
   case io_readwrite:
@@ -182,6 +185,8 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   //    afSetVirtualByteOrder(afhandle, AF_DEFAULT_TRACK, AF_BYTEORDER_BIGENDIAN);
 
   debug_print_type();
+
+  AUDIO_IO::open();
 }
 
 void AUDIOFILE_INTERFACE::close(void)
@@ -221,23 +226,42 @@ void AUDIOFILE_INTERFACE::write_samples(void* target_buffer,
 
 SAMPLE_SPECS::sample_pos_t AUDIOFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
-  finished_rep = false;
+  AFframecount res;
 
-  SAMPLE_SPECS::sample_pos_t res =
-    ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, pos);
+  if (io_mode() == io_read) {
 
-  if (res != pos) {
-    ECA_LOG_MSG(ECA_LOGGER::info, 
-		"invalid seek for file " +
-		opt_filename_rep + 
-		" req was to " +
-		kvu_numtostr(pos) + 
-		" result was " +
-		kvu_numtostr(res));
-    if (res < 0) {
-      res = afTellFrame(afHandle, AF_DEFAULT_TRACK);
-      DBC_CHECK(res >= 0);
-      res = pos;
+    finished_rep = false;
+    
+    res = ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, pos);
+    
+    if (res != pos) {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "invalid seek for file " +
+		  opt_filename_rep + 
+		  " req was to " +
+		  kvu_numtostr(pos) + 
+		  " result was " +
+		  kvu_numtostr(res));
+      if (res < 0) {
+	res = afTellFrame(afhandle, AF_DEFAULT_TRACK);
+	if (res >= 0)
+	  pos = res;
+	else
+	  pos = position_in_samples();
+      }
+    }
+  }
+  else {
+    /* note: seeking is not supported for outputs by 
+     *       libaudiofile */
+    if (pos != position_in_samples()) {
+      ECA_LOG_MSG(ECA_LOGGER::errors, 
+		  "libaudiofile does not support seeking for output files ("
+		  + opt_filename_rep + ")");
+
+      finished_rep = true;
+      pos = 0;
+    }
   }
 
   return pos;
