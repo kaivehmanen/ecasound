@@ -2,6 +2,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{ae}
 \usepackage{hevea}
+\usepackage{hyperref}
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
@@ -30,6 +31,8 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 31.01.2009 - Lots of minor improvements in preparation for 
+                   2.6.0 release.
 \item 29.01.2009 - Updated ``JACK Audio Server'' section to match 
                    the changes in 2.6.0 release.
 \item 05.08.2008 - Fixed a bug in example of loop device usage.
@@ -175,7 +178,8 @@ to files, the \emph{.ecs} file format is used. The file syntax
 uses the same notation as Ecasound's console (and command-line)
 interface. This makes it easy to edit the chainsetup files
 outside Ecasound, either manually or using external utils.
-See \texttt{ecasound(1)} man page for details.
+See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)} 
+man page for details.
 
 % ----------------------------------------------------------------------
 \section{Current position}
@@ -290,8 +294,9 @@ chainsetup (when issuing commands such as ``cs-connect'', or ``start'').
 % ----------------------------------------------------------------------
 \section{Chain operators and controllers}
 
-The best place to start is to read through the \texttt{ecasound(1)} man
-page, which contains documentation for all native Ecasound 
+The best place to start is to read through 
+the \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+man page, which contains documentation for all native Ecasound 
 chain objects.
 
 % ----------------------------------------------------------------------
@@ -432,10 +437,8 @@ on top of Ecasound, visit Ecasound's web site at \ahrefurl{http://www.eca.cx}.
 The standalone program ``ecasound'' is the primary user interface
 for Ecasound. 
 
-% FIXME: add examples from the 'examples' page
-
-\subsection{Further Reading}
-See \texttt{ecasound(1)} man page and the \texttt{Examples web page}
+See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+man page and the \texttt{Examples web page}
 at \ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}.
 
 % ----------------------------------------------------------------------
@@ -492,14 +495,18 @@ ecasignalview -b:1024 alsa null
 ecasignalview -f:s32,10,96000,i alsa null
 \end{verbatim}
 
-\subsection{Monitoring Non-realtime Sources}
+It can also be used with files and real-time devices like
+JACK inputs and outputs:
+\begin{verbatim}
+# monitor audio recorded by JACK system input (first 2ch)
+ecasignalview -f:f32,2 jack,system null
 
-\emph{FIXME: to be written...}
+# monitor audio from JACK application ``foosynth''
+ecasignalview -f:f32,2 jack,foosynth null
 
-\subsection{Use with JACK}
-
-\emph{FIXME: to be written...}
-See also \ref{JACK Audio Server}.
+# play and monitor a file input
+ecasignalview foo.wav alsa
+\end{verbatim}
 
 \subsection{Further Reading}
 
@@ -557,7 +564,11 @@ multitrack recording (output offsetting ) and looping.
 Starting from Ecasound version 2.5.0, similar functionality is
 provided by special purpose audio object types 'audioloop', 'audioselect'
 and others. You may choose between EWF and these audio object types
-based on your specific needs.
+based on your specific needs. See 
+\href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+man page and the \texttt{Examples web page}
+at \ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}
+for many examples of using these.
 
 Writing to EWF file is nowadays considered to be a deprecated
 feature and it may be removed in a future release.
@@ -776,8 +787,8 @@ case, both entry and close thresholds are ``5\%'' (peak volume).
 \section{LADSPA plugins}
 
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's 
-Simple Plugin API). See \texttt{ecasound(1)} man page and 
-the LADSPA web site at ``www.ladspa.org'' for more information.
+Simple Plugin API). See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+man page and the LADSPA web site at ``www.ladspa.org'' for more information.
 
 \subsection{Ecasound is not able to find any LADSPA plugins I have installed!}
 
@@ -859,7 +870,8 @@ ecasound -f:f32,2,44100 -i jack,system -o foo.wav
 
 Here we use ``-f:bits,channels,srate'' to set how many channels 
 to record from the sound device using JACK. As described in 
-the ecasound(1) man page, the parameters to ``-f'' may be overridden
+the \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+man page, the parameters to ``-f'' may be overridden
 by the audio objects. In case of JACK, the server always sets
 the sampling rate, and also the sample format is fixed to 32bit
 floats. Because of this, the above two examples achieve the same 
@@ -889,8 +901,8 @@ ecasound -i jack,remote_client            -o foo.wav
 ecasound -i jack,local_portprefix -o foo.wav
 \end{verbatim}
 
-See ecasound(1) manual page for descriptions of 
-the ``jack\_multi'' audio object and the variants 
+See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+manual page for descriptions of the ``jack\_multi'' audio object and the variants 
 of ``jack'' usage.
 
 \subsection{Transport Control}

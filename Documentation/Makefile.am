@@ -97,10 +97,10 @@ ecasoundrc.5: ecasoundrc_manpage.man
 	yodl2html -o $@ $<
 
 # ---------------------------------------------------------------------
-# doxygen
-doxygen:
-	doxygen doxygen_libkvutils_config
-	doxygen doxygen_libecasound_config
+# doxygen (target removed 2009/Feb)
+#doxygen:
+#	doxygen doxygen_libkvutils_config
+#	doxygen doxygen_libecasound_config
 
 # ---------------------------------------------------------------------
 # Clean targets
