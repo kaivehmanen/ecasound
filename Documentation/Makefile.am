@@ -37,8 +37,7 @@ EXTRA_DIST = 	$(srcdir)/ecasound.1 \
 	    	$(srcdir)/examples.html \
 		$(srcdir)/manpages.html \
 		$(srcdir)/tutorials.html \
-		$(srcdir)/style_ecasound.css \
-		$(srcdir)/edi-list.txt
+		$(srcdir)/style_ecasound.css
 
 # ---------------------------------------------------------------------
 # local targets for generating docs from latex and yodl sources
