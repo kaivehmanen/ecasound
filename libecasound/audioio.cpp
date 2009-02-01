@@ -265,6 +265,10 @@ void AUDIO_IO::open(void) throw (AUDIO_IO::SETUP_ERROR &)
   open_rep = true;
   if (supports_seeking() == true)
     seek_position(position_in_samples());
+  else
+    /* note: if seeking is not supported, object always starts 
+     *       at position 0 when opened */
+    set_position_in_samples(0);
 }
 
 void AUDIO_IO::close(void)

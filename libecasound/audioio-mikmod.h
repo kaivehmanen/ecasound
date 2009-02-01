@@ -52,6 +52,14 @@ class MIKMOD_INTERFACE : public AUDIO_IO_BUFFERED,
   virtual void start_io(void);
   virtual void stop_io(void);
 
+ protected:
+
+  /* functions called by AUDIO_IO_FORKED_STREAM that require
+   * the use of AUDIO_IO methods */
+
+  virtual bool do_supports_seeking(void) const { return supports_seeking(); }
+  virtual void do_set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos) { set_position_in_samples(pos); }
+
  private:
 
   std::string opt_filename_rep;

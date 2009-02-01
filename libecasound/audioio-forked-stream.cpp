@@ -178,10 +178,9 @@ void AUDIO_IO_FORKED_STREAM::set_fork_bits(int bits)
 
 void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
 {
-  last_fork_rep = false;
-  fd_rep = 0;
-
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-read: '" + fork_command() + "'");
+
+  init_state_before_fork();
 
   if (use_named_pipe_rep == true) {
     if (tmp_file_created_rep == true) {
@@ -240,12 +239,24 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
   }
 }
 
-void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
+/**
+ * Initializes state that needs to be reset/refresh 
+ * between every new fork of a child object.
+ */
+void AUDIO_IO_FORKED_STREAM::init_state_before_fork(void)
 {
   last_fork_rep = false;
   fd_rep = 0;
 
+  if (do_supports_seeking() != true) 
+    do_set_position_in_samples(0);
+}
+
+void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
+{
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-fifo-read: '" + fork_command() + "'");
+
+  init_state_before_fork();
 
   sigkill_sent_rep = false;
   pid_of_child_rep = fork();
@@ -296,11 +307,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
 
 void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
 {
-  last_fork_rep = false;
-  fd_rep = 0;
-
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Fork child-for-write: '" + fork_command() + "'");
   
+  init_state_before_fork();
+
   int fpipes[2];
   if (pipe(fpipes) == 0) {
     sigkill_sent_rep = false;

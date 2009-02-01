@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// audioio-faad.cpp: Interface class for FAAC/FAAD AAC encoder/decoder.
-// Copyright (C) 2004-2006,2008 Kai Vehmanen
+// audioio-aac.cpp: Interface class for FAAC/FAAD AAC encoder/decoder.
+// Copyright (C) 2004-2006,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)

@@ -2,7 +2,7 @@
 // audioio-db-client.cpp: Client class for double-buffering providing 
 //                        additional layer of buffering for objects
 //                        derived from AUDIO_IO.
-// Copyright (C) 2000-2005 Kai Vehmanen
+// Copyright (C) 2000-2005,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -199,6 +199,34 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
 }
 
 /**
+ * Stops the DB server in case it's running. 
+ * Returns true if server was running. The return
+ * value should be passed to restore_db_server_state()
+ * function.
+ */
+bool AUDIO_IO_DB_CLIENT::pause_db_server_if_running(void)
+{
+  bool was_running = false;
+  if (pserver_repp->is_running() == true) {
+    was_running = true;
+    pserver_repp->stop();
+    pserver_repp->wait_for_stop();
+    DBC_CHECK(pserver_repp->is_running() != true);
+  }
+
+  return was_running;
+}
+
+void AUDIO_IO_DB_CLIENT::restore_db_server_state(bool was_running)
+{
+  if (was_running == true) {
+    pserver_repp->start();
+    pserver_repp->wait_for_full();
+    DBC_CHECK(pserver_repp->is_running() == true);
+  }
+}
+
+/**
  * Seeks to the current position.
  *
  * Note! Seeking involves stopping the whole db 
@@ -209,25 +237,23 @@ SAMPLE_SPECS::sample_pos_t AUDIO_IO_DB_CLIENT::seek_position(SAMPLE_SPECS::sampl
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "seek " + label() + 
 	      " to pos " + kvu_numtostr(pos) + ".");
-  SAMPLE_SPECS::sample_pos_t res;
-  bool was_running = false;
-  if (pserver_repp->is_running() == true) {
-    was_running = true;
-    pserver_repp->stop();
-    pserver_repp->wait_for_stop();
-    DBC_CHECK(pserver_repp->is_running() != true);
+  SAMPLE_SPECS::sample_pos_t res =
+    child()->position_in_samples();
+  
+  if (child()->supports_seeking() == true) {
+    bool was_running = pause_db_server_if_running();
+
+    child()->seek_position_in_samples(pos);
+    res = child()->position_in_samples();
+    if (pbuffer_repp != 0) {
+      pbuffer_repp->reset();
+    }
+
+    finished_rep = false;
+
+    restore_db_server_state(was_running);
   }
-  child()->seek_position_in_samples(pos);
-  res = child()->position_in_samples();
-  if (pbuffer_repp != 0) {
-    pbuffer_repp->reset();
-  }
-  finished_rep = false;
-  if (was_running == true) {
-    pserver_repp->start();
-    pserver_repp->wait_for_full();
-    DBC_CHECK(pserver_repp->is_running() == true);
-  }
+
   return res;
 }
 
@@ -277,4 +303,30 @@ void AUDIO_IO_DB_CLIENT::close(void)
   if (child()->is_open() == true) child()->close();
 
   AUDIO_IO::close();
+}
+
+void AUDIO_IO_DB_CLIENT::start_io(void)
+{
+  AUDIO_IO_PROXY::start_io();
+
+  /* note: child may have changed its position after 
+   *       start_io() is issued (via AUDIO_IO_PROXY::start_io() */
+
+  if (child()->supports_seeking() != true) {
+    bool was_running = pause_db_server_if_running();
+
+    set_position_in_samples(child()->position_in_samples());
+
+    /* as position might have changed, flush the buffers */
+    if (pbuffer_repp != 0) {
+      pbuffer_repp->reset();
+    }
+
+    restore_db_server_state(was_running);
+  }
+}
+
+void AUDIO_IO_DB_CLIENT::stop_io(void)
+{
+  AUDIO_IO_PROXY::stop_io();
 }

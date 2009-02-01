@@ -196,7 +196,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
   /** @name Functions reimplemented from AUDIO_IO */
   /*@{*/
 
-  virtual bool supports_seeking(void) const { return false; }
+  virtual bool supports_seeking(void) const { return true; }
   virtual bool finished(void) const { return is_open() == false; }
   virtual std::string status(void) const;
 

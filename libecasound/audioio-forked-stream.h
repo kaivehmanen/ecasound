@@ -5,6 +5,7 @@
 #include <kvu_temporary_file_directory.h>
 
 #include "audioio-barrier.h"
+#include "sample-specs.h" 
 
 /**
  * Helper class providing routines for forking new processes 
@@ -31,6 +32,8 @@ class AUDIO_IO_FORKED_STREAM : public AUDIO_IO_BARRIER {
 
   void init_temp_directory(void);
   void fork_child_for_fifo_read(void);
+
+  void init_state_before_fork(void);
 
 public:
 
@@ -60,6 +63,9 @@ public:
   bool child_fork_succeeded(void) const { return(last_fork_rep); }
   int pid_of_child(void) const { return(pid_of_child_rep); }
   int file_descriptor(void) const { return(fd_rep); }
+
+  virtual bool do_supports_seeking(void) const = 0;
+  virtual void do_set_position_in_samples(SAMPLE_SPECS::sample_pos_t pos) = 0;
 
 public:
 

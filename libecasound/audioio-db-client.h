@@ -66,6 +66,14 @@ class AUDIO_IO_DB_CLIENT : public AUDIO_IO_PROXY {
 
   /*@}*/
 
+  /** @name Reimplemented functions from AUDIO_IO_BARRIER */
+  /*@{*/
+
+  virtual void start_io(void);
+  virtual void stop_io(void);
+
+  /*@}*/
+
   /** @name Reimplemented functions from AUDIO_IO */
   /*@{*/
 
@@ -93,6 +101,9 @@ class AUDIO_IO_DB_CLIENT : public AUDIO_IO_PROXY {
   bool recursing_rep;
 
   void fetch_initial_child_data(void);
+
+  bool pause_db_server_if_running(void);
+  void restore_db_server_state(bool was_running);
 };
 
 #endif
