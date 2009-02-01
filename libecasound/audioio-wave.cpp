@@ -289,9 +289,9 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
   memcpy(riff_header_rep.wname,"WAVE",4);
 
   /* hack for 64bit wav files */
-  if (fio_repp->get_file_length() > UINT32_MAX)
+  if (fio_repp->get_file_length() > static_cast<off_t>(UINT32_MAX))
     riff_header_rep.size = little_endian_uint32(UINT32_MAX);
-  else if (fio_repp->get_file_length() > sizeof(riff_header_rep))
+  else if (fio_repp->get_file_length() > static_cast<off_t>(sizeof(riff_header_rep)))
     riff_header_rep.size = little_endian_uint32(fio_repp->get_file_length() - sizeof(riff_header_rep));
   else
     riff_header_rep.size = little_endian_uint32(0);
@@ -434,8 +434,8 @@ void WAVEFILE::update_riff_datablock(void)
 
   fio_repp->set_file_position_end();
 
-  /* hack for wav files with length over 2^31 bytes */
-  if (fio_repp->get_file_position() - savetemp > UINT32_MAX)
+  /* hack for wav files with length over 2^32-1 bytes */
+  if (fio_repp->get_file_position() - savetemp > static_cast<off_t>(UINT32_MAX))
     fblock.bsize = little_endian_uint32(UINT32_MAX);
   else
     fblock.bsize = little_endian_uint32(fio_repp->get_file_position() - savetemp);
