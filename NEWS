@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------
-** Ecasound - User-visible changes (NEWS)      (last edited: 310109) **
+** Ecasound - User-visible changes (NEWS)      (last edited: 010209) **
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][+extraT]" :
@@ -64,7 +64,7 @@ xx0y2009 (v2.6.0) -** stable release **-
 		   value, either the default value or e.g. the JACK 
 		   system sampling rate; updated documentation, see
 		   ecasound(1)
-        - changed: minor update ecasound's "--help"
+        - changed: minor update to ecasound's "--help"
 	- changed: when reading RIFF WAVE files, properly ignore 
 		   any unknown subchunk types
 	- changed: largefile support (+2GiB files) is now enabled
@@ -91,10 +91,10 @@ xx0y2009 (v2.6.0) -** stable release **-
 		 lenght, and a seek past the end of stream was performed
         - fixed: aac/ogg/mikmod/mid inputs - once object reached state 
 		 'finished' (all samples played), it cannot be played 
-		 again by reconnectin the chainsetup
-	- fixed: combination of '--daemon' and '-C' (disable interactive
+		 again by reconnecting the chainsetup
+	- fixed: combination of '--server' and '-C' (disable interactive
 		 mode) had a bug that prevented processing of commands
-		 received over the daemon socket while the engine 
+		 received over the server socket while the engine 
 		 was running the batchmode
 	- fixed: a nasty bug in 'playat' implementation causing audible
 		 artifacts ; see 
