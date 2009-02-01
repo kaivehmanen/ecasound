@@ -340,9 +340,15 @@ fi
 dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Check for LFS (--with-largefile)
+dnl Check for LFS (--with-largefile, --disable-largefile
+dnl 
+dnl NOTE: AC_CHECK_LARGEFILE is defined in acinlude.m4 and
+dnl       use AC_SYS_LARGEFILE to perform the check.
 dnl
-dnl modifies: AM_CXXFLAGS, AM_CFLAGS
+dnl Refs:
+dnl   http://www.gnu.org/software/hello/manual/autoconf/System-Services.html
+dnl   http://ac-archive.sourceforge.net/largefile/future.html
+dnl
 dnl defines: enable_largefile
 dnl ---
 AC_CHECK_LARGEFILE

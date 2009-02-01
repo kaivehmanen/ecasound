@@ -138,7 +138,7 @@ SAMPLE_SPECS::sample_pos_t CDRFILE::seek_position(SAMPLE_SPECS::sample_pos_t pos
     off_t curpos_rep = pos * frame_size();
     DBC_CHECK(curpos_rep >= 0);
 /* fseeko doesn't seem to work with glibc 2.1.x */
-#if _LARGEFILE_SOURCE
+#if _FILE_OFFSET_BITS==64
     off_t seekpos = 0;
     off_t seekstep = 0;
     int whence = SEEK_SET;

@@ -67,6 +67,11 @@ xx0y2009 (v2.6.0) -** stable release **-
         - changed: minor update ecasound's "--help"
 	- changed: when reading RIFF WAVE files, properly ignore 
 		   any unknown subchunk types
+	- changed: largefile support (+2GiB files) is now enabled
+		   by default and configure uses's default autoconf
+		   macro AC_SYS_LARGEFILE to perform the checks; 
+		   to explicitly disable, use '--disable-largefile';
+		   the old '--with-largefile' no longer has any effect
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually

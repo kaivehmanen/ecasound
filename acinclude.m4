@@ -101,9 +101,15 @@ AC_SUBST(ECA_S_JACK_INCLUDES)
 ])
 
 ## ------------------------------------------------------------------------
-## Check for LFS
+## Check for LFS (now deprecated, v3 is only a stub that doesn't
+## peform any checks)
 ## 
-## version: 2
+## version: 3
+##
+## refs:
+##  - http://www.gnu.org/software/libtool/manual/libc/Feature-Test-Macros.html
+##  - http://www.suse.de/~aj/linux_lfs.html
+##  - http://en.wikipedia.org/wiki/Large_file_support
 ##
 ## modifies: AM_CXXFLAGS, AM_CFLAGS
 ## defines: enable_largefile
@@ -112,23 +118,38 @@ AC_SUBST(ECA_S_JACK_INCLUDES)
 
 AC_DEFUN([AC_CHECK_LARGEFILE],
 [
-AC_MSG_CHECKING(for largefile support (>2GB files))
-AC_ARG_WITH(largefile,
-  [  --with-largefile        Support large (>2GB) files],
-  [ if test "x$withval" = "xyes" ; then
-      enable_largefile="yes"
-    fi 
-  ])
-       
-if test "x$enable_largefile" = "xyes"; then
-  # AC_DEFINE(_FILE_OFFSET_BITS, 64)
-  # AC_DEFINE(_LARGEFILE_SOURCE)
-  AM_CXXFLAGS="$AM_CXXFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
-  AM_CFLAGS="$AM_CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
-  AC_MSG_RESULT(yes.)
-else
-  AC_MSG_RESULT(no.)
-fi
+  echo "checking for largefile support (>2GB files)..."
+
+  dnl note: this is only for backwards compatibility
+  AC_ARG_WITH(largefile,
+    [  --with-largefile        deprecated option, now used by default], [])
+
+  AC_SYS_LARGEFILE
+  if test x$ac_cv_sys_file_offset_bits = x64 ; then
+    dnl note: Just to be sure that the define is there even
+    dnl       if config.h is not included in right order w.r.t.
+    dnl       the system headers.
+    AM_CXXFLAGS="$AM_CXXFLAGS -D_FILE_OFFSET_BITS=64"
+    AM_CFLAGS="$AM_CFLAGS -D_FILE_OFFSET_BITS=64"
+
+    enable_largefile=yes
+  fi
+
+  dnl old checks
+  dnl ----------
+  dnl  [ if test "x$withval" = "xyes" ; then
+  dnl      enable_largefile="yes"
+  dnl    fi 
+  dnl  ]
+  dnl if test "x$enable_largefile" = "xyes"; then
+  dnl   dnl AC_DEFINE(_FILE_OFFSET_BITS, 64)
+  dnl   dnl AC_DEFINE(_LARGEFILE_SOURCE)
+  dnl   AM_CXXFLAGS="$AM_CXXFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  dnl   AM_CFLAGS="$AM_CFLAGS -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE"
+  dnl   AC_MSG_RESULT(yes.)
+  dnl else
+  dnl   AC_MSG_RESULT(no.)
+  dnl fi
 
 ])
 

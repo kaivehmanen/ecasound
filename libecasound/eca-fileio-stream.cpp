@@ -131,7 +131,7 @@ void ECA_FILE_IO_STREAM::set_file_position(off_t newpos)
   curpos_rep = newpos;
   if (standard_mode != true) {
 /* fseeko doesn't seem to work with glibc 2.1.x */
-#if _LARGEFILE_SOURCE
+#if _FILE_OFFSET_BITS==64
     off_t seekpos = 0;
     off_t seekstep = 0;
     int whence = SEEK_SET;
