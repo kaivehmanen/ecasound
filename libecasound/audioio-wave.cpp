@@ -1,9 +1,12 @@
 // ------------------------------------------------------------------------
 // audioio-wave.cpp: RIFF WAVE audio file input/output.
-// Copyright (C) 1999-2003,2005,2008 Kai Vehmanen
+// Copyright (C) 1999-2003,2005,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
+//
+// References:
+//     - http://ccrma.stanford.edu/courses/422/projects/WaveFormat/
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -257,7 +260,7 @@ void WAVEFILE::update (void)
 
 void WAVEFILE::find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&)
 {
-  if (find_block("data") != true) {
+  if (find_block("data", 0) != true) {
     throw(ECA_ERROR("AUDIOIO-WAVE", "no RIFF data block found", ECA_ERROR::retry));
   }
   data_start_position_rep = fio_repp->get_file_position();
@@ -313,7 +316,7 @@ void WAVEFILE::read_riff_fmt(void) throw(AUDIO_IO::SETUP_ERROR&)
 
   off_t savetemp = fio_repp->get_file_position();    
 
-  if (find_block("fmt ") != true)
+  if (find_block("fmt ", 0) != true)
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-WAVE: no riff fmt-block found"));
   else {
     fio_repp->read_to_buffer(&riff_format_rep, sizeof(riff_format_rep));
@@ -426,7 +429,7 @@ void WAVEFILE::update_riff_datablock(void)
     
   memcpy(fblock.sig,"data",4);
 
-  find_block("data");
+  find_block("data", 0);
   off_t savetemp = fio_repp->get_file_position();
 
   fio_repp->set_file_position_end();
@@ -459,7 +462,7 @@ bool WAVEFILE::next_riff_block(RB *t, off_t *offtmp)
   return true;
 }
 
-bool WAVEFILE::find_block(const char* fblock)
+bool WAVEFILE::find_block(const char* fblock, uint32_t* blksize)
 {
   off_t offset;
   RB block;
@@ -470,6 +473,8 @@ bool WAVEFILE::find_block(const char* fblock)
   while(next_riff_block(&block,&offset)) {
     // ECA_LOG_MSG(ECA_LOGGER::user_objects, "found RIFF-block ");
     if (memcmp(block.sig,fblock,4) == 0) {
+      if (blksize != 0)
+	*blksize = block.bsize;
       return true;
     }
     fio_repp->set_file_position(offset);
@@ -480,11 +485,16 @@ bool WAVEFILE::find_block(const char* fblock)
 
 bool WAVEFILE::finished(void) const
 {
- if (fio_repp->is_file_error() ||
-     !fio_repp->is_file_ready()) 
-   return true;
+  if (io_mode() == io_read && 
+      (length_set() == true &&
+       position_in_samples() >= length_in_samples()))
+    return true;
 
- return false;
+  if (fio_repp->is_file_error() ||
+      !fio_repp->is_file_ready()) 
+    return true;
+  
+  return false;
 }
 
 long int WAVEFILE::read_samples(void* target_buffer, long int samples)
@@ -493,6 +503,11 @@ long int WAVEFILE::read_samples(void* target_buffer, long int samples)
   DBC_REQUIRE(samples >= 0);
   DBC_REQUIRE(target_buffer != 0);
   // --------
+
+  if (length_set() == true &&
+      position_in_samples() + samples >= length_in_samples())
+    samples = length_in_samples() - position_in_samples();
+  
   fio_repp->read_to_buffer(target_buffer, frame_size() * samples);
   return fio_repp->file_bytes_processed() / frame_size();
 }
@@ -503,6 +518,13 @@ void WAVEFILE::write_samples(void* target_buffer, long int samples)
   DBC_REQUIRE(samples >= 0);
   DBC_REQUIRE(target_buffer != 0);
   // --------
+
+  /* note: When writing in write-update mode (i.e. modifying an
+   *       existing file), we do not honor the previous length value 
+   *       in "data" header chunk. This may lead to overriding some
+   *       non-data chunk at the end of the file.
+   */
+
   fio_repp->write_from_buffer(target_buffer, frame_size() * samples);
 }
 
@@ -518,16 +540,37 @@ SAMPLE_SPECS::sample_pos_t WAVEFILE::seek_position(SAMPLE_SPECS::sample_pos_t po
 void WAVEFILE::set_length_in_bytes(void)
 {
   off_t savetemp = fio_repp->get_file_position();
+  uint32_t blksize = 0;
 
-  find_block("data");
+  find_block("data", &blksize);
   off_t datastart = fio_repp->get_file_position();
 
   fio_repp->set_file_position_end();
   off_t datalen = fio_repp->get_file_position() - datastart;
-  set_length_in_samples(datalen / frame_size());
-  MESSAGE_ITEM mitem;
-  mitem << "data length " << datalen << " bytes.";
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, mitem.to_string());
+
+  /* note: If the audio stream length defined in "data" header
+   *       block is zero (not updated), or it's set to maximum
+   *       value, set the length according to actual file length.
+   *       
+   *       This is not strictly according to the RIFF WAVE spec,
+   *       but allows to handle RIFF WAVE files with a broken 
+   *       header, as well as files with size exceeding the 2GiB
+   *       limit. */
+  if (blksize != 0 &&
+      blksize != UINT32_MAX) {
+    set_length_in_samples(blksize / frame_size());
+  }
+  else 
+    set_length_in_samples(datalen / frame_size());
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "data block length in header " + 
+	      kvu_numtostr(blksize) + 
+	      ", file length after data block " +
+	      kvu_numtostr(datalen) + 
+	      ", length set to " +
+	      kvu_numtostr(length_in_samples()) + 
+	      " samples");
 
   fio_repp->set_file_position(savetemp);
 }

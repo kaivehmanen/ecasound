@@ -134,7 +134,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
   void write_riff_datablock(void);
   void update_riff_datablock(void);
   void find_riff_datablock (void) throw(AUDIO_IO::SETUP_ERROR&);
-  bool find_block(const char* fblock);
+  bool find_block(const char* fblock, uint32_t *blksize);
 };
 
 #endif
