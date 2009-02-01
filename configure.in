@@ -998,7 +998,7 @@ dnl --
 
 AC_MSG_CHECKING(whether to build with system readline)
 AC_ARG_ENABLE(sys_readline,
-  [  --enable-sys-readline	  compile with system readline (default=no)],
+  [  --enable-sys-readline	  Compile with system readline (default=yes)],
   [
     case "$enableval" in
       y | yes)

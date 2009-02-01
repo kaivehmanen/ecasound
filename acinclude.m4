@@ -23,7 +23,7 @@ AC_ARG_WITH(jack,
   ])
 
 AC_ARG_ENABLE(jack,
-  [  --enable-jack		  Enable JACK support],
+  [  --enable-jack		  Enable JACK support (default=yes, if found)],
   [
     case "$enableval" in
       y | yes)
