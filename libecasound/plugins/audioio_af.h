@@ -29,15 +29,15 @@ class AUDIOFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   
  public:
 
-  virtual string name(void) const { return("SGI libaudiofile object"); }
-  virtual string description(void) const { return("SGI libaudiofile object. Supports AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio files (.au, .snd)."); }
+  virtual string name(void) const { return "SGI libaudiofile object"; }
+  virtual string description(void) const { return "SGI libaudiofile object. Supports AIFF (.aiff, .aifc, .aif) and Sun/NeXT audio files (.au, .snd)."; }
 
   virtual void set_parameter(int param, string value);
   virtual string get_parameter(int param) const;
 
-  virtual int supported_io_modes(void) const { return(io_read | io_write); }
-  virtual string parameter_names(void) const { return("filename,opt_filename"); }
-  virtual bool locked_audio_format(void) const { return(true); }
+  virtual int supported_io_modes(void) const { return (io_read | io_write); }
+  virtual string parameter_names(void) const { return "filename,opt_filename"; }
+  virtual bool locked_audio_format(void) const { return true; }
   
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);

@@ -1,6 +1,9 @@
 // ------------------------------------------------------------------------
 // audioio-af.cpp: Interface to SGI audiofile library.
-// Copyright (C) 1999-2001,2004 Kai Vehmanen
+// Copyright (C) 1999-2001,2004,2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // References:
 //     http://www.68k.org/~michael/audiofile/
@@ -43,9 +46,9 @@
 static const char* audio_io_keyword_const = "audiofile_aiff_au_snd";
 static const char* audio_io_keyword_regex_const = "(aif*$)|(au$)|(snd$)";
 
-const char* audio_io_keyword(void){return(audio_io_keyword_const); }
-const char* audio_io_keyword_regex(void){return(audio_io_keyword_regex_const); }
-int audio_io_interface_version(void) { return(ecasound_library_version_current); }
+const char* audio_io_keyword(void){return audio_io_keyword_const; }
+const char* audio_io_keyword_regex(void){return audio_io_keyword_regex_const; }
+int audio_io_interface_version(void) { return ecasound_library_version_current; }
 #endif
 
 using namespace std;
@@ -69,7 +72,7 @@ AUDIOFILE_INTERFACE* AUDIOFILE_INTERFACE::clone(void) const
   for(int n = 0; n < number_of_params(); n++) {
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
-  return(target);
+  return target;
 }
 
 void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
@@ -84,7 +87,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   switch(io_mode()) {
   case io_read:
     {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
+      ECA_LOG_MSG(ECA_LOGGER::info, "Using audiofile library to open file \"" +
 		  real_filename + "\" for reading.");
 
       afhandle = ::afOpenFile(real_filename.c_str(), "r", NULL);
@@ -119,7 +122,7 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
   case io_write:
     {
-      ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Using audiofile library to open file \"" +
+      ECA_LOG_MSG(ECA_LOGGER::info, "Using audiofile library to open file \"" +
 		    real_filename + "\" for writing.");
 
       AFfilesetup fsetup;
@@ -135,8 +138,10 @@ void AUDIOFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
       else if (strstr(teksti.c_str(),".aif") != 0) { file_format = AF_FILE_AIFF; }
       else if (strstr(teksti.c_str(),".au") != 0) { file_format = AF_FILE_NEXTSND; }
       else if (strstr(teksti.c_str(),".snd") != 0) { file_format = AF_FILE_NEXTSND; }
+      else if (strstr(teksti.c_str(),".wav") != 0) { file_format = AF_FILE_WAVE; }
+      else if (strstr(teksti.c_str(),".avr") != 0) { file_format = AF_FILE_AVR; }
       else {
-	ECA_LOG_MSG(ECA_LOGGER::info, "(audioio-af) Warning! Unknown audio format, using raw format instead.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Warning! Unknown audio format, using raw format instead.");
 	file_format = AF_FILE_RAWDATA;
       }
       ::afInitFileFormat(fsetup, file_format);
@@ -188,13 +193,13 @@ void AUDIOFILE_INTERFACE::close(void)
 
 void AUDIOFILE_INTERFACE::debug_print_type(void) {
   int temp = ::afGetFileFormat(afhandle, 0);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "(audioio-af) afFileformat: " + kvu_numtostr(temp) + "."); 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "afFileformat: " + kvu_numtostr(temp) + "."); 
 }
 
 bool AUDIOFILE_INTERFACE::finished(void) const
 {
   if (finished_rep == true || 
-      (io_mode() == io_read && out_position())) return(true);
+      (io_mode() == io_read && out_position())) return true;
 
   return false;
 }
@@ -205,7 +210,7 @@ long int AUDIOFILE_INTERFACE::read_samples(void* target_buffer,
   samples_read = ::afReadFrames(afhandle, AF_DEFAULT_TRACK,
 				target_buffer, samples);
   finished_rep = (samples_read < samples) ? true : false;
-  return(samples_read);
+  return samples_read;
 }
 
 void AUDIOFILE_INTERFACE::write_samples(void* target_buffer, 
@@ -216,8 +221,25 @@ void AUDIOFILE_INTERFACE::write_samples(void* target_buffer,
 
 SAMPLE_SPECS::sample_pos_t AUDIOFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
-  ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, pos);
   finished_rep = false;
+
+  SAMPLE_SPECS::sample_pos_t res =
+    ::afSeekFrame(afhandle, AF_DEFAULT_TRACK, pos);
+
+  if (res != pos) {
+    ECA_LOG_MSG(ECA_LOGGER::info, 
+		"invalid seek for file " +
+		opt_filename_rep + 
+		" req was to " +
+		kvu_numtostr(pos) + 
+		" result was " +
+		kvu_numtostr(res));
+    if (res < 0) {
+      res = afTellFrame(afHandle, AF_DEFAULT_TRACK);
+      DBC_CHECK(res >= 0);
+      res = pos;
+  }
+
   return pos;
 }
 
@@ -239,10 +261,10 @@ string AUDIOFILE_INTERFACE::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    return(label());
+    return label();
 
   case 2: 
-    return(opt_filename_rep);
+    return opt_filename_rep;
   }
-  return("");
+  return "";
 }
