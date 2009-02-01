@@ -155,6 +155,11 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::ladspa_plugin_map(void)
     KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
     if (ladspa_plugin_map_repp == 0) {
       ladspa_plugin_map_repp = new ECA_OBJECT_MAP();
+      DBC_CHECK(ladspa_plugin_map_repp != 0);
+
+      /* note: matching LADSPA unique names must be case sensitive */
+      ladspa_plugin_map_repp->toggle_case_sensitive_expressions(true);
+
       ECA_STATIC_OBJECT_MAPS::register_ladspa_plugin_objects(ladspa_plugin_map_repp);
     }
   }

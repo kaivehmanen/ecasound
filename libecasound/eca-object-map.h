@@ -38,6 +38,14 @@ class ECA_OBJECT_MAP {
 
   /*@}*/
 
+  /** @name Object map features */
+  /*@{*/
+  
+  void toggle_case_sensitive_expressions(bool v);
+  bool case_sensitive_expressions(void) const;
+  
+  /*@}*/
+
   /** @name Object registration */
   /*@{*/
 
@@ -75,6 +83,7 @@ class ECA_OBJECT_MAP {
   mutable std::map<std::string, ECA_OBJECT*> object_map;
   mutable std::map<std::string,std::string> object_expr_map;
 
+  bool expr_case_sensitive_rep;
 };
 
 #endif

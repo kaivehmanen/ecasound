@@ -1,3 +1,8 @@
+2009-02-02  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-object-map.h (toggle_case_sensitive_expressions,
+	case_sensitive_expressions): Member functions added.
+
 2009-01-31  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-test-case.h (run): A new overloaded function taking 

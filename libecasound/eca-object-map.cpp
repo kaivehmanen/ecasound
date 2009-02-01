@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-object-map: A virtual base for dynamic object maps 
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2004,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -36,6 +36,7 @@ using std::string;
 using std::list;
 
 ECA_OBJECT_MAP::ECA_OBJECT_MAP(void)
+  : expr_case_sensitive_rep(false)
 {
 }
 
@@ -63,6 +64,16 @@ ECA_OBJECT_MAP::~ECA_OBJECT_MAP(void)
   }
 }
 
+void ECA_OBJECT_MAP::toggle_case_sensitive_expressions(bool v)
+{
+  expr_case_sensitive_rep = v;
+}
+
+bool ECA_OBJECT_MAP::case_sensitive_expressions(void) const
+{
+  return expr_case_sensitive_rep;
+}
+
 /**
  * Registers a new object to the object map. Map object will take care
  * of deleting the registered objects. Notice that it's possible 
@@ -83,10 +94,10 @@ void ECA_OBJECT_MAP::register_object(const string& keyword, const string& expr, 
   if (expr_to_keyword(keyword) != keyword &&
       object != 0) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "WARNING: Keyword " + keyword + 
-		  " doesn't match to regex " + expr + 
-		  " for object '" + object->name() + 
-		  "' (" + expr_to_keyword(expr) + ").");
+		"WARNING: Registered keyword " + keyword + 
+		" doesn't match the associated regex " + expr + 
+		", for object '" + object->name() + 
+		"' (" + expr_to_keyword(expr) + ").");
   }
 }
 
@@ -149,25 +160,33 @@ const ECA_OBJECT* ECA_OBJECT_MAP::object(const string& keyword) const
 
 /**
  * A convenience function which directly returns an object matching
- * the regex 'expr'.
+ * search string 'input'.
  */
-const ECA_OBJECT* ECA_OBJECT_MAP::object_expr(const string& expr) const
+const ECA_OBJECT* ECA_OBJECT_MAP::object_expr(const string& input) const
 {
-  return object(expr_to_keyword(expr));
+  return object(expr_to_keyword(input));
 }
 
 /**
- * Returns the identifying keyword that matches the expression 'expr'.
+ * Returns the identifying keyword for input string 'input'.
+ * 
+ * If 'case_sensitive_expressions() != true', the pattern 
+ * matching will be case insensitive.
  */
-string ECA_OBJECT_MAP::expr_to_keyword(const string& expr) const
+string ECA_OBJECT_MAP::expr_to_keyword(const string& input) const
 {
   map<string,string>::const_iterator p = object_expr_map.begin();
   regex_t preg;
   string result;
   while(p != object_expr_map.end()) {
-    regcomp(&preg, p->second.c_str(), REG_EXTENDED | REG_NOSUB | REG_ICASE);
-    if (regexec(&preg, expr.c_str(), 0, 0, 0) == 0) {
-      ECA_LOG_MSG(ECA_LOGGER::functions, "match (1): " + expr + " to regexp " + p->second);
+    int cflags = REG_EXTENDED | REG_NOSUB;
+    
+    if (case_sensitive_expressions() != true)
+      cflags |= REG_ICASE;
+
+    regcomp(&preg, p->second.c_str(), cflags);
+    if (regexec(&preg, input.c_str(), 0, 0, 0) == 0) {
+      ECA_LOG_MSG(ECA_LOGGER::functions, "match (1): " + input + " to regexp " + p->second);
       result = p->first;
       regfree(&preg);
       break;
