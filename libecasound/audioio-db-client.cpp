@@ -254,7 +254,7 @@ SAMPLE_SPECS::sample_pos_t AUDIO_IO_DB_CLIENT::seek_position(SAMPLE_SPECS::sampl
     restore_db_server_state(was_running);
   }
 
-  return res;
+  return AUDIO_IO_PROXY::seek_position(res);
 }
 
 /**
