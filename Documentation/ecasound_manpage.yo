@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (27.01.2009)
+       (06.02.2009)
        ()
        (Multimedia software)
 
@@ -581,8 +581,7 @@ name (e.g. "KMidimon").
 
 dit(-Mms:device_id)
 Sends MMC start ("Deferred Play") and stop ("Stop") with 
-device ID 'device_id'. Messages can be broadcast to all devices
-by using device ID of '127'.
+device ID 'device_id'.
 
 While Ecasound does not directly support syncing transport state 
 to incoming MMC messages, this can be achieved by connecting Ecasound
