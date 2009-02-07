@@ -107,6 +107,10 @@ xx0y2009 (v2.6.0) -** stable release **-
  		 use); in most cases this means graceful recovery 
 	 	 from failed seek attempts, and correct reporting of
 	 	 the objects actual current position
+        - fixed: error is emitted if trying to use 'select' with
+		 objects that do not support seeking
+        - fixed: bugs with passing 'auto' as the 2nd parameter of 
+		 'resample'
 24082008 (v2.5.2) -** stable release **-
 	- more verbose description of change available at:
                  http://eca.cx/relnotes/ecasound_v2_5_2_relnotes.txt

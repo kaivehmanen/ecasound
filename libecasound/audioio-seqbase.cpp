@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-seqbase.cpp: Base class for audio sequencer objects
-// Copyright (C) 1999,2002,2005,2008 Kai Vehmanen
+// Copyright (C) 1999,2002,2005,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -123,6 +123,12 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
       child_looping_rep) {
     child()->close();
     throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Unable to loop an object with infinite length."));
+  }
+
+  if (child()->supports_seeking_sample_accurate() != true &&
+      child_start_pos_rep.samples() > 0) {
+    child()->close();
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Unable use sections of an object that does not support seeking."));
   }
 
   /* step: set srate for audio time variable */
@@ -418,6 +424,14 @@ void AUDIO_SEQUENCER_BASE::set_child_offset(const ECA_AUDIO_TIME& v)
 
 void AUDIO_SEQUENCER_BASE::set_child_start_position(const ECA_AUDIO_TIME& v)
 {
+  if (is_open() == true &&
+      child()->supports_seeking_sample_accurate() != true) {
+    ECA_LOG_MSG(ECA_LOGGER::errors, 
+		"ERROR: object '" + child()->label() +
+		"' does not support sample accurate seeking, unable to set start position.");
+    return;
+  }
+
   child_start_pos_rep = v;
 }
 

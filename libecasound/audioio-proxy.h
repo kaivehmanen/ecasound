@@ -69,6 +69,8 @@ class AUDIO_IO_PROXY
   /*@{*/
 
   virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos) { return child_repp->seek_position(pos); }
+  virtual bool supports_seeking(void) const { return child_repp->supports_seeking(); }
+  virtual bool supports_seeking_sample_accurate(void) const { return child_repp->supports_seeking_sample_accurate(); }
 
   /*@}*/
 
@@ -77,7 +79,6 @@ class AUDIO_IO_PROXY
 
   virtual int supported_io_modes(void) const { return(child_repp->supported_io_modes()); }
   virtual bool supports_nonblocking_mode(void) const { return(child_repp->supports_nonblocking_mode()); }
-  virtual bool supports_seeking(void) const { return(child_repp->supports_seeking()); }
   virtual bool finite_length_stream(void) const { return( child_repp->finite_length_stream()); }
   virtual bool locked_audio_format(void) const { return(child_repp->locked_audio_format()); }
 
