@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999-2004,2008 Kai Vehmanen
+// Copyright (C) 1999-2004,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -223,11 +223,16 @@ string AUDIO_IO::format_info(void) const
 void AUDIO_IO::set_parameter(int param, 
 			     string value)
 {
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      AUDIO_IO::parameter_set_to_string(param, value));
   if (param == 1) set_label(value);
 }
 
 string AUDIO_IO::get_parameter(int param) const
 {
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+	      AUDIO_IO::parameter_get_to_string(param));
+
   if (param == 1) return label();
   return "";
 }
@@ -237,8 +242,9 @@ string AUDIO_IO::get_parameter(int param) const
  */
 string AUDIO_IO::parameter_get_to_string(int param) const
 {
-  return string("get_parameter of ")
-    + label() + ": " + kvu_numtostr(param) + ".";
+  return string("get param ")
+    + kvu_numtostr(param) + " of '" + label() + "': '" 
+    + kvu_numtostr(param) + "'";
 }
 
 /** 
@@ -246,9 +252,9 @@ string AUDIO_IO::parameter_get_to_string(int param) const
  */
 string AUDIO_IO::parameter_set_to_string(int param, string value) const
 {
-  return string("set_parameter of ")
-    + label() + ": " + kvu_numtostr(param) 
-    + " to " + value + ".";
+  return string("set param ")
+    + kvu_numtostr(param) + " of '" 
+    + label() + "' to '" + value + "'";
 }
 
 // ===================================================================
@@ -394,7 +400,7 @@ void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 {
   ECA_AUDIO_FORMAT::set_samples_per_second(v);
   ECA_AUDIO_POSITION::set_samples_per_second(v);
-  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,
 		"set srate, aobj '" +
 		name() + ":" + label() +
 		"' to " + 

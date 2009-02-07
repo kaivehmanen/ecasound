@@ -166,10 +166,8 @@ string AUDIO_IO_RESAMPLE::parameter_names(void) const
 
 void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
 {
-
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      "set_parameter " + label() +
-	      " to value " + value + ".");  
+	      AUDIO_IO::parameter_set_to_string(param, value));
 
   /* total of n+1 params, where n is number of childobj params */
   if (param > static_cast<int>(params_rep.size())) params_rep.resize(param);
@@ -219,9 +217,6 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
 
 string AUDIO_IO_RESAMPLE::get_parameter(int param) const
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"get_parameter " + label() + ".");
-
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
     if (param > AUDIO_IO_RESAMPLE::child_parameter_offset 
 	&& init_rep == true) {

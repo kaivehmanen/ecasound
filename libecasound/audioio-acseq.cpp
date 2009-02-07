@@ -169,8 +169,8 @@ void AUDIO_CLIP_SEQUENCER::set_parameter(int param, string value)
 
 string AUDIO_CLIP_SEQUENCER::get_parameter(int param) const
 {
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      AUDIO_IO::parameter_get_to_string(param) + ".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+	      AUDIO_IO::parameter_get_to_string(param));
 
   if (param > 0 && param < static_cast<int>(params_rep.size()) + 1) {
     if (param > child_param_offset_rep &&
