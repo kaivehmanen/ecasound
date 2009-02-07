@@ -14,6 +14,9 @@ PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 RELEASE = 1
 
+docs:
+	cd Documentation ; $(MAKE) $(AM_MAKEFLAGS) docs
+
 install-data-local: ecasoundrc
 	$(INSTALL) -d $(DESTDIR)$(pkgdatadir)
 	$(INSTALL_DATA) $(top_builddir)/ecasoundrc $(DESTDIR)$(pkgdatadir)/ecasoundrc
@@ -36,3 +39,5 @@ ecasoundrc: ecasoundrc.in Makefile.am
 
 clean-local:
 	rm -fv ecasoundrc
+
+dist-hook: docs
