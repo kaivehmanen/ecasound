@@ -33,6 +33,6 @@ ecasound_eci_doc.pdf: eci_doc.latex eci_doc.dvi
 eci_doc.dvi: eci_doc.latex
 
 clean-docs:
-	rm -fv ecasound_programmers_guide.html
+	rm -fv ecasound_programmers_guide.html ecasound_eci_doc.pdf
 	rm -fv eci_doc.log eci_doc.toc eci_doc.dvi eci_doc.aux eci_doc.ps eci_doc.dvi
 	rm -fv html_ecidoc/*

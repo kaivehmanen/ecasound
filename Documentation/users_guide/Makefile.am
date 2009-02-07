@@ -31,6 +31,7 @@ users_guide.dvi: users_guide.latex
 ecasound_users_guide.pdf: users_guide.dvi
 
 clean-docs:
+	rm -fv ecasound_users_guide.pdf
 	rm -fv users_guide.log users_guide.toc users_guide.dvi users_guide.aux users_guide.ps users_guide.dvi
 	rm -fv html_uguide/*
 
