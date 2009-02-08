@@ -7,13 +7,12 @@
  *        died so better to give an error */
 /* FIXME: add some mechanism to detect failed eci_init(); */
 /* FIXME: add check for msgsize errors */
-/* FIXME: get rid of the all static string lengths (C... blaah ;)) */
 /* FIXME: add proper signal handling */
 
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
  *                ecasound control interface
- * Copyright (C) 2000-2006,2008 Kai Vehmanen
+ * Copyright (C) 2000-2006,2008,2009 Kai Vehmanen
  * Copyright (C) 2003 Michael Ewe
  * Copyright (C) 2001 Aymeric Jeanneau
  *
@@ -34,6 +33,8 @@
  * -------------------------------------------------------------------------
  * History of major changes:
  *
+ * 2009-02-08 Kai Vehmanen
+ *     - Finally got rid of the fixed-size parsing buffers.
  * 2006-12-06 Kai Vehmanen 
  *     - Fixed severe string termination bug in handling lists of
  *       strings.
@@ -52,6 +53,7 @@
  * -------------------------------------------------------------------------
  */
 
+#include <assert.h>
 #include <stdio.h>        /* ANSI-C: printf(), ... */
 #include <stdlib.h>       /* ANSI-C: calloc(), free() */
 #include <string.h>       /* ANSI-C: strlen() */
@@ -72,7 +74,7 @@
  * Options
  */
 
-/* #define ECI_ENABLE_DEBUG */
+//#define ECI_ENABLE_DEBUG
 
 /* --------------------------------------------------------------------- 
  * Definitions and constants
@@ -81,7 +83,7 @@
 #define ECI_MAX_PARSER_BUF_SIZE    524288 /* XXX: wasting memory, should be fixed */
 #define ECI_MAX_FLOAT_BUF_SIZE     32
 #define ECI_MAX_RETURN_TYPE_SIZE   4
-#define ECI_MAX_STRING_SIZE        65536  /* XXX: see above */
+#define ECI_INI_STRING_SIZE        64
 #define ECI_MAX_RESYNC_ATTEMPTS    9
 #define ECI_MAX_LAST_COMMAND_SIZE  64
 
@@ -134,10 +136,17 @@
  * Data structures 
  */
 
+struct eci_string_s {
+  char *d;   /* buffer to string contents */
+  int slen;     /* string length in octets, including terminating null */
+  int size;     /* buffer length in octets, including terminating null */
+};
+typedef struct eci_string_s eci_string;
+
 struct eci_los_list {
   struct eci_los_list* prev_repp;
   struct eci_los_list* next_repp;
-  char* data_repp;
+  eci_string data_repp;
 };
 
 struct eci_parser { 
@@ -149,11 +158,11 @@ struct eci_parser {
   long int last_li_rep;
   int last_i_rep;
   int last_counter_rep;
-  char last_error_repp[ECI_MAX_STRING_SIZE];
+  eci_string last_error_repp;
   char last_type_repp[ECI_MAX_RETURN_TYPE_SIZE];
   struct eci_los_list* last_los_repp;
   /* char* last_los_repp[ECI_MAX_STRING_SIZE]; */
-  char last_s_repp[ECI_MAX_STRING_SIZE];
+  eci_string last_s_repp;
 
   int msgsize_rep;
   int loglevel_rep;
@@ -227,18 +236,19 @@ const char* eci_str_sync_lost =
  * Declarations of static functions
  */
 
-void eci_impl_check_handle(struct eci_internal* eci_rep);
-void eci_impl_clean_last_values(struct eci_parser* parser);
-void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message);
-ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout);
-const char* eci_impl_get_ecasound_path(void);
-struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* headptr, char* stmp, int len);
-struct eci_los_list *eci_impl_los_list_alloc_item(void);
-void eci_impl_los_list_clear(struct eci_los_list *ptr);
-void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout);
-void eci_impl_set_last_los_value(struct eci_parser* parser);
-void eci_impl_set_last_values(struct eci_parser* parser);
-void eci_impl_update_state(struct eci_parser* eci_rep, char c);
+static void eci_impl_check_handle(struct eci_internal* eci_rep);
+static void eci_impl_free_parser(struct eci_internal* eci_rep);
+static void eci_impl_clean_last_values(struct eci_parser* parser);
+static void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message);
+static ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout);
+static const char* eci_impl_get_ecasound_path(void);
+static struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* headptr, char* stmp, int len);
+static struct eci_los_list *eci_impl_los_list_alloc_item(void);
+static void eci_impl_los_list_clear(struct eci_los_list *ptr);
+static void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout);
+static void eci_impl_set_last_los_value(struct eci_parser* parser);
+static void eci_impl_set_last_values(struct eci_parser* parser);
+static void eci_impl_update_state(struct eci_parser* eci_rep, char c);
 
 /* ---------------------------------------------------------------------
  * Constructing and destructing                                       
@@ -351,7 +361,7 @@ eci_handle_t eci_init_r(void)
       res = read(cmd_receive_pipe[0], &pid, sizeof(pid));
       if ( res != sizeof(pid) ) {
 	  ECI_DEBUG_1("(ecasoundc_sa) fork() of %s FAILED!\n", ecasound_exec);
-	  free(eci_rep->parser_repp);
+	  eci_impl_free_parser(eci_rep);
 	  free(eci_rep);
 	  eci_rep = NULL;
       }
@@ -370,7 +380,7 @@ eci_handle_t eci_init_r(void)
       res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, buf, 1, ECI_READ_TIMEOUT_MS);
       if (res != 1) {
 	ECI_DEBUG_1("(ecasoundc_sa) fork() of %s FAILED!\n", ecasound_exec);
-	free(eci_rep->parser_repp);
+	eci_impl_free_parser(eci_rep);
 	free(eci_rep);
 	eci_rep = NULL;
       }
@@ -384,7 +394,7 @@ eci_handle_t eci_init_r(void)
 	eci_impl_read_return_value(eci_rep, ECI_READ_TIMEOUT_MS);
 	if (eci_rep->commands_counter_rep != eci_rep->parser_repp->last_counter_rep) {
 	  ECI_DEBUG_3("(ecasoundc_sa) exec() of %s FAILED (%d=%d)!\n", ecasound_exec, eci_rep->commands_counter_rep, eci_rep->parser_repp->last_counter_rep);
-	  free(eci_rep->parser_repp);
+	  eci_impl_free_parser(eci_rep);
 	  free(eci_rep);
 	  eci_rep = NULL;
 	}
@@ -452,9 +462,7 @@ void eci_cleanup_r(eci_handle_t ptr)
     /* free lists of strings, if any */
     eci_impl_clean_last_values(eci_rep->parser_repp);
 
-    /* if (eci_rep->eci != 0) {} */
-    /* delete eci_rep->eci; */
-    free(eci_rep->parser_repp);
+    eci_impl_free_parser(eci_rep);
     free(eci_rep);
   }
 }
@@ -598,7 +606,7 @@ const char* eci_last_string_list_item_r(eci_handle_t ptr, int n)
       i != NULL; 
       i = i->next_repp) {
     if (count++ == n) {
-      return i->data_repp;
+      return i->data_repp.d;
     }
   }
 
@@ -613,7 +621,7 @@ const char* eci_last_string_r(eci_handle_t ptr)
 
   eci_impl_check_handle(eci_rep);
 
-  return eci_rep->parser_repp->last_s_repp;
+  return eci_rep->parser_repp->last_s_repp.d;
 }
 
 double eci_last_float(void) { return(eci_last_float_r(static_eci_rep)); }
@@ -665,7 +673,7 @@ const char* eci_last_error_r(eci_handle_t ptr)
 
   eci_impl_check_handle(eci_rep);
   
-  return eci_rep->parser_repp->last_error_repp;
+  return eci_rep->parser_repp->last_error_repp.d;
 }
 
 
@@ -699,10 +707,14 @@ int eci_error_r(eci_handle_t ptr)
 
   eci_impl_check_handle(eci_rep);
 
-  if (eci_rep->parser_repp->sync_lost_rep == true)
+  if (eci_rep->parser_repp->sync_lost_rep == true) {
+    ECI_DEBUG("(ecasoundc_sa) sync lost, raising an error");
     return 1;
+  }
 
   res = (eci_rep->parser_repp->last_type_repp[0] == 'e') ? 1 : 0;
+
+  ECI_DEBUG_1("(ecasoundc_sa) checking for error, returning %d", res);
 
   return res;
 }
@@ -722,7 +734,77 @@ const char* eci_current_event_r(eci_handle_t ptr) { return(0); }
  * Implementation of static functions
  */
 
-void eci_impl_check_handle(struct eci_internal* eci_rep)
+/**
+ * Clears the string contents.
+ *
+ * @post eci_string_len(str)==0
+ */
+static void eci_string_clear(eci_string *str)
+{
+  DBC_CHECK(str);
+  str->slen = 0;
+}
+
+/**
+ * Initializes the string object for use.
+ * This must only be called after initial 
+ * object allocation.
+ */
+static void eci_string_init(eci_string *str)
+{
+  DBC_CHECK(str);
+  str->slen = 0;
+  str->size = 0;
+  str->d = 0;
+}
+
+static void eci_string_free(eci_string *str)
+{
+  DBC_CHECK(str);
+  free(str->d);
+  str->size = 0;
+  str->slen = 0;
+}
+
+/**
+ * Returns the string length.
+ */
+static int eci_string_len(eci_string *str)
+{
+  DBC_CHECK(str);
+  return str->slen;
+}
+
+/**
+ * Adds 'len' octets from buffer 'src' to the string
+ * at position 'at' (position 0 being the first character).
+ */
+static void eci_string_add(eci_string *dst, int at, char const *src, int len)
+{
+  int space_needed = at + len + 1;
+
+  DBC_CHECK(dst);
+
+  if (space_needed > dst->size) {
+    int newsize = 
+      dst->size ? dst->size * 2 : ECI_INI_STRING_SIZE;
+    char *newbuf;
+    while (space_needed > newsize) {
+      newsize *= 2;
+    }
+    newbuf = realloc(dst->d, newsize);
+    assert(newbuf);
+    dst->size = newsize;
+    dst->d = newbuf;
+  }
+  
+  DBC_CHECK(space_needed <= dst->size);
+
+  memcpy(&dst->d[at], src, len);
+  dst->d[at + len] = 0;
+}
+
+static void eci_impl_check_handle(struct eci_internal* eci_rep)
 {
   if (eci_rep == NULL) {
     fprintf(stderr, "%s", eci_str_null_handle);
@@ -731,20 +813,28 @@ void eci_impl_check_handle(struct eci_internal* eci_rep)
   }
 }
 
-void eci_impl_clean_last_values(struct eci_parser* parser)
+static void eci_impl_free_parser(struct eci_internal* eci_rep)
+{
+  DBC_CHECK(eci_rep);
+  eci_string_free(&eci_rep->parser_repp->last_error_repp);
+  eci_string_free(&eci_rep->parser_repp->last_s_repp);
+  free(eci_rep->parser_repp);
+}
+
+static void eci_impl_clean_last_values(struct eci_parser* parser)
 {
   DBC_CHECK(parser != 0);
 
-  memset(parser->last_s_repp, 0, ECI_MAX_STRING_SIZE);
   eci_impl_los_list_clear(parser->last_los_repp);
   parser->last_los_repp = NULL;
   parser->last_i_rep = 0;
   parser->last_li_rep = 0;
   parser->last_f_rep = 0.0f;
-  memset(parser->last_error_repp, 0, ECI_MAX_STRING_SIZE);
+  eci_string_clear(&parser->last_error_repp);
+  eci_string_clear(&parser->last_s_repp);
 }
 
-void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message)
+static void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message)
 {
   struct eci_internal* eci_rep = (struct eci_internal*)ptr;
 
@@ -763,7 +853,7 @@ void eci_impl_dump_parser_state(eci_handle_t ptr, const char* message)
  * for reading, up to 'timeout' milliseconds will be waited. 
  * A negative value means infinite timeout.
  */
-ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout)
+static ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout)
 {
   int nfds = 1;
   struct pollfd ufds;
@@ -788,7 +878,7 @@ ssize_t eci_impl_fd_read(int fd, void *buf, size_t count, int timeout)
   return rescount;
 }
 
-const char* eci_impl_get_ecasound_path(void)
+static const char* eci_impl_get_ecasound_path(void)
 {
   const char* result = getenv("ECASOUND");
 
@@ -801,16 +891,11 @@ const char* eci_impl_get_ecasound_path(void)
 }
 
 
-struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* head, char* stmp, int len)
+static struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* head, char* stmp, int len)
 {
   struct eci_los_list* i = head;
   struct eci_los_list* last = NULL;
   
-  if (len + 1 >= ECI_MAX_STRING_SIZE) {
-    fprintf(stderr, "(ecasoundc_sa) WARNING! String list buffer overflowed!\n\n");
-    len = ECI_MAX_STRING_SIZE - 1;
-  }
-
   /* find end of list */
   while(i != NULL) {
     last = i;
@@ -819,8 +904,7 @@ struct eci_los_list *eci_impl_los_list_add_item(struct eci_los_list* head, char*
 
   /* add to the end, copy data */
   i = eci_impl_los_list_alloc_item();
-  memcpy(i->data_repp, stmp, len);
-  i->data_repp[len] = 0;
+  eci_string_add(&i->data_repp, 0, stmp, len);
   if (last != NULL) last->next_repp = i;
   
   /* ECI_DEBUG_3("(ecasoundc_sa) adding item '%s' to los list; head=%p, i=%p\n", stmp, (void*)head, (void*)i); */
@@ -837,16 +921,15 @@ struct eci_los_list *eci_impl_los_list_alloc_item(void)
 {
   struct eci_los_list *item;
   /* ECI_DEBUG("(ecasoundc_sa) list alloc item\n"); */
-  item = (struct eci_los_list*)malloc(sizeof(struct eci_los_list));
+  item = (struct eci_los_list*)calloc(1, sizeof(struct eci_los_list));
   DBC_CHECK(item != NULL);
   item->next_repp = item->prev_repp = NULL;
-  item->data_repp = (char*)malloc(ECI_MAX_STRING_SIZE);
-  DBC_CHECK(item->data_repp != NULL);
+  eci_string_clear(&item->data_repp);
 
   return item;
 }
 
-void eci_impl_los_list_clear(struct eci_los_list *ptr)
+static void eci_impl_los_list_clear(struct eci_los_list *ptr)
 {
   struct eci_los_list *i = ptr;
 
@@ -855,15 +938,13 @@ void eci_impl_los_list_clear(struct eci_los_list *ptr)
   while(i != NULL) {
     /* ECI_DEBUG_1("(ecasoundc_sa) freeing list item %p\n", (void*)i); */
     struct eci_los_list* next = i->next_repp;
-    if (i->data_repp) {
-      free(i->data_repp), i->data_repp = NULL;
-    }
+    eci_string_free(&i->data_repp);
     free(i);
     i = next;
   }
 }
 
-void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
+static void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
 {
   char* raw_buffer = eci_rep->raw_buffer_repp;
   int attempts = 0;
@@ -913,13 +994,13 @@ void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout)
  * @pre parser != 0
  * @pre parser->state_rep == ECI_STATE_COMMON_LF_3
  */
-void eci_impl_set_last_los_value(struct eci_parser* parser)
+static void eci_impl_set_last_los_value(struct eci_parser* parser)
 {
   struct eci_los_list* i = parser->last_los_repp;
   int quoteflag = 0, m = 0, n;
-  char* stmp = malloc(ECI_MAX_STRING_SIZE);
+  eci_string stmp;
+  eci_string_init(&stmp);
 
-  DBC_CHECK(stmp != NULL);
   DBC_CHECK(parser != 0);
   DBC_CHECK(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
@@ -936,26 +1017,24 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
     }
     else if (c == '\\') {
       n++;
-      c = parser->buffer_repp[n];
-      stmp[m++] = c;
+      eci_string_add(&stmp, m++, &parser->buffer_repp[n], 1);
     }
     else if (c != ',' || quoteflag == 1) {
-      stmp[m++] = c;
+      eci_string_add(&stmp, m++, &parser->buffer_repp[n], 1);
     }
     else {
       if (m == 0) continue;
-      i = eci_impl_los_list_add_item(i, stmp, m);
+      i = eci_impl_los_list_add_item(i, stmp.d, m);
       m = 0;
     }
   }
   if (m > 0) {
-    i = eci_impl_los_list_add_item(i, stmp, m);
+    i = eci_impl_los_list_add_item(i, stmp.d, m);
   }
 
   parser->last_los_repp = i;
 
-  /* delete tmp char-buffer */
-  free(stmp);
+  eci_string_free(&stmp);
 }
 
 /**
@@ -965,7 +1044,7 @@ void eci_impl_set_last_los_value(struct eci_parser* parser)
  * @pre parser != 0
  * @pre parser->state_rep == ECI_STATE_COMMON_LF_3
  */
-void eci_impl_set_last_values(struct eci_parser* parser)
+static void eci_impl_set_last_values(struct eci_parser* parser)
 {
   DBC_CHECK(parser != 0);
   DBC_CHECK(parser->state_rep == ECI_STATE_COMMON_LF_3);
@@ -973,7 +1052,7 @@ void eci_impl_set_last_values(struct eci_parser* parser)
   switch(parser->last_type_repp[0])
     {
     case 's':
-      memcpy(parser->last_s_repp, parser->buffer_repp, parser->buffer_current_rep);
+      eci_string_add(&parser->last_s_repp, 0, parser->buffer_repp, parser->buffer_current_rep);
       break;
 
     case 'S':
@@ -993,7 +1072,7 @@ void eci_impl_set_last_values(struct eci_parser* parser)
       break;
 
     case 'e':
-      memcpy(parser->last_error_repp, parser->buffer_repp, parser->buffer_current_rep);
+      eci_string_add(&parser->last_error_repp, 0, parser->buffer_repp, parser->buffer_current_rep);
       break;
 
     default: {}
@@ -1001,7 +1080,7 @@ void eci_impl_set_last_values(struct eci_parser* parser)
     }
 }
 
-void eci_impl_update_state(struct eci_parser* parser, char c)
+static void eci_impl_update_state(struct eci_parser* parser, char c)
 {
   char* msg_buffer = parser->buffer_repp;
 
@@ -1092,7 +1171,7 @@ void eci_impl_update_state(struct eci_parser* parser, char c)
 	memcpy(parser->last_type_repp, parser->buffer_repp, len);
 	parser->last_type_repp[len] = 0;
 	
-	/* ECI_DEBUG_2("(ecasoundc_sa) found rettype '%s' (len=%d).\n", parser->last_type_repp, parser->buffer_current_rep); */
+	ECI_DEBUG_2("(ecasoundc_sa) found rettype '%s' (len=%d)\n.", parser->last_type_repp, parser->buffer_current_rep);
 
 	parser->state_rep = ECI_STATE_COMMON_LF_1;
 	parser->token_phase_rep =  ECI_TOKEN_PHASE_NONE;
