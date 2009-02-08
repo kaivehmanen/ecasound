@@ -1,3 +1,7 @@
+2009-02-08  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* library interface version 21:0:1 frozen (2.6.0 release)
+
 2009-02-02  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-object-map.h (toggle_case_sensitive_expressions,
