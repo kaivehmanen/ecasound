@@ -18,7 +18,8 @@ DISTCLEANFILES = \
 	eci_doc.ps \
 	ecasound_eci_doc.pdf \
 	html_ecidoc/eci_doc.html \
-	html_ecidoc/eci_doc.haux
+	html_ecidoc/eci_doc.haux \
+	html_ecidoc/eci_doc.htoc
 
 all:
 
