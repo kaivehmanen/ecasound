@@ -1,7 +1,10 @@
 // ------------------------------------------------------------------------
 // eca-control-interface.cpp: C++ implementation of the Ecasound
 //                            Control Interface
-// Copyright (C) 2000,2002 Kai Vehmanen
+// Copyright (C) 2000,2002,2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3 (see Ecasound Programmer's Guide)
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -45,6 +48,14 @@ ECA_CONTROL_INTERFACE::~ECA_CONTROL_INTERFACE (void)
 }
 
 /**
+ * Checks whether ECI is ready for use.
+ */
+bool ECA_CONTROL_INTERFACE::ready(void)
+{
+  return (eci_ready_r(eci_repp) != 0);
+}
+
+/**
  * Parse string mode command and act accordingly.
  */
 void ECA_CONTROL_INTERFACE::command(const string& cmd)
@@ -67,50 +78,50 @@ const vector<string>& ECA_CONTROL_INTERFACE::last_string_list(void) const
     strlist_rep.push_back(string(next));
   }
   
-  return(strlist_rep);
+  return strlist_rep;
 }
 
 const string& ECA_CONTROL_INTERFACE::last_string(void) const
 {
   str_rep = string(eci_last_string_r(eci_repp));
-  return(str_rep);
+  return str_rep;
 }
 
 double ECA_CONTROL_INTERFACE::last_float(void) const
 {
-  return(eci_last_float_r(eci_repp));
+  return eci_last_float_r(eci_repp);
 }
 
 int ECA_CONTROL_INTERFACE::last_integer(void) const
 {
-  return(eci_last_integer_r(eci_repp));
+  return eci_last_integer_r(eci_repp);
 }
 
 long int ECA_CONTROL_INTERFACE::last_long_integer(void) const
 {
-  return(eci_last_long_integer_r(eci_repp));
+  return eci_last_long_integer_r(eci_repp);
 }
 
 const string& ECA_CONTROL_INTERFACE::last_error(void) const
 {
   str_rep = string(eci_last_error_r(eci_repp));
-  return(str_rep); 
+  return str_rep;
 }
 
 const string& ECA_CONTROL_INTERFACE::last_type(void) const
 {
   str_rep = string(eci_last_type_r(eci_repp));
-  return(str_rep); 
+  return str_rep;
 }
 
 bool ECA_CONTROL_INTERFACE::error(void) const
 {
-  return((eci_error_r(eci_repp) != 0) ? true : false);
+  return ((eci_error_r(eci_repp) != 0) ? true : false);
 }
 
 bool ECA_CONTROL_INTERFACE::events_available(void)
 {
-  return(false);
+  return false;
 }
 
 void ECA_CONTROL_INTERFACE::next_event(void)
@@ -120,5 +131,5 @@ void ECA_CONTROL_INTERFACE::next_event(void)
 const string& ECA_CONTROL_INTERFACE::current_event(void)
 {
   str_rep = "";
-  return(str_rep);
+  return str_rep;
 }

@@ -2,6 +2,13 @@
 *** ecasound - changes and additions to libecasoundc interface      ***
 -----------------------------------------------------------------------
 
+2009-02-08  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* ecasoundc.h (eci_ready): Added.
+	* ecasoundc.h (eci_ready_r): Added.
+	* eca-control-interface.cpp (ready): 
+	* library version 2:0:1 frozen
+	
 2003-01-07  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library version 1:0:0 frozen

@@ -43,6 +43,9 @@ xx0y2009 (v2.6.0) -** stable release **-
 		 some initial test cases
         - added: unit test framework - minor improvements including
 		 abilitity to select which cases to run
+	- added: ECI - functions eci_ready() and eci_ready_r() added
+		 to ecasoundc.h, and ECA_CONTROL_INTERACE::ready()
+		 to the C++ API
 	- changed: deprecated 'jack_auto', 'jack_generic' and
 	           'jack_alsa'
 	- changed: numbering of JACK ports created with 'jack' and
@@ -72,6 +75,11 @@ xx0y2009 (v2.6.0) -** stable release **-
 		   macro AC_SYS_LARGEFILE to perform the checks; 
 		   to explicitly disable, use '--disable-largefile';
 		   the old '--with-largefile' no longer has any effect
+	- changed: refactored ECI C impl code to get rid of all
+		   fixed size buffers from the parser; this makes
+		   the implementation more robust, reduces memory
+		   usage and provides a small speed-up to most ECI
+		   apps; closes sfbug:1412409
 	- fixed: do not limit max-gain reported by '-ev' to [1,max]
 		 value range
         - fixed: avoid denormal numbers in '-ete' (leads to unusually

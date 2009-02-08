@@ -118,8 +118,10 @@ static int eci_test_1(void)
   ECA_TEST_ENTRY();
 
   eci_init();
+  if (eci_ready() == 0) ECA_TEST_FAIL(1, "eci_init failed (1)");
   eci_cleanup();
   eci_init();
+  if (eci_ready() == 0) ECA_TEST_FAIL(2, "eci_init failed (2)");
   eci_cleanup();
  
   ECA_TEST_SUCCESS();
@@ -132,8 +134,10 @@ static int eci_test_2(void)
   ECA_TEST_ENTRY();
 
   handle = eci_init_r();
+  if (eci_ready_r(handle) == 0) ECA_TEST_FAIL(1, "eci_init_r failed (1)");
   eci_cleanup_r(handle);
   handle = eci_init_r();
+  if (eci_ready_r(handle) == 0) ECA_TEST_FAIL(2, "eci_init_r failed (1)");
   eci_cleanup_r(handle);
 
   ECA_TEST_SUCCESS();

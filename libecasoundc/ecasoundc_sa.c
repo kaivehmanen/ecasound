@@ -5,7 +5,6 @@
 
 /* FIXME: add check for big sync-error -> ecasound probably 
  *        died so better to give an error */
-/* FIXME: add some mechanism to detect failed eci_init(); */
 /* FIXME: add check for msgsize errors */
 
 /** ------------------------------------------------------------------------
@@ -419,6 +418,36 @@ eci_handle_t eci_init_r(void)
 }
 
 /**
+ * Checks whether ECI is ready for use.
+ *
+ * @return non-zero if ready, zero otherwise
+ */
+int eci_ready(void)
+{
+  return eci_ready_r(static_eci_rep);
+}
+
+/**
+ * Checks whether ECI is ready for use.
+ *
+ * @return non-zero if ready, zero otherwise
+ */
+int eci_ready_r(eci_handle_t ptr)
+{
+  struct eci_internal* eci_rep = (struct eci_internal*)ptr;
+
+  if (!ptr)
+    return 0;
+
+  if (eci_rep->pid_of_child_rep <= 0 ||
+      eci_rep->cmd_read_fd_rep < 0 ||
+      eci_rep->cmd_write_fd_rep < 0)
+    return 0;
+      
+  return 1;
+}
+
+/**
  * Frees all resources.
  */
 void eci_cleanup(void)
@@ -502,6 +531,11 @@ void eci_command_r(eci_handle_t ptr, const char* command)
   int timeout = ECI_READ_RETVAL_TIMEOUT_MS;
 
   eci_impl_check_handle(eci_rep);
+
+  if (eci_ready_r(ptr) == 0) {
+    ECI_DEBUG("(ecasoundc_sa) not ready, unable to process commands\n");
+    return;
+  }
 
   ECI_DEBUG_2("(ecasoundc_sa) writing command '%s' (cmd-counter=%d).\n", 
 	      command, eci_rep->commands_counter_rep + 1);
@@ -722,8 +756,13 @@ int eci_error_r(eci_handle_t ptr)
 
   eci_impl_check_handle(eci_rep);
 
+  if (eci_ready_r(ptr) == 0) {
+    ECI_DEBUG("(ecasoundc_sa) not ready, raising an error\n");
+    return 1;
+  }
+
   if (eci_rep->parser_repp->sync_lost_rep == true) {
-    ECI_DEBUG("(ecasoundc_sa) sync lost, raising an error");
+    ECI_DEBUG("(ecasoundc_sa) sync lost, raising an error\n");
     return 1;
   }
 

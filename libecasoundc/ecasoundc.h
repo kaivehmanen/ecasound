@@ -39,6 +39,9 @@ typedef void * eci_handle_t;
 void eci_init(void);
 eci_handle_t eci_init_r(void);
 
+int eci_ready(void);
+int eci_ready_r(eci_handle_t p);
+
 void eci_cleanup(void);
 void eci_cleanup_r(eci_handle_t p);
  
