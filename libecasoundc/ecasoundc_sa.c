@@ -788,15 +788,23 @@ const char* eci_current_event_r(eci_handle_t ptr) { return(0); }
  * Implementation of static functions
  */
 
+static void eci_string_add(eci_string *dst, int at, char const *src, int len);
+
 /**
  * Clears the string contents.
  *
  * @post eci_string_len(str)==0
+ * @post strlen(str->d)==0
  */
 static void eci_string_clear(eci_string *str)
 {
   DBC_CHECK(str);
   str->slen = 0;
+  if (str->size == 0) 
+    eci_string_add(str, 0, NULL, 0);
+  else
+    str->d[0] = 0;
+  DBC_CHECK(str->d[0] == 0);
 }
 
 /**
