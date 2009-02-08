@@ -1,6 +1,5 @@
 dnl ---
 dnl configure.in for ecasound
-dnl last modified: 20080821-54
 dnl 
 dnl Many of the tests and macros in this file have been borrowed from 
 dnl other GPL-licensed packages (Alsaplayer, ALSA, SIP, PyQt, 
@@ -9,7 +8,7 @@ dnl
 dnl refs:
 dnl  - http://www.gnu.org/software/autoconf/manual/
 dnl  - http://www.gnu.org/software/automake/manual/
-dnl  - http://www.gnu.org/software/libtool/manual/ö
+dnl  - http://www.gnu.org/software/libtool/manual/
 dnl ---
 
 dnl ------------------------------------------------------------------
@@ -17,10 +16,10 @@ dnl ------------------------------------------------------------------
 dnl ---
 dnl Initialize autoconf and automake
 dnl ---
-AC_INIT(ecasound, 2.6.0)
+AC_INIT([ecasound], [2.6.0])
 AC_PREREQ(2.50)
-AC_CONFIG_SRCDIR(libecasound/audiofx.h)
-AM_INIT_AUTOMAKE(1.6.1)
+AC_CONFIG_SRCDIR([libecasound/audiofx.h])
+AM_INIT_AUTOMAKE([1.6.1])
 
 dnl FIXME: replace with AC_CONFIG_HEADERS when upgrading to a newer automake
 AM_CONFIG_HEADER([config.h]) 
