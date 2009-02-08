@@ -9,6 +9,17 @@
 EXTRA_DIST =	ecasound_programmers_guide.txt \
 		eci_doc.latex
 
+DISTCLEANFILES = \
+	ecasound_programmers_guide.html \
+	eci_doc.log \
+	eci_doc.aux \
+	eci_doc.toc \
+	eci_doc.dvi \
+	eci_doc.ps \
+	ecasound_eci_doc.pdf \
+	html_ecidoc/eci_doc.html \
+	html_ecidoc/eci_doc.haux
+
 all:
 
 docs: ecasound_programmers_guide.html ecasound_eci_doc.pdf

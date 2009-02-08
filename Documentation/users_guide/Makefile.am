@@ -6,7 +6,20 @@
 
 # ---------------------------------------------------------------------
 # Files going into distribution:
+
 EXTRA_DIST = users_guide.latex
+
+DISTCLEANFILES = \
+	users_guide.log \
+	users_guide.aux \
+	users_guide.out \
+	users_guide.dvi \
+	users_guide.toc \
+	users_guide.ps \
+	ecasound_users_guide.pdf \
+	html_uguide/users_guide.html \
+	html_uguide/users_guide.haux \
+	html_uguide/users_guide.htoc
 
 all:
 
