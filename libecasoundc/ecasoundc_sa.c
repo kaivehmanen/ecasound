@@ -7,7 +7,6 @@
  *        died so better to give an error */
 /* FIXME: add some mechanism to detect failed eci_init(); */
 /* FIXME: add check for msgsize errors */
-/* FIXME: add proper signal handling */
 
 /** ------------------------------------------------------------------------
  * ecasoundc.cpp: Standalone C implementation of the 
@@ -35,6 +34,7 @@
  *
  * 2009-02-08 Kai Vehmanen
  *     - Finally got rid of the fixed-size parsing buffers.
+ *     - Added handling (or proper ignoring) of SIGPIPE signals.
  * 2006-12-06 Kai Vehmanen 
  *     - Fixed severe string termination bug in handling lists of
  *       strings.
@@ -66,7 +66,7 @@
 #include <sys/stat.h>     /* POSIX: stat() */
 #include <sys/types.h>    /* POSIX: fork() */
 #include <sys/wait.h>     /* POSIX: wait() */
-#include <signal.h>       /* POSIIX: signal handling */
+#include <signal.h>       /* POSIX: signal handling */
 
 #include "ecasoundc.h"
 
@@ -74,13 +74,15 @@
  * Options
  */
 
-//#define ECI_ENABLE_DEBUG
+// #define ECI_ENABLE_DEBUG
 
 /* --------------------------------------------------------------------- 
  * Definitions and constants
  */
 
-#define ECI_MAX_PARSER_BUF_SIZE    524288 /* XXX: wasting memory, should be fixed */
+#define ECI_PARSER_BUF_SIZE        65536
+
+#define ECI_MAX_DYN_ALLOC_SIZE     16777216 /* assert if reached */
 #define ECI_MAX_FLOAT_BUF_SIZE     32
 #define ECI_MAX_RETURN_TYPE_SIZE   4
 #define ECI_INI_STRING_SIZE        64
@@ -158,11 +160,12 @@ struct eci_parser {
   long int last_li_rep;
   int last_i_rep;
   int last_counter_rep;
-  eci_string last_error_repp;
   char last_type_repp[ECI_MAX_RETURN_TYPE_SIZE];
   struct eci_los_list* last_los_repp;
-  /* char* last_los_repp[ECI_MAX_STRING_SIZE]; */
+  eci_string last_error_repp;
   eci_string last_s_repp;
+
+  eci_string buffer_rep;
 
   int msgsize_rep;
   int loglevel_rep;
@@ -171,8 +174,6 @@ struct eci_parser {
   int buffer_current_rep;
 
   bool sync_lost_rep;
-
-  char buffer_repp[ECI_MAX_PARSER_BUF_SIZE];
 };
 
 struct eci_internal { 
@@ -187,7 +188,7 @@ struct eci_internal {
   struct eci_parser* parser_repp;
 
   char farg_buf_repp[ECI_MAX_FLOAT_BUF_SIZE];
-  char raw_buffer_repp[ECI_MAX_PARSER_BUF_SIZE];
+  char raw_buffer_repp[ECI_PARSER_BUF_SIZE];
 };
 
 /* --------------------------------------------------------------------- 
@@ -268,6 +269,8 @@ void eci_init(void)
 /**
  * Initializes session. This call creates a new ecasound
  * instance and prepares it for processing. 
+ *
+ * @return NULL if initialization fails
  */
 eci_handle_t eci_init_r(void)
 {
@@ -326,7 +329,7 @@ eci_handle_t eci_init_r(void)
       res = write(1, args, 1); 
 
       res = execvp(args[0], (char**)args);
-      if (res < 0) printf("(ecasoundc_sa) launcing ecasound FAILED!\n");
+      if (res < 0) printf("(ecasoundc_sa) launching ecasound FAILED!\n");
 
       close(0);
       close(1);
@@ -340,6 +343,15 @@ eci_handle_t eci_init_r(void)
       char buf[1];
       int status;
       int pid;
+
+      /* set up signal handling */
+      struct sigaction ign_handler;
+      ign_handler.sa_handler = SIG_IGN;
+      sigemptyset(&ign_handler.sa_mask);
+      ign_handler.sa_flags = 0;
+      /* ignore the following signals */
+      sigaction(SIGPIPE, &ign_handler, 0);
+      sigaction(SIGFPE, &ign_handler, 0);
 
       eci_rep = (struct eci_internal*)calloc(1, sizeof(struct eci_internal));
       eci_rep->parser_repp = (struct eci_parser*)calloc(1, sizeof(struct eci_parser));
@@ -375,6 +387,7 @@ eci_handle_t eci_init_r(void)
 
       /* step: switch to non-blocking mode for read */
       fcntl(eci_rep->cmd_read_fd_rep, F_SETFL, O_NONBLOCK);
+      fcntl(eci_rep->cmd_write_fd_rep, F_SETFL, O_NONBLOCK);
 
       /* step: check that fork succeeded() */
       res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, buf, 1, ECI_READ_TIMEOUT_MS);
@@ -424,9 +437,11 @@ void eci_cleanup_r(eci_handle_t ptr)
   struct eci_internal* eci_rep = (struct eci_internal*)ptr;
   ssize_t resread = 1, respoll;
   char buf[1];
-  struct pollfd fds[1];;
+  struct pollfd fds[1];
 
   eci_impl_check_handle(eci_rep);
+
+  ECI_DEBUG("\n(ecasoundc_sa) requesting to terminatte ecasound process.\n");
 
   write(eci_rep->cmd_write_fd_rep, "quit\n", strlen("quit\n"));
   eci_rep->commands_counter_rep++;
@@ -488,7 +503,7 @@ void eci_command_r(eci_handle_t ptr, const char* command)
 
   eci_impl_check_handle(eci_rep);
 
-  ECI_DEBUG_2("\n(ecasoundc_sa) writing command '%s' (cmd-counter=%d).\n", 
+  ECI_DEBUG_2("(ecasoundc_sa) writing command '%s' (cmd-counter=%d).\n", 
 	      command, eci_rep->commands_counter_rep + 1);
 
   memcpy(eci_rep->last_command_repp, command, ECI_MAX_LAST_COMMAND_SIZE);
@@ -500,7 +515,7 @@ void eci_command_r(eci_handle_t ptr, const char* command)
 
   /* 'run' is the only blocking function */
   if (strncmp(command, "run", 3) == 0) {
-    ECI_DEBUG("\n(ecasoundc_sa) 'run' detected; disabling reply timeout!\n");
+    ECI_DEBUG("(ecasoundc_sa) 'run' detected; disabling reply timeout!\n");
     timeout = -1;
   }
 
@@ -517,7 +532,7 @@ void eci_command_r(eci_handle_t ptr, const char* command)
     eci_impl_read_return_value(eci_rep, timeout);
   }
 
-  ECI_DEBUG_2("\n(ecasoundc_sa) set return value type='%s' (read-counter=%d).\n", 
+  ECI_DEBUG_2("(ecasoundc_sa) set return value type='%s' (read-counter=%d).\n", 
 	      eci_rep->parser_repp->last_type_repp, eci_rep->parser_repp->last_counter_rep);
   
   if (eci_rep->commands_counter_rep >
@@ -792,6 +807,7 @@ static void eci_string_add(eci_string *dst, int at, char const *src, int len)
     while (space_needed > newsize) {
       newsize *= 2;
     }
+    assert(newsize <= ECI_MAX_DYN_ALLOC_SIZE);
     newbuf = realloc(dst->d, newsize);
     assert(newbuf);
     dst->size = newsize;
@@ -818,7 +834,9 @@ static void eci_impl_free_parser(struct eci_internal* eci_rep)
   DBC_CHECK(eci_rep);
   eci_string_free(&eci_rep->parser_repp->last_error_repp);
   eci_string_free(&eci_rep->parser_repp->last_s_repp);
+  eci_string_free(&eci_rep->parser_repp->buffer_rep);
   free(eci_rep->parser_repp);
+  eci_rep->parser_repp = 0;
 }
 
 static void eci_impl_clean_last_values(struct eci_parser* parser)
@@ -953,7 +971,7 @@ static void eci_impl_read_return_value(struct eci_internal* eci_rep, int timeout
 	    eci_rep->parser_repp->last_counter_rep);
 
   while(attempts < ECI_MAX_RESYNC_ATTEMPTS) {
-    int res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, raw_buffer, ECI_MAX_PARSER_BUF_SIZE-1, timeout);
+    int res = eci_impl_fd_read(eci_rep->cmd_read_fd_rep, raw_buffer, ECI_PARSER_BUF_SIZE-1, timeout);
     if (res > 0) {
       int n;
 
@@ -1004,23 +1022,23 @@ static void eci_impl_set_last_los_value(struct eci_parser* parser)
   DBC_CHECK(parser != 0);
   DBC_CHECK(parser->state_rep == ECI_STATE_COMMON_LF_3);
 
-  ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_repp, parser->buffer_current_rep);
+  ECI_DEBUG_2("(ecasoundc_sa) parsing a list '%s' (count=%d)\n", parser->buffer_rep.d, parser->buffer_current_rep);
 
   eci_impl_los_list_clear(i);
   parser->last_los_repp = NULL;
 
   for(n = 0; n < parser->buffer_current_rep && n < parser->msgsize_rep; n++) {
-    char c = parser->buffer_repp[n];
+    char c = parser->buffer_rep.d[n];
 
     if (c == '\"') {
       quoteflag = !quoteflag;
     }
     else if (c == '\\') {
       n++;
-      eci_string_add(&stmp, m++, &parser->buffer_repp[n], 1);
+      eci_string_add(&stmp, m++, &parser->buffer_rep.d[n], 1);
     }
     else if (c != ',' || quoteflag == 1) {
-      eci_string_add(&stmp, m++, &parser->buffer_repp[n], 1);
+      eci_string_add(&stmp, m++, &parser->buffer_rep.d[n], 1);
     }
     else {
       if (m == 0) continue;
@@ -1052,7 +1070,7 @@ static void eci_impl_set_last_values(struct eci_parser* parser)
   switch(parser->last_type_repp[0])
     {
     case 's':
-      eci_string_add(&parser->last_s_repp, 0, parser->buffer_repp, parser->buffer_current_rep);
+      eci_string_add(&parser->last_s_repp, 0, parser->buffer_rep.d, parser->buffer_current_rep);
       break;
 
     case 'S':
@@ -1060,19 +1078,19 @@ static void eci_impl_set_last_values(struct eci_parser* parser)
       break;
 
     case 'i':
-      parser->last_i_rep = atoi(parser->buffer_repp);
+      parser->last_i_rep = atoi(parser->buffer_rep.d);
       break;
 
     case 'l':
-      parser->last_li_rep = atol(parser->buffer_repp);
+      parser->last_li_rep = atol(parser->buffer_rep.d);
       break;
 
     case 'f':
-      parser->last_f_rep = atof(parser->buffer_repp);
+      parser->last_f_rep = atof(parser->buffer_rep.d);
       break;
 
     case 'e':
-      eci_string_add(&parser->last_error_repp, 0, parser->buffer_repp, parser->buffer_current_rep);
+      eci_string_add(&parser->last_error_repp, 0, parser->buffer_rep.d, parser->buffer_current_rep);
       break;
 
     default: {}
@@ -1082,14 +1100,13 @@ static void eci_impl_set_last_values(struct eci_parser* parser)
 
 static void eci_impl_update_state(struct eci_parser* parser, char c)
 {
-  char* msg_buffer = parser->buffer_repp;
-
   switch(parser->state_rep)
     {
     case ECI_STATE_INIT:
       if (c >= 0x30 && c <= 0x39) {
 	parser->token_phase_rep = ECI_TOKEN_PHASE_READING;
 	parser->buffer_current_rep = 0;
+	eci_string_clear(&parser->buffer_rep);
 	parser->state_rep = ECI_STATE_LOGLEVEL;
       }
       else {
@@ -1099,8 +1116,7 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
 
     case ECI_STATE_LOGLEVEL:
       if (c == ' ') {
-	parser->buffer_repp[parser->buffer_current_rep] = 0;
-	parser->loglevel_rep = atoi(parser->buffer_repp);
+	parser->loglevel_rep = atoi(parser->buffer_rep.d);
 
 	if (parser->loglevel_rep == ECI_RETURN_TYPE_LOGLEVEL) {
 	  /* ECI_DEBUG_3("\n(ecasoundc_sa) found rettype loglevel '%s' (i=%d,len=%d).\n", parser->buffer_repp, parser->loglevel_rep, parser->buffer_current_rep); */
@@ -1124,10 +1140,10 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
       if ((c == ' ' && parser->state_msg_rep == ECI_STATE_MSG_RETURN) ||
 	  (c == 0x0d && parser->state_msg_rep == ECI_STATE_MSG_GEN)) {
 
-	parser->buffer_repp[parser->buffer_current_rep] = 0;
-	parser->msgsize_rep = atoi(parser->buffer_repp);
+	parser->msgsize_rep = atoi(parser->buffer_rep.d);
 
 	/* ECI_DEBUG_3("(ecasoundc_sa) found msgsize '%s' (i=%d,len=%d).\n", parser->buffer_repp, parser->msgsize_rep, parser->buffer_current_rep); */
+
 	if (parser->state_msg_rep == ECI_STATE_MSG_GEN) {
 	  parser->state_rep = ECI_STATE_COMMON_LF_1;
 	}
@@ -1144,6 +1160,7 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
       else if (parser->token_phase_rep == ECI_TOKEN_PHASE_NONE) {
 	parser->token_phase_rep =  ECI_TOKEN_PHASE_READING;
 	parser->buffer_current_rep = 0;
+	eci_string_clear(&parser->buffer_rep);
       }
       break;
 
@@ -1167,11 +1184,11 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
 	/* parse return type */
 	/* set 'parser->last_type_repp' */
 	int len = (parser->buffer_current_rep < ECI_MAX_RETURN_TYPE_SIZE) ? parser->buffer_current_rep : (ECI_MAX_RETURN_TYPE_SIZE - 1);
-	parser->buffer_repp[parser->buffer_current_rep] = 0;
-	memcpy(parser->last_type_repp, parser->buffer_repp, len);
+
+	memcpy(parser->last_type_repp, parser->buffer_rep.d, len);
 	parser->last_type_repp[len] = 0;
 	
-	ECI_DEBUG_2("(ecasoundc_sa) found rettype '%s' (len=%d)\n.", parser->last_type_repp, parser->buffer_current_rep);
+	ECI_DEBUG_2("(ecasoundc_sa) found rettype '%s' (len=%d)\n", parser->last_type_repp, parser->buffer_current_rep);
 
 	parser->state_rep = ECI_STATE_COMMON_LF_1;
 	parser->token_phase_rep =  ECI_TOKEN_PHASE_NONE;
@@ -1180,6 +1197,7 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
       else if (parser->token_phase_rep == ECI_TOKEN_PHASE_NONE) {
 	parser->token_phase_rep =  ECI_TOKEN_PHASE_READING;
 	parser->buffer_current_rep = 0;
+	eci_string_clear(&parser->buffer_rep);
       }
 
       break;
@@ -1189,18 +1207,15 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
 	/* parse return type */
 	/* set 'parser->last_xxx_yyy' */
 
-	parser->buffer_repp[parser->buffer_current_rep] = 0;
-
 	/* handle empty content */
-	if (parser->msgsize_rep == 0) parser->buffer_repp[0] = 0;
+	if (parser->msgsize_rep == 0) 
+	  eci_string_clear(&parser->buffer_rep);
 
-#if 1
 	ECI_DEBUG_2("(ecasoundc_sa) found content, loglevel=%d, msgsize=%d", parser->loglevel_rep, parser->msgsize_rep);
 	if (parser->state_msg_rep == ECI_STATE_MSG_GEN)
 	  ECI_DEBUG(".\n");
 	else
 	  ECI_DEBUG_1(" type='%s'.\n", parser->last_type_repp);
-#endif
 
 	parser->state_rep = ECI_STATE_COMMON_LF_2;
 	parser->token_phase_rep =  ECI_TOKEN_PHASE_VALIDATE;
@@ -1209,9 +1224,9 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
       else if (parser->token_phase_rep == ECI_TOKEN_PHASE_NONE) {
 	parser->token_phase_rep = ECI_TOKEN_PHASE_READING;
 	parser->buffer_current_rep = 0;
+	eci_string_clear(&parser->buffer_rep);
       }
       break;
-
 
     case ECI_STATE_COMMON_CR_2:
       if (c == 0x0d)
@@ -1237,12 +1252,12 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
     case ECI_STATE_COMMON_LF_3:
       if (c == 0x0a) {
 	if (parser->state_msg_rep == ECI_STATE_MSG_RETURN) {
-	  ECI_DEBUG_1("(ecasoundc_sa) rettype-content validated: <<< %s >>>\n", parser->buffer_repp);
+	  ECI_DEBUG_1("(ecasoundc_sa) rettype-content validated: <<<%s>>>\n", parser->buffer_rep.d);
 	  eci_impl_set_last_values(parser);
 	  parser->last_counter_rep++;
 	}
 	else {
-	  ECI_DEBUG_1("(ecasoundc_sa) gen-content validated: <<< %s >>>\n", parser->buffer_repp);
+	  ECI_DEBUG_1("(ecasoundc_sa) gen-content validated: <<<%s>>>\n", parser->buffer_rep.d);
 	}
 	parser->state_rep = ECI_STATE_INIT; 
       }
@@ -1262,14 +1277,9 @@ static void eci_impl_update_state(struct eci_parser* parser, char c)
     } /* end of switch() */
 
   if (parser->token_phase_rep == ECI_TOKEN_PHASE_READING) {
-    if (parser->buffer_current_rep >= parser->msgsize_rep) {
-      /* ECI_DEBUG_2("\n(ecasoundc_sa) WARNING! Content size exceeded; cur=%d, msgsize=%d.\n\n", parser->buffer_current_rep, parser->msgsize_rep); */
-    }
-    msg_buffer[parser->buffer_current_rep] = c;
-    if (++parser->buffer_current_rep == ECI_MAX_PARSER_BUF_SIZE) {
-      fprintf(stderr, "\n(ecasoundc_sa) WARNING! Parsing buffer overflowed!\n\n");
-      parser->token_phase_rep =  ECI_TOKEN_PHASE_READING;
-      parser->buffer_current_rep = 0;
-    }
+    eci_string_add(&parser->buffer_rep, parser->buffer_current_rep, &c, 1);
+    ++parser->buffer_current_rep;
   }
+
+  //ECI_DEBUG_2("(ecasoundc_sa) parser buf contents: '%s' (cur=%d)\n.", parser->buffer_rep.d, parser->buffer_current_rep);
 }
