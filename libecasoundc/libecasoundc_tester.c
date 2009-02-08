@@ -1,6 +1,6 @@
 /* ------------------------------------------------------------------------
  * libecasound_tester.c: Runs a set of ECI C unit tests.
- * Copyright (C) 2002,2006 Kai Vehmanen
+ * Copyright (C) 2002,2006,2009 Kai Vehmanen
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,14 +192,14 @@ static int eci_test_4(void)
   eci_command_r(handle, "ao-add null");
 
   eci_command_r(handle, "cs-connect");
-  if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(2, "cs-connect failed (1)"); }
+  if (eci_error_r(handle) != 0) { eci_cleanup_r(handle); ECA_TEST_FAIL(2, "cs-connect failed (1)"); }
 
   eci_command_r(handle, "cs-disconnect");
   eci_command_r(handle, "ai-iselect 1");
   eci_command_r(handle, "ai-remove");
   eci_command_r(handle, "ai-add rtnull");
   eci_command_r(handle, "cs-connect");
-  if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(3, "cs-connect failed (2)"); }
+  if (eci_error_r(handle) != 0) { eci_cleanup_r(handle); ECA_TEST_FAIL(3, "cs-connect failed (2)"); }
 
   eci_command_r(handle, "cs-disconnect");
   eci_command_r(handle, "ai-iselect 1");
@@ -210,7 +210,7 @@ static int eci_test_4(void)
   eci_command_r(handle, "c-add 1");
   eci_command_r(handle, "ai-add null");
   eci_command_r(handle, "cs-connect");
-  if (eci_error_r(handle) == 0) { ECA_TEST_FAIL(3, "cs-connect succeeded when it should fail"); }
+  if (eci_error_r(handle) == 0) { eci_cleanup_r(handle); ECA_TEST_FAIL(3, "cs-connect succeeded when it should fail"); }
 
   eci_command_r(handle, "c-remove");
   eci_command_r(handle, "c-select test_c");
@@ -223,13 +223,19 @@ static int eci_test_4(void)
   eci_command_r(handle, "ai-iselect 1");
   eci_command_r(handle, "ai-attach");
   eci_command_r(handle, "cs-connect");
-  if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(3, "cs-connect failed (3)"); }
+  if (eci_error_r(handle) != 0) { eci_cleanup_r(handle); ECA_TEST_FAIL(3, "cs-connect failed (3)"); }
 
   eci_command_r(handle, "cs-disconnect");
+
+  /* note: Test that ECI implementation survives sending
+   *       a "quit". This will cause the ecasound process
+   *       to exit, which needs special handling from 
+   *       the ECI implementation. */
+
   eci_command_r(handle, "quit");
 
   eci_cleanup_r(handle);
-  
+
   ECA_TEST_SUCCESS();
 }
 
