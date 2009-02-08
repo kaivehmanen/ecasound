@@ -289,10 +289,13 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
   memcpy(riff_header_rep.wname,"WAVE",4);
 
   /* hack for 64bit wav files */
+#if _FILE_OFFSET_BITS == 64
   if (fio_repp->get_file_length() > static_cast<off_t>(UINT32_MAX))
     riff_header_rep.size = little_endian_uint32(UINT32_MAX);
-  else if (fio_repp->get_file_length() > static_cast<off_t>(sizeof(riff_header_rep)))
-    riff_header_rep.size = little_endian_uint32(fio_repp->get_file_length() - sizeof(riff_header_rep));
+  else 
+#endif
+    if (fio_repp->get_file_length() > static_cast<off_t>(sizeof(riff_header_rep)))
+      riff_header_rep.size = little_endian_uint32(fio_repp->get_file_length() - sizeof(riff_header_rep));
   else
     riff_header_rep.size = little_endian_uint32(0);
 
@@ -435,10 +438,16 @@ void WAVEFILE::update_riff_datablock(void)
   fio_repp->set_file_position_end();
 
   /* hack for wav files with length over 2^32-1 bytes */
+#if _FILE_OFFSET_BITS == 64
   if (fio_repp->get_file_position() - savetemp > static_cast<off_t>(UINT32_MAX))
     fblock.bsize = little_endian_uint32(UINT32_MAX);
   else
+#endif
     fblock.bsize = little_endian_uint32(fio_repp->get_file_position() - savetemp);
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "updating data block header length to " + 
+	      kvu_numtostr(little_endian_uint32(fblock.bsize)));
 
   savetemp = savetemp - sizeof(fblock);
   if (savetemp > 0) {
@@ -474,7 +483,7 @@ bool WAVEFILE::find_block(const char* fblock, uint32_t* blksize)
     // ECA_LOG_MSG(ECA_LOGGER::user_objects, "found RIFF-block ");
     if (memcmp(block.sig,fblock,4) == 0) {
       if (blksize != 0)
-	*blksize = block.bsize;
+	*blksize = little_endian_uint32(block.bsize);
       return true;
     }
     fio_repp->set_file_position(offset);
@@ -487,13 +496,14 @@ bool WAVEFILE::finished(void) const
 {
   if (io_mode() == io_read && 
       (length_set() == true &&
-       position_in_samples() >= length_in_samples()))
+       position_in_samples() >= length_in_samples())) {
     return true;
+  }
 
   if (fio_repp->is_file_error() ||
       !fio_repp->is_file_ready()) 
     return true;
-  
+
   return false;
 }
 
