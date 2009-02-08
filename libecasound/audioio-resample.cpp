@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-resample.cpp: A proxy class that resamples the child 
 //                       object's data.
-// Copyright (C) 2002-2004,2008 Kai Vehmanen
+// Copyright (C) 2002-2004,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -24,6 +24,8 @@
 #include <cstdlib> /* atoi() */
 #include <cmath>   /* ceil(), floor() */
 #include <iostream>
+
+#include <math.h>
 
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
@@ -66,18 +68,22 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 	      child_params_as_string(1 + AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep) + ".");  
 
   if (init_rep != true) {
-    AUDIO_IO* tmp =
-      ECA_OBJECT_FACTORY::create_audio_object(
-        child_params_as_string(1 + AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep));
+    AUDIO_IO* tmp = 0;
+
+    const string& objname = 
+      child_params_as_string(1 + AUDIO_IO_RESAMPLE::child_parameter_offset, &params_rep);
+
+    if (objname.size() > 0)
+      tmp = ECA_OBJECT_FACTORY::create_audio_object(objname);
 
     /* FIXME: add check for real-time devices, resample does _not_
      *        work with them (rt API not proxied properly)
      */
     
-    DBC_CHECK(tmp != 0);
-    if (tmp != 0) {
-      set_child(tmp);
-    }
+    if (tmp == 0)
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RESAMPLE: unable to open child object '" + objname + "'"));
+    
+    set_child(tmp);
 
     int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {
@@ -89,18 +95,19 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     init_rep = true; /* must be set after dyn. parameters */
   }
 
-  if (child_srate_rep == 0) {
+  if (child_srate_conf_rep == 0) {
     /* query the sampling rate from child object */
     child()->set_io_mode(io_mode());
+    child()->set_audio_format(audio_format());
     child()->open();
-    child_srate_rep = child()->samples_per_second();
+    child_srate_conf_rep = child()->samples_per_second();
     child()->close();
   }
 
   psfactor_rep = 1.0f;
   if (io_mode() == AUDIO_IO::io_read) {
-    psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_rep;
-    child_buffersize_rep = static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep)));
+    psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_conf_rep;
+    child()->set_buffersize(static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep))));
   }
   else {
     throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RESAMPLE: 'io_write' and 'io_readwrite' modes are not supported."));
@@ -108,18 +115,17 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "pre-open(); psfactor=" + kvu_numtostr(psfactor_rep) +
-	      ", child_srate=" + kvu_numtostr(child_srate_rep) +
+	      ", child_srate=" + kvu_numtostr(child_srate_conf_rep) +
 	      ", srate=" + kvu_numtostr(samples_per_second()) +
 	      ", bsize=" + kvu_numtostr(buffersize()) +
-	      ", c-bsize=" + kvu_numtostr(child_buffersize_rep) + 
+	      ", c-bsize=" + kvu_numtostr(child()->buffersize()) + 
 	      ", child=" + child()->label() + ".");
 
   /* note, we don't use pre_child_open() as 
    * we want to set srate differently */
-  child()->set_buffersize(child_buffersize_rep);
   child()->set_io_mode(io_mode());
   child()->set_audio_format(audio_format());
-  child()->set_samples_per_second(child_srate_rep);
+  child()->set_samples_per_second(child_srate_conf_rep);
 
   child()->open();
 
@@ -135,11 +141,13 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
   sbuf_rep.length_in_samples(buffersize());
   sbuf_rep.number_of_channels(channels());
-  sbuf_rep.resample_init_memory(child_srate_rep, samples_per_second());
+  sbuf_rep.resample_init_memory(child_srate_conf_rep, samples_per_second());
   sbuf_rep.resample_set_quality(quality_rep);
     
-  set_label(child()->label());
-  set_length_in_samples(child()->length_in_samples());
+  set_label("resample:" + child()->label());
+
+  set_length_in_samples(static_cast<long int>(std::ceil(child()->length_in_samples() * psfactor_rep)));
+  //set_length_in_seconds(child()->length_in_seconds_exact());
 
   AUDIO_IO_PROXY::open();
 }
@@ -154,9 +162,23 @@ void AUDIO_IO_RESAMPLE::close(void)
   AUDIO_IO_PROXY::close();
 }
 
-bool AUDIO_IO_RESAMPLE::finished(void) const
+void AUDIO_IO_RESAMPLE::set_buffersize(long int samples)
 {
-  return child()->finished();
+  if (samples != buffersize()) {
+    long old_bsize = buffersize();
+    AUDIO_IO_PROXY::set_buffersize(samples);
+    child()->set_buffersize(static_cast<long int>(std::floor(samples * (1.0f / psfactor_rep))));
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"setting bsize from " + 
+		kvu_numtostr(old_bsize) +
+		" to " +
+		kvu_numtostr(child()->buffersize()));
+  }
+}
+
+long int AUDIO_IO_RESAMPLE::buffersize(void) const
+{
+  return AUDIO_IO_PROXY::buffersize();
 }
 
 string AUDIO_IO_RESAMPLE::parameter_names(void) const
@@ -194,15 +216,16 @@ void AUDIO_IO_RESAMPLE::set_parameter(int param, string value)
     }
     else if (param == 2) {
       if (value == "auto") {
-	child_srate_rep = 0;
+	if (init_rep != true) 
+	  child_srate_conf_rep = 0;
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		  "resampling with automatic detection of child srate");
       }
       else {
-	child_srate_rep = std::atoi(value.c_str());
+	child_srate_conf_rep = std::atoi(value.c_str());
 	ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		  "resampling w/ child srate of " + 
-		  kvu_numtostr(child_srate_rep));
+		  kvu_numtostr(child_srate_conf_rep));
       }
     }
   }
@@ -229,6 +252,20 @@ string AUDIO_IO_RESAMPLE::get_parameter(int param) const
   return "";
 }
 
+SAMPLE_SPECS::sample_pos_t AUDIO_IO_RESAMPLE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
+{
+  SAMPLE_SPECS::sample_pos_t pub_pos, child_pos =
+    static_cast<long int>(std::floor(pos * (1.0f / psfactor_rep)));
+
+  child()->seek_position_in_samples(child_pos);
+  child_pos = 
+    child()->position_in_samples();
+
+  pub_pos = static_cast<long int>(std::floor(child_pos * (psfactor_rep)));
+
+  return pub_pos;
+}
+
 void AUDIO_IO_RESAMPLE::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 {
   AUDIO_IO::set_audio_format(f_str);
@@ -236,7 +273,7 @@ void AUDIO_IO_RESAMPLE::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
   
   /* set_audio_format() also sets the sample rate so we need to 
      reset the value back to the correct one */
-  child()->set_samples_per_second(child_srate_rep);
+  child()->set_samples_per_second(child_srate_conf_rep);
 }
 
 void AUDIO_IO_RESAMPLE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
@@ -250,9 +287,11 @@ void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
   /* read sample buffer */
   child()->read_buffer(&sbuf_rep);
   /* resample and copy to sbuf */
-  sbuf_rep.resample(child_srate_rep, samples_per_second());
+  sbuf_rep.resample(child_srate_conf_rep, samples_per_second());
+  sbuf->number_of_channels(sbuf_rep.number_of_channels());
   sbuf->copy(sbuf_rep);
   change_position_in_samples(sbuf->length_in_samples());
+  DBC_ENSURE(sbuf->length_in_samples() <= buffersize());
 }
 
 void AUDIO_IO_RESAMPLE::write_buffer(SAMPLE_BUFFER* sbuf)

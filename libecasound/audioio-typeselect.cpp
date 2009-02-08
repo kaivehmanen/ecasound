@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-typeselect.cpp: A proxy class for overriding default keyword
 //                         and filename associations.
-// Copyright (C) 2001,2002,2008 Kai Vehmanen
+// Copyright (C) 2001,2002,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -57,12 +57,18 @@ void AUDIO_IO_TYPESELECT::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "open " + label() + ".");  
 
   if (init_rep != true) {
-    AUDIO_IO* tmp = 
-      ECA_OBJECT_FACTORY::create_audio_object(child_params_as_string(2, &params_rep));
+    AUDIO_IO* tmp = 0;
 
-    if (tmp != 0) {
-      set_child(tmp);
-    }
+    const string& objname = 
+      child_params_as_string(2, &params_rep);
+
+    tmp = 
+      ECA_OBJECT_FACTORY::create_audio_object(objname);
+
+    if (tmp == 0)
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-TYPESELECT: unable to open child object '" + objname + "'"));
+
+    set_child(tmp);
 
     int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {

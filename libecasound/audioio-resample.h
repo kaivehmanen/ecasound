@@ -67,7 +67,15 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
 
-  virtual bool finished(void) const;
+  virtual void set_buffersize(long int samples);
+  virtual long int buffersize(void) const;
+
+  /*@}*/
+
+  /** @name Reimplemented functions from ECA_AUDIO_POSITION */
+  /*@{*/
+
+  virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   /*@}*/
 
@@ -89,8 +97,7 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
 
   mutable std::vector<std::string> params_rep;
   bool init_rep;
-  SAMPLE_SPECS::sample_rate_t child_srate_rep;
-  long int child_buffersize_rep;
+  SAMPLE_SPECS::sample_rate_t child_srate_conf_rep;
   float psfactor_rep;
   int quality_rep;
   SAMPLE_BUFFER sbuf_rep;

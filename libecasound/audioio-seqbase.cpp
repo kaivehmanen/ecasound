@@ -106,7 +106,13 @@ AUDIO_SEQUENCER_BASE* AUDIO_SEQUENCER_BASE::clone(void) const
 void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
   if (init_rep != true) {
-    AUDIO_IO* tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
+    AUDIO_IO* tmp = 0;
+
+    const string& objname = child_name_rep;
+
+    if (objname.size() > 0)
+      tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
+
     if (tmp == 0) 
       throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Couldn't open child object."));
 
@@ -280,6 +286,7 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 	- chipos1;
 
       //dump_child_debug("case3a-in");
+
       child()->set_buffersize(buffersize());
       child()->read_buffer(sbuf);
 
@@ -293,10 +300,11 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
        * go beyond set length */
       if (sbuf->length_in_samples() > 
 	  samples_to_include) {
-	sample_pos_t data_left = sbuf->length_in_samples() - samples_to_include;
-	sbuf->length_in_samples(data_left);
+	sbuf->length_in_samples(samples_to_include);
       }
+
       change_position_in_samples(sbuf->length_in_samples());
+
       //dump_child_debug("case3a-out");
     }
     else if (chipos2 < chipos1 &&
@@ -305,11 +313,13 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       // case 3b: looping, we will run out of data during read
       // ---
 
+      //dump_child_debug("case3b-in");
+
       child()->set_buffersize(buffersize());
       child()->read_buffer(sbuf);
       
       sample_pos_t over_child_eof = chipos2 - child_start_pos_rep.samples();
-      
+
       /* step: copy segment 1 from loop end, and segment 2 from
        *       loop start point */
       sample_pos_t chistartpos = 
@@ -335,6 +345,7 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 	child()->set_buffersize(save_bsize);
       }
       change_position_in_samples(buffersize());
+
       //dump_child_debug("case3b-out");
     }
     else {
@@ -363,6 +374,7 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       child()->finite_length_stream() != true))
     extend_position();
 
+  DBC_ENSURE(channels() == child()->channels());
   DBC_ENSURE(sbuf->number_of_channels() == channels());
   DBC_ENSURE(sbuf->length_in_samples() <= buffersize());
 }

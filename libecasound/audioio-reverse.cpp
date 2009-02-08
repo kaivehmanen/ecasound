@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-reverse.cpp: A proxy class that reverts the child 
 //                      object's data.
-// Copyright (C) 2002,2005,2008 Kai Vehmanen
+// Copyright (C) 2002,2005,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -27,6 +27,7 @@
 #include <kvu_numtostr.h>
 
 #include "audioio-reverse.h"
+#include "audioio-resample.h"
 #include "eca-logger.h"
 #include "eca-object-factory.h"
 #include "samplebuffer.h"
@@ -67,13 +68,18 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   }
   
   if (init_rep != true) {
-    AUDIO_IO* tmp = 
-      ECA_OBJECT_FACTORY::create_audio_object(
-        child_params_as_string(1 + AUDIO_IO_REVERSE::child_parameter_offset, &params_rep));
+    AUDIO_IO* tmp = 0;
 
-    if (tmp != 0) {
-      set_child(tmp);
-    }
+    const string& objname = 
+      child_params_as_string(1 + AUDIO_IO_REVERSE::child_parameter_offset, &params_rep);
+    
+    if (objname.size() > 0)
+      tmp = ECA_OBJECT_FACTORY::create_audio_object(objname);
+
+    if (tmp == 0) 
+      throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-REVERSE: unable to open child object '" + objname + "'"));
+
+    set_child(tmp);
 
     int numparams = child()->number_of_params();
     for(int n = 0; n < numparams; n++) {
@@ -95,6 +101,11 @@ void AUDIO_IO_REVERSE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   if (child()->finite_length_stream() != true) {
     child()->close();
     throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: Unable to reverse an infinite length audio object " + child()->label() + "."));
+  }
+
+  if (dynamic_cast<AUDIO_IO_RESAMPLE*>(child()) != 0) {
+    child()->close();
+    throw(SETUP_ERROR(SETUP_ERROR::dynamic_params, "AUDIOIO-REVERSE: 'resample' objects not supported"));
   }
 
   if (child()->supports_seeking() != true) {
@@ -168,34 +179,65 @@ SAMPLE_SPECS::sample_pos_t AUDIO_IO_REVERSE::seek_position(SAMPLE_SPECS::sample_
 
 void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
 {
-  tempbuf_repp->number_of_channels(sbuf->number_of_channels());
+  tempbuf_repp->number_of_channels(channels());
+  sbuf->number_of_channels(channels());
 
-  /* phase 1: seek to correct position and read one buffer */
+  SAMPLE_BUFFER::buf_size_t read_count = buffersize();
+
+  /* phase 1: Seek to correct position and read one buffer */
   SAMPLE_SPECS::sample_pos_t curpos = position_in_samples();
   SAMPLE_SPECS::sample_pos_t newpos = child()->length_in_samples() - curpos - buffersize();
   if (newpos <= 0) {
     child()->seek_position_in_samples(0);
-    int oldbufsize = child()->buffersize();
-    child()->set_buffersize(-newpos);
-    child()->read_buffer(tempbuf_repp);
-    child()->set_buffersize(oldbufsize);
+    read_count = -newpos;
     finished_rep = true;
-    DBC_CHECK(-newpos == tempbuf_repp->length_in_samples());
   }
   else {
     child()->seek_position_in_samples(newpos);
-    child()->read_buffer(tempbuf_repp);
-    DBC_CHECK(buffersize() == tempbuf_repp->length_in_samples());
   }
-  curpos += tempbuf_repp->length_in_samples();
-  set_position_in_samples(curpos);
 
-  /* phase 2: copy the data reversed from tempbuf
-   *          to sbuf */
-  sbuf->length_in_samples(tempbuf_repp->length_in_samples());
-  for(int c = 0; c < sbuf->number_of_channels(); c++) {
-    for(SAMPLE_BUFFER::buf_size_t n = 0; n < sbuf->length_in_samples(); n++) {
-      sbuf->buffer[c][n] = tempbuf_repp->buffer[c][sbuf->length_in_samples() - n - 1];
+  /* phase 2: Copy the data in reversed order from tempbuf
+   *          to sbuf. As we cannot have any gaps between 
+   *          the blocks before reversing, we try to read
+   *          multiple times until we get the full block 
+   *          of data (at least buffersize() worth of samples).
+   */
+
+  const int max_loops = 3;
+  SAMPLE_BUFFER::buf_size_t read_sofar = 0;
+
+  /* this is how much reverse samples we will produce */
+  sbuf->length_in_samples(read_count);
+
+  for(int i = 0; i < max_loops; i++) {
+    child()->read_buffer(tempbuf_repp);
+
+    if (tempbuf_repp->length_in_samples() + read_sofar > read_count)
+      tempbuf_repp->length_in_samples(read_count - read_sofar);
+
+    for(int c = 0; c < sbuf->number_of_channels(); c++) {
+
+      SAMPLE_BUFFER::buf_size_t src = 0;
+      SAMPLE_BUFFER::buf_size_t dst = 
+	(read_count - read_sofar - tempbuf_repp->length_in_samples());
+
+      for(; src < tempbuf_repp->length_in_samples(); src++, dst++) {
+
+	sbuf->buffer[c][dst] = 
+	  tempbuf_repp->buffer[c][tempbuf_repp->length_in_samples() - src - 1];
+
+      }
     }
+
+    read_sofar += tempbuf_repp->length_in_samples();
+
+    if (read_sofar >= read_count)
+      break;
   }
+
+  DBC_CHECK(read_sofar <= buffersize());
+  DBC_CHECK(sbuf->length_in_samples() == read_count);
+
+  curpos += read_sofar;
+  set_position_in_samples(curpos);
 }

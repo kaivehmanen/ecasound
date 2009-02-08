@@ -111,6 +111,12 @@ xx0y2009 (v2.6.0) -** stable release **-
 		 objects that do not support seeking
         - fixed: bugs with passing 'auto' as the 2nd parameter of 
 		 'resample'
+	- fixed: bug with seeking resampled audio objects
+	- fixed: bug in combined use of 'audioloop' and 'resample'
+	- fixed: catch and warn about various errors cases when
+		 given incorrect or missing params to audio 
+		 types: typeselect, resample, reverse, playat, 
+		 audioloop, select
 24082008 (v2.5.2) -** stable release **-
 	- more verbose description of change available at:
                  http://eca.cx/relnotes/ecasound_v2_5_2_relnotes.txt
