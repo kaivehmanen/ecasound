@@ -29,7 +29,7 @@ function check_md5sum() {
   set +x
   if test "`md5sum $1 |cut -f1 -d' '`" != "$2" ; then
     echo -e "\n\nWARNING: md5sum did not match (not necessarily an error, but"
-    echo -e "needs to be manually verified). Define SKIP_MD5SUM=1 to ignore md5 errors.\n"
+    echo -e "\tneeds to be manually verified).\n"
     if test "x$SKIP_MD5SUM" != "x1"; then
       error_exit
     fi
