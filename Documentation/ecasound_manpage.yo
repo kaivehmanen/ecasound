@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (06.02.2009)
+       (10.02.2009)
        ()
        (Multimedia software)
 
@@ -1043,6 +1043,33 @@ manpagesection(RETURN VALUES)
 	dit(3)
 	Error during processing. Possible causes: output object has run
 	out of free disk space, etc.
+
+	dit(4)
+	Error during process termination and/or cleanup. See section
+ 	on 'SIGNALS' for further details.
+
+manpagesection(SIGNALS)
+
+	When ecasound receives any of the POSIX signals SIGINT (ctrl-c), 
+	SIGHUP, SIGTERM or SIGQUIT, normal cleanup and exit procedure is 
+	initiated. Here normal exit means that e.g. file headers are 
+	updated before closing, helper processes are terminated in normal 
+	way, and so forth.
+
+	If, while doing the cleanup described above, ecasound receives
+	another signal (of the same set of POSIX signals), ecasound
+	will skip the normal cleanup procedure, and terminate
+	immediately. Any remaining cleanup tasks will be skipped. 
+	Depending on the runtime state and configuration, this brute 
+	force exit may have some side-effects. Ecasound will return
+	exit code of '4' if normal cleanup was skipped.
+	
+	Special case handling is applied to the SIGINT (ctrl-c) signal.
+        If a SIGINT signal is received during the cleanup procedure,
+	ecasound will ignore the signal once, and emit a notice to 'stderr'
+	that cleanup is already in progress. Any subsequent SIGINT signals 
+	will no longer get special handling, and instead process will 
+        terminate immediately (and possibly without proper cleanup).
 
 manpagefiles()
 
