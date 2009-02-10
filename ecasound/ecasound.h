@@ -24,6 +24,7 @@ class ECA_SESSION;
 #define ECASOUND_RETVAL_INIT_FAILURE    1    /**< Unable to initialize */
 #define ECASOUND_RETVAL_START_ERROR     2    /**< Unable to start processing */
 #define ECASOUND_RETVAL_RUNTIME_ERROR   3    /**< Error during processing */
+#define ECASOUND_RETVAL_CLEANUP_ERROR   4    /**< Error during cleanup/exit */
 
 /**
  * Type definitions
@@ -31,6 +32,31 @@ class ECA_SESSION;
 
 /* Note! Check the initialization in ecasound.cpp if
  *       you change the state struct! */
+
+class ECASOUND_RUN_STATE {
+ public:
+  ECASOUND_RUN_STATE(void);
+  ~ECASOUND_RUN_STATE(void);
+
+  ECA_CONSOLE* console;
+  ECA_CONTROL* control;
+  ECA_LOGGER_INTERFACE* logger;
+  ECA_NETECI_SERVER* eciserver;
+  ECA_SESSION* session;
+  std::vector<std::string>* launchcmds;
+  pthread_t* neteci_thread;
+  pthread_t* watchdog_thread;
+  pthread_mutex_t* lock;
+  sig_atomic_t exit_request;
+  sigset_t* signalset;
+  int retval;
+  int neteci_tcp_port;
+  bool neteci_mode;
+  bool keep_running_mode;
+  bool cerr_output_only_mode;
+  bool interactive_mode;
+  bool quiet_mode;
+};
 
 struct ecasound_state {
   ECA_CONSOLE* console;

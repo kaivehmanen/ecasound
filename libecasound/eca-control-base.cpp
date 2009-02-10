@@ -195,8 +195,8 @@ int ECA_CONTROL_BASE::run(bool batchmode)
      * until error occurs) */
     while(is_finished() != true || batchmode != true) {
       
-      /* sleep for one second */
-      kvu_sleep(1, 0);
+      /* sleep for 250ms */
+      kvu_sleep(0, 250000000);
 
       if (processing_started != true) {
 	if (is_running() == true ||
@@ -241,7 +241,7 @@ int ECA_CONTROL_BASE::run(bool batchmode)
   ECA_LOG_MSG(ECA_LOGGER::subsystems, 
 	      std::string("Controller/Batch processing finished (")
 	      + kvu_numtostr(result) + ")");
-  
+
   // --------
   DBC_ENSURE(is_finished() == true ||
 	     (processing_started == true && is_running()) != true ||

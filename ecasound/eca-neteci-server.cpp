@@ -69,7 +69,7 @@
 
 using namespace std;
 
-ECA_NETECI_SERVER::ECA_NETECI_SERVER(struct ecasound_state* state)
+ECA_NETECI_SERVER::ECA_NETECI_SERVER(ECASOUND_RUN_STATE* state)
   : state_repp(state),
     srvfd_rep(-1),
     server_listening_rep(false),

@@ -9,6 +9,7 @@
 #include <netinet/in.h>   /* IP socket definitions */
 
 struct ecasound_state;
+class ECASOUND_RUN_STATE;
 
 struct ecasound_neteci_server_client {
   std::string peername;
@@ -30,7 +31,7 @@ class ECA_NETECI_SERVER {
   /**
    * Constructor.
    */
-  ECA_NETECI_SERVER(struct ecasound_state* state);
+  ECA_NETECI_SERVER(ECASOUND_RUN_STATE* state);
 
   /**
    * Virtual destructor.
@@ -60,7 +61,7 @@ class ECA_NETECI_SERVER {
   struct sockaddr_un addr_un_rep;
   struct sockaddr_in addr_in_rep;
   struct sockaddr* addr_repp;
-  struct ecasound_state* state_repp;
+  ECASOUND_RUN_STATE* state_repp;
 
   std::list<struct ecasound_neteci_server_client*> clients_rep;
   /* FIXME: turn into a buffer of pointers to allow ptr-fields */
