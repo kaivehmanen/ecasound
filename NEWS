@@ -32,7 +32,8 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
 	           all builds, expressing that the codebase expects 
 		   the build environment be compatible with the Single 
-		   UNIX Spec v2 (1998)
+		   UNIX Spec v2 (1998); thanks to Jussi Laako for
+		   reminding about this
 	- changed: yet another change to signal handling in ecasound;
 		   now two level response to signals is supported in
 		   all stages of process termination -> first starting
