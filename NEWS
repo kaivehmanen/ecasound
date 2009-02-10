@@ -25,6 +25,22 @@ Howto for reading the entries:
 
 -----------------------------------------------------------------------
 
+xxyy2009 (v2.x.y) -** stable release **-
+	- added: new exit code of '4' to ecasound; see entry below
+		 about signal handling changes and ecasound(1) for
+		 more details
+	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
+	           all builds, expressing that the codebase expects 
+		   the build environment be compatible with the Single 
+		   UNIX Spec v2 (1998)
+	- changed: yet another change to signal handling in ecasound;
+		   now two level response to signals is supported in
+		   all stages of process termination -> first starting
+		   normal cleanup and exit procudere, and with
+		   second signal terminate immediately; see ecasound(1)
+		   for the full story (new 'SIGNALS' section)
+	- changed: dropped "-funroll-loops" from the set of default
+		   compiler options
 08022009 (v2.6.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
