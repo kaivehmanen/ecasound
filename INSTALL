@@ -135,6 +135,9 @@ Ecasound specific options
 	enabled if all the necessary header and library
 	files are found.
 
+`--disable-largefile'
+	Explicitly disable large file (>2GB) support.
+
 `--with-jack=JACK_PREFIX'
 	Enable JACK support and compile against JACK installed
 	in 'JACK_PREFIX'.
@@ -142,10 +145,6 @@ Ecasound specific options
 `--with-libsamplerate=LIBSAMPLERATE_PREFIX'
 	Enable libsamplerate support and compile against libsamplerate 
 	installed in 'LIBSAMPLERATE_PREFIX'.
-
-`--with-largefile'
-	Compile with support for large files (>2GB). Disabled
-	by default.
 
 `--enable-pyecasound={c,python,none}'
 	Enable pyecasound and select which implementation to use. 
