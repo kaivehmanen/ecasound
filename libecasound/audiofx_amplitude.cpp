@@ -35,7 +35,12 @@ EFFECT_AMPLITUDE::~EFFECT_AMPLITUDE(void)
 {
 }
 
-EFFECT_AMPLIFY::EFFECT_AMPLIFY (parameter_t multiplier_percent)
+EFFECT_AMPLITUDE::parameter_t EFFECT_AMPLITUDE::db_to_linear(parameter_t value)
+{
+  return std::pow(10.0f, static_cast<float>(value * 0.05f));
+}
+
+EFFECT_AMPLIFY::EFFECT_AMPLIFY (EFFECT_AMPLITUDE::parameter_t multiplier_percent)
 {
   set_parameter(1, multiplier_percent);
 }
