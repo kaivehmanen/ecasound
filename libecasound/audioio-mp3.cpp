@@ -360,6 +360,27 @@ void MP3FILE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
                          count and sample format */
     set_channels(2);
     set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_le);
+
+    /* note: 'lame' command-line syntax, and default related to them, 
+     *       have changed slightly in lame 3.98, so we need this hack 
+     *       to support both old and new versions. In the past,
+     *       Ecasound wrote little-endian samples and used lame
+     *       option "-x". Newer lame versions (3.97) introduced
+     *       "--litle-endian" and "--big-endian", but these were 
+     *       buggy still in 3.97 (fixed in 3.98). And with 3.98, 
+     *       additional options (e.g. "-r") need to be passed, or
+     *       otherwise lame will exit with an error.
+     * 
+     *       In addition to above problems, we also need to remember
+     *       people updating to a newer Ecasound, but who do not update
+     *       their custom 'lame' launch commands in
+     *       ~/.ecasound/ecasoundrc (ecasound must continue to output
+     *       little-endian samples by default).
+     */
+    if (MP3FILE::conf_output_cmd.find("lame ") != std::string::npos &&
+	MP3FILE::conf_output_cmd.find(" --big-endian ") != std::string::npos) {
+      set_sample_format(ECA_AUDIO_FORMAT::sfmt_s16_be);
+    }
   }
 
   triggered_rep = false;

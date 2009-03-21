@@ -42,6 +42,13 @@ xxyy2009 (v2.x.y) -** stable release **-
 		   for the full story (new 'SIGNALS' section)
 	- changed: dropped "-funroll-loops" from the set of default
 		   compiler options
+	- changed: comment out many entries in the global installed
+		   'ecasoundrc' file (entries are redundant as the same
+	 	   defaults are already set in the program binaries)
+	- fixed: mp3 output was broken with lame 3.98 (and newer); 
+		 the default lame parameters have now been updated 
+		 and have been tested with lame 3.96, 3.97 and with
+		 the latest 3.98.2
 08022009 (v2.6.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt

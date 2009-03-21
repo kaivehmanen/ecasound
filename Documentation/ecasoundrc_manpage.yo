@@ -130,7 +130,11 @@ startdit()
 	path to the output mp3, %S with sample rate in kHz, and 
 	%B with encoding bitrate in kbps. Double-quotes and 
 	backslash-espacing can be used to include white-space to 
-	individual parameters.Defaults to em(lame -b %B -s %S -x -S - %f).
+	individual parameters. By default Ecasound will try to
+	launch em(lame). As a special exception (added to Ecasound
+	2.7.0), if the output program is "lame" and options 
+	include "--big-endian", Ecasound will detect this and output
+	big-endian samples.
 
 	dit(ext-cmd-ogg-input)
 	Command for starting Ogg Vorbis input. Ecasound expects that audio samples
