@@ -187,6 +187,8 @@ void EFFECT_AMPLIFY_CLIPCOUNT::set_parameter(int param, parameter_t value)
   case 2:
     maxnum_of_clipped = (int)value;
     break;
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -198,7 +200,8 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CLIPCOUNT::get_parameter(int param) c
   case 2:
     return maxnum_of_clipped;
   }
-  return 0.0;
+  DBC_NEVER_REACHED();
+  return 0.0f;
 }
 
 void EFFECT_AMPLIFY_CLIPCOUNT::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
@@ -258,8 +261,10 @@ void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value)
       if (value > 0) {
 	channel_rep = static_cast<int>(value);
 	channel_rep--;
-	break;
       }
+      break;
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -272,6 +277,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_CHANNEL::get_parameter(int param) con
   case 2: 
     return static_cast<parameter_t>(channel_rep + 1);
   }
+  DBC_NEVER_REACHED();
   return 0.0;
 }
 
@@ -322,6 +328,8 @@ void EFFECT_LIMITER::set_parameter(int param, parameter_t value) {
   case 1:
     limit_rep = value / 100.0;
     break;
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -330,6 +338,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_LIMITER::get_parameter(int param) const {
   case 1: 
     return limit_rep * 100.0;
   }
+  DBC_NEVER_REACHED();
   return 0.0;
 }
 
@@ -377,11 +386,13 @@ EFFECT_COMPRESS::EFFECT_COMPRESS (const EFFECT_COMPRESS& x) {
 void EFFECT_COMPRESS::set_parameter(int param, parameter_t value) {
   switch (param) {
   case 1: 
-    crate = pow(2.0, value / 6.0);
+    crate = std::pow(2.0, value / 6.0);
     break;
   case 2: 
     threshold = value / 100.0;
     break;
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -392,6 +403,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_COMPRESS::get_parameter(int param) const {
   case 2: 
     return threshold * 100.0;
   }
+  DBC_NEVER_REACHED();
   return 0.0;
 }
 
@@ -422,7 +434,8 @@ void EFFECT_COMPRESS::parameter_description(int param, struct PARAM_DESCRIPTION 
     pd->logarithmic = false;
     pd->output = false;
     break;
-  default: {}
+  default: 
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -499,6 +512,8 @@ void EFFECT_NOISEGATE::set_parameter(int param, parameter_t value) {
   case 5: 
     rtime = (value * (parameter_t)samples_per_second() / 1000.0);
     break;
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -516,6 +531,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_NOISEGATE::get_parameter(int param) const
   case 5: 
     return rtime * 1000.0 / (parameter_t)samples_per_second();
   }
+  DBC_NEVER_REACHED();
   return 0.0;
 }
 
@@ -664,6 +680,8 @@ void EFFECT_NORMAL_PAN::set_parameter(int param, parameter_t value)
       l_gain = (100.0 - value) / 50.0;
     }
     break;
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
@@ -689,6 +707,8 @@ void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTIO
       pd->bounded_below = true;
       pd->lower_bound = 0.0f;
     }
+  default:
+    DBC_NEVER_REACHED();
   }
 }
 
