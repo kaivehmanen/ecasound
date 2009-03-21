@@ -49,18 +49,20 @@ EFFECT_AMPLIFY::~EFFECT_AMPLIFY(void)
 {
 }
 
-void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value) {
+void EFFECT_AMPLIFY::set_parameter(int param, parameter_t value)
+{
   switch (param) {
   case 1: 
-    gain = value / 100.0;
+    gain_rep = value / 100.0;
     break;
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY::get_parameter(int param) const { 
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY::get_parameter(int param) const
+{
   switch (param) {
   case 1: 
-    return gain * 100.0;
+    return gain_rep * 100.0;
   }
   return 0.0;
 }

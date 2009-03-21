@@ -23,12 +23,12 @@ class EFFECT_AMPLITUDE : public EFFECT_BASE {
 #include "audiofx_compressor.h"
 
 /**
- * Normal amplifier
+ * Amplifier for adjusting signal level (linear)
  * @author Kai Vehmanen
  */
 class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
 
-  parameter_t gain;
+  parameter_t gain_rep;
   SAMPLE_ITERATOR i;
 
  public:
