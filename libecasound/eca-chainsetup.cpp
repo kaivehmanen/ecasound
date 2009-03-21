@@ -269,6 +269,8 @@ void ECA_CHAINSETUP::set_defaults(void)
   DBC_REQUIRE(is_enabled() != true);
   // --------
 
+  /* note: defaults are set as specified in ecasoundrc(5) */
+
   precise_sample_rates_rep = false;
   ignore_xruns_rep = true;
 
@@ -345,7 +347,7 @@ string ECA_CHAINSETUP::set_resource_helper(const ECA_RESOURCES& ecaresources, co
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		"(eca-chaisetup) Using hardcoded defaults for '" +
+		"Using hardcoded defaults for '" +
 		tag + "'.");
     return alternative;
   }

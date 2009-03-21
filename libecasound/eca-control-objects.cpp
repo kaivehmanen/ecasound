@@ -299,7 +299,13 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
 
   /* 5. fork an external text editor */
   string editori = "";
-  if (resource_value("ext-cmd-text-editor-use-getenv") == "true") {
+  string use_getenv =
+    resource_value("ext-cmd-text-editor-use-getenv");
+  
+  if (use_getenv.size() == 0 ||
+      use_getenv == "true") {
+    /* note: as specified in ecasoundrc(5), we should 
+     *       default to 'true' */
     if (std::getenv("EDITOR") != 0) {
       editori = std::getenv("EDITOR");
     }
@@ -308,7 +314,8 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
     editori = resource_value("ext-cmd-text-editor");
 
   if (editori == "") {
-    ECA_LOG_MSG(ECA_LOGGER::info, "Can't edit; no text editor specified/available.");
+    ECA_LOG_MSG(ECA_LOGGER::info,
+		"Cannot edit, no text editor specified/available. See ecasoundrc(5) man page and the 'ext-cmd-text-editor' configuration variable.");
   }
 
   // FIXME: we should drop priviledge-level here (at least if root)!

@@ -18,14 +18,14 @@ class MP3FILE : public AUDIO_IO_BUFFERED,
 
  private:
   
-  static std::string default_input_cmd;
-  static std::string default_output_cmd;
+  static std::string conf_input_cmd;
+  static std::string conf_output_cmd;
+  static long int conf_default_output_bitrate;
 
  public:
 
   static void set_input_cmd(const std::string& value);
   static void set_output_cmd(const std::string& value);
-  static long int default_output_default_bitrate;
  
  public:
 

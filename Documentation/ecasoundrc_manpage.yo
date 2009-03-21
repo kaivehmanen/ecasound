@@ -114,14 +114,14 @@ startdit()
 	Defaults to em(true).
 
 	dit(ext-cmd-mp3-input)
-	Command for starting mp3 input. Ecasound expects that signed,
-	16bit, stereo audio samples are written to standard output.
-	Ecasound will query other audio	format parameters by parsing 
+	Command for starting mp3 input. Ecasound expects to read signed,
+	16bit, little-endian stereo audio samples from its standard
+	input. Ecsound will query other audio format parameters by parsing 
 	the mp3 file header. Before execution, %f is replaced with
 	path to the input mp3. If exists, "%o" is replaced with he
 	start offset in mp3 frames. Double-quotes and backslash-espacing 
 	can be used to include white-space to individual parameters.
-	Defaults to em(mpg123 --stereo -r -b 0 -q -s -k %o %f).
+	By default, em(mpg123) is launched.
 
 	dit(ext-cmd-mp3-output)
 	Command for starting mp3 output. Ecasound will write stereo, 
@@ -139,8 +139,8 @@ startdit()
 	ogg files, so these need to be set manually by the user.
 	Before execution, %f is replaced with path to the input ogg. 
 	Double-quotes and backslash-espacing can be used to include white-space 
-	to individual parameters. Defaults to 
-	em(ogg123 -d raw -o byteorder:%E --file=- %f).
+	to individual parameters. By default Ecasound will try to
+	launch (ogg123).
 
 	dit(ext-cmd-ogg-output)
 	Command for starting Ogg Vorbis output. Ecasound will write
@@ -149,8 +149,8 @@ startdit()
 	replaced with path to the output ogg, %c, %s and %b with matching audio
 	format parameters, and %B with encoding bitrate in kbps.
 	Double-quotes and backslash-espacing can be used to include white-space to 
-	individual parameters. Defaults to 
-	em(oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --raw-endianness 0 --output=%f -).
+	individual parameters. By default Ecasound will try to
+	launch (oggenc).
 
 	dit(ext-cmd-mikmod)
 	Command for starting mikmod input. Ecasound expects that 
@@ -158,7 +158,8 @@ startdit()
 	output. Before execution, %f is replaced with 
 	file path, and %s with selected sample rate. Double-quotes 
 	and backslash-espacing can be used to include white-space to 
-	individual parameters. Defaults to em(mikmod -d stdout -o 16s -q -f %s -p 0 --noloops %f).
+	individual parameters. By default Ecasound will try to launch
+	em(mikmod).
 
 	dit(ext-cmd-timidity)
 	Command for starting timidity++ input. Ecasound expects that
@@ -166,7 +167,7 @@ startdit()
 	output. Before execution, %f is replaced with file path, and
 	%s with sample rate. Double-quotes and backslash-espacing can 
 	be used to include white-space to individual parameters.
-	Defaults to em(timidity -Or1S -id -s %s -o - %f).
+	By default Ecasound will try to launch em(timidity).
 
 	dit(ext-cmd-flac-input)
 	Command for starting FLAC input. Ecasound expects that audio samples
@@ -175,7 +176,8 @@ startdit()
 	FLAC files, so these need to be set manually by the user. 
 	Before execution, %f is replaced with path to the input FLAC
 	file. Double-quotes and backslash-espacing can be used to include 
-	white-space to individual parameters.Defaults to em(flac -d -c %f).
+	white-space to individual parameters. By default Ecasound will
+	try to launch (flac).
 
 	dit(ext-cmd-flac-output)
 	Command for starting FLAC output. Ecasound will write
@@ -184,8 +186,8 @@ startdit()
 	the output flac, %c, %b and %s with matching audio
         format parameters, %I with either 'signed' or 'unsigned', and
 	%E with either 'little' or 'big'. Double-quotes and backslash-espacing 
-	can be used to include white-space to individual parameters. Defaults 
-	to em(flac -o %f --force-raw-format --channels=%c --bps=%b --sample-rate=%s --sign=%I --endian=%E -).
+	can be used to include white-space to individual parameters. By default 
+	Ecasound will try to launch (flac).
 
 	dit(ext-cmd-aac-input)
 	Command for starting AAC input. Ecasound expects that signed,
@@ -195,7 +197,8 @@ startdit()
 	Before execution, %f is replaced with path to the input AAC
 	file. Note! FAAC must be compiled with MP4 support. Double-quotes 
 	and backslash-espacing can be used to include white-space to 
-	individual parameters. Defaults to em(faad -w -b 1 -f 2 -d %f).
+	individual parameters. By default Ecasound will try to 
+	laucnh em(faad).
 
 	dit(ext-cmd-aac-output)
 	Command for starting AAC output. Ecasound will write big-endian
@@ -204,7 +207,8 @@ startdit()
 	the output AAC file, %c, %b and %s with matching audio format 
 	parameters. Note! FAAC must be compiled with MP4 support. Double-quotes 
 	and backslash-espacing can be used to include white-space to 
-	individual parameters. Defaults to em(faac -P -o %f -R %s -B %b -C %c -).
+	individual parameters. By default Ecasound will try to launch
+	em(faac).
 
 enddit()
 

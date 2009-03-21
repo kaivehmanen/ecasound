@@ -137,17 +137,40 @@ void ECA_SESSION::set_cs_param_defaults(void)
     // Interpret resources 
 
     ECA_RESOURCES ecaresources;
-    
-    MP3FILE::set_input_cmd(ecaresources.resource("ext-cmd-mp3-input"));
-    MP3FILE::set_output_cmd(ecaresources.resource("ext-cmd-mp3-output"));
-    MIKMOD_INTERFACE::set_mikmod_cmd(ecaresources.resource("ext-cmd-mikmod"));
-    TIMIDITY_INTERFACE::set_timidity_cmd(ecaresources.resource("ext-cmd-timidity"));
-    OGG_VORBIS_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-ogg-input"));
-    OGG_VORBIS_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-ogg-output"));
-    FLAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-flac-input"));
-    FLAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-flac-output"));
-    AAC_FORKED_INTERFACE::set_input_cmd(ecaresources.resource("ext-cmd-aac-input"));
-    AAC_FORKED_INTERFACE::set_output_cmd(ecaresources.resource("ext-cmd-aac-output"));
+    string v;
+
+    /* note: defaults specified in ecasoundrc(5) */
+
+    v = ecaresources.resource("ext-cmd-mp3-input");
+    if (v.size() > 0)
+      MP3FILE::set_input_cmd(v);
+    v = ecaresources.resource("ext-cmd-mp3-output");
+    if (v.size() > 0)
+      MP3FILE::set_output_cmd(v);
+    v = ecaresources.resource("ext-cmd-mikmod");
+    if (v.size() > 0)
+      MIKMOD_INTERFACE::set_mikmod_cmd(v);
+    v = ecaresources.resource("ext-cmd-timidity");
+    if (v.size() > 0)
+      TIMIDITY_INTERFACE::set_timidity_cmd(v);
+    v = ecaresources.resource("ext-cmd-ogg-input");
+    if (v.size() > 0)
+      OGG_VORBIS_INTERFACE::set_input_cmd(v);
+    v = ecaresources.resource("ext-cmd-ogg-output");
+    if (v.size() > 0)
+      OGG_VORBIS_INTERFACE::set_output_cmd(v);
+    v = ecaresources.resource("ext-cmd-flac-input");
+    if (v.size() > 0)
+      FLAC_FORKED_INTERFACE::set_input_cmd(v);
+    v = ecaresources.resource("ext-cmd-flac-output");
+    if (v.size() > 0)
+      FLAC_FORKED_INTERFACE::set_output_cmd(v);
+    v = ecaresources.resource("ext-cmd-aac-input");
+    if (v.size() > 0)
+      AAC_FORKED_INTERFACE::set_input_cmd(v);
+    v = ecaresources.resource("ext-cmd-aac-output");
+    if (v.size() > 0)
+      AAC_FORKED_INTERFACE::set_output_cmd(v);
 
     cs_defaults_set_rep = true;
   }

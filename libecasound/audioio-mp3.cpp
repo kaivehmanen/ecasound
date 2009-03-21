@@ -2,7 +2,7 @@
 // audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
 //                  input/output using standard streams. Defaults to
 //                  mpg123 and lame.
-// Copyright (C) 1999-2006,2008 Kai Vehmanen
+// Copyright (C) 1999-2006,2008,2009 Kai Vehmanen
 // Note! Routines for parsing mp3 header information were taken from XMMS
 //       1.2.5's mpg123 plugin. Improvements to parsing logic were
 //       contributed by Julian Dobson.
@@ -54,12 +54,17 @@
 
 #include "eca-logger.h"
 
-std::string MP3FILE::default_input_cmd = "mpg123 --stereo -b 0 -q -s -k %o %f";
-std::string MP3FILE::default_output_cmd = "lame -b %B -s %S -x -S - %f";
-long int MP3FILE::default_output_default_bitrate = 128000;
+const char *default_input_cmd = "mpg123 --stereo -b 0 -q -s -k %o %f";
+const char *default_output_cmd = "lame -b %B -s %S -r --big-endian -S - %f";
+const long int default_output_bitrate = 128000;
 
-void MP3FILE::set_input_cmd(const std::string& value) { MP3FILE::default_input_cmd = value; }
-void MP3FILE::set_output_cmd(const std::string& value) { MP3FILE::default_output_cmd = value; }
+std::string MP3FILE::conf_input_cmd = std::string(default_input_cmd);
+std::string MP3FILE::conf_output_cmd = std::string(default_output_cmd);
+
+long int MP3FILE::conf_default_output_bitrate = default_output_bitrate;
+
+void MP3FILE::set_input_cmd(const std::string& value) { MP3FILE::conf_input_cmd = value; }
+void MP3FILE::set_output_cmd(const std::string& value) { MP3FILE::conf_output_cmd = value; }
 
 /***************************************************************
  * Routines for parsing mp3 header information. Taken from XMMS
@@ -331,7 +336,7 @@ MP3FILE::MP3FILE(const std::string& name)
   filehandle_rep = 0;
   mono_input_rep = false;
   pcm_rep = 1;
-  bitrate_rep = MP3FILE::default_output_default_bitrate;
+  bitrate_rep = MP3FILE::conf_default_output_bitrate;
 }
 
 MP3FILE::~MP3FILE(void)
@@ -393,7 +398,7 @@ long int MP3FILE::read_samples(void* target_buffer, long int samples)
   bytes_rep = std::fread(target_buffer, 1, frame_size() * samples, filehandle_rep);
   if (bytes_rep < samples * frame_size() || bytes_rep == 0) {
     if (position_in_samples() == 0) 
-      ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+      ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::conf_input_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
     finished_rep = true;
     triggered_rep = false;
   }
@@ -422,7 +427,7 @@ void MP3FILE::write_samples(void* target_buffer, long int samples)
 
     if (bytes_rep < frame_size() * samples) {
       if (position_in_samples() == 0) 
-	ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::default_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
+	ECA_LOG_MSG(ECA_LOGGER::errors, "Can't start process \"" + MP3FILE::conf_output_cmd + "\". Please check your ~/.ecasound/ecasoundrc.");
       else
 	ECA_LOG_MSG(ECA_LOGGER::errors, 
 		    "Error in writing to child process (to write " 
@@ -464,7 +469,7 @@ void MP3FILE::set_parameter(int param, std::string value)
     if (numvalue > 0) 
       bitrate_rep = numvalue;
     else
-      bitrate_rep = MP3FILE::default_output_default_bitrate;
+      bitrate_rep = MP3FILE::conf_default_output_bitrate;
     break;
   }
 }
@@ -565,7 +570,7 @@ void MP3FILE::stop_io(void)
 
 void MP3FILE::fork_input_process(void)
 {
-  std::string cmd = MP3FILE::default_input_cmd;
+  std::string cmd = MP3FILE::conf_input_cmd;
   if (cmd.find("%o") != std::string::npos) {
     cmd.replace(cmd.find("%o"), 2, kvu_numtostr((long)(position_in_samples() / pcm_rep)));
   }
@@ -596,7 +601,7 @@ void MP3FILE::fork_output_process(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "Starting to encode " + label() + " with lame.");
   last_position_rep = position_in_samples();
-  std::string cmd = MP3FILE::default_output_cmd;
+  std::string cmd = MP3FILE::conf_output_cmd;
   if (cmd.find("%B") != std::string::npos) {
     cmd.replace(cmd.find("%B"), 2, kvu_numtostr((long int)(bitrate_rep / 1000)));
   }

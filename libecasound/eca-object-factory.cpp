@@ -605,10 +605,15 @@ GENERIC_CONTROLLER* ECA_OBJECT_FACTORY::create_controller (const string& argu)
 std::string ECA_OBJECT_FACTORY::probe_default_output_device(void)
 {
     ECA_RESOURCES ecaresources;
-    string default_output = ecaresources.resource("default-output");
+    const char *output_autodetect = "autodetect";
+    string default_output = output_autodetect;
     bool output_selected = true;
 
-    if (default_output == "autodetect") {
+    if (ecaresources.has("default-output") == true)
+      default_output =
+	ecaresources.resource("default-output");
+
+    if (default_output == output_autodetect) {
       
       output_selected = false;
 
