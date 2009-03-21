@@ -29,6 +29,8 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- added: new exit code of '4' to ecasound; see entry below
 		 about signal handling changes and ecasound(1) for
 		 more details
+	- added: -eadb chainop, like -ea/-eac, but gain given in dB;
+		 documented in ecasound(1)
 	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
 	           all builds, expressing that the codebase expects 
 		   the build environment be compatible with the Single 
