@@ -20,6 +20,8 @@
 #ifndef INCLUDED_DBC_H
 #define INCLUDED_DBC_H
 
+#define DBC_NEVER_REACHED(x) DBC_CHECK(false)
+
 #ifdef ENABLE_DBC
 
 #include <stdio.h>

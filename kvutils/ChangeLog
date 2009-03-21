@@ -1,3 +1,9 @@
+2009-03-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_dbc.h: Added DBC_NEVER_REACHED macro.
+	* kvu_debug.h: File added.
+	* library version changed to 9:0:5
+
 2006-12-06  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 8 frozen (2.4.5 release)
