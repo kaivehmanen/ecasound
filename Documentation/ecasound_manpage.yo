@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (10.02.2009)
+       (21.03.2009)
        ()
        (Multimedia software)
 
@@ -626,9 +626,10 @@ startdit()
 dit(-ev)
 Analyzes sample data to find out how much the signal can
 be amplified without clipping. The resulting percent value
-can be used as a parameter to -ea and -eas effects. Also prints 
-a statistics table containing info about stereo-image and
-how different sample values are used.
+can be used as a parameter to '-ea' (amplify). A statistical
+summary, containing info about the stereo-image and
+distribution of sample values, is printed out at the end
+of processing.
 
 dit(-evp)
 Peak amplitude watcher. Maintains peak information for 
@@ -648,13 +649,14 @@ Audio stamp. Takes a snapshot of passing audio data and stores
 it using id 'stamp-id' (integer number). This data can later be
 used by controllers and other operators.
 
-dit(-ea:amplify-%)
-Amplifies signal by amplify-% percent (linear scale, i.e. individual
-samples are multiplied by 'amplify-%/100').
- 
-dit(-eac:amplify-%,channel)
+dit(-ea:amplify%)
+Adjusts the signal amplitude to 'amplify%' percent (linear scale, i.e. 
+individual samples are multiplied by 'amplify%/100'). See also 
+'-eadb'.
+
+dit(-eac:amplify%,channel)
 Amplifies signal of channel 'channel' by amplify-% percent (linear 
-scale, i.e. individual samples are multiplied by 'amplify-%/100'). 
+scale, i.e. individual samples are multiplied by 'amplify%/100'). 
 'channel' ranges from 1...n where n is the total number of channels. 
 See also '-eadb'.
 
@@ -671,7 +673,9 @@ clipped samples (resulting sample value is outside the nominal
 [-1,1] range), a warning will be issued.
 
 dit(-eal:limit-%)
-Limiter effect. Limits audio level to 'limit-%'.
+Limiter effect. Limits audio level to 'limit-%' (linear scale) with
+values equal or greater than 100% resulting in no change to
+the signal.
  
 dit(-ec:rate,threshold-%)
 Compressor (a simple one). 'rate' is the compression rate in
