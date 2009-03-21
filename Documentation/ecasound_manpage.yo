@@ -656,11 +656,19 @@ dit(-eac:amplify-%,channel)
 Amplifies signal of channel 'channel' by amplify-% percent (linear 
 scale, i.e. individual samples are multiplied by 'amplify-%/100'). 
 'channel' ranges from 1...n where n is the total number of channels. 
+See also '-eadb'.
 
-dit(-eaw:amplify-%,max-clipped-samples)
-Amplifies signal by amplify-% percent. If number of consecutive
-clipped samples (resulting sample has the largest amplitude
-possible) reaches 'max-clipped-samples', a warning will be issued.
+dit(-eadb:gain-dB[,channel])
+Adjusts signal level by 'gain-dB', with a gain of 0dB having no effect
+to the signal. The 'channel' parameter (1...n) is optional. If 'channel'
+parameter is specified, and its value is nonzero, gain is only applied 
+to the given channel (1...n).
+
+dit(-eaw:amplify%,max-clipped-samples)
+Amplifies signal by amplify-% percent (linear scale, i.e. individual
+samples are multiplied by 'amplify%/100'). If number of consecutive
+clipped samples (resulting sample value is outside the nominal 
+[-1,1] range), a warning will be issued.
 
 dit(-eal:limit-%)
 Limiter effect. Limits audio level to 'limit-%'.

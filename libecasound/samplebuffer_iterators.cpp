@@ -22,6 +22,8 @@
 
 #include <vector>
 
+#include <kvu_dbc.h>
+
 #include "samplebuffer.h"
 #include "samplebuffer_iterators.h"
 
@@ -46,13 +48,27 @@ void SAMPLE_ITERATOR::next(void)
 
 // ---------------------------------------------------------------------
 
+void SAMPLE_ITERATOR_CHANNEL::init(SAMPLE_BUFFER* buf, int channel)
+{
+  target = buf; 
+  index = 0; 
+  channel_index = channel; 
+
+  if (channel_index < 0 ||
+      channel_index >= target->number_of_channels())
+    index = target->buffersize_rep;
+  DBC_CHECK(index == 0);
+}
+
 void SAMPLE_ITERATOR_CHANNEL::begin(int channel)
 {
   index = 0;
   channel_index = channel;
+
   if (channel_index < 0 ||
       channel_index >= target->number_of_channels())
     index = target->buffersize_rep;
+  DBC_CHECK(index == 0);
 }
 
 // ---------------------------------------------------------------------

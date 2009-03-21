@@ -67,7 +67,7 @@ class SAMPLE_ITERATOR_CHANNEL {
   /**
    * Prepare iterator for processing.
    */
-  void init(SAMPLE_BUFFER* buf) { target = buf; }
+  void init(SAMPLE_BUFFER* buf, int channel = 0);
 
   /**
    * Start iteration from the first sample of 'channel'. More channels 
@@ -77,6 +77,12 @@ class SAMPLE_ITERATOR_CHANNEL {
    */
   void begin(int channel);
 
+  /**
+   * Start iteration from the first audio item (using the previously
+   * set channel).
+   */
+  void begin(void) { index = 0; }
+  
   /**
    * Move iterator to the next audio item.
    */

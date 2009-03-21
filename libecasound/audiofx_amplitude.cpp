@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_amplitude.cpp: Amplitude effects and dynamic processors.
-// Copyright (C) 1999-2000,2003,2008 Kai Vehmanen
+// Copyright (C) 1999-2000,2003,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include <kvu_message_item.h>
+#include <kvu_dbc.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_amplitude.h"
@@ -69,9 +70,106 @@ void EFFECT_AMPLIFY::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
 void EFFECT_AMPLIFY::process(void) {
   i.begin();
   while(!i.end()) {
-    *i.current() = *i.current() *  gain;
+    *i.current() = *i.current() *  gain_rep;
     i.next();
   }
+}
+
+EFFECT_AMPLIFY_DB::EFFECT_AMPLIFY_DB(parameter_t gain, int channel)
+  : sbuf_repp(0) 
+{
+  set_parameter(1, gain);
+  set_parameter(2, channel);
+}
+
+EFFECT_AMPLIFY_DB::~EFFECT_AMPLIFY_DB(void)
+{
+}
+
+void EFFECT_AMPLIFY_DB::set_parameter(int param, parameter_t value)
+{
+  switch (param) {
+  case 1: 
+    gain_rep = EFFECT_AMPLITUDE::db_to_linear(value);
+    gain_db_rep = value;
+    break;
+
+  case 2: 
+    {
+      int ch = static_cast<int>(value);
+      /* note: ch==0 -> apply to all channels */
+      if (ch >= 0) {
+	bool reinit = false;
+	if (channel_rep != ch &&
+	    sbuf_repp != 0) {
+	  reinit = true;
+	}
+	channel_rep = ch;
+	/* note: must be done after 'channel_rep' is set */
+	if (reinit == true)
+	  init(sbuf_repp);
+      }
+    }
+    break;
+
+  default:
+    DBC_NEVER_REACHED();
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_AMPLIFY_DB::get_parameter(int param) const
+{
+  switch (param) {
+  case 1: 
+    return gain_db_rep;
+
+  case 2:
+    return channel_rep;
+  }
+  DBC_NEVER_REACHED();
+  return 0.0;
+}
+
+void EFFECT_AMPLIFY_DB::init(SAMPLE_BUFFER* sbuf)
+{
+  sbuf_repp = sbuf;
+  if (channel_rep > 0) {
+    i_ch.init(sbuf, channel_rep - 1);
+  }
+  else {
+    i_all.init(sbuf);
+  }
+}
+
+void EFFECT_AMPLIFY_DB::release(void)
+{
+  sbuf_repp = 0;
+}
+
+void EFFECT_AMPLIFY_DB::process(void)
+{
+  if (channel_rep > 0) {
+    i_ch.begin();
+    while(!i_ch.end()) {
+      *i_ch.current() *= gain_rep;
+      i_ch.next();
+    }
+  }  
+  else {
+    i_all.begin();
+    while(!i_all.end()) {
+      *i_all.current() *= gain_rep;
+      i_all.next();
+    }
+  }
+}
+
+int EFFECT_AMPLIFY_DB::output_channels(int i_channels) const
+{
+  if (channel_rep > i_channels)
+    return channel_rep;
+
+  return i_channels;
 }
 
 EFFECT_AMPLIFY_CLIPCOUNT::EFFECT_AMPLIFY_CLIPCOUNT (parameter_t multiplier_percent, int max_clipped) {

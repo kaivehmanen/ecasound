@@ -14,6 +14,9 @@
 class EFFECT_AMPLITUDE : public EFFECT_BASE {
 
  public:
+
+  parameter_t db_to_linear(parameter_t value);
+
   virtual ~EFFECT_AMPLITUDE(void);
 };
 
@@ -44,6 +47,41 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
   virtual ~EFFECT_AMPLIFY(void);
   EFFECT_AMPLIFY* clone(void) const { return new EFFECT_AMPLIFY(*this); }
   EFFECT_AMPLIFY* new_expr(void) const { return new EFFECT_AMPLIFY(); }
+};
+
+/**
+ * Amplifier for adjusting signal level (dB)
+ * @author Kai Vehmanen
+ */
+class EFFECT_AMPLIFY_DB: public EFFECT_AMPLITUDE {
+ 
+ private:
+
+  parameter_t gain_rep;
+  parameter_t gain_db_rep; 
+  int channel_rep;
+  SAMPLE_BUFFER *sbuf_repp;
+  SAMPLE_ITERATOR_CHANNEL i_ch;
+  SAMPLE_ITERATOR i_all;
+
+ public:
+
+  virtual std::string name(void) const { return("Amplify (dB)"); }
+  virtual std::string parameter_names(void) const  { return("gain-db,channel"); }
+
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
+  virtual void process(void);
+
+  virtual int output_channels(int i_channels) const;
+
+  EFFECT_AMPLIFY_DB(parameter_t gain = 0.0f, int channel = 0);
+  virtual ~EFFECT_AMPLIFY_DB(void);
+  EFFECT_AMPLIFY_DB* clone(void) const { return new EFFECT_AMPLIFY_DB(*this); }
+  EFFECT_AMPLIFY_DB* new_expr(void) const { return new EFFECT_AMPLIFY_DB(); }
 };
 
 /**

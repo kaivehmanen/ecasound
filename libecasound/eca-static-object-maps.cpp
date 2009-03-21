@@ -322,6 +322,7 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
 
   objmap->register_object("eS", "^eS$", new EFFECT_AUDIO_STAMP());
   objmap->register_object("ea", "^ea$", new EFFECT_AMPLIFY());
+  objmap->register_object("eadb", "^eadb$", new EFFECT_AMPLIFY_DB());
   objmap->register_object("eac", "^eac$", new EFFECT_AMPLIFY_CHANNEL());
   objmap->register_object("eal", "^eal$", new EFFECT_LIMITER());
   objmap->register_object("eaw", "^eaw$", new EFFECT_AMPLIFY_CLIPCOUNT());
