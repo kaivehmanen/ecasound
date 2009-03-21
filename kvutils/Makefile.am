@@ -21,7 +21,8 @@ check_PROGRAMS = $(TESTS)
 
 INCLUDES = $(ECA_S_EXTRA_CPPFLAGS)
 
-kvutil_sources = 	kvu_com_line.cpp \
+kvutil_sources = 	kvu_debug.cpp \
+			kvu_com_line.cpp \
 			kvu_fd_io.cpp \
 			kvu_locks.cpp \
 			kvu_message_item.cpp \
@@ -34,9 +35,11 @@ kvutil_sources = 	kvu_com_line.cpp \
 		 	kvu_value_queue.cpp
 
 kvutil_headers = 	kvu_dbc.h \
+			kvu_debug.h \
 			kvu_definition_by_contract.h \
 			kvu_com_line.h \
 			kvu_fd_io.h \
+			kvu_inttypes.h \
 			kvu_locks.h \
 			kvu_message_item.h \
 			kvu_numtostr.h \
@@ -46,8 +49,7 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_temporary_file_directory.h \
 			kvu_threads.h \
 			kvu_utils.h \
-			kvu_value_queue.h \
-			kvu_inttypes.h
+			kvu_value_queue.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
 libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:@LIBKVUTILS_VERSION_AGE@ -static
