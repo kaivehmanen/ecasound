@@ -258,46 +258,9 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
   // --------
   DBC_REQUIRE(selected_chainsetup().empty() != true);
   // --------
-  
-  /* 1. detect hot-swap */
-  bool hot_swap = false;
-  bool restart = false;
-  if (connected_chainsetup() == selected_chainsetup()) {
-    hot_swap = true;
-    if (is_running()) restart = true;
-  }
 
-  /* 2. store runtime state of the old chainsetup */
-  string origname = selected_chainsetup_repp->name();
-  string origfilename = selected_chainsetup_repp->filename();
-  SAMPLE_SPECS::sample_pos_t origpos = selected_chainsetup_repp->position_in_samples();
-
-  /* 3. create a safely accessible temporary filename */
-  TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
-  string tmpdir ("ecasound-");
-  char* tmp_p = std::getenv("USER");
-  if (tmp_p != NULL) {
-    tmpdir += string(tmp_p);
-    tempfile_dir_rep.reserve_directory(tmpdir);
-  }
-  if (tempfile_dir_rep.is_valid() != true) {
-    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Unable to create temporary directory \"" + tmpdir + "\".");
-    return;
-  }
-  string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
-
-  /* 4. save selected chainsetup to the temp file */
-  if (hot_swap == true)
-    session_repp->connected_chainsetup_repp->set_name("cs-edit-temp");
-
-  save_chainsetup(filename);
-
-  if (hot_swap == true)
-    session_repp->connected_chainsetup_repp->set_name(origname);
-  else
-    remove_chainsetup();
-
-  /* 5. fork an external text editor */
+  /* 1. check which editor to use (and exit if none 
+   *    defined) */
   string editori = "";
   string use_getenv =
     resource_value("ext-cmd-text-editor-use-getenv");
@@ -315,8 +278,49 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
 
   if (editori == "") {
     ECA_LOG_MSG(ECA_LOGGER::info,
-		"Cannot edit, no text editor specified/available. See ecasoundrc(5) man page and the 'ext-cmd-text-editor' configuration variable.");
+		"ERROR: Cannot edit, no text editor specified/available. See ecasoundrc(5) man page and the 'ext-cmd-text-editor' configuration variable.");
+    return;
   }
+  
+  /* 2. detect hot-swap */
+  bool hot_swap = false;
+  bool restart = false;
+  if (connected_chainsetup() == selected_chainsetup()) {
+    hot_swap = true;
+    if (is_running()) restart = true;
+  }
+
+  /* 3. store runtime state of the old chainsetup */
+  string origname = selected_chainsetup_repp->name();
+  string origfilename = selected_chainsetup_repp->filename();
+  SAMPLE_SPECS::sample_pos_t origpos = selected_chainsetup_repp->position_in_samples();
+
+  /* 4. create a safely accessible temporary filename */
+  TEMPORARY_FILE_DIRECTORY tempfile_dir_rep;
+  string tmpdir ("ecasound-");
+  char* tmp_p = std::getenv("USER");
+  if (tmp_p != NULL) {
+    tmpdir += string(tmp_p);
+    tempfile_dir_rep.reserve_directory(tmpdir);
+  }
+  if (tempfile_dir_rep.is_valid() != true) {
+    ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Unable to create temporary directory \"" + tmpdir + "\".");
+    return;
+  }
+  string filename = tempfile_dir_rep.create_filename("cs-edit-tmp", ".ecs");
+
+  /* 5. save selected chainsetup to the temp file */
+  if (hot_swap == true)
+    session_repp->connected_chainsetup_repp->set_name("cs-edit-temp");
+
+  save_chainsetup(filename);
+
+  if (hot_swap == true)
+    session_repp->connected_chainsetup_repp->set_name(origname);
+  else
+    remove_chainsetup();
+
+  /* 6. fork an external text editor */
 
   // FIXME: we should drop priviledge-level here (at least if root)!
   editori += " " + filename;
@@ -327,7 +331,7 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
 
   }
   else {
-    /* 6. reload the edited chainsetup and reset runtime state */
+    /* 7. reload the edited chainsetup and reset runtime state */
     load_chainsetup(filename);
 
     if (is_selected() != true) {
@@ -344,10 +348,10 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
 	selected_chainsetup_repp->seek_position_in_samples(origpos);
 
       if (hot_swap == true) {
-	/* 6.1 disconnect the chainsetup to be replaced */
+	/* 7.1 disconnect the chainsetup to be replaced */
 	disconnect_chainsetup();
 	
-	/* 6.2 try to connect the edited chainsetup */
+	/* 7.2 try to connect the edited chainsetup */
 	select_chainsetup("cs-edit-temp");
 	if (is_valid() == true) {
 	  connect_chainsetup();
@@ -361,12 +365,12 @@ void ECA_CONTROL_OBJECTS::edit_chainsetup(void)
 	  }
 	}
 
-	/* 6.3 if connecting the modified chainsetup fails */
+	/* 7.3 if connecting the modified chainsetup fails */
 	if (is_connected() != true) {
 	  ECA_LOG_MSG(ECA_LOGGER::info, "Can't connect; edited chainsetup is not valid.");
 	}
       
-	/* 6.4 remove the old chainsetup */
+	/* 7.4 remove the old chainsetup */
 	select_chainsetup(origname);
 	remove_chainsetup();
 	select_chainsetup("cs-edit-temp");

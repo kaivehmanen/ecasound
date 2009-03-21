@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasoundrc)
        (5)
-       (27.09.2008)
+       (22.03.2009)
        ()
        (Multimedia software)
 
@@ -107,7 +107,7 @@ startdit()
 
 	dit(ext-cmd-text-editor)
         If em(ext-cmd-text-editor-use-getenv) is em(false) or "EDITOR" 
-        is null, value of this field is used. Defaults to em(pico).
+        is null, value of this field is used.
 
 	dit(ext-cmd-text-editor-use-getenv)
 	Should ecasound try to query environment variable "EDITOR".
