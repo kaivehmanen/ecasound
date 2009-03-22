@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_jack_manager.cpp: Manager for JACK client objects
-// Copyright (C) 2001-2004,2008 Kai Vehmanen
+// Copyright (C) 2001-2004,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -1049,13 +1049,16 @@ int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
       break;
     }
 
-    /* case 2: engine finished and in batch mode -> exit */
-    if ((engine_repp->status() == ECA_ENGINE::engine_status_finished ||
-	 engine_repp->status() == ECA_ENGINE::engine_status_error) &&
-	engine->batch_mode() == true) {
-
-      /* batch operation finished (or error occured) */
-      ECA_LOG_MSG(ECA_LOGGER::system_objects, "batch finished in exec");
+    /* case 2-i: engine finished and in batch mode -> exit */
+    if (engine_repp->status() == ECA_ENGINE::engine_status_finished &&
+	engine_repp->batch_mode() == true) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "batch finished in exec, exit");
+      break;
+    }
+    
+    /* case 2-ii: engine error occured -> exit */
+    else if (engine_repp->status() == ECA_ENGINE::engine_status_error) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "engine error, exit");
       break;
     }
 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2008 Kai Vehmanen
+// Copyright (C) 1999-2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -111,11 +111,16 @@ int ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
       engine_repp->engine_iteration();
     }
     else {
-      /* case 3a: engine finished and in batch mode -> exit */
-      if ((engine_repp->status() == ECA_ENGINE::engine_status_finished ||
-	   engine_repp->status() == ECA_ENGINE::engine_status_error) &&
+      /* case 3a-i: engine finished and in batch mode -> exit */
+      if (engine_repp->status() == ECA_ENGINE::engine_status_finished &&
 	  engine_repp->batch_mode() == true) {
-	/* batch operation finished (or error occured) */
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "batch finished in exec, exit");
+	break;
+      }
+
+      /* case 3a-ii: engine error occured -> exit */
+      else if (engine_repp->status() == ECA_ENGINE::engine_status_error) {
+	ECA_LOG_MSG(ECA_LOGGER::system_objects, "engine error, exit");
 	break;
       }
 

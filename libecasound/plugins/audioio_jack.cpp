@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-jack.cpp: Interface to JACK audio framework
-// Copyright (C) 2001-2003,2008 Kai Vehmanen
+// Copyright (C) 2001-2003,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -49,11 +49,11 @@ int audio_io_interface_version(void) { return ecasound_library_version_current; 
 #endif
 
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
+  : jackmgr_rep(0),
+    myid_rep(0)
 {
   ECA_LOG_MSG(ECA_LOGGER::functions, "constructor");
   
-  jackmgr_rep = 0;
-  myid_rep = 0;
 }
 
 AUDIO_IO_JACK::~AUDIO_IO_JACK(void)
