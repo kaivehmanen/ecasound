@@ -21,7 +21,8 @@ check_PROGRAMS = $(TESTS)
 
 INCLUDES = $(ECA_S_EXTRA_CPPFLAGS)
 
-kvutil_sources = 	kvu_debug.cpp \
+kvutil_sources = 	kvu_dbc.cpp \
+			kvu_debug.cpp \
 			kvu_com_line.cpp \
 			kvu_fd_io.cpp \
 			kvu_locks.cpp \
