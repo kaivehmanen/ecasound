@@ -95,12 +95,15 @@ class AUDIO_IO_RESAMPLE : public AUDIO_IO_PROXY {
 
  private:
 
+  void recalculate_psfactor(void);
+
   mutable std::vector<std::string> params_rep;
   bool init_rep;
   SAMPLE_SPECS::sample_rate_t child_srate_conf_rep;
   float psfactor_rep;
   int quality_rep;
   SAMPLE_BUFFER sbuf_rep;
+  SAMPLE_BUFFER leftoverbuf_rep;
 
   static const int child_parameter_offset = 2;
 

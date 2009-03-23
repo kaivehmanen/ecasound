@@ -35,11 +35,14 @@
 #include "eca-object-factory.h"
 #include "samplebuffer.h"
 
+// #define RESAMPLE_VERBOSE_DEBUG 1
+
 /**
  * Constructor.
  */
 AUDIO_IO_RESAMPLE::AUDIO_IO_RESAMPLE (void) 
-  : sbuf_rep(buffersize(), 0)
+  :  psfactor_rep(1.0f),
+     sbuf_rep(buffersize(), 0)
 {
   init_rep = false;
   quality_rep = 50;
@@ -59,6 +62,15 @@ AUDIO_IO_RESAMPLE* AUDIO_IO_RESAMPLE::clone(void) const
     target->set_parameter(n + 1, get_parameter(n + 1));
   }
   return target;
+}
+
+void AUDIO_IO_RESAMPLE::recalculate_psfactor(void)
+{
+  DBC_REQUIRE(child_srate_conf_rep > 0);
+  DBC_REQUIRE(io_mode() == AUDIO_IO::io_read);
+   
+  psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_conf_rep;
+  child()->set_buffersize(static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep))));
 }
 
 void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
@@ -104,14 +116,12 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     child()->close();
   }
 
-  psfactor_rep = 1.0f;
-  if (io_mode() == AUDIO_IO::io_read) {
-    psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_conf_rep;
-    child()->set_buffersize(static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep))));
-  }
-  else {
-    throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-RESAMPLE: 'io_write' and 'io_readwrite' modes are not supported."));
-  }
+
+  if (io_mode() != AUDIO_IO::io_read) 
+    throw(SETUP_ERROR(SETUP_ERROR::io_mode,
+		      "AUDIOIO-RESAMPLE: 'io_write' and 'io_readwrite' modes are not supported."));
+
+  recalculate_psfactor();
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "pre-open(); psfactor=" + kvu_numtostr(psfactor_rep) +
@@ -278,24 +288,138 @@ void AUDIO_IO_RESAMPLE::set_audio_format(const ECA_AUDIO_FORMAT& f_str)
 
 void AUDIO_IO_RESAMPLE::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
 {
+  /* the child srate is set in open */
+  
+  if (child()->is_open() == true)
+    recalculate_psfactor();
+
   AUDIO_IO::set_samples_per_second(v);
-  /* the child srate is only set in open */
 }
 
-void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* sbuf)
+void AUDIO_IO_RESAMPLE::read_buffer(SAMPLE_BUFFER* dst_sbuf)
 {
-  /* read sample buffer */
-  child()->read_buffer(&sbuf_rep);
-  /* resample and copy to sbuf */
-  sbuf_rep.resample(child_srate_conf_rep, samples_per_second());
-  sbuf->number_of_channels(sbuf_rep.number_of_channels());
-  sbuf->copy(sbuf_rep);
-  change_position_in_samples(sbuf->length_in_samples());
-  DBC_ENSURE(sbuf->length_in_samples() <= buffersize());
+  long int dst_left = buffersize();
+  SAMPLE_BUFFER::buf_size_t dst_write_pos = 0;
+
+  dst_sbuf->number_of_channels(channels());
+  dst_sbuf->length_in_samples(dst_left);
+
+#ifdef RESAMPLE_VERBOSE_DEBUG
+  std::fprintf(stderr, "--- (%ld samples)\n", dst_left);
+#endif
+    
+  /* step: copy any leftover resampled audio from 
+   *       last iteration */
+  if (dst_left > 0 &&
+      leftoverbuf_rep.length_in_samples() > 0) {
+    DBC_CHECK(leftoverbuf_rep.length_in_samples() <= dst_left);
+
+#ifdef RESAMPLE_VERBOSE_DEBUG
+    std::fprintf(stderr, "leftover copy_range 0..%ld -> %ld..%ld, copied %ld, dst_left=%ld\n",
+		 leftoverbuf_rep.length_in_samples() - 1, 
+		 dst_write_pos, dst_write_pos + leftoverbuf_rep.length_in_samples() - 1, 
+		 leftoverbuf_rep.length_in_samples(), dst_left);
+#endif
+    dst_sbuf->copy_range(leftoverbuf_rep, 
+			 0,
+			 leftoverbuf_rep.length_in_samples(),
+			 dst_write_pos);
+    dst_sbuf->event_tags_add(leftoverbuf_rep);
+
+    dst_left -= leftoverbuf_rep.length_in_samples();
+    dst_write_pos += leftoverbuf_rep.length_in_samples();;
+
+#ifdef RESAMPLE_VERBOSE_DEBUG
+    std::fprintf(stderr, 
+		 "copied %ld leftover samples, %ld remain, dst_write_pos=%ld\n", 
+		 leftoverbuf_rep.length_in_samples(), dst_left, dst_write_pos);
+#endif
+
+    leftoverbuf_rep.length_in_samples(0);
+  }
+  DBC_CHECK(leftoverbuf_rep.length_in_samples() == 0);
+
+  /* note: loop until we have buffersize() worth of samples,
+   *       or until we encounter end-of-stream */
+  for(int i = 0; dst_left > 0; i++) {
+    long int src_to_copy = dst_left;
+
+    /* step: read sample buffer,  src-rate */
+    child()->read_buffer(&sbuf_rep);
+#ifdef RESAMPLE_VERBOSE_DEBUG
+    std::fprintf(stderr, "%d: asked for %ld samples, got %ld\n", i, child()->buffersize(), sbuf_rep.length_in_samples());
+#endif
+
+    /* step: resample dst-rate */
+    sbuf_rep.resample(child_srate_conf_rep, samples_per_second());
+
+#ifdef RESAMPLE_VERBOSE_DEBUG
+    std::fprintf(stderr, "after resample, %ld samples\n", 
+		 sbuf_rep.length_in_samples());
+#endif
+
+    /* step: if we didn't get enough samples, adjust src_to_copy */
+    if (sbuf_rep.length_in_samples() < src_to_copy)
+      src_to_copy = sbuf_rep.length_in_samples();
+
+    /* step: copy src_to_copy resampled samples */
+#ifdef RESAMPLE_VERBOSE_DEBUG
+    std::fprintf(stderr, "copy_range 0..%ld -> %ld..%ld, copied %ld,  dst_left=%ld\n",
+		 src_to_copy - 1, dst_write_pos, dst_write_pos + src_to_copy - 1, 
+		 src_to_copy, dst_left);
+#endif
+    dst_sbuf->copy_range(sbuf_rep,
+			 0,
+			 src_to_copy,
+			 dst_write_pos);
+    dst_sbuf->event_tags_add(sbuf_rep);
+    
+    dst_write_pos += src_to_copy;
+    dst_left -= src_to_copy;
+
+    if (dst_left > 0 &&
+	sbuf_rep.event_tag_test(SAMPLE_BUFFER::tag_end_of_stream)) {
+      dst_sbuf->event_tag_set(SAMPLE_BUFFER::tag_end_of_stream);
+      dst_sbuf->length_in_samples(dst_sbuf->length_in_samples() - dst_left);
+      break;
+    }
+
+    /* step: if there are any new leftovers, store them for 
+     *       the next iteration */
+    if (sbuf_rep.length_in_samples() > src_to_copy) {
+      DBC_CHECK(dst_left <= 0);
+      SAMPLE_BUFFER::buf_size_t leftover = 
+	sbuf_rep.length_in_samples() - src_to_copy;
+      leftoverbuf_rep.length_in_samples(leftover);
+      leftoverbuf_rep.number_of_channels(channels());
+
+#ifdef RESAMPLE_VERBOSE_DEBUG
+      std::fprintf(stderr, "copy_range leftovers %ld..%ld -> %ld..%ld, copied %ld, dst_left=%ld\n",
+		   src_to_copy, sbuf_rep.length_in_samples() - 1, 
+		   0, leftover - 1, 
+		   leftover, dst_left);
+#endif
+      leftoverbuf_rep.copy_range(sbuf_rep, 
+				 src_to_copy,
+				 sbuf_rep.length_in_samples(),
+				 0);
+      leftoverbuf_rep.event_tags_set(sbuf_rep);
+    }
+  }
+
+  change_position_in_samples(dst_sbuf->length_in_samples());
+
+#ifdef RESAMPLE_VERBOSE_DEBUG
+  std::fprintf(stderr, "exit with %ld samples\n", dst_sbuf->length_in_samples());
+#endif
+
+  DBC_ENSURE(dst_sbuf->length_in_samples() <= buffersize());
+  DBC_ENSURE(dst_sbuf->number_of_channels() == channels());
 }
 
 void AUDIO_IO_RESAMPLE::write_buffer(SAMPLE_BUFFER* sbuf)
 {
   /* FIXME: not implemented */
+  DBC_NEVER_REACHED();
   change_position_in_samples(sbuf->length_in_samples());
 }
