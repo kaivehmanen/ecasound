@@ -228,7 +228,8 @@ void AUDIO_IO_JACK::write_buffer(SAMPLE_BUFFER* sbuf)
   /* note: this is reimplemented only to catch errors with unsupported
    *       input streams (e.g. one produces by 'resample' object' */
 
-  if (sbuf->length_in_samples() != jackmgr_rep->buffersize() &&
+  if (sbuf->length_in_samples() > 0 &&
+      sbuf->length_in_samples() != jackmgr_rep->buffersize() &&
       sbuf->event_tag_test(SAMPLE_BUFFER::tag_end_of_stream) != true) {
     error_flag_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::errors, 
