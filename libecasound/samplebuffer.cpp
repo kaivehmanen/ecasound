@@ -141,53 +141,6 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
 }
 
 /**
- * Assignment operator.
- *
- * For better performance, doesn't copy IO-buffers nor
- * iterator state.
- *
- * ** Note! This function is obsolete!
- */
-SAMPLE_BUFFER& SAMPLE_BUFFER::operator=(const SAMPLE_BUFFER& x)
-{
-  if (this != &x) {
-
-    impl_repp->resample_memory_rep = x.impl_repp->resample_memory_rep;
-    
-    if (x.buffersize_rep > reserved_samples_rep ||
-	x.buffer.size() != buffer.size()) {
-
-      reserved_samples_rep = x.buffersize_rep;
-
-      for(size_t n = 0; n < buffer.size(); n++) delete[] buffer[n];
-
-      buffer.resize(x.buffer.size());
-
-      for(size_t n = 0; n < buffer.size(); n++) {
-	buffer[n] = new sample_t [reserved_samples_rep];
-	for(buf_size_t m = 0; m < reserved_samples_rep; m++) {
-	  buffer[n][m] = SAMPLE_SPECS::silent_value;
-	}
-      }
-    }
-    
-    buffersize_rep = x.buffersize_rep;
-    channel_count_rep = x.channel_count_rep;
-
-    for(size_t n = 0; n < buffer.size(); n++) {
-      std::memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
-    }
-  }
-
-  return *this;
-
-  // ---
-  DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
-  DBC_ENSURE(buffersize_rep == reserved_samples_rep);
-  // ---
-}
-
-/**
  * Destructor.
  */
 SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
