@@ -2078,7 +2078,8 @@ static void priv_seek_position_helper(std::vector<AUDIO_IO*>* objs, SAMPLE_SPECS
       /* note: report if object claims it supports seeking, but
        *       in fact the seek failed */
       if ((*q)->supports_seeking() == true) {
-	if ((*q)->position_in_samples() != pos)
+	if (pos <= (*q)->length_in_samples() &&
+	    (*q)->position_in_samples() != pos)
 	  ECA_LOG_MSG(ECA_LOGGER::info,
 		      "WARNING: sample accurate seek failed with " +
 		      tag + " '" + (*q)->name() + "'");
