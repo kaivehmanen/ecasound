@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2006,2008 Kai Vehmanen
+// Copyright (C) 1999-2006,2008,2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -2002,25 +2002,13 @@ long int ECA_CHAINSETUP::check_for_locked_buffersize(void) const
 #ifdef ECA_COMPILE_JACK
   int pid = getpid();
   string cname = "ecasound-ctrl-" + kvu_numtostr(pid);
-  int jackobjs = 0, resampleobjs = 0;
+  int jackobjs = 0;
 
   for(size_t n = 0; n < inputs_direct_rep.size(); n++) {
-    AUDIO_IO_RESAMPLE *p = dynamic_cast<AUDIO_IO_RESAMPLE*>(inputs_direct_rep[n]);
-    if (p != 0) ++resampleobjs;
     if (inputs_direct_rep[n]->name() == "JACK interface") ++jackobjs;
-    if (resampleobjs && jackobjs) break;
   }
   for(size_t n = 0; n < outputs_direct_rep.size(); n++) {
-    AUDIO_IO_RESAMPLE *p = dynamic_cast<AUDIO_IO_RESAMPLE*>(outputs_direct_rep[n]);
-    if (p != 0) ++resampleobjs;
     if (outputs_direct_rep[n]->name() == "JACK interface") ++jackobjs;
-    if (resampleobjs && jackobjs) break;
-  }
-
-  if (resampleobjs && jackobjs) {
-    ECA_LOG_MSG(ECA_LOGGER::info, 
-		"WARNING: Mixing resample and jack objects may result garbled audio. "
-		"Problem occurs when buffersize is not an integer multiple of resample ratio.");
   }
 
   /* contact jackd only if there is at least one jack audio object 

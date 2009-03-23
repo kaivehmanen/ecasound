@@ -41,6 +41,8 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
 
   virtual bool finished(void) const;
 
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
+
   virtual long int read_samples(void* target_buffer, long int samples);
   virtual void write_samples(void* target_buffer, long int samples);
 
@@ -68,6 +70,7 @@ class AUDIO_IO_JACK : public AUDIO_IO_DEVICE {
 
   AUDIO_IO_JACK_MANAGER* jackmgr_rep;
   int myid_rep;
+  bool error_flag_rep;
 
   std::vector<std::string> params_rep;
   SAMPLE_SPECS::sample_pos_t curpos_rep;

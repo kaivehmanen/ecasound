@@ -33,6 +33,7 @@
 #include "audioio.h"
 #include "eca-version.h"
 #include "eca-logger.h"
+#include "samplebuffer.h"
 
 #include "audioio_jack.h"
 #include "audioio_jack_manager.h"
@@ -50,7 +51,8 @@ int audio_io_interface_version(void) { return ecasound_library_version_current; 
 
 AUDIO_IO_JACK::AUDIO_IO_JACK (void)
   : jackmgr_rep(0),
-    myid_rep(0)
+    myid_rep(0),
+    error_flag_rep(false)
 {
   ECA_LOG_MSG(ECA_LOGGER::functions, "constructor");
   
@@ -203,7 +205,8 @@ bool AUDIO_IO_JACK::finished(void) const
 {
   if (is_open() != true ||
       jackmgr_rep == 0 ||
-      jackmgr_rep->is_open() != true)
+      jackmgr_rep->is_open() != true ||
+      error_flag_rep == true)
     return true;
 
   return false;
@@ -220,13 +223,26 @@ long int AUDIO_IO_JACK::read_samples(void* target_buffer, long int samples)
   return 0;
 }
 
+void AUDIO_IO_JACK::write_buffer(SAMPLE_BUFFER* sbuf)
+{
+  /* note: this is reimplemented only to catch errors with unsupported
+   *       input streams (e.g. one produces by 'resample' object' */
+
+  if (sbuf->length_in_samples() != jackmgr_rep->buffersize() &&
+      sbuf->event_tag_test(SAMPLE_BUFFER::tag_end_of_stream) != true) {
+    error_flag_rep = true;
+    ECA_LOG_MSG(ECA_LOGGER::errors, 
+		"ERROR: Variable size input buffers detected at JACK output, stopping processing. " 
+		"This can happen e.g. with a 'resample' input object.");
+  }
+
+  AUDIO_IO_DEVICE::write_buffer(sbuf);
+}
+
 void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
 {
-  /* FIXME: case where samples!=buffersize() not handled */
-
+  DBC_CHECK(samples <= jackmgr_rep->buffersize());
   if (jackmgr_rep != 0) {
-    DBC_CHECK(samples <= jackmgr_rep->buffersize());
-    
     jackmgr_rep->write_samples(myid_rep, target_buffer, samples);
   }
 }
@@ -234,6 +250,7 @@ void AUDIO_IO_JACK::write_samples(void* target_buffer, long int samples)
 void AUDIO_IO_JACK::prepare(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "prepare / " + label());
+  error_flag_rep = false;
   AUDIO_IO_DEVICE::prepare();
 }
 
