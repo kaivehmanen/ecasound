@@ -179,7 +179,12 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
 
   /**
    * Reads samples and store them to buffer pointed by 'sbuf'. If 
-   * necessary, the target buffer will be resized.
+   * necessary, the target buffer will be resized (both length 
+   * and number of channels). 
+   *
+   * The sample buffer event tags may also be set during 
+   * this method call (see SAMPLE_BUFFER documentation for more
+   * details).
    *
    * It's important to note that SAMPLE_BUFFER audio format cannot be
    * changed during processing. This means that audio data must be converted
@@ -195,6 +200,7 @@ class AUDIO_IO : public DYNAMIC_OBJECT<string>,
    * @pre readable() == true
    * @pre sbuf != 0
    * @post sbuf->length_in_samples() <= buffersize()
+   * @post sbuf->number_of_channels() == channels()
    */
   virtual void read_buffer(SAMPLE_BUFFER* sbuf) = 0;
 
