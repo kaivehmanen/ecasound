@@ -153,6 +153,10 @@ void AUDIO_IO_DB_CLIENT::read_buffer(SAMPLE_BUFFER* sbuf)
 		<< "\". Trying to recover." << std::endl;
     }
   }
+
+  // --------
+  DBC_ENSURE(sbuf->number_of_channels() == channels());
+  // --------
 }
 
 /**
