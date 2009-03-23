@@ -240,6 +240,8 @@ void SAMPLE_BUFFER::add(const SAMPLE_BUFFER& x)
  * Channel-wise, weighted addition. Before addition every sample is 
  * multiplied by '1/weight'. Buffer length is increased if necessary.
  *
+ * Note: event tags are not copied!
+ * 
  * @pre weight != 0
  * @post length_in_samples() >= x.length_in_samples()
  */
@@ -263,6 +265,8 @@ void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight)
 /**
  * Channel-wise copy. Buffer length is adjusted if necessary.
  *
+ * Note: event tags are not copied!
+ * 
  * @post length_in_samples() == x.length_in_samples()
  */
 void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x)
@@ -282,7 +286,10 @@ void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x)
  * 'start_pos' - 'end_pos' from buffer 'x' to current 
  * buffer position 'to_pos'. 
  *
+ * Note: event tags are not copied!
+ * 
  * @pre start_pos <= end_pos
+ * @pre 
  * @pre to_pos < length_in_samples()
  */
 void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& src, 
@@ -1044,6 +1051,48 @@ void SAMPLE_BUFFER::release_pointer_reflock(void)
 {
   impl_repp->lockref_rep--;
   DBC_ENSURE(impl_repp->lockref_rep >= 0);
+}
+
+/**
+ * Adds all event tags that are set for 'sbuf' (bitwise-OR).
+ */
+void SAMPLE_BUFFER::event_tags_add(const SAMPLE_BUFFER& sbuf)
+{
+  impl_repp->event_tags_rep |= 
+    sbuf.impl_repp->event_tags_rep;
+}
+
+/**
+ * Sets only those event flags that are set for 'sbuf'.
+ */
+void SAMPLE_BUFFER::event_tags_set(const SAMPLE_BUFFER& sbuf)
+{
+  impl_repp->event_tags_rep = 
+    sbuf.impl_repp->event_tags_rep;
+}
+
+/**
+ * Clears all tags matching 'tagmask'
+ */
+void SAMPLE_BUFFER::event_tags_clear(Tag_name tagmask)
+{
+  event_tag_set(tagmask, false);
+}
+
+/** 
+ * Set/clears the event tag 'tag'.
+ */
+void SAMPLE_BUFFER::event_tag_set(Tag_name tag, bool val)
+{
+  if (val)
+    impl_repp->event_tags_rep |= tag;
+  else
+    impl_repp->event_tags_rep &= ~tag;
+}
+
+bool SAMPLE_BUFFER::event_tag_test(Tag_name tag)
+{
+  return (impl_repp->event_tags_rep & tag) ? true : false;
 }
 
 /**

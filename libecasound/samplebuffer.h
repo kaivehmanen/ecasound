@@ -19,6 +19,7 @@ class SAMPLE_BUFFER_impl;
  * Dynamic attributes are:
  *  - number of channels
  *  - length in samples
+ *  - event tags 
  *
  * Provided services:
  *  - copying from/to other samplebuffer objects
@@ -28,6 +29,7 @@ class SAMPLE_BUFFER_impl;
  *  - changing channel count and length
  *  - reserving space before-hand
  *  - realtime-safety and pointer locking
+ *  - access to event tags
  */
 class SAMPLE_BUFFER {
 
@@ -45,6 +47,17 @@ class SAMPLE_BUFFER {
   typedef SAMPLE_SPECS::channel_t channel_size_t;
   typedef long int buf_size_t;
   typedef SAMPLE_SPECS::sample_t sample_t;
+
+  enum Tag_name {
+    /* buffer contains last samples of a stream */
+    tag_end_of_stream = 1,
+    /* buffer contains samples from multiple inputs */
+    tag_mixed_content = (1 << 1),
+    /* internal: placeholder */
+    tag_last =  (1 << 30),
+    /* internal: matches all tags */
+    tag_all = 0xffffffff
+  };
 
   /*@}*/
 
@@ -124,6 +137,17 @@ class SAMPLE_BUFFER {
   void set_rt_lock(bool state);
   void get_pointer_reflock(void);
   void release_pointer_reflock(void);
+
+  /*@}*/
+
+  /** @name Event tags - for relaying additional info about the buffer */
+  /*@{*/
+
+  void event_tags_add(const SAMPLE_BUFFER& sbuf);
+  void event_tags_set(const SAMPLE_BUFFER& sbuf);
+  void event_tags_clear(Tag_name tagmask = tag_all);
+  void event_tag_set(Tag_name tag, bool val = true);
+  bool event_tag_test(Tag_name tag);
 
   /*@}*/
 

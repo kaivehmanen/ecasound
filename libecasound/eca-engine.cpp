@@ -494,6 +494,10 @@ void ECA_ENGINE::init_engine_state(void)
   finished_rep = false;
   inputs_not_finished_rep = 1; // for the 1st iteration
   outputs_finished_rep = 0;
+  mixslot_repp->event_tag_set(SAMPLE_BUFFER::tag_end_of_stream, false);
+  for(size_t n = 0; n < cslots_rep.size(); n++) {
+    cslots_rep[n]->event_tag_set(SAMPLE_BUFFER::tag_end_of_stream, false);
+  }
 }
 
 /**
@@ -1377,8 +1381,8 @@ void ECA_ENGINE::init_servers(void)
  */
 void ECA_ENGINE::init_chains(void)
 {
-
   mixslot_repp->number_of_channels(max_channels());
+  mixslot_repp->event_tag_set(SAMPLE_BUFFER::tag_mixed_content);
 
   cslots_rep.resize(chains_repp->size());
   for(size_t n = 0; n < cslots_rep.size(); n++) {
@@ -1758,6 +1762,8 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
 	    mix_to_outputs_divide_helper(cslots_rep[n], mixslot_repp, output_chain_count_rep[outputnum], (count == 1));
  	  else
 	    mix_to_outputs_sum_helper(cslots_rep[n], mixslot_repp, (count == 1));
+
+	  mixslot_repp->event_tags_add(*cslots_rep[n]);
 
 	  if (count == output_chain_count_rep[outputnum]) {
 	    (*outputs_repp)[outputnum]->write_buffer(mixslot_repp);
