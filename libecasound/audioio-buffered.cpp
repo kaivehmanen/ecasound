@@ -20,6 +20,7 @@
 #include <cmath> /* ceil() */
 #include <kvu_dbc.h>
 
+#include "eca-logger.h"
 #include "samplebuffer.h"
 #include "audioio-buffered.h"
 
@@ -81,7 +82,18 @@ void AUDIO_IO_BUFFERED::read_buffer(SAMPLE_BUFFER* sbuf)
 				sample_format(),
 				channels());
   }
+
+  if (sbuf->length_in_samples() < buffersize_rep) {
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "end-of-stream tag detected for '"
+		+ description() + "'");
+    sbuf->event_tag_set(SAMPLE_BUFFER::tag_end_of_stream);
+  }
+
   change_position_in_samples(sbuf->length_in_samples());
+
+  // --------
+  DBC_ENSURE(sbuf->number_of_channels() == channels());
+  // --------
 }
 
 void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf)
