@@ -137,7 +137,8 @@ class ECA_CONTROL_BASE {
   bool is_selected(void) const;
   bool is_finished(void) const;
   bool is_valid(void) const;
-  bool is_engine_started(void) const;
+  bool is_engine_created(void) const;
+  bool is_engine_running(void) const;
 
   std::string engine_status(void) const;
 

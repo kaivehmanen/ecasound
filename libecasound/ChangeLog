@@ -1,3 +1,9 @@
+2009-03-24  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-control-base.cpp: Removed is_engine_started() and replaced
+	it with is_engine_created() that has slightly different semantics.
+	* eca-control-base.h: Added is_engine_running().
+
 2009-03-23  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* samplebuffer.h: copy_range() now requires the object channel

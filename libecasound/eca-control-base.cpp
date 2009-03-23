@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2004,2006,2008 Kai Vehmanen
+// Copyright (C) 1999-2004,2006,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -83,6 +83,7 @@ ECA_CONTROL_BASE::ECA_CONTROL_BASE (ECA_SESSION* psession)
   engine_exited_rep.set(0);
   float_to_string_precision_rep = 3;
   joining_rep = false;
+  DBC_CHECK(is_engine_created() != true);
 }
 
 ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void)
@@ -94,13 +95,13 @@ ECA_CONTROL_BASE::~ECA_CONTROL_BASE (void)
  * Initializes the engine
  *
  * @pre is_connected() == true
- * @pre is_engine_started() != true
+ * @pre is_engine_created() != true
  */
 void ECA_CONTROL_BASE::engine_start(void)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
-  DBC_REQUIRE(is_engine_started() != true);
+  DBC_REQUIRE(is_engine_created() != true);
   // --------
 
   start_engine_sub(false);
@@ -111,7 +112,7 @@ void ECA_CONTROL_BASE::engine_start(void)
  *
  * @pre is_connected() == true
  * @pre is_running() != true
- * @post is_engine_started() == true
+ * @post is_engine_created() == true
  *
  * @return negative on error, zero on success 
  */
@@ -126,12 +127,12 @@ int ECA_CONTROL_BASE::start(void)
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing started");
 
-  if (is_engine_started() != true) {
+  if (is_engine_created() != true) {
     /* request_batchmode=false */
     start_engine_sub(false);
   }
 
-  if (is_engine_started() != true) {
+  if (is_engine_created() != true) {
     ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: couldn't start engine.");
     result = -1;
   }  
@@ -140,7 +141,7 @@ int ECA_CONTROL_BASE::start(void)
   }
 
   // --------
-  DBC_ENSURE(result != 0 || is_engine_started() == true);
+  DBC_ENSURE(result != 0 || is_engine_created() == true);
   // --------
 
   return result;
@@ -158,8 +159,8 @@ int ECA_CONTROL_BASE::start(void)
  * @post is_finished() == true || 
  *       processing_started == true && is_running() != true ||
  *       processing_started != true &&
- *       (is_engine_started() != true ||
- *        is_engine_started() == true &&
+ *       (is_engine_created() != true ||
+ *        is_engine_created() == true &&
  * 	  engine_repp->status() != ECA_ENGINE::engine_status_stopped))
  *
  * @return negative on error, zero on success 
@@ -176,12 +177,12 @@ int ECA_CONTROL_BASE::run(bool batchmode)
   bool processing_started = false;
   int result = -1;
 
-  if (is_engine_started() != true) {
+  if (is_engine_created() != true) {
     /* request_batchmode=true */
     start_engine_sub(batchmode);
   }
 
-  if (is_engine_started() != true) {
+  if (is_engine_created() != true) {
     ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: couldn't start the engine. (2)");
   } 
   else { 
@@ -205,7 +206,7 @@ int ECA_CONTROL_BASE::run(bool batchmode)
 	  /* make a note that engine state changed to 'running' */
 	  processing_started = true;
 	}
-	else if (is_engine_started() == true) {
+	else if (is_engine_created() == true) {
 	  if (engine_repp->status() == ECA_ENGINE::engine_status_error) {
 	    /* not running, so status() is either 'not_ready' or 'error' */
 	    ECA_LOG_MSG(ECA_LOGGER::info, "Can't start processing: engine startup failed. (3)");
@@ -218,7 +219,7 @@ int ECA_CONTROL_BASE::run(bool batchmode)
 	}
 	else {
 	  /* ECA_CONTROL_BASE destructor has been run and 
-	   * engine_repp is now 0 (--> is_engine_started() != true) */
+	   * engine_repp is now 0 (--> is_engine_created() != true) */
 	  break;
 	}
       }
@@ -246,8 +247,8 @@ int ECA_CONTROL_BASE::run(bool batchmode)
   DBC_ENSURE(is_finished() == true ||
 	     (processing_started == true && is_running()) != true ||
 	     (processing_started != true &&
-	      (is_engine_started() != true ||
-	       (is_engine_started() == true &&
+	      (is_engine_created() != true ||
+	       (is_engine_created() == true &&
 		engine_repp->status() != ECA_ENGINE::engine_status_stopped))));
   // --------
 
@@ -257,14 +258,14 @@ int ECA_CONTROL_BASE::run(bool batchmode)
 /**
  * Stops the processing engine.
  *
- * @pre is_engine_started() == true
+ * @pre is_engine_created() == true
  * @pre is_running() == true
  * @post is_running() == false
  */
 void ECA_CONTROL_BASE::stop(void)
 {
   // --------
-  DBC_REQUIRE(is_engine_started() == true);
+  DBC_REQUIRE(is_engine_created() == true);
   DBC_REQUIRE(is_running() == true);
   // --------
 
@@ -282,13 +283,13 @@ void ECA_CONTROL_BASE::stop(void)
  * Stop the processing engine using thread-to-thread condition
  * signaling.
  *
- * @pre is_engine_started() == true
+ * @pre is_engine_created() == true
  * @post is_running() == false
  */
 void ECA_CONTROL_BASE::stop_on_condition(void)
 {
   // --------
-  DBC_REQUIRE(is_engine_started() == true);
+  DBC_REQUIRE(is_engine_created() == true);
   // --------
 
   if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
@@ -318,7 +319,8 @@ void ECA_CONTROL_BASE::quit(void) { close_engine(); }
  */
 void ECA_CONTROL_BASE::quit_async(void)
 {
-  if (is_engine_started() != true) return;
+  if (is_engine_running() != true) 
+    return;
 
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
 }
@@ -327,13 +329,13 @@ void ECA_CONTROL_BASE::quit_async(void)
  * Starts the processing engine.
  *
  * @pre is_connected() == true
- * @pre is_engine_started() != true
+ * @pre is_engine_running() != true
  */
 void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
-  DBC_REQUIRE(is_engine_started() != true);
+  DBC_REQUIRE(is_engine_running() != true);
   // --------
 
   DBC_CHECK(engine_exited_rep.get() != 1);
@@ -341,8 +343,13 @@ void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
   unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
   if (p < session_repp->connected_chainsetup_repp->chains.size())
     session_repp->connected_chainsetup_repp->active_chain_index_rep = p;
+  
+  if (engine_repp)
+    close_engine();
 
+  DBC_CHECK(is_engine_created() != true);
   engine_repp = new ECA_ENGINE (session_repp->connected_chainsetup_repp);
+  DBC_CHECK(is_engine_created() == true);
 
   /* to relay the batchmode parameter to created new thread */
   req_batchmode_rep = batchmode;
@@ -375,11 +382,12 @@ void ECA_CONTROL_BASE::run_engine(void)
  * Closes the processing engine.
  *
  * ensure:
- *  is_engine_started() != true
+ *  is_engine_created() != true
+ *  is_engine_running() != true
  */
 void ECA_CONTROL_BASE::close_engine(void)
 {
-  if (is_engine_started() != true) return;
+  if (is_engine_created() != true) return;
 
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
 
@@ -421,7 +429,8 @@ void ECA_CONTROL_BASE::close_engine(void)
   }
 
   // ---
-  DBC_ENSURE(is_engine_started() != true);
+  DBC_ENSURE(is_engine_created() != true);
+  DBC_ENSURE(is_engine_running() != true);
   // ---
 }
 
@@ -462,7 +471,7 @@ bool ECA_CONTROL_BASE::is_selected(void) const { return selected_chainsetup_repp
 /**
  * Returns true if processing engine is running.
  */
-bool ECA_CONTROL_BASE::is_running(void) const { return (is_engine_started() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
+bool ECA_CONTROL_BASE::is_running(void) const { return (is_engine_created() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
 
 /**
  * Returns true if engine has finished processing. Engine state is 
@@ -470,7 +479,7 @@ bool ECA_CONTROL_BASE::is_running(void) const { return (is_engine_started() == t
  */
 bool ECA_CONTROL_BASE::is_finished(void) const
 {
-  return (is_engine_started() == true && 
+  return (is_engine_created() == true && 
 	  (engine_repp->status() == ECA_ENGINE::engine_status_finished ||
 	   engine_repp->status() == ECA_ENGINE::engine_status_error)); 
 } 
@@ -554,27 +563,44 @@ double ECA_CONTROL_BASE::position_in_seconds_exact(void) const
 }
 
 /**
- * Returns true if engine has been started. 
+ * Returns true if engine object has been created.
+ * If true, the engine object is available for use, but 
+ * the related engine thread is not necessarily running.
  *
- * Note: when in batch mode, status of notready means that
- *       engine has exited and is no longer receiving any commands
- *       and thus false is returned
+ * @see is_engine_running()
  */
-bool ECA_CONTROL_BASE::is_engine_started(void) const
+bool ECA_CONTROL_BASE::is_engine_created(void) const
 {
-  bool ret = true;
+  return (engine_repp != 0);
+}
 
-  if (engine_repp == 0) {
-    ret = false;
-  }
-  else {
-    if (engine_repp->batch_mode() == true &&
-	engine_repp->status() == ECA_ENGINE::engine_status_notready) {
-      ret = false;
-    }
-  }
-  
-  return ret;
+/**
+ * Returns true if engine is running and ready to receive
+ * control commands via the message queue.
+ * 
+ * In practise running means that the engine thread 
+ * has been created and it is running the exec() method
+ * of the engine.
+ * 
+ * @see is_engine_created()
+ */
+bool ECA_CONTROL_BASE::is_engine_running(void) const
+{
+  bool started = is_engine_created();
+
+  if (started != true)
+    return false;
+
+  /* note: has been started, but run_engine() has returned */
+  if (engine_pid_rep < 0)
+    return false;
+
+  DBC_CHECK(engine_repp != 0);
+  if (engine_repp->status() ==
+      ECA_ENGINE::engine_status_notready)
+    return false;
+
+  return true;
 }
 
 /**
@@ -582,7 +608,7 @@ bool ECA_CONTROL_BASE::is_engine_started(void) const
  */
 string ECA_CONTROL_BASE::engine_status(void) const
 {
-  if (is_engine_started() == true) {
+  if (is_engine_created() == true) {
     switch(engine_repp->status()) {
     case ECA_ENGINE::engine_status_running: 
       {

@@ -696,8 +696,20 @@ void ECA_CONTROL::action(int action_id)
   // ---
   // Engine commands
   // ---
-  case ec_engine_launch: { if (is_engine_started() != true) engine_start(); break; }
-  case ec_engine_halt: { close_engine(); break; }
+  case ec_engine_launch: { 
+    if (is_engine_running() != true) 
+      engine_start(); 
+    else
+      set_last_error("Engine already running, use 'engine-halt' first.");
+    break; 
+  }
+  case ec_engine_halt: { {
+    if (is_engine_running() == true)
+      close_engine(); 
+    else
+      set_last_error("Engine not running, use 'engine-launch' first.");
+    break; 
+  }
   case ec_engine_status: { set_last_string(engine_status()); break; }
 
   // ---
@@ -860,7 +872,7 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
     result += "connected to engine (engine status: ";
     result += engine_status() + ")";
   }
-  else if (cs->is_enabled() && is_engine_started() == true) {
+  else if (cs->is_enabled() && is_engine_created() == true) {
     result += "connected (engine status: ";
     result += engine_status() + ")";
   }

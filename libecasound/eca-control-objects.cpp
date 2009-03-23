@@ -536,8 +536,10 @@ void ECA_CONTROL_OBJECTS::disconnect_chainsetup(void)
   DBC_REQUIRE(is_connected());
   // --------
 
-  if (is_engine_started() == true) {
+  if (is_engine_running() == true) {
     stop_on_condition();
+  }
+  if (is_engine_created()) {
     close_engine();
   }
 
@@ -566,7 +568,7 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position(double seconds)
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     if (seconds < 0)
       send_chain_commands_to_engine(ECA_ENGINE::ep_rewind, 
 				    -seconds);
@@ -597,7 +599,7 @@ void ECA_CONTROL_OBJECTS::change_chainsetup_position_samples(SAMPLE_SPECS::sampl
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     change_chainsetup_position(static_cast<double>(samples) /
 			       selected_chainsetup_repp->samples_per_second());
   }
@@ -623,7 +625,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position(double seconds)
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_setpos, seconds);
   }
   else {
@@ -648,7 +650,7 @@ void ECA_CONTROL_OBJECTS::set_chainsetup_position_samples(SAMPLE_SPECS::sample_p
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     set_chainsetup_position(static_cast<double>(samples) /
 			    selected_chainsetup_repp->samples_per_second());
   }
@@ -1116,9 +1118,9 @@ void ECA_CONTROL_OBJECTS::rename_chain(const string& name)
 void ECA_CONTROL_OBJECTS::send_chain_commands_to_engine(int command, double value)
 {
   // --------
-  DBC_CHECK(is_engine_started() == true);
+  DBC_CHECK(is_engine_running() == true);
   // --------
-  if (is_engine_started() != true) return; 
+  if (is_engine_running() != true) return; 
 
   const std::vector<string>& schains = selected_chainsetup_repp->selected_chains();
 
@@ -1150,7 +1152,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_muting(void)
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_muting, 0.0);
   } 
   else {
@@ -1171,7 +1173,7 @@ void ECA_CONTROL_OBJECTS::toggle_chain_bypass(void)
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_started() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     send_chain_commands_to_engine(ECA_ENGINE::ep_c_bypass, 0.0);
   }
   else {
@@ -1788,7 +1790,7 @@ bool ECA_CONTROL_OBJECTS::cond_stop_for_editing(void)
  */
 void ECA_CONTROL_OBJECTS::cond_start_after_editing(bool was_running)
 {
-  if (is_engine_started() == true && was_running == true) {
+  if (is_engine_running() == true && was_running == true) {
     engine_repp->command(ECA_ENGINE::ep_edit_unlock, 0.0);
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
   }
@@ -1973,7 +1975,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_started() == true &&
+    if (is_engine_running() == true &&
 	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_c_select, p);
       engine_repp->command(ECA_ENGINE::ep_cop_select, chainop_id);
@@ -2041,7 +2043,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_started() == true && 
+    if (is_engine_running() == true && 
 	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_copp_select, param);
     }
@@ -2072,7 +2074,7 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_started() == true && 
+    if (is_engine_running() == true && 
 	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_copp_value, value);
     }
@@ -2346,7 +2348,7 @@ void ECA_CONTROL_OBJECTS::select_controller_parameter(int param)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_started() == true && 
+    if (is_engine_running() == true && 
 	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_ctrlp_select, param);
     }
@@ -2400,7 +2402,7 @@ void ECA_CONTROL_OBJECTS::set_controller_parameter(CHAIN_OPERATOR::parameter_t v
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_started() == true && 
+    if (is_engine_running() == true && 
 	selected_chainsetup() == connected_chainsetup()) {
       engine_repp->command(ECA_ENGINE::ep_ctrlp_value, value);
     }
