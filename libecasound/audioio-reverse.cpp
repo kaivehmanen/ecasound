@@ -240,4 +240,6 @@ void AUDIO_IO_REVERSE::read_buffer(SAMPLE_BUFFER* sbuf)
 
   curpos += read_sofar;
   set_position_in_samples(curpos);
+
+  DBC_ENSURE(sbuf->number_of_channels() == channels());
 }

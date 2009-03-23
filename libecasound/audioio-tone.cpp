@@ -192,6 +192,8 @@ void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
   }
 
   change_position_in_samples(sbuf->length_in_samples());
+
+  DBC_ENSURE(sbuf->number_of_channels() == channels());
 }
 
 void AUDIO_IO_TONE::write_buffer(SAMPLE_BUFFER* sbuf)
