@@ -133,13 +133,13 @@ void AUDIO_IO_DB_CLIENT::read_buffer(SAMPLE_BUFFER* sbuf)
 
   if (pbuffer_repp->read_space() > 0) {
     SAMPLE_BUFFER* source = pbuffer_repp->sbufs_rep[pbuffer_repp->readptr_rep.get()];
-    sbuf->number_of_channels(source->number_of_channels());
-    sbuf->copy(*source);
+    sbuf->copy_all_content(*source);
     pbuffer_repp->advance_read_pointer();
     pserver_repp->signal_client_activity();
     change_position_in_samples(sbuf->length_in_samples());
   }
   else {
+    sbuf->number_of_channels(channels());
     if (pbuffer_repp->finished_rep.get() == 1) {
       finished_rep = true;
       sbuf->length_in_samples(0);
@@ -165,8 +165,8 @@ void AUDIO_IO_DB_CLIENT::write_buffer(SAMPLE_BUFFER* sbuf)
 
   if (pbuffer_repp->write_space() > 0) {
     SAMPLE_BUFFER* target = pbuffer_repp->sbufs_rep[pbuffer_repp->writeptr_rep.get()];
-    target->number_of_channels(sbuf->number_of_channels());
-    target->copy(*sbuf);
+    target->copy_all_content(*sbuf);
+    target->number_of_channels(channels());
     pbuffer_repp->advance_write_pointer();
     pserver_repp->signal_client_activity();
     change_position_in_samples(sbuf->length_in_samples());

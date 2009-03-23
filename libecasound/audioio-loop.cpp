@@ -81,25 +81,26 @@ SAMPLE_SPECS::sample_pos_t LOOP_DEVICE::seek_position(SAMPLE_SPECS::sample_pos_t
 
 void LOOP_DEVICE::read_buffer(SAMPLE_BUFFER* buffer)
 {
-  buffer->number_of_channels(channels());
   if (empty_rounds_rep == 0) {
     if (filled_rep == true) {
-      buffer->copy(sbuf);
+      buffer->copy_all_content(sbuf);
       /* note: read_buffer() should never be called in the middle
        *       of the 'X * write_buffer()' sequence (where X is the number
        *       of chain outputs connected to this loop device */
       DBC_CHECK(writes_rep == 0);
     }
     else {
+      buffer->number_of_channels(channels());
       buffer->make_silent();
     }
   }
   else {
     finished_rep = true;
+    buffer->number_of_channels(channels());
     buffer->make_silent();
   }
 
-  DBC_CHECK(buffer->number_of_channels() == channels());
+  DBC_ENSURE(buffer->number_of_channels() == channels());
 }
 
 void LOOP_DEVICE::write_buffer(SAMPLE_BUFFER* buffer)

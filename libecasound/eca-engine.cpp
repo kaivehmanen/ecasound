@@ -1657,8 +1657,7 @@ void ECA_ENGINE::inputs_to_chains(void)
 	else {
 	  /* case-1b: input connected to chain 'n', copy 'mixslot' to 
 	   *          the matching per-chain slot */
-	  cslots_rep[c]->number_of_channels(mixslot_repp->number_of_channels());
-	  cslots_rep[c]->copy(*mixslot_repp);
+	  cslots_rep[c]->copy_all_content(*mixslot_repp);
 	}
       }
     }
@@ -1684,7 +1683,7 @@ void mix_to_outputs_divide_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *to, 
     if (from->number_of_channels() < to->number_of_channels()) {
       to->make_silent();
     }
-    to->copy(*from);
+    to->copy_matching_channels(*from);
     to->divide_by(divide_by);
   }
   else {
@@ -1699,10 +1698,10 @@ void mix_to_outputs_sum_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *to, boo
     if (from->number_of_channels() < to->number_of_channels()) {
       to->make_silent();
     }
-    to->copy(*from);
+    to->copy_matching_channels(*from);
   }
   else {
-    to->add(*from);
+    to->add_matching_channels(*from);
   }
 }
 

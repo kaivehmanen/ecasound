@@ -1,3 +1,20 @@
+2009-03-23  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* samplebuffer.h: copy_range() now requires the object channel
+	counts to match.
+
+2009-03-22  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* samplebuffer.h: Renamed copy() member function into
+	copy_matching_channels() to more accurately describe 
+	the semantics.
+	* samplebuffer.h: Renamed add() into add_matching_channels().
+	* samplebuffer.h: Added copy_all_content().
+	* samplebuffer.h: Added event_tag_set(), event_tag_test(), 
+	event_tags_set(), event_tags_add() and event_tags_clear()
+	member functions. Added new Tag_name enum type.
+	* library interface version to 22:0:0
+
 2009-03-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* samplebuffer_iterators.h: Added optional second argument

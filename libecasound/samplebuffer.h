@@ -76,9 +76,10 @@ class SAMPLE_BUFFER {
   /** @name Copying from/to other samplebuffer objects */
   /*@{*/
 
-  void add(const SAMPLE_BUFFER& x);
+  void add_matching_channels(const SAMPLE_BUFFER& x);
   void add_with_weight(const SAMPLE_BUFFER& x, int weight);
-  void copy(const SAMPLE_BUFFER& x);
+  void copy_matching_channels(const SAMPLE_BUFFER& x);
+  void copy_all_content(const SAMPLE_BUFFER& x);
   void copy_range(const SAMPLE_BUFFER& x, buf_size_t start_pos, buf_size_t end_pos, buf_size_t to_pos);
 
   /*@}*/

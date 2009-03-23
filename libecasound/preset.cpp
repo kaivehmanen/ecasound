@@ -560,7 +560,7 @@ void PRESET::process(void)
 {
   vector<SAMPLE_BUFFER*>::iterator p = buffers.begin();
   while(p != buffers.end()) {
-    (*p)->copy(*first_buffer);
+    (*p)->copy_all_content(*first_buffer);
     ++p;
   }
 

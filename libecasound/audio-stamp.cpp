@@ -31,15 +31,11 @@ void AUDIO_STAMP::set_id(int n) {
 }
 
 void AUDIO_STAMP::store(const SAMPLE_BUFFER* x) {
-  buffer_rep.length_in_samples(x->length_in_samples());
-  buffer_rep.number_of_channels(x->number_of_channels());
-  buffer_rep.copy(*x);
+  buffer_rep.copy_all_content(*x);
 }
 
 void AUDIO_STAMP::fetch_stamp(SAMPLE_BUFFER* x) {
-  x->length_in_samples(buffer_rep.length_in_samples());
-  x->number_of_channels(buffer_rep.number_of_channels());
-  x->copy(buffer_rep);
+  x->copy_all_content(buffer_rep);
 }
 
 void AUDIO_STAMP_SERVER::register_stamp(AUDIO_STAMP* stamp) {

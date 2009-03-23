@@ -220,10 +220,14 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
 
 /**
  * Channel-wise addition. Buffer length is increased if necessary.
+ * Only channels, that are present in both source and destination, are 
+ * modified.
  *
+ * Note: event tags are not copied!
+ * 
  * @post length_in_samples() >= x.length_in_samples()
  */
-void SAMPLE_BUFFER::add(const SAMPLE_BUFFER& x)
+void SAMPLE_BUFFER::add_matching_channels(const SAMPLE_BUFFER& x)
 {
   if (x.length_in_samples() > length_in_samples()) {
     length_in_samples(x.length_in_samples());
@@ -239,6 +243,8 @@ void SAMPLE_BUFFER::add(const SAMPLE_BUFFER& x)
 /**
  * Channel-wise, weighted addition. Before addition every sample is 
  * multiplied by '1/weight'. Buffer length is increased if necessary.
+ * Only channels, that are present in both source and destination, are 
+ * modified.
  *
  * Note: event tags are not copied!
  * 
@@ -269,7 +275,7 @@ void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight)
  * 
  * @post length_in_samples() == x.length_in_samples()
  */
-void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x)
+void SAMPLE_BUFFER::copy_matching_channels(const SAMPLE_BUFFER& x)
 {
   length_in_samples(x.length_in_samples());
   
@@ -282,9 +288,32 @@ void SAMPLE_BUFFER::copy(const SAMPLE_BUFFER& x)
 }
 
 /**
+ * Copy all audio contents from 'x'. After copying, length, channel
+ * count, and event tag set match to those of 'x'.
+ *
+ * @post length_in_samples() == x.length_in_samples()
+ * @post number_of_channels() == number_of_channels()
+ * @post for all I: event_tag_test(I) == x.event_tag_test(I)
+ */
+void SAMPLE_BUFFER::copy_all_content(const SAMPLE_BUFFER& x)
+{
+  length_in_samples(x.length_in_samples());
+  number_of_channels(x.number_of_channels());
+  
+  for(channel_size_t q = 0; q < number_of_channels(); q++) {
+    for(buf_size_t t = 0; t < length_in_samples(); t++) {
+      buffer[q][t] = x.buffer[q][t];
+    }
+  }
+  
+  event_tags_set(x);
+}
+
+/**
  * Ranged channel-wise copy. Copies samples in range 
- * 'start_pos' - 'end_pos' from buffer 'x' to current 
- * buffer position 'to_pos'. 
+ * 'start_pos' - 'end_pos-1' from buffer 'x' to current 
+ * buffer position 'to_pos'. The 'src' object must have
+ * equal number of channels as the current object.
  *
  * Note: event tags are not copied!
  * 
@@ -300,20 +329,27 @@ void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& src,
   // ---
   DBC_REQUIRE(src_start_pos <= src_end_pos);
   DBC_REQUIRE(dst_to_pos < length_in_samples());
+  DBC_REQUIRE(number_of_channels() == src.number_of_channels());
   // ---
-
-  int min_c_count = (channel_count_rep <= src.channel_count_rep) ? channel_count_rep : src.channel_count_rep;
 
   if (src_end_pos > src.length_in_samples())
     src_end_pos = src.length_in_samples();
 
-  for(channel_size_t q = 0; q < min_c_count; q++) {
+  for(channel_size_t q = 0; q < channel_count_rep; q++) {
     buf_size_t dst_i = dst_to_pos;
     for(buf_size_t src_i = src_start_pos; 
 	  src_i < src_end_pos && 
 	  dst_i < length_in_samples();
 	src_i++, dst_i++) {
+
       buffer[q][dst_i] = src.buffer[q][src_i];
+
+#ifdef SAMPLEBUFFER_COPY_RANGE_VERBOSE_DEBUG
+      if (dst_i == 0 || src_i == 0 || src_i == src_end_pos - 1 ||dst_i == length_in_samples() - 1) {
+	std::fprintf(stderr, "dst[%d][%ld] = src[%d][%ld]\n", 
+		     q, dst_i, q, src_i);
+      }
+#endif
     }
   }
 }
