@@ -703,7 +703,7 @@ void ECA_CONTROL::action(int action_id)
       set_last_error("Engine already running, use 'engine-halt' first.");
     break; 
   }
-  case ec_engine_halt: { {
+  case ec_engine_halt: {
     if (is_engine_running() == true)
       close_engine(); 
     else
