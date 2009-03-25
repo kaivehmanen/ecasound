@@ -6,7 +6,7 @@
 General
 
 This directory contains a set of small programs that 
-test various parts of ecasound. See also 'ecasound/manual-tests'
+test various parts of ecasound.
 
 ---
 Test programs
