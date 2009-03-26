@@ -38,7 +38,7 @@ using std::cerr;
 using std::endl;
 
 /** 
- * Definitions from glibc's sys/time.h
+ * Definitions from glibc's sys/time.h (LGPL 2.1)
  */
 
 #ifndef timerclear
