@@ -156,13 +156,14 @@ esac
 dnl ------------------------------------------------------------------
 
 dnl ---
-dnl Check pthread support
+dnl Check pthread and rt support
 dnl ---
 
 dnl switch to C while testing for pthread support
 AC_LANG_C
 AC_SEARCH_LIBS(pthread_create, pthread c_r,,
 		AC_MSG_ERROR([** POSIX.4 threads not installed or broken **]))
+AC_SEARCH_LIBS(clock_gettime, rt)
 dnl switch back to C++
 AC_LANG_CPLUSPLUS
 
@@ -766,10 +767,10 @@ dnl ---
 dnl switch to C for testing
 AC_LANG_C
 dnl see also section 7 - functions 
-AC_SEARCH_LIBS(inet_ntoa, socket nsl)
+AC_SEARCH_LIBS(inet_ntoa, socket nsl,, AC_MSG_ERROR([*** required inet_ntoa() function not found! ***]))
 AC_SEARCH_LIBS(nanosleep, rt posix4)
 AC_SEARCH_LIBS(sched_setscheduler, rt posix4)
-AC_SEARCH_LIBS(socket, socket nsl)
+AC_SEARCH_LIBS(socket, socket nsl,, AC_MSG_ERROR([*** required socket() function not found! ***]))
 AC_SEARCH_LIBS(sin, m,, AC_MSG_ERROR([*** required sin() function not found! ***]))
 AC_SEARCH_LIBS(dlopen, dl,, AC_MSG_ERROR([*** required dlopen() function not found! ***]))
 dnl switch back to C++
@@ -1093,7 +1094,7 @@ dnl Checks for system header files.
 dnl ---
 AC_HEADER_TIME
 dnl Note! Header filenames must be on the same line!
-AC_CHECK_HEADERS(dlfcn.h errno.h fcntl.h signal.h unistd.h sys/stat.h sys/time.h sys/types.h sys/wait.h sys/select.h,,
+AC_CHECK_HEADERS(dlfcn.h errno.h fcntl.h regex.h signal.h unistd.h sys/poll.h sys/stat.h sys/socket.h sys/time.h sys/types.h sys/wait.h sys/select.h,,
 		 AC_MSG_ERROR([*** not all required header files were found ***]))
 AC_CHECK_HEADERS(execinfo.h inttypes.h locale.h ladspa.h sched.h stdint.h sys/mman.h termios.h)
 
@@ -1138,26 +1139,27 @@ dnl ---
 dnl Checks for functions.
 dnl ---
 AC_FUNC_MMAP
-AC_CHECK_FUNCS(atexit)
-AC_CHECK_FUNCS(atoll)
-AC_CHECK_FUNCS(gettimeofday)
+AC_CHECK_FUNCS(execvp gettimeofday,,
+		      AC_MSG_ERROR([*** not all required library functions were found ***]))
+
+AC_CHECK_FUNCS(clock_gettime)
 AC_CHECK_FUNCS(mlockall)
 AC_CHECK_FUNCS(munlockall)
 AC_CHECK_FUNCS(nanosleep)
 AC_CHECK_FUNCS(pause)
-AC_CHECK_FUNCS(usleep)
-AC_CHECK_FUNCS(sched_get_priority_max)
-AC_CHECK_FUNCS(sched_getparam)
-AC_CHECK_FUNCS(sched_getscheduler)
-AC_CHECK_FUNCS(sched_setscheduler)
-AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(pthread_self)
 AC_CHECK_FUNCS(pthread_getschedparam)
 AC_CHECK_FUNCS(pthread_setschedparam)
 AC_CHECK_FUNCS(pthread_sigmask)
 AC_CHECK_FUNCS(pthread_kill)
+AC_CHECK_FUNCS(sched_get_priority_max)
+AC_CHECK_FUNCS(sched_getparam)
+AC_CHECK_FUNCS(sched_getscheduler)
+AC_CHECK_FUNCS(sched_setscheduler)
+AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(sigprocmask)
 AC_CHECK_FUNCS(sigwait)
+AC_CHECK_FUNCS(usleep)
 
 dnl ------------------------------------------------------------------
 
