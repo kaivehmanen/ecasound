@@ -30,13 +30,17 @@
 #endif
 
 #include <iostream>
+
+#ifdef HAVE_FEATURES_H
 #include <features.h>
+#endif
 
 using namespace std;
 
 /* backtrace is an GNU glibc extension and it was 
  * first added to glibc 2.1 */
-#if defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2,1) && defined(HAVE_EXECINFO_H)
+#if defined(__GLIBC_PREREQ) 
+#if __GLIBC_PREREQ(2,1) && defined(HAVE_EXECINFO_H)
 
 #include <execinfo.h>
 #include <stdio.h>
@@ -68,6 +72,8 @@ void kvu_print_backtrace_stderr(void)
 "-----------------------------------------------------------------------"
        << endl;
 }
+
+#endif
 
 #else
 
