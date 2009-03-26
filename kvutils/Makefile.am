@@ -33,6 +33,7 @@ kvutil_sources = 	kvu_dbc.cpp \
 			kvu_temporary_file_directory.cpp \
 			kvu_threads.cpp \
 			kvu_utils.cpp \
+			kvu_timestamp.cpp \
 		 	kvu_value_queue.cpp
 
 kvutil_headers = 	kvu_dbc.h \
@@ -50,6 +51,7 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_temporary_file_directory.h \
 			kvu_threads.h \
 			kvu_utils.h \
+			kvu_timestamp.h \
 			kvu_value_queue.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
