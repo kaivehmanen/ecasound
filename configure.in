@@ -1096,7 +1096,7 @@ AC_HEADER_TIME
 dnl Note! Header filenames must be on the same line!
 AC_CHECK_HEADERS(dlfcn.h errno.h fcntl.h regex.h signal.h unistd.h sys/poll.h sys/stat.h sys/socket.h sys/time.h sys/types.h sys/wait.h sys/select.h,,
 		 AC_MSG_ERROR([*** not all required header files were found ***]))
-AC_CHECK_HEADERS(execinfo.h inttypes.h locale.h ladspa.h sched.h stdint.h sys/mman.h termios.h)
+AC_CHECK_HEADERS(execinfo.h features.h inttypes.h locale.h ladspa.h sched.h stdint.h sys/mman.h termios.h)
 
 dnl ------------------------------------------------------------------
 
