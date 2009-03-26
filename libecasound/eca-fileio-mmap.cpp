@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-fileio-mmap.cpp: mmap based file-I/O and buffering routines.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -86,8 +88,10 @@ void ECA_FILE_IO_MMAP::open_file(const std::string& fname,
 
 void ECA_FILE_IO_MMAP::close_file(void) {
 //    cerr << fname_rep << ": munmaping region." << endl;
+#ifdef HAVE_MMAP
   ::munmap(buffer_repp, flength_rep);
   ::close(fd_rep);
+#endif
 }
 
 void ECA_FILE_IO_MMAP::read_to_buffer(void* obuf, off_t bytes) {

@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-fileio-stream.cpp: File-I/O and buffering routines using normal
 //                        file streams.
-// Copyright (C) 1999-2002 Kai Vehmanen
+// Copyright (C) 1999-2002,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@
 #include <climits> /* LONG_MAX */
 #include <errno.h>
 #include <unistd.h> /* stat() */
-#include <sys/mman.h>
 #include <sys/stat.h> /* stat() */
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h> /* off_t */
