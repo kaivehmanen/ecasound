@@ -33,6 +33,7 @@
 #include "kvu_locks.h"
 #include "kvu_numtostr.h"
 #include "kvu_rtcaps.h"
+#include "kvu_timestamp.h"
 #include "kvu_utils.h"
 #include "kvu_value_queue.h"
 
@@ -76,12 +77,14 @@ static int kvu_test_3(void);
 static int kvu_test_4(void);
 static void* kvu_test_1_helper(void* ptr);
 static void* kvu_test_4_helper(void* ptr);
+static int kvu_test_5_timestamp(void);
 
 static kvu_test_t kvu_funcs[] = { 
-  kvu_test_1, 
-  kvu_test_2, 
-  kvu_test_3, 
-  kvu_test_4, 
+  kvu_test_1,  /* kvu_locks.h: ATOMIC_INTEGER */
+  kvu_test_2,  /* kvu_utils.h: string handling */
+  kvu_test_3,  /* kvu_utils.h: float2str */
+  kvu_test_4,  /* kvu_value_queue.h */
+  kvu_test_5_timestamp,  /* kvu_timestamp.h */
   NULL 
 };
 
@@ -432,4 +435,55 @@ static void* kvu_test_4_helper(void* ptr)
   pthread_exit(&kvu_test_4_retval);
   /* never reached */
   return 0;
+}
+
+/**
+ * Tests the kvu_timestamp.h interface
+ */
+static int kvu_test_5_timestamp(void)
+{
+  ECA_TEST_ENTRY();
+
+  struct kvu_timespec stamp;
+  int res;
+  int monotonic =
+    kvu_clock_is_monotonic();
+  double start, now, prev, end;
+
+  res = kvu_clock_gettime(&stamp);
+  if (res)
+    ECA_TEST_FAIL(1, "kvu_test_5-1 clock_gettime failed"); 
+
+  start = kvu_timespec_seconds(&stamp);
+  end = start + 3.0;
+  now = prev = start;
+
+  ECA_TEST_NOTE("3s timer loop starts");
+
+  while (now < end) {
+
+    /* 5ms sleeps */
+    kvu_sleep(0, 5000000);
+
+    res = kvu_clock_gettime(&stamp);
+    if (res)
+      ECA_TEST_FAIL(1, "kvu_test_5-2 clock_gettime failed"); 
+    now = kvu_timespec_seconds(&stamp);
+
+#ifdef VERY_VERBOSE
+    fprintf(stderr, "now=%.09f delta=%.09f end=%.03f\n",
+	    now - start, now - prev, end - start);
+#endif
+
+    if (now < prev) {
+      if (monotonic)
+	ECA_TEST_FAIL(1, "kvu_test_5-3 clock goes backwards"); 
+      else
+	ECA_TEST_NOTE("kvu_test_5 - clock went backwards");
+    }
+    
+    prev = now;
+  }
+  
+  ECA_TEST_SUCCESS();
 }
