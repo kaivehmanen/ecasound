@@ -30,6 +30,7 @@
 
 #include <unistd.h>  /* POSIX: sleep() */
 
+#include "kvu_dbc.h"
 #include "kvu_locks.h"
 #include "kvu_numtostr.h"
 #include "kvu_rtcaps.h"
@@ -50,10 +51,10 @@ using namespace std;
  */
 
 #ifdef VERBOSE
-#define ECA_TEST_ENTRY()   do { printf("\n%s:%d - Test started\n", __FILE__, __LINE__); } while(0)
-#define ECA_TEST_SUCCESS() do { printf("%s:%d - Test passed\n", __FILE__, __LINE__); return 0; } while(0)
-#define ECA_TEST_FAIL(x,y) do { printf("\n%s:%d - Test failed: \"%s\"\n", __FILE__, __LINE__, y); return x; } while(0)
-#define ECA_TEST_NOTE(x)   do { printf("%s:%d - %s\n", __FILE__, __LINE__, x); fflush(stdout); } while(0)
+#define ECA_TEST_ENTRY()   do { printf("\n%s:%d - Test started\n", __KVU_FUNCTION, __LINE__); } while(0)
+#define ECA_TEST_SUCCESS() do { printf("%s:%d - Test passed\n", __KVU_FUNCTION, __LINE__); return 0; } while(0)
+#define ECA_TEST_FAIL(x,y) do { printf("\n%s:%d - Test failed: \"%s\"\n", __KVU_FUNCTION, __LINE__, y); return x; } while(0)
+#define ECA_TEST_NOTE(x)   do { printf("%s:%d - %s\n", __KVU_FUNCTION, __LINE__, x); fflush(stdout); } while(0)
 #else
 #define ECA_TEST_ENTRY()   ((void) 0)
 #define ECA_TEST_SUCCESS() return 0

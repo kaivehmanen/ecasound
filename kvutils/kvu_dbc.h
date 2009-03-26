@@ -31,27 +31,27 @@ void kvu_dbc_report_failure(const char *action, const char* expr, const char* fi
  * if expr is false.
  */
 #define DBC_REQUIRE(expr) \
-   (expr) ? (void)(0) :	kvu_dbc_report_failure("DBC_REQUIRE", #expr, __FILE__, __func__,  __LINE__)
+   (expr) ? (void)(0) :	kvu_dbc_report_failure("DBC_REQUIRE", #expr, __FILE__, __KVU_FUNCTION,  __LINE__)
 
 /**
  * Declare a boolean postcondition assertion. A warning is emitted
  * if expr is false.
  */
 #define DBC_ENSURE(expr) \
-   (expr) ? (void)(0) :	kvu_dbc_report_failure("DBC_ENSURE", #expr, __FILE__, __func__,  __LINE__)
+   (expr) ? (void)(0) :	kvu_dbc_report_failure("DBC_ENSURE", #expr, __FILE__, __KVU_FUNCTION,  __LINE__)
 
 /**
  * Declare a boolean invariant assertion. A warning is emitted
  * if expr is false.
  */
 #define DBC_CHECK(expr)	\
-   (expr) ? (void)(0) :	kvu_dbc_report_failure("DBC_CHECK", #expr, __FILE__, __func__,  __LINE__)
+   (expr) ? (void)(0) :	kvu_dbc_report_failure("DBC_CHECK", #expr, __FILE__, __KVU_FUNCTION,  __LINE__)
 
 /**
  * Emits warning if macro is ever executed.
  */
 #define DBC_NEVER_REACHED(expr) \
-   kvu_dbc_report_failure("DBC_NEVER_REACHED", NULL, __FILE__, __func__,  __LINE__)
+   kvu_dbc_report_failure("DBC_NEVER_REACHED", NULL, __FILE__, __KVU_FUNCTION,  __LINE__)
 
 /**
  * A helper macro for declaring variables, etc that will be
@@ -71,5 +71,22 @@ void kvu_dbc_report_failure(const char *action, const char* expr, const char* fi
 #define DBC_DECLARE(expr)               ((void) 0)
 
 #endif /* <-- DBC DISABLED */
+
+/* Adapted from glibc 2.9 assert.h (LGPL 2.1)
+  
+   Version 2.4 and later of GCC define a magical variable `__PRETTY_FUNCTION__'
+   which contains the name of the function currently being defined.
+   This is broken in G++ before version 2.6.
+   C9x has a similar variable called __KVU_FUNCTION, but prefer the GCC one since
+   it demangles C++ function names.  */
+# if defined __cplusplus ? __GNUC_PREREQ (2, 6) : __GNUC_PREREQ (2, 4)
+#   define __KVU_FUNCTION	__PRETTY_FUNCTION__
+# else
+#  if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+#   define __KVU_FUNCTION	__KVU_FUNCTION
+#  else
+#   define __KVU_FUNCTION	((__const char *) 0)
+#  endif
+# endif
 
 #endif /* INCLUDED_DBC_H */
