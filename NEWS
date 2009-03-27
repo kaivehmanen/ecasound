@@ -3,6 +3,7 @@
 -----------------------------------------------------------------------
 
 About the version numbers... "vX.Y[.Z[.R]][+extraT]" :
+------------------------------------------------------
 
   X = major version  - incremented after major redesigns
   Y = minor version  - incremented when new features are added
@@ -12,7 +13,19 @@ About the version numbers... "vX.Y[.Z[.R]][+extraT]" :
 
   extraT             - 'beta', 'pre' and 'rc' releases (optional)
 
+Quick overview of various sources of change info
+------------------------------------------------
+
+  - NEWS. This file. Lists all user-visible changes, with a brief
+    description.
+  - Release notes. Describes the most important changes in a bit
+    more detail.
+	- http://eca.cx/relnotes/
+  - Version control history. Describes all changes in implementation.
+        - http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound
+
 Howto for reading the entries:
+------------------------------
 
   added/removed = a new/removed feature, interfaces, or new 
                   implementation of some feature
@@ -23,7 +36,7 @@ Howto for reading the entries:
 	          README for a complete list contributor tags; entries 
 		  with no tags are from the main author(s)
 
------------------------------------------------------------------------
+***********************************************************************
 
 xxyy2009 (v2.x.y) -** stable release **-
 	- added: new exit code of '4' to ecasound; see entry below
