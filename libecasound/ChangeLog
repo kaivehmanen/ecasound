@@ -1,3 +1,7 @@
+2009-03-28  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* samplebuffer.h: Added overloaded make_silent(int channel).
+
 2009-03-24  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-control-base.cpp: Removed is_engine_started() and replaced

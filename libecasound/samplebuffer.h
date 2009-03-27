@@ -92,6 +92,7 @@ class SAMPLE_BUFFER {
   void make_empty(void);
   bool is_empty(void) const { return buffersize_rep == 0; }
   void make_silent(void);
+  void make_silent(int channel);
   void make_silent_range(buf_size_t start_pos, buf_size_t end_pos);
   void resample(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
   void resample_set_quality(int quality);

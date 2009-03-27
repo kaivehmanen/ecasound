@@ -329,14 +329,37 @@ void SAMPLE_BUFFER::make_empty(void)
 }
 
 /**
+ * Mutes one channel  of the buffer.
+ *
+ * @pre channel >= 0 
+ * @pre channel < number_of_channels()
+ */
+void SAMPLE_BUFFER::make_silent(int channel)
+{
+  DBC_REQUIRE(channel >= 0);
+  DBC_REQUIRE(channel < number_of_channels());
+
+  std::memset(buffer[channel], 0, buffersize_rep * sizeof(SAMPLE_SPECS::silent_value));
+
+  /* - the generic version: */
+  /*
+    for(buf_size_t s = 0; s < buffersize_rep; s++) {
+    buffer[n][s] = SAMPLE_SPECS::silent_value;
+    }
+  */
+}
+
+/**
  * Mutes the whole buffer.
  */
 void SAMPLE_BUFFER::make_silent(void)
 {
+  /* catch if someone changes SAMPLE_SPECS::silent_value */
+  DBC_DECLARE(float f = 0.0f);
+  DBC_CHECK(static_cast<uint32_t>(f) == 0);
+
   for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    for(buf_size_t s = 0; s < buffersize_rep; s++) {
-      buffer[n][s] = SAMPLE_SPECS::silent_value;
-    }
+    make_silent(n);
   }
 }
 
