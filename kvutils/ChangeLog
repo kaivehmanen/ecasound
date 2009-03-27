@@ -1,3 +1,7 @@
+2009-03-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_timestamp.h: New interface.
+
 2009-03-21  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* kvu_dbc.h: Added DBC_NEVER_REACHED macro.
