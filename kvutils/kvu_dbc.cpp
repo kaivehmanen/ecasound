@@ -36,7 +36,7 @@ void kvu_dbc_report_failure(const char *action, const char* expr, const char* fi
 #endif
 
   std::fprintf(stderr, 
-	       "Warning: %s failed - \"%s\", %s:%d(%s)\n", action, expr, file, lineno, func);
+	       "Warning: type %s soft-assert '%s' failed at\n -> %s:%d [%s]\n", action, expr, file, lineno, func);
 }
 
 #endif
