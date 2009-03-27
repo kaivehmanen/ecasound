@@ -20,4 +20,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#ifndef INCLUDED_KVU_DEBUG_H
+#define INCLUDED_KVU_DEBUG_H
+
 void kvu_print_backtrace_stderr(void);
+
+#endif
