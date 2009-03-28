@@ -23,6 +23,8 @@ Quick overview of various sources of change info
 	- http://eca.cx/relnotes/
   - Version control history. Describes all changes in implementation.
         - http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound
+  - Library interface changes are documented in ChangeLog files (these
+    are distributed along with the source code).
 
 Howto for reading the entries:
 ------------------------------
