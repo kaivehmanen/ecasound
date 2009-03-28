@@ -118,8 +118,6 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
     buffersize_rep(x.buffersize_rep),
     reserved_samples_rep(x.reserved_samples_rep)
 {
-  impl_repp = new SAMPLE_BUFFER_impl;
-
   buffer.resize(x.buffer.size());
 
   for(size_t n = 0; n < buffer.size(); n++) {
@@ -127,7 +125,13 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
     std::memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
   }
 
+  impl_repp = new SAMPLE_BUFFER_impl(*x.impl_repp); 
+  /* note: a shallow copy, do copy refs to objects still
+   *       owned by 'x' */
   impl_repp->old_buffer_repp = 0;
+#ifdef ECA_COMPILE_SAMPLERATE
+  impl_repp->src_state_rep.resize(0);
+#endif
 
   ECA_LOG_MSG(ECA_LOGGER::functions, 
 		"Buffer copy-constructed, channels: " +
