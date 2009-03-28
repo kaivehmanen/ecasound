@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_mixing.cpp: Effects for channel mixing and routing
-// Copyright (C) 1999-2002,2006,2008 Kai Vehmanen
+// Copyright (C) 1999-2002,2006,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -21,6 +21,7 @@
 // ------------------------------------------------------------------------
 
 #include <kvu_dbc.h>
+#include <kvu_numtostr.h>
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_mixing.h"
@@ -310,5 +311,146 @@ void EFFECT_MIX_TO_CHANNEL::process(void)
     *t_iter.current() = sum / channels;
     i.next();
     t_iter.next();
+  }
+}
+
+EFFECT_CHANNEL_ARRANGE::EFFECT_CHANNEL_ARRANGE (void)
+  : sbuf_repp(0), 
+    out_channels_rep(0)
+{
+}
+
+EFFECT_CHANNEL_ARRANGE* EFFECT_CHANNEL_ARRANGE::clone(void) const
+{
+  EFFECT_CHANNEL_ARRANGE *obj =
+    new EFFECT_CHANNEL_ARRANGE();
+  /* FIXME */
+  DBC_NEVER_REACHED();
+  return obj;
+}
+
+int EFFECT_CHANNEL_ARRANGE::output_channels(int i_channels) const
+{
+  return out_channels_rep;
+}
+
+void EFFECT_CHANNEL_ARRANGE::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+{
+  /* these apply for all params */
+  pd->default_value = 1;
+  pd->description = "channel";
+  pd->bounded_above = false;
+  pd->upper_bound = 0.0f;
+  pd->bounded_below = true;
+  pd->lower_bound = 1.0f;
+  pd->toggled = false;
+  pd->integer = true;
+  pd->logarithmic = false;
+  pd->output = false;
+}
+
+void EFFECT_CHANNEL_ARRANGE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+{
+  int src_ch = static_cast<int>(value);
+  int dst_ch = param;
+
+  if (dst_ch > 0) {
+    if (dst_ch > static_cast<int>(chsrc_map_rep.size())) {
+      chsrc_map_rep.resize(dst_ch);
+    }
+
+    chsrc_map_rep[dst_ch - 1] = src_ch - 1;
+
+    /* step: reset highest non-zero channel */
+    int n;
+    for(n = chsrc_map_rep.size() - 1;
+	n >= 0; n--) {
+      if (chsrc_map_rep[n] >= 0) 
+	break;
+    }
+    out_channels_rep = n + 1;
+#if 0
+    fprintf(stderr, "out_channels_set set to %d.\n", 
+	    out_channels_rep);
+#endif
+  }
+}
+
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_ARRANGE::get_parameter(int param) const
+{
+
+  /* note: we ignore zero-src channel at the end of
+   *       chsrc_map_rep to avoid infinite loops in
+   *       e.g. ECA_OBJECT_FACTORY */
+  if (param > 0 &&
+      param <= out_channels_rep) {
+    
+    DBC_CHECK(out_channels_rep <= static_cast<int>(chsrc_map_rep.size()));
+
+    /* return 1...N */
+    return chsrc_map_rep[param - 1] + 1;
+  }
+
+  return 0.0;
+}
+
+std::string EFFECT_CHANNEL_ARRANGE::parameter_names(void) const 
+{
+  std::string params;
+  int ch = 0;
+  while(ch < out_channels_rep) {
+    params += "src-ch-" + kvu_numtostr(ch + 1);
+    ++ch;
+    if (ch != out_channels_rep)
+      params += ",";
+  }
+  return params;
+  //return param_names_rep;
+}
+
+void EFFECT_CHANNEL_ARRANGE::init(SAMPLE_BUFFER *insample)
+{
+  sbuf_repp = insample;
+  bouncebuf_rep.number_of_channels(sbuf_repp->number_of_channels());
+  bouncebuf_rep.length_in_samples(sbuf_repp->length_in_samples());
+
+  f_iter.init(&bouncebuf_rep);
+  t_iter.init(insample);
+}
+
+void EFFECT_CHANNEL_ARRANGE::release(void)
+{
+  sbuf_repp = 0;
+}
+
+void EFFECT_CHANNEL_ARRANGE::process(void)
+{
+  /* step: copy input buffer to a temporary buffer */
+  bouncebuf_rep.copy_all_content(*sbuf_repp);
+
+  /* step: make sure output buf has exactly N channels */
+  sbuf_repp->number_of_channels(out_channels_rep);
+
+  /* step: route channels bouncebuf_rep -> sbuf_repp */
+  for(int dst_ch = 0; dst_ch < out_channels_rep; dst_ch++) {
+    int src_ch = chsrc_map_rep[dst_ch];
+
+#if 0
+    fprintf(stderr, "out#%d <-- in#%d\n", 
+	    dst_ch, src_ch);
+#endif
+
+    if (src_ch >= 0 && src_ch < bouncebuf_rep.number_of_channels()) {
+      f_iter.begin(src_ch);
+      t_iter.begin(dst_ch);
+      while(!f_iter.end() && !t_iter.end()) {
+	*t_iter.current() = *f_iter.current();
+	f_iter.next();
+	t_iter.next();
+      }
+    }
+    else {
+      sbuf_repp->make_silent(dst_ch);
+    }
   }
 }

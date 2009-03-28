@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (21.03.2009)
+       (27.03.2009)
        ()
        (Multimedia software)
 
@@ -800,6 +800,8 @@ enddit()
 em(CHANNEL MIXING / ROUTING)
 startdit()
 
+COMMENT(Rough order: common operators first, not alphabetical)
+
 dit(-chcopy:from-channel, to-channel)
 Copy channel 'from_channel' to 'to_channel'. If 'to_channel' 
 doesn't exist, it is created. Channel indexing starts from 1.
@@ -810,8 +812,19 @@ Copy channel 'from_channel' to 'to_channel', and mutes the source
 channel 'from_channel'. Channel indexing starts from 1.
 Option added to ecasound 2.4.5.
 
+dit(-charrange:ch1,...,chN)
+Arrange chain channels in different order. The resulting
+audio stream has total of 'N' channels. Each parameter specifies
+the source channel to use for given output channel. As an
+example, '-charrange:2,1' would reverse the channels of 
+a stereo stream ('out1,out2' = 'in2,in1'). Specifying the same 
+source channel multiple times is allowed. For example, '-charrange:2,2'
+would route the second channel to both two output channels 
+('out1,out2' = 'in2,in2'). If 'chX' is zero, the given channel 'X' 
+will be muted in the output stream.
+
 dit(-chmix:to-channel)
-Mix all channels to channel 'to_channel'.  If 'to_channel' 
+Mix all source channels to channel 'to_channel'.  If 'to_channel' 
 doesn't exist, it is created. Channel indexing starts from 1.
 Option added to ecasound 2.4.5.
 
