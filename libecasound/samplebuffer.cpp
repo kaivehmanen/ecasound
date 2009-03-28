@@ -126,7 +126,7 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
   }
 
   impl_repp = new SAMPLE_BUFFER_impl(*x.impl_repp); 
-  /* note: a shallow copy, do copy refs to objects still
+  /* note: a shallow copy, do not copy refs to objects still
    *       owned by 'x' */
   impl_repp->old_buffer_repp = 0;
 #ifdef ECA_COMPILE_SAMPLERATE
