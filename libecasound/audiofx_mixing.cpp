@@ -424,12 +424,18 @@ void EFFECT_CHANNEL_SELECT::process(void)
   /* step: copy input buffer to a temporary buffer */
   bouncebuf_rep.copy_all_content(*sbuf_repp);
 
-  /* step: make sure output buf has exactly N channels */
-  sbuf_repp->number_of_channels(out_channels_rep);
-
   /* step: route channels bouncebuf_rep -> sbuf_repp */
   for(int dst_ch = 0; dst_ch < out_channels_rep; dst_ch++) {
     int src_ch = chsrc_map_rep[dst_ch];
+
+    /* for development use only */
+#if 0
+    std::fprintf(stderr, "%sout#%d <-- in#%d (avail in=%d, out=%d)\n",
+		 dst_ch == 0 ? "---\n" : "",
+		 dst_ch, src_ch,
+		 bouncebuf_rep.number_of_channels(),
+		 sbuf_repp->number_of_channels());
+#endif
 
     if (src_ch >= 0 && src_ch < bouncebuf_rep.number_of_channels()) {
       f_iter.begin(src_ch);
@@ -444,4 +450,7 @@ void EFFECT_CHANNEL_SELECT::process(void)
       sbuf_repp->make_silent(dst_ch);
     }
   }
+
+  /* step: make sure output buf has exactly N channels */
+  sbuf_repp->number_of_channels(out_channels_rep);
 }
