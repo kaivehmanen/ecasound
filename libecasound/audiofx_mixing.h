@@ -40,8 +40,8 @@ public:
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 
-  void init(SAMPLE_BUFFER *insample);
-  void process(void);
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void process(void);
 
   EFFECT_CHANNEL_COPY* clone(void) const { return new EFFECT_CHANNEL_COPY(*this); }
   EFFECT_CHANNEL_COPY* new_expr(void) const { return new EFFECT_CHANNEL_COPY(); }
@@ -132,6 +132,42 @@ public:
   EFFECT_MIX_TO_CHANNEL* clone(void) const { return new EFFECT_MIX_TO_CHANNEL(*this); }
   EFFECT_MIX_TO_CHANNEL* new_expr(void) const { return new EFFECT_MIX_TO_CHANNEL(); }
   EFFECT_MIX_TO_CHANNEL (parameter_t to_channel = 1.0);
+};
+
+/**
+ * Arbitrary channel routing
+ * @author Kai Vehmanen
+ */
+class EFFECT_CHANNEL_ARRANGE : public EFFECT_MIXING {
+
+private:
+
+  SAMPLE_ITERATOR_CHANNEL f_iter, t_iter;
+  SAMPLE_BUFFER *sbuf_repp;
+  SAMPLE_BUFFER bouncebuf_rep;
+  std::string param_names_rep;
+  std::vector<int> chsrc_map_rep;
+  int out_channels_rep;
+
+public:
+
+  virtual std::string name(void) const { return("Channel route"); }
+  virtual std::string parameter_names(void) const;
+
+  int output_channels(int i_channels) const;
+
+  virtual void parameter_description(int param, struct PARAM_DESCRIPTION *pd) const;
+  virtual bool variable_params(void) const { return true; }
+  virtual void set_parameter(int param, parameter_t value);
+  virtual parameter_t get_parameter(int param) const;
+
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
+  virtual void process(void);
+
+  EFFECT_CHANNEL_ARRANGE* clone(void) const;
+  EFFECT_CHANNEL_ARRANGE* new_expr(void) const { return new EFFECT_CHANNEL_ARRANGE(); }
+  EFFECT_CHANNEL_ARRANGE(void);
 };
 
 #endif

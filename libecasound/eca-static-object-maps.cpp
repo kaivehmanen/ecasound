@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-static-object-maps.h: Static object map instances
-// Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -345,6 +345,7 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("ei", "^ei$", new EFFECT_PITCH_SHIFT());
   objmap->register_object("enm", "^enm$", new EFFECT_NOISEGATE());
   objmap->register_object("epp", "^epp$", new EFFECT_NORMAL_PAN());
+  objmap->register_object("charrange", "^charrange$", new EFFECT_CHANNEL_ARRANGE());
   EFFECT_CHANNEL_COPY *op_cp = new EFFECT_CHANNEL_COPY();
   objmap->register_object("chcopy", "^chcopy$", op_cp);
   objmap->register_object("erc", "^erc$", op_cp);
