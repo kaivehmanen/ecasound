@@ -369,10 +369,6 @@ void EFFECT_CHANNEL_SELECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t
 	break;
     }
     out_channels_rep = n + 1;
-#if 0
-    fprintf(stderr, "out_channels_set set to %d.\n", 
-	    out_channels_rep);
-#endif
   }
 }
 
@@ -434,11 +430,6 @@ void EFFECT_CHANNEL_SELECT::process(void)
   /* step: route channels bouncebuf_rep -> sbuf_repp */
   for(int dst_ch = 0; dst_ch < out_channels_rep; dst_ch++) {
     int src_ch = chsrc_map_rep[dst_ch];
-
-#if 0
-    fprintf(stderr, "out#%d <-- in#%d\n", 
-	    dst_ch, src_ch);
-#endif
 
     if (src_ch >= 0 && src_ch < bouncebuf_rep.number_of_channels()) {
       f_iter.begin(src_ch);
