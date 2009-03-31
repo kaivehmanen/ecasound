@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2008 Kai Vehmanen
+// Copyright (C) 1999-2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -682,7 +682,12 @@ void CHAIN::process(void)
     if (sfx_rep == true) {
       /* note: processing enabled (no bypass) */
       for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
-	audioslot_repp->number_of_channels(chainops_rep[p]->output_channels(audioslot_repp->number_of_channels()));
+
+	/* note: increase channel count if chainop needs the space */
+	int out_ch = chainops_rep[p]->output_channels(audioslot_repp->number_of_channels());
+	if (out_ch > audioslot_repp->number_of_channels())
+	  audioslot_repp->number_of_channels(out_ch);
+	
 	chainops_rep[p]->process();
       }
     }
