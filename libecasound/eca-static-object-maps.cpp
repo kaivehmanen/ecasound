@@ -345,7 +345,7 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("ei", "^ei$", new EFFECT_PITCH_SHIFT());
   objmap->register_object("enm", "^enm$", new EFFECT_NOISEGATE());
   objmap->register_object("epp", "^epp$", new EFFECT_NORMAL_PAN());
-  objmap->register_object("charrange", "^charrange$", new EFFECT_CHANNEL_ARRANGE());
+  objmap->register_object("chselect", "^chselect$", new EFFECT_CHANNEL_SELECT());
   EFFECT_CHANNEL_COPY *op_cp = new EFFECT_CHANNEL_COPY();
   objmap->register_object("chcopy", "^chcopy$", op_cp);
   objmap->register_object("erc", "^erc$", op_cp);
