@@ -138,7 +138,7 @@ public:
  * Arbitrary channel routing
  * @author Kai Vehmanen
  */
-class EFFECT_CHANNEL_ARRANGE : public EFFECT_MIXING {
+class EFFECT_CHANNEL_SELECT : public EFFECT_MIXING {
 
 private:
 
@@ -151,7 +151,7 @@ private:
 
 public:
 
-  virtual std::string name(void) const { return("Channel route"); }
+  virtual std::string name(void) const { return("Channel select"); }
   virtual std::string parameter_names(void) const;
 
   int output_channels(int i_channels) const;
@@ -165,9 +165,9 @@ public:
   virtual void release(void);
   virtual void process(void);
 
-  EFFECT_CHANNEL_ARRANGE* clone(void) const;
-  EFFECT_CHANNEL_ARRANGE* new_expr(void) const { return new EFFECT_CHANNEL_ARRANGE(); }
-  EFFECT_CHANNEL_ARRANGE(void);
+  EFFECT_CHANNEL_SELECT* clone(void) const;
+  EFFECT_CHANNEL_SELECT* new_expr(void) const { return new EFFECT_CHANNEL_SELECT(); }
+  EFFECT_CHANNEL_SELECT(void);
 };
 
 #endif

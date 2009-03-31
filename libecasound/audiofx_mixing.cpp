@@ -314,27 +314,27 @@ void EFFECT_MIX_TO_CHANNEL::process(void)
   }
 }
 
-EFFECT_CHANNEL_ARRANGE::EFFECT_CHANNEL_ARRANGE (void)
+EFFECT_CHANNEL_SELECT::EFFECT_CHANNEL_SELECT (void)
   : sbuf_repp(0), 
     out_channels_rep(0)
 {
 }
 
-EFFECT_CHANNEL_ARRANGE* EFFECT_CHANNEL_ARRANGE::clone(void) const
+EFFECT_CHANNEL_SELECT* EFFECT_CHANNEL_SELECT::clone(void) const
 {
-  EFFECT_CHANNEL_ARRANGE *obj =
-    new EFFECT_CHANNEL_ARRANGE();
+  EFFECT_CHANNEL_SELECT *obj =
+    new EFFECT_CHANNEL_SELECT();
   /* FIXME */
   DBC_NEVER_REACHED();
   return obj;
 }
 
-int EFFECT_CHANNEL_ARRANGE::output_channels(int i_channels) const
+int EFFECT_CHANNEL_SELECT::output_channels(int i_channels) const
 {
   return out_channels_rep;
 }
 
-void EFFECT_CHANNEL_ARRANGE::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+void EFFECT_CHANNEL_SELECT::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   /* these apply for all params */
   pd->default_value = 1;
@@ -349,7 +349,7 @@ void EFFECT_CHANNEL_ARRANGE::parameter_description(int param, struct PARAM_DESCR
   pd->output = false;
 }
 
-void EFFECT_CHANNEL_ARRANGE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+void EFFECT_CHANNEL_SELECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
   int src_ch = static_cast<int>(value);
   int dst_ch = param;
@@ -376,7 +376,7 @@ void EFFECT_CHANNEL_ARRANGE::set_parameter(int param, CHAIN_OPERATOR::parameter_
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_ARRANGE::get_parameter(int param) const
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_SELECT::get_parameter(int param) const
 {
 
   /* note: we ignore zero-src channel at the end of
@@ -394,7 +394,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_ARRANGE::get_parameter(int param) con
   return 0.0;
 }
 
-std::string EFFECT_CHANNEL_ARRANGE::parameter_names(void) const 
+std::string EFFECT_CHANNEL_SELECT::parameter_names(void) const 
 {
   std::string params;
   int ch = 0;
@@ -408,7 +408,7 @@ std::string EFFECT_CHANNEL_ARRANGE::parameter_names(void) const
   //return param_names_rep;
 }
 
-void EFFECT_CHANNEL_ARRANGE::init(SAMPLE_BUFFER *insample)
+void EFFECT_CHANNEL_SELECT::init(SAMPLE_BUFFER *insample)
 {
   sbuf_repp = insample;
   bouncebuf_rep.number_of_channels(sbuf_repp->number_of_channels());
@@ -418,12 +418,12 @@ void EFFECT_CHANNEL_ARRANGE::init(SAMPLE_BUFFER *insample)
   t_iter.init(insample);
 }
 
-void EFFECT_CHANNEL_ARRANGE::release(void)
+void EFFECT_CHANNEL_SELECT::release(void)
 {
   sbuf_repp = 0;
 }
 
-void EFFECT_CHANNEL_ARRANGE::process(void)
+void EFFECT_CHANNEL_SELECT::process(void)
 {
   /* step: copy input buffer to a temporary buffer */
   bouncebuf_rep.copy_all_content(*sbuf_repp);
