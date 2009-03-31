@@ -1,6 +1,6 @@
 # ---
 # manual configuration
-srcdir=..
+srcdir=../..
 #ecasound_library=ecasound_debug
 ecasound_library=ecasound_debug
 #kvutils_library=kvutils_debug
