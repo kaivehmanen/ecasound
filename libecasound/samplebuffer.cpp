@@ -30,9 +30,9 @@
 #include <iostream>
 #include <vector>
 
-#include <cmath>   /* ceil(), floor() */
-#include <cstring> /* memcpy */
-#include <cstdlib> /* labs() */
+#include <cmath>    /* ceil(), floor() */
+#include <cstring>  /* memcpy */
+#include <stdlib.h> /* labs(), posix_memalign */
 
 #include <sys/types.h>
 
@@ -63,6 +63,19 @@ static const bool is_system_littleendian = false;
 static const bool is_system_littleendian = true;
 #endif
 
+using namespace std;
+
+static void priv_alloc_sample_buf(SAMPLE_SPECS::sample_t **memptr, size_t size)
+{
+#ifdef HAVE_POSIX_MEMALIGN
+  /* align buffers to 128bit/16octet boundary */
+  posix_memalign(reinterpret_cast<void**>(memptr), 16, size);
+#else
+  *memptr = reinterpret_cast<SAMPLE_SPECS::sample_t*>(malloc(size));
+#endif
+
+}
+
 /**
  * Constructs a new sample buffer object.
  */
@@ -80,7 +93,8 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels)
 
   buffer.resize(channels);
   for(size_t n = 0; n < buffer.size(); n++) {
-    buffer[n] = new sample_t [reserved_samples_rep];
+    priv_alloc_sample_buf(&buffer[n], 
+			  sizeof(sample_t) * reserved_samples_rep);
   }
   make_silent();
 
@@ -153,7 +167,7 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
 
   for(size_t n = 0; n < buffer.size(); n++) {
     if (buffer[n] != 0) {
-      delete[] buffer[n];
+      ::free(buffer[n]);
       buffer[n] = 0;
     }
   }
@@ -884,7 +898,7 @@ void SAMPLE_BUFFER::number_of_channels(channel_size_t len)
     size_t old_size = buffer.size();
     buffer.resize(len);
     for(channel_size_t n = old_size; n < len; n++) {
-      buffer[n] = new sample_t [reserved_samples_rep];
+      priv_alloc_sample_buf(&buffer[n], sizeof(sample_t) * reserved_samples_rep);
     }
     ECA_LOG_MSG(ECA_LOGGER::functions, "Increasing channel-count (1).");    
   }
@@ -924,7 +938,7 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
     reserved_samples_rep = len * 2;
     for(size_t n = 0; n < buffer.size(); n++) {
       sample_t *prev_buffer = buffer[n];
-      buffer[n] = new sample_t [reserved_samples_rep];
+      priv_alloc_sample_buf(&buffer[n], sizeof(sample_t) * reserved_samples_rep);
       for (buf_size_t m = 0; m < buffersize_rep; m++)
 	buffer[n][m] = prev_buffer[m];
       delete[] prev_buffer;
@@ -1278,7 +1292,7 @@ void SAMPLE_BUFFER::resample_secret_rabbit_code(SAMPLE_SPECS::sample_rate_t from
       params.output_frames_gen = 0;
       params.input_frames_used = old_buffer_size;
     }
-    DBC_CHECK(std::labs(params.input_frames_used - old_buffer_size) == 0);
+    DBC_CHECK(::labs(params.input_frames_used - old_buffer_size) == 0);
 #ifdef ECA_DEBUG_MODE
     /* make sure all input samples have been used */
     if (old_buffer_size != params.input_frames_used) { std::cerr << "input_frames_over=" << old_buffer_size - params.input_frames_used << ".\n"; }
