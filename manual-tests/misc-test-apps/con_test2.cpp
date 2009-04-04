@@ -1,13 +1,12 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include "ecatestsuite.h"
 
 using namespace std;
 
-static const string ecasound_exec ("./ecasound_test");
 static const string rtobject("rtnull");
 static const string nonrtobject("null");
 
@@ -30,6 +29,11 @@ int main(int argc, char *argv[]) {
 }
 
 void eci_combination_test(string arg) {
+  string ecasound_exec ("./ecasound_test");
+  const char *ecasound_env = getenv("ECASOUND");
+  if (ecasound_env)
+    ecasound_exec = string(ecasound_env);
+
   eci_execute_test(ecasound_exec +
 		   " -a:1 -i:" + rtobject + " -o:" + nonrtobject + " " + arg + " -t:2 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + 

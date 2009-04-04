@@ -1,20 +1,24 @@
 #include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 
-#include <kvu_numtostr.h>
 #include "ecatestsuite.h"
 
 using namespace std;
 
-static const string ecasound_exec ("./ecasound_test");
 static const string input_file("foo.wav");
 
 static void eci_execute_test(const string& cmd);
 
 int main(int argc, char *argv[]) {
   ECA_TEST_ENTRY();
+
+  string ecasound_exec ("./ecasound_test");
+  const char *ecasound_env = getenv("ECASOUND");
+  if (ecasound_env)
+    ecasound_exec = string(ecasound_env);
 
   eci_execute_test(ecasound_exec + " -a:1 -i " + input_file + " -gc:1,0.5 -o null -t:5 2>/dev/null >/dev/null");
   eci_execute_test(ecasound_exec + " -i:" + input_file + " -o:null -t:5 2>/dev/null >/dev/null");
@@ -40,7 +44,9 @@ int main(int argc, char *argv[]) {
   string many_chains (ecasound_exec);
   many_chains += " -a:";
   for(int n = 0; n < 128; n++) {
-    many_chains += kvu_numtostr(n);
+    std::stringstream tmp;
+    tmp << n;
+    many_chains += tmp.str();
     if (n != 128) many_chains += ",";
   }
   many_chains += " -i:" + input_file;

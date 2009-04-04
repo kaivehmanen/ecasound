@@ -24,7 +24,10 @@ Most tests are performed using ecasound's 'null' and
 real audio objects. In these cases, the following 
 files and device are used:
 
-./ecasound_test	  - a symbolic link to ecasound executable
+./ecasound_test	  - a symbolic link to ecasound executable; 
+		    alternative ECASOUND environment variable
+		    can be set to select the ecasound binary
+		    to run
 ./foo.wav	  - generic input wav-file
 ./bigfoo.wav	  - a big (>10MB) input file
 /dev/dsp	  - OSS output file
@@ -39,7 +42,7 @@ ECI - Test cases utilizing the ECI API (Ecasound Control
 ECA - Tests cases for testing libecasound components.
 
 ---
-List of current tests
+List of current tests (not necessarily complete)
 
 CON-1 - Simple tests for command-line options and basic 
         operations.
