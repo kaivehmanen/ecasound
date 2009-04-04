@@ -89,6 +89,11 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels)
   DBC_REQUIRE(channels >= 0);
   // ---
 
+  /* catch if someone changes SAMPLE_SPECS::silent_value */
+  DBC_DECLARE(float f = 0.0f);
+  DBC_CHECK(static_cast<uint32_t>(f) == 0);
+  DBC_CHECK(sizeof(f) == 4);
+
   impl_repp = new SAMPLE_BUFFER_impl;
 
   buffer.resize(channels);
@@ -372,10 +377,6 @@ void SAMPLE_BUFFER::make_silent(int channel)
  */
 void SAMPLE_BUFFER::make_silent(void)
 {
-  /* catch if someone changes SAMPLE_SPECS::silent_value */
-  DBC_DECLARE(float f = 0.0f);
-  DBC_CHECK(static_cast<uint32_t>(f) == 0);
-
   for(channel_size_t n = 0; n < channel_count_rep; n++) {
     make_silent(n);
   }
