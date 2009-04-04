@@ -8,8 +8,9 @@
 #define ECA_TEST_CASE()    printf("."); fflush(stdout)
 #else
 #define ECA_TEST_ENTRY()   ((void) 0)
-#define ECA_TEST_SUCCESS() return(0)
-#define ECA_TEST_FAIL(x,y) return(x)
+#define ECA_TEST_SUCCESS() exit(0)
+#define ECA_TEST_FAIL(x,y) exit(x)
+#define ECA_TEST_CASE()    ((void) 0)
 #endif
 
 #endif /* INCLUDED_ECATESTSUITE_H */
