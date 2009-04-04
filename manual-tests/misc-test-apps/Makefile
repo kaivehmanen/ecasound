@@ -1,46 +1,43 @@
-# ---
-# manual configuration
-srcdir=../..
-#ecasound_library=ecasound_debug
-ecasound_library=ecasound_debug
-#kvutils_library=kvutils_debug
-kvutils_library=kvutils_debug
-
-# ---
-
-ECAFLAGS= -I${srcdir}/libecasound -I${srcdir}/kvutils -I${srcdir}/libecasoundc -D_REENTRANT -g -Wall -Wstrict-prototypes -DVERBOSE
-ECALDFLAGS= \
-	-L${srcdir}/libecasound/.libs \
-	-L${srcdir}/kvutils/.libs
-
-ECALIBS= \
-	${srcdir}/libecasound/.libs/lib${ecasound_library}.a \
-	${srcdir}/kvutils/.libs/lib${kvutils_library}.a
-
-CXXFLAGS += $(ECAFLAGS)
-CFLAGS += $(ECACFLAGS)
-LDFLAGS += $(ECALDFLAGS)
+ECAFLAGS = $(shell libecasound-config --cflags) -I.
+ECALDFLAGS = $(shell libecasound-config --ldflags)
+#ECALIBS = $(shell libecasound-config --libs)
+ECALIBS = $(shell libecasound-config --libs_debug)
 
 CXX=c++
-CC=c++
+CPPFLAGS += -DVERBOSE
+CPPFLAGS += -DLIBECASOUND_VERSION=$(shell grep libecasound_version `which libecasound-config` |cut -f2 -d=)
 
 # FIXME: move C eci tests to libecasoundc?
 
 COMMON_SRC = 		ecatestsuite.h
 GENERATED_FILES = 	ecatestlist.txt
-TARGETS=		con_test1 \
-			con_test2
 
+LIB_TESTS=		eca_loop_bench$(EXEEXT)
+
+EXEC_TESTS=		con_test1 \
+			con_test2
+ALL_TESTS=		$(LIB_TESTS) $(EXEC_TESTS)
+
+# not built:
 #			eca_test1
 
-all: $(TARGETS) create-test-list
+all: $(ALL_TESTS) ecatestlist.txt
 
-con_test1: con_test1.o ${ECALIBS}
-con_test2: con_test2.o ${ECALIBS}
-eca_test1: ${ECALIBS} eca_test1.o
+con_test1: con_test1.o
+con_test2: con_test2.o
+eca_loop_bench$(EXEEXT): eca_loop_bench$(EXEEXT).o
 
-create-test-list:
-	echo $(TARGETS) > ecatestlist.txt
+%$(EXEEXT).o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(ECAFLAGS) -c -o $@ $<
+
+%.o: %.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(ECAFLAGS) -c -o $@ $<
+
+$(ALL_TESTS):
+	$(CXX) $(LDFLAGS) $(ECALDFLAGS) -o $@ $@.o $(ECALIBS)
+
+ecatestlist.txt: $(ALL_TESTS)
+	echo $(ALL_TESTS) > ecatestlist.txt
 
 clean:
-	rm -fv $(TARGETS) $(GENERATED_FILES) *.o
+	rm -fv $(ALL_TESTS) $(GENERATED_FILES) *.o

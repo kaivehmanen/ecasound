@@ -22,30 +22,42 @@
 #include "kvu_procedure_timer.h"
 #include "ecatestsuite.h"
 
-int test_make_silent(void);
-int test_copy_ops(void);
+int test_sbuf_make_silent(void);
+int test_sbuf_copy_ops(void);
+int test_sbuf_constructor(void);
+int test_sbuf_mix(void);
 
 int main(int argc, char *argv[])
 {
   int res = 0;
 
-  std::printf("********************************************************"
-	      "\nTesting with libecasound v%s (%s).\n",
+  std::printf("--------------------------------------------------------\n"
+	      "Testing with libecasound *** v%s *** (%s).\n",
 	      ecasound_library_version, __FILE__);
 
-  res += test_make_silent();
-  res += test_copy_ops();
+  res += test_sbuf_make_silent();
+  res += test_sbuf_copy_ops();
+  res += test_sbuf_constructor();
+  res += test_sbuf_mix();
 
   return res;
 }
 
-int test_make_silent(void)
+void helper_print_one_result(const char *casename, const PROCEDURE_TIMER& t1, int loops)
 {
-  const int loops = 100000;
-  const int bufsize = 1024;
-  const int channels = 2;
+  std::printf("\t%-20.20s:\t%.03fms (%.03fus/loop)\n", 
+	      casename,
+	      t1.last_duration_seconds() * 1000.0,
+	      t1.last_duration_seconds() * 1000000.0 / loops);
+}
 
-  std::printf("make_silent with %d loops (bufsize=%d, ch=%d):\n", 
+int test_sbuf_make_silent(void)
+{
+  const int loops = 10000;
+  const int bufsize = 1024;
+  const int channels = 12;
+
+  std::printf("sbuf_make_silent with %d loops (bufsize=%d, ch=%d):\n", 
 	      loops, 1024, 12);
 
   PROCEDURE_TIMER t1;
@@ -53,40 +65,39 @@ int test_make_silent(void)
 
   /* note: make sure code is paged in */
   sbuf.make_silent();
+  
   t1.start();
   for(int n = 0; n < loops; n++) {
     sbuf.make_silent_range(0, bufsize);
   }
   t1.stop();
 
-  std::printf("\tmake_silent_range: %.03fms (%.03fms per event)\n", 
-	      t1.last_duration_seconds() * 1000.0,
-	      t1.last_duration_seconds() * 1000.0 / loops);
+  helper_print_one_result("make_silent_range", t1, loops);
 
   /* note: make sure code is paged in */
   sbuf.make_silent_range(0, bufsize);
   t1.reset();
+
   t1.start();
   for(int n = 0; n < loops; n++) {
     sbuf.make_silent();
   }
   t1.stop();
   
-  std::printf("\tmake_silent:       %.03fms\n", 
-	      t1.last_duration_seconds() * 1000.0);
+  helper_print_one_result("make_silent", t1, loops);
 }  
 
-int test_copy_ops(void)
+int test_sbuf_copy_ops(void)
 {
-  const int loops = 100000;
+  const int loops = 10000;
   const int bufsize = 1024;
-  const int channels = 2;
+  const int channels = 12;
 
   PROCEDURE_TIMER t1;
   SAMPLE_BUFFER sbuf_a (bufsize, channels);
   SAMPLE_BUFFER sbuf_b (bufsize, channels);
 
-  std::printf("copy_ops with %d loops (bufsize=%d, ch=%d):\n", 
+  std::printf("sbuf_copy_ops with %d loops (bufsize=%d, ch=%d):\n", 
 	      loops, 1024, 12);
 
 #if LIBECASOUND_VERSION >= 22
@@ -99,23 +110,19 @@ int test_copy_ops(void)
   }
   t1.stop();
 
-  std::printf("\tcopy_all_content: %.03fms (%.03fms per event)\n", 
-	      t1.last_duration_seconds() * 1000.0,
-	      t1.last_duration_seconds() * 1000.0 / loops);
+  helper_print_one_result("copy_all_content", t1, loops);
 
   /* note: make sure code is paged in */
   sbuf_a.copy_matching_channels(sbuf_b);
-
   t1.reset();
+
   t1.start();
   for(int n = 0; n < loops; n++) {
     sbuf_a.copy_matching_channels(sbuf_b);
   }
   t1.stop();
 
-  std::printf("\tcopy_matching_channels: %.03fms (%.03fms per event)\n", 
-	      t1.last_duration_seconds() * 1000.0,
-	      t1.last_duration_seconds() * 1000.0 / loops);
+  helper_print_one_result("copy_matching_channels", t1, loops);
 
 #else
 
@@ -129,9 +136,69 @@ int test_copy_ops(void)
   }
   t1.stop();
 
-  std::printf("\tcopy (v21 lib API): %.03fms (%.03fms per event)\n", 
-	      t1.last_duration_seconds() * 1000.0,
-	      t1.last_duration_seconds() * 1000.0 / loops);
+  helper_print_one_result("copy (v21-lib)", t1, loops);
 
 #endif
+}  
+
+int test_sbuf_constructor(void)
+{
+  const int loops = 10000;
+  const int bufsize = 1024;
+  const int channels = 12;
+
+  PROCEDURE_TIMER t1;
+  SAMPLE_BUFFER sbuf_a (bufsize, channels);
+
+  std::printf("sbuf constructor with %d loops (bufsize=%d, ch=%d):\n", 
+	      loops, 1024, 12);
+
+  /* note: make sure code is paged in */
+
+  t1.start();
+  for(int n = 0; n < loops; n++) {
+    SAMPLE_BUFFER sbuf_b (bufsize, channels);
+  }
+  t1.stop();
+
+  helper_print_one_result("constructor", t1, loops);
+}  
+
+int test_sbuf_mix(void)
+{
+  const int loops = 10000;
+  const int bufsize = 1024;
+  const int channels = 12;
+
+  std::printf("sbuf_mix with %d loops (bufsize=%d, ch=%d):\n", 
+	      loops, bufsize, channels);
+
+  PROCEDURE_TIMER t1;
+  SAMPLE_BUFFER sbuf_a (bufsize, channels);
+  SAMPLE_BUFFER sbuf_b (bufsize, channels);
+
+  /* case 1 */
+  sbuf_a.divide_by(1.23456789);
+  t1.reset();
+  
+  t1.start();
+  for(int n = 0; n < loops; n++) {
+    sbuf_a.divide_by(1.23456789);
+  }
+  t1.stop();
+
+  helper_print_one_result("divide_by", t1, loops);
+
+  /* case 2 */
+
+  sbuf_a.add_with_weight(sbuf_b, 2);
+  t1.reset();
+  
+  t1.start();
+  for(int n = 0; n < loops; n++) {
+    sbuf_a.add_with_weight(sbuf_b, 2);
+  }
+  t1.stop();
+
+  helper_print_one_result("add_with_weight", t1, loops);
 }  
