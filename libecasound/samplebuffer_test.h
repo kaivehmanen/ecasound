@@ -101,21 +101,52 @@ void SAMPLE_BUFFER_TEST::do_run(void)
   const int channels = 12;
   const SAMPLE_BUFFER::sample_t multiplier = 100.1f;
 
-  SAMPLE_BUFFER sbuf_orig (bufsize, channels);
-  SAMPLE_BUFFER sbuf_ref (bufsize, channels);
-  SAMPLE_BUFFER sbuf_test (bufsize, channels);
+  std::fprintf(stdout, "%s: tests for SAMPLE_BUFFER class\n",
+	       __FILE__);
 
-  cerr << "libecasound_tester: samplebuffer" << endl;
+  /* case: multiply_by */
+  {
+    std::fprintf(stdout, "%s: multiply_by\n",
+		 __FILE__);
+    SAMPLE_BUFFER sbuf_orig (bufsize, channels);
+    SAMPLE_BUFFER sbuf_ref (bufsize, channels);
+    SAMPLE_BUFFER sbuf_test (bufsize, channels);
 
-  fill_random_data(&sbuf_orig);
+    fill_random_data(&sbuf_orig);
+    
+    sbuf_test.copy_all_content(sbuf_orig);
+    sbuf_ref.copy_all_content(sbuf_orig);
+    
+    sbuf_test.multiply_by(multiplier);
+    sbuf_ref.multiply_by_ref(multiplier);
+    
+    if (verify_content(sbuf_ref, sbuf_test) != true) {
+      ECA_TEST_FAILURE("optimized multiple_by");
+    }
+  }
 
-  sbuf_test.copy_all_content(sbuf_orig);
-  sbuf_ref.copy_all_content(sbuf_orig);
+  /* case: copy_all_content */
+  {
+    std::fprintf(stdout, "%s: copy_all_content\n",
+		 __FILE__);
 
-  sbuf_test.multiply_by(multiplier);
-  sbuf_ref.multiply_by_ref(multiplier);
+    SAMPLE_BUFFER sbuf_orig (bufsize, channels);
+    SAMPLE_BUFFER sbuf_ref (bufsize, channels);
+    SAMPLE_BUFFER sbuf_test (bufsize, channels);
 
-  if (verify_content(sbuf_ref, sbuf_test) != true) {
-    ECA_TEST_FAILURE("optimized multiple_by");
+    fill_random_data(&sbuf_orig);
+
+    /* note: copy_all_content should modify the destination
+     *       channel and sample counts to match those of
+     *       the source object. */
+    sbuf_test.number_of_channels(0);
+    sbuf_test.length_in_samples(1);
+
+    sbuf_test.copy_all_content(sbuf_orig);
+    sbuf_ref.copy_matching_channels(sbuf_orig);
+    
+    if (verify_content(sbuf_ref, sbuf_test) != true) {
+      ECA_TEST_FAILURE("copy_all_content");
+    }
   }
 }
