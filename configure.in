@@ -1076,6 +1076,50 @@ AC_SUBST(ECA_S_READLINE_LIBS)
 
 dnl ------------------------------------------------------------------
 
+dnl --
+dnl Check for liboil (optional)
+dnl --
+
+PKG_CHECK_MODULES([LIBOIL], [liboil-0.3], HAVE_LIBOIL=yes, HAVE_LIBOIL=no)
+AC_MSG_CHECKING(whether to use liboil)
+AC_ARG_ENABLE(liboil,
+  [  --enable-liboil		Use liboil if available (default=no)],
+  [
+    case "$enableval" in
+      y | yes)
+        if test "x${HAVE_LIBOIL}" = xyes ; then 
+	  AC_MSG_RESULT(yes)
+          enable_liboil=yes 
+        else
+          AC_MSG_RESULT(no)
+	  AC_MSG_WARN([--enable-liboil given but liboil library not available])
+        fi
+      ;;
+
+      n | no)
+        AC_MSG_RESULT(no)
+        enable_liboil=no
+      ;;
+        
+      *)
+        AC_MSG_ERROR([Invalid parameter value for --enable-liboil: $enableval])
+      ;;
+    esac
+  ],
+  [
+    AC_MSG_RESULT(no)
+    enable_liboil=no
+  ]
+)
+
+if test "x${enable_liboil}" = "xyes" ; then
+  ECA_S_EXTRA_CPPFLAGS="${ECA_S_EXTRA_CPPFLAGS} ${LIBOIL_CFLAGS}"
+  ECA_S_EXTRA_LIBS="${ECA_S_EXTRA_LIBS} ${LIBOIL_LIBS}"
+  AC_DEFINE([ECA_USE_LIBOIL], [], [Use liboil])
+fi
+
+dnl ------------------------------------------------------------------
+
 dnl All non-std external libraries that libecasound depends on
 AC_SUBST(ECA_S_EXTRA_CPPFLAGS)
 AC_SUBST(ECA_S_EXTRA_CFLAGS)
@@ -1336,6 +1380,11 @@ if test x$samplerate_support = xyes ; then
 	echo "Libsamplerate support   yes"
 else
 	echo "Libsamplerate support   no"
+fi
+if test x$liboil_support = xyes ; then
+	echo "Liboil support:         yes"
+else
+	echo "Liboil support:         no"
 fi
 
 echo "-----------------------------------------------------------------"
