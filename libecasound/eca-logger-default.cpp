@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-logger-default.cpp: Default logging subsystem implementation.
-// Copyright (C) 2002-2004,2008 Kai Vehmanen
+// Copyright (C) 2002-2004,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -29,23 +29,23 @@ void ECA_LOGGER_DEFAULT::do_msg(ECA_LOGGER::Msg_level_t level, const std::string
 {
   if (is_log_level_set(level) == true) {
     if (level == ECA_LOGGER::subsystems) {
-      std::cerr << "[* ";
+      std::cout << "[* ";
     }
     else if (module_name.size() > 0 &&
 	     is_log_level_set(ECA_LOGGER::module_names) == true &&
 	     level != ECA_LOGGER::eiam_return_values) {
-      std::cerr << "(" 
+      std::cout << "(" 
 		<< std::string(module_name.begin(), 
 			       find(module_name.begin(), module_name.end(), '.'))
 		<< ") ";
     }
     
-    std::cerr << log_message;
+    std::cout << log_message;
     
     if (level == ECA_LOGGER::subsystems) {
-      std::cerr << " *]";
+      std::cout << " *]";
     }
-    std::cerr << std::endl;
+    std::cout << std::endl;
   }
 }
 
