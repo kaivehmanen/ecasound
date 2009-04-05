@@ -205,7 +205,8 @@ ecasound_test_framework_include = \
 			eca-object-factory_test.h \
 			eca-sample-conversion_test.h \
 			audioio_test.h \
-			audioio-device_test.h
+			audioio-device_test.h \
+			samplebuffer_test.h
 
 # note! also remembers to update install-data-local and 
 #       uninstall-data targets
