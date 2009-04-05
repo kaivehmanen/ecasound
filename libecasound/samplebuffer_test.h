@@ -25,6 +25,7 @@
 #include <ctime>
 
 #include "kvu_dbc.h"
+#include "kvu_inttypes.h"
 
 #include "samplebuffer.h"
 #include "eca-test-case.h"
@@ -32,7 +33,7 @@
 using namespace std;
 
 /* ignore one bit errors in significand */
-static const SAMPLE_BUFFER::sample_t diff_threshold = 1.0 / (1 << 22);
+static const uint32_t diff_threshold_ints = 1;
 
 static void fill_random_data(SAMPLE_BUFFER *sbuf)
 {
@@ -65,11 +66,15 @@ static bool verify_content(SAMPLE_BUFFER& a, SAMPLE_BUFFER& b)
 
   for (int ch = 0; ch < ch_count; ch++) {
     for (int i = 0; i < i_count; i++) {
-      float diff = fabs(a.buffer[ch][i] - b.buffer[ch][i]);
-      if (diff > diff_threshold) {
-	std::fprintf(stderr, "%s: error in sample ch%d[%d], diff %.03f\n",
-		     __FILE__, ch, i, diff);
-	return false;
+      if (a.buffer[ch][i] != b.buffer[ch][i]) {
+	assert(sizeof(SAMPLE_BUFFER::sample_t) == sizeof(uint32_t));
+	uint32_t diff = std::labs(*reinterpret_cast<uint32_t*>(&a.buffer[ch][i]) -
+				  *reinterpret_cast<uint32_t*>(&b.buffer[ch][i]));
+	if (diff > diff_threshold_ints) {
+	    std::fprintf(stderr, "%s: ERROR sample ch%d[%d], diff %d (%.03f<->%.03f)\n",
+			 __FILE__, ch, i, diff, a.buffer[ch][i], b.buffer[ch][i]);
+	    return false;
+	}
       }
     }
   }
