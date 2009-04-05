@@ -2,9 +2,9 @@
 #define INCLUDED_AUDIOIO_WAVE_H
 
 #include <string>
-#include <iostream>
 
 #include <kvu_inttypes.h>
+#include <kvu_dbc.h>
 
 #include "audioio-buffered.h"
 #include "samplebuffer.h"
@@ -121,7 +121,7 @@ class WAVEFILE : public AUDIO_IO_BUFFERED {
 
  private:
 
-  WAVEFILE(const WAVEFILE& x) { std::cerr << "WAVE construct"; }
+  WAVEFILE(const WAVEFILE& x) { DBC_NEVER_REACHED(); }
   WAVEFILE& operator=(const WAVEFILE& x) {  return(*this); }
 
   void update(void);        
