@@ -355,16 +355,9 @@ void SAMPLE_BUFFER::multiply_by(SAMPLE_BUFFER::sample_t factor, int channel)
 
 void SAMPLE_BUFFER::multiply_by(SAMPLE_BUFFER::sample_t factor)
 {
-#ifdef ECA_USE_LIBOIL 
   for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    oil_scalarmultiply_f32_ns(reinterpret_cast<float*>(buffer[n]), 
-			      reinterpret_cast<const float*>(buffer[n]), 
-			      reinterpret_cast<const float*>(&factor), 
-			      buffersize_rep);
+    multiply_by(factor, n);
   }
-#else 
-  multiply_by_ref(factor);
-#endif
 }
 
 void SAMPLE_BUFFER::multiply_by_ref(SAMPLE_BUFFER::sample_t factor)
