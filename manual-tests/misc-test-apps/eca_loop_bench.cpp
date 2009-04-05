@@ -16,6 +16,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
+
 #include "eca-version.h"
 #include "samplebuffer.h"
 #include "audiofx_amplitude.h"
@@ -64,7 +68,7 @@ int test_sbuf_make_silent(void)
   const int channels = 12;
 
   std::printf("sbuf_make_silent with %d loops (bufsize=%d, ch=%d):\n", 
-	      loops, 1024, 12);
+	      loops, bufsize, channels);
 
   PROCEDURE_TIMER t1;
   SAMPLE_BUFFER sbuf (bufsize, channels);
@@ -157,7 +161,7 @@ int test_sbuf_constructor(void)
   SAMPLE_BUFFER sbuf_a (bufsize, channels);
 
   std::printf("sbuf constructor with %d loops (bufsize=%d, ch=%d):\n", 
-	      loops, 1024, 12);
+	      loops, bufsize, channels);
 
   /* note: make sure code is paged in */
 
@@ -341,7 +345,7 @@ int test_sbuf_iter(void)
     }
     t1.stop();
   
-    helper_print_one_result("amplify_memops", t1, loops, bufsize);
+    helper_print_one_result("amplify_plainc", t1, loops, bufsize);
   }
 
   /* case 3+4 */
