@@ -6,7 +6,11 @@
 //     eca-style-version: 3
 //
 // References:
+//   - libsamplerate:
 //     http://www.mega-nerd.com/SRC/
+//   - liboil:
+//     http://liboil.freedesktop.org/
+//     http://library.gnome.org/devel/liboil/
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +36,7 @@
 
 #include <cmath>    /* ceil(), floor() */
 #include <cstring>  /* memcpy */
-#include <stdlib.h> /* labs(), posix_memalign */
+#include <stdlib.h> /* not cstdlib we need e.g. posix_memalign() */
 
 #include <sys/types.h>
 
@@ -41,6 +45,12 @@
 
 #ifdef ECA_COMPILE_SAMPLERATE
 #include <samplerate.h>
+#endif
+
+#ifdef ECA_USE_LIBOIL 
+extern "C" {
+#include <liboil/liboil.h>
+}
 #endif
 
 #include "eca-sample-conversion.h"
@@ -112,6 +122,10 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels)
 #else
   impl_repp->quality_rep = 5;
 #endif
+
+#ifdef ECA_USE_LIBOIL
+  oil_init();
+#endif
  
   ECA_LOG_MSG(ECA_LOGGER::functions, 
 		"Buffer created, channels: " +
@@ -120,46 +134,6 @@ SAMPLE_BUFFER::SAMPLE_BUFFER (buf_size_t buffersize, channel_size_t channels)
 
   // ---
   DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
-  // ---
-}
-
-/**
- * Constructs a new sample buffer object from a reference
- * to an already existing object.
- *
- * For better performance, doesn't copy IO-buffers nor
- * iterator state.
- *
- * ** Note! This function is obsolete!
- */
-SAMPLE_BUFFER::SAMPLE_BUFFER (const SAMPLE_BUFFER& x)
-  : channel_count_rep(x.channel_count_rep),
-    buffersize_rep(x.buffersize_rep),
-    reserved_samples_rep(x.reserved_samples_rep)
-{
-  buffer.resize(x.buffer.size());
-
-  for(size_t n = 0; n < buffer.size(); n++) {
-    buffer[n] = new sample_t [reserved_samples_rep];
-    std::memcpy(buffer[n], x.buffer[n], buffersize_rep * sizeof(sample_t));
-  }
-
-  impl_repp = new SAMPLE_BUFFER_impl(*x.impl_repp); 
-  /* note: a shallow copy, do not copy refs to objects still
-   *       owned by 'x' */
-  impl_repp->old_buffer_repp = 0;
-#ifdef ECA_COMPILE_SAMPLERATE
-  impl_repp->src_state_rep.resize(0);
-#endif
-
-  ECA_LOG_MSG(ECA_LOGGER::functions, 
-		"Buffer copy-constructed, channels: " +
-		kvu_numtostr(buffer.size()) + ", length-samples: " +
-		kvu_numtostr(buffersize_rep) + ".");
-
-  // ---
-  DBC_ENSURE(buffer.size() == static_cast<size_t>(channel_count_rep));
-  DBC_ENSURE(buffersize_rep == reserved_samples_rep);
   // ---
 }
 
@@ -178,7 +152,7 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
   }
 
   if (impl_repp->old_buffer_repp != 0) {
-    delete[] impl_repp->old_buffer_repp;
+    ::free(impl_repp->old_buffer_repp);
     impl_repp->old_buffer_repp = 0;
   }
 
@@ -204,6 +178,27 @@ SAMPLE_BUFFER::~SAMPLE_BUFFER (void)
  * @post length_in_samples() >= x.length_in_samples()
  */
 void SAMPLE_BUFFER::add_matching_channels(const SAMPLE_BUFFER& x)
+{
+#ifdef ECA_USE_LIBOIL 
+  if (x.length_in_samples() > length_in_samples()) {
+    length_in_samples(x.length_in_samples());
+  }
+  int min_c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
+  for(channel_size_t q = 0; q < min_c_count; q++) {
+    oil_add_f32(reinterpret_cast<float*>(buffer[q]),
+		reinterpret_cast<const float*>(buffer[q]),
+		reinterpret_cast<const float*>(x.buffer[q]),
+		x.length_in_samples());
+  }
+#else
+  add_matching_channels_ref(x);
+#endif
+}
+
+/**
+ * Unoptimized version of add_matching_channels().
+ */
+void SAMPLE_BUFFER::add_matching_channels_ref(const SAMPLE_BUFFER& x)
 {
   if (x.length_in_samples() > length_in_samples()) {
     length_in_samples(x.length_in_samples());
@@ -233,6 +228,9 @@ void SAMPLE_BUFFER::add_with_weight(const SAMPLE_BUFFER& x, int weight)
   DBC_REQUIRE(weight != 0);
   // ---
 
+  /* note: gcc does a suprisingly good job for this function,
+   *       so additional optimizations don't seem worthwhile */
+
   if (x.length_in_samples() > length_in_samples()) {
     length_in_samples(x.length_in_samples());
   }
@@ -257,9 +255,15 @@ void SAMPLE_BUFFER::copy_matching_channels(const SAMPLE_BUFFER& x)
   
   int min_c_count = (channel_count_rep <= x.channel_count_rep) ? channel_count_rep : x.channel_count_rep;
   for(channel_size_t q = 0; q < min_c_count; q++) {
-    for(buf_size_t t = 0; t < length_in_samples(); t++) {
-      buffer[q][t] = x.buffer[q][t];
-    }
+    std::memcpy(buffer[q], 
+		x.buffer[q],
+		sizeof(sample_t) * length_in_samples());
+
+    /* ref implementation:
+     * for(buf_size_t t = 0; t < length_in_samples(); t++) {
+     *   buffer[q][t] = x.buffer[q][t];
+     * }
+     */ 
   }
 }
 
@@ -277,9 +281,16 @@ void SAMPLE_BUFFER::copy_all_content(const SAMPLE_BUFFER& x)
   number_of_channels(x.number_of_channels());
   
   for(channel_size_t q = 0; q < number_of_channels(); q++) {
-    for(buf_size_t t = 0; t < length_in_samples(); t++) {
-      buffer[q][t] = x.buffer[q][t];
-    }
+    std::memcpy(buffer[q], 
+		x.buffer[q],
+		sizeof(sample_t) * length_in_samples());
+
+    /* ref implementation:
+     * {
+     * for(buf_size_t t = 0; t < length_in_samples(); t++) {
+     * 	buffer[q][t] = x.buffer[q][t];
+     * }
+     */
   }
   
   event_tags_set(x);
@@ -330,16 +341,40 @@ void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& src,
   }
 }
 
+void SAMPLE_BUFFER::multiply_by(SAMPLE_BUFFER::sample_t factor)
+{
+#ifdef ECA_USE_LIBOIL 
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    oil_scalarmultiply_f32_ns(reinterpret_cast<float*>(buffer[n]), 
+			      reinterpret_cast<const float*>(buffer[n]), 
+			      reinterpret_cast<const float*>(&factor), 
+			      buffersize_rep);
+  }
+#else 
+  multiply_by_ref(factor);
+#endif
+}
+
+void SAMPLE_BUFFER::multiply_by_ref(SAMPLE_BUFFER::sample_t factor)
+{
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    for(buf_size_t m = 0; m < buffersize_rep; m++) {
+      buffer[n][m] *= factor;
+    }
+  }
+}
+
 /**
  * Divides all samples by 'dvalue'.
  */
 void SAMPLE_BUFFER::divide_by(SAMPLE_BUFFER::sample_t dvalue)
 {
-  for(channel_size_t n = 0; n < channel_count_rep; n++) {
-    for(buf_size_t m = 0; m < buffersize_rep; m++) {
-      buffer[n][m] /= dvalue;
-    }
-  }
+  multiply_by(1.0 / dvalue);
+}
+
+void SAMPLE_BUFFER::divide_by_ref(SAMPLE_BUFFER::sample_t dvalue)
+{
+  multiply_by_ref(1.0 / dvalue);
 }
 
 /**
@@ -373,6 +408,16 @@ void SAMPLE_BUFFER::make_silent(int channel)
 }
 
 /**
+ * Unoptimized version of make_silent(int).
+ */
+void SAMPLE_BUFFER::make_silent_ref(int channel)
+{
+  for(buf_size_t s = 0; s < buffersize_rep; s++) {
+    buffer[channel][s] = SAMPLE_SPECS::silent_value;
+  }
+}
+
+/**
  * Mutes the whole buffer.
  */
 void SAMPLE_BUFFER::make_silent(void)
@@ -390,6 +435,24 @@ void SAMPLE_BUFFER::make_silent(void)
  */
 void SAMPLE_BUFFER::make_silent_range(buf_size_t start_pos,
 				      buf_size_t end_pos) {
+  // --
+  DBC_REQUIRE(start_pos >= 0);
+  DBC_REQUIRE(end_pos >= 0);
+  // --
+
+  for(channel_size_t n = 0; n < channel_count_rep; n++) {
+    std::memset(buffer[n] + start_pos, 
+		0,
+		sizeof(sample_t) * 
+		(end_pos < buffersize_rep ? end_pos : buffersize_rep));
+  }
+}
+
+/**
+ * Unoptimized version of make_silent_range()
+ */
+void SAMPLE_BUFFER::make_silent_range_ref(buf_size_t start_pos,
+					  buf_size_t end_pos) {
   // --
   DBC_REQUIRE(start_pos >= 0);
   DBC_REQUIRE(end_pos >= 0);
@@ -415,6 +478,27 @@ void SAMPLE_BUFFER::limit_values(void)
 	buffer[n][m] = SAMPLE_SPECS::impl_min_value;
     }
   }
+  
+#if 0 /* slower than the naive implementation */
+  {
+    float min = SAMPLE_SPECS::impl_min_value;
+    float max = SAMPLE_SPECS::impl_max_value;
+    for(channel_size_t n = 0; n < channel_count_rep; n++) {
+      oil_clip_f32(reinterpret_cast<float*>(buffer[n]),
+		   sizeof(float),
+		   reinterpret_cast<const float*>(buffer[n]),
+		   sizeof(float),
+		   buffersize_rep,
+		   &min, &max);
+    }
+  }
+#endif
+}
+
+/** Unoptimized version of limit_values() */
+void SAMPLE_BUFFER::limit_values_ref(void)
+{
+  limit_values();
 }
 
 /**
@@ -942,12 +1026,12 @@ void SAMPLE_BUFFER::length_in_samples(buf_size_t len)
       priv_alloc_sample_buf(&buffer[n], sizeof(sample_t) * reserved_samples_rep);
       for (buf_size_t m = 0; m < buffersize_rep; m++)
 	buffer[n][m] = prev_buffer[m];
-      delete[] prev_buffer;
+      ::free(prev_buffer);
     }
 
     if (impl_repp->old_buffer_repp != 0) {
-      delete[] impl_repp->old_buffer_repp;
-      impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
+      ::free(impl_repp->old_buffer_repp);
+      priv_alloc_sample_buf(&impl_repp->old_buffer_repp, sizeof(sample_t) * reserved_samples_rep);
     }
   }
 
@@ -997,8 +1081,8 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 #endif
 
     for(int c = 0; c < channel_count_rep; c++) {
-      delete[] buffer[c];
-      buffer[c] = new sample_t [reserved_samples_rep];
+      ::free(buffer[c]);
+      priv_alloc_sample_buf(&buffer[c], sizeof(sample_t) * reserved_samples_rep);
     }
   }
 
@@ -1017,7 +1101,7 @@ void SAMPLE_BUFFER::resample_init_memory(SAMPLE_SPECS::sample_rate_t from_srate,
 #ifdef ECA_DEBUG_MODE
     DBC_CHECK(impl_repp->rt_lock_rep != true);
 #endif
-    impl_repp->old_buffer_repp = new sample_t [reserved_samples_rep];
+    priv_alloc_sample_buf(&impl_repp->old_buffer_repp, sizeof(sample_t) * reserved_samples_rep);
   }
 
   if (impl_repp->resample_memory_rep.size() < static_cast<size_t>(channel_count_rep)) {

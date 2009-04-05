@@ -77,6 +77,7 @@ class SAMPLE_BUFFER {
   /*@{*/
 
   void add_matching_channels(const SAMPLE_BUFFER& x);
+  void add_matching_channels_ref(const SAMPLE_BUFFER& x);
   void add_with_weight(const SAMPLE_BUFFER& x, int weight);
   void copy_matching_channels(const SAMPLE_BUFFER& x);
   void copy_all_content(const SAMPLE_BUFFER& x);
@@ -88,12 +89,20 @@ class SAMPLE_BUFFER {
   /*@{*/ 
 
   void divide_by(sample_t dvalue);
+  void divide_by_ref(sample_t dvalue);
+  void multiply_by(sample_t factor);
+  void multiply_by(sample_t factor, int channel)
+  void multiply_by_ref(sample_t factor);
+  void multiply_by_ref(sample_t factor, int channel)
   void limit_values(void);
+  void limit_values_ref(void);
   void make_empty(void);
   bool is_empty(void) const { return buffersize_rep == 0; }
   void make_silent(void);
   void make_silent(int channel);
+  void make_silent_ref(int channel);
   void make_silent_range(buf_size_t start_pos, buf_size_t end_pos);
+  void make_silent_range_ref(buf_size_t start_pos, buf_size_t end_pos);
   void resample(SAMPLE_SPECS::sample_rate_t from_rate, SAMPLE_SPECS::sample_rate_t to_rate);
   void resample_set_quality(int quality);
   int resample_get_quality(void) const;

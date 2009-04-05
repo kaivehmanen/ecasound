@@ -1,3 +1,11 @@
+2009-04-04  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* samplebuffer.h: Added member functions multiply_by() (two overloaded
+	versions).
+	* samplebuffer.h: Added unoptimized member funcs make_silent_range_ref(),
+	add_matching_channels_ref(), multiply_by_ref(), divide_by_ref(),
+	make_silent_ref(), limit_values_ref().
+
 2009-03-28  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* samplebuffer.h: Added overloaded make_silent(int channel).
