@@ -6,6 +6,7 @@ ECALIBS = $(shell libecasound-config --libs_debug)
 CXX=c++
 CPPFLAGS += -DVERBOSE
 CPPFLAGS += -DLIBECASOUND_VERSION=$(shell grep libecasound_version `which libecasound-config` |cut -f2 -d=)
+CXXFLAGS += -Werror -g
 
 # FIXME: move C eci tests to libecasoundc?
 
