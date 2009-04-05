@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // preset.cpp: Class for representing effect presets
-// Copyright (C) 2000-2002,2004-2007 Kai Vehmanen
+// Copyright (C) 2000-2002,2004-2007,2009 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
 //
 // Attributes:
@@ -508,7 +508,6 @@ CHAIN_OPERATOR::parameter_t PRESET::get_parameter(int param) const
 {
   if (param > 0 && param <= static_cast<int>(impl_repp->slave_param_objects_rep.size())) {
     DBC_CHECK(static_cast<int>(impl_repp->slave_param_indices_rep.size()) > param - 1);
-    DBC_CHECK(impl_repp->slave_param_indices_rep[param - 1].size() > 0);
 
     if (impl_repp->slave_param_indices_rep[param - 1].size() > 0) {
       int index = impl_repp->slave_param_indices_rep[param - 1][0];

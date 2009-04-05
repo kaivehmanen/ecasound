@@ -24,7 +24,18 @@ class PRESET_impl {
 
   vector<string> preset_param_names_rep;
 
+  /** 
+   * maps preset's public params 1...N (parent) to params
+   * of slave objects (one-to-many mapping as multiple 
+   * slave params can be associated with the same preset
+   * param
+   */
   vector<vector<int> > slave_param_indices_rep;
+
+  /**
+   * maps preset's public params 1...N (parent) to slave
+   * objects (see slave_param_indices_rep)
+   */
   vector<vector<DYNAMIC_OBJECT<SAMPLE_SPECS::sample_t>* > > slave_param_objects_rep;
 
   vector<GENERIC_CONTROLLER*> gctrls_rep;
