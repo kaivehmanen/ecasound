@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
 	      "Testing with libecasound *** v%s *** (%s).\n",
 	      ecasound_library_version, __FILE__);
 
-  res += test_sbuf_make_silent();
   res += test_sbuf_copy_ops();
   res += test_sbuf_constructor();
+  res += test_sbuf_make_silent();
   res += test_sbuf_mix();
   res += test_sbuf_iter();
 
@@ -108,47 +108,63 @@ int test_sbuf_copy_ops(void)
   SAMPLE_BUFFER sbuf_b (bufsize, channels);
 
   std::printf("sbuf_copy_ops with %d loops (bufsize=%d, ch=%d):\n", 
-	      loops, 1024, 12);
+	      loops, bufsize, channels);
 
 #if LIBECASOUND_VERSION >= 22
-  /* note: make sure code is paged in */
-  sbuf_a.copy_all_content(sbuf_b);
-
-  t1.start();
-  for(int n = 0; n < loops; n++) {
-    sbuf_a.copy_all_content(sbuf_b);
-  }
-  t1.stop();
-
-  helper_print_one_result("copy_all_content", t1, loops, bufsize);
-
-  /* note: make sure code is paged in */
-  sbuf_a.copy_matching_channels(sbuf_b);
-  t1.reset();
-
-  t1.start();
-  for(int n = 0; n < loops; n++) {
-    sbuf_a.copy_matching_channels(sbuf_b);
-  }
-  t1.stop();
-
-  helper_print_one_result("copy_matching_channels", t1, loops, bufsize);
-
+ {
+   /* note: make sure code is paged in */
+   sbuf_a.copy_all_content(sbuf_b);
+   
+   t1.start();
+   for(int n = 0; n < loops; n++) {
+     sbuf_a.copy_all_content(sbuf_b);
+   }
+   t1.stop();
+   helper_print_one_result("copy_all_content", t1, loops, bufsize);
+ }
+ {
+   /* note: make sure code is paged in */
+   sbuf_a.copy_matching_channels(sbuf_b);
+   t1.reset();
+   
+   t1.start();
+   for(int n = 0; n < loops; n++) {
+     sbuf_a.copy_matching_channels(sbuf_b);
+   }
+   t1.stop();
+   helper_print_one_result("copy_matching_channels", t1, loops, bufsize);
+ }
 #else
-
-  /* note: make sure code is paged in */
-  sbuf_a.copy(sbuf_b);
-
-  t1.reset();
-  t1.start();
-  for(int n = 0; n < loops; n++) {
-    sbuf_a.copy(sbuf_b);
-  }
-  t1.stop();
-
-  helper_print_one_result("copy (v21-lib)", t1, loops, bufsize);
-
+ {
+   /* note: make sure code is paged in */
+   sbuf_a.copy(sbuf_b);
+   
+   t1.reset();
+   t1.start();
+   for(int n = 0; n < loops; n++) {
+     sbuf_a.copy(sbuf_b);
+   }
+   t1.stop();
+   
+   helper_print_one_result("copy (v21-lib)", t1, loops, bufsize);
+ }
 #endif
+ {
+   size_t rawsize = sizeof(SAMPLE_BUFFER::sample_t) * bufsize * channels;
+   void *rawbuf1 = std::malloc(rawsize);
+   void *rawbuf2 = std::malloc(rawsize);
+
+   std::memcpy(rawbuf1, rawbuf2, rawsize);
+   t1.reset();
+   t1.start();
+   for(int n = 0; n < loops; n++) {
+     std::memcpy(rawbuf1, rawbuf2, rawsize);
+   }
+   t1.stop();
+   helper_print_one_result("copy_raw_memcpy", t1, loops, bufsize);
+   std::free(rawbuf1);
+   std::free(rawbuf2);
+ }
 }  
 
 int test_sbuf_constructor(void)
