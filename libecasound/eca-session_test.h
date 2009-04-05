@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-session_test.h: Unit test for ECA_SESSION
-// Copyright (C) 2003 Kai Vehmanen
+// Copyright (C) 2003,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ private:
 
 void ECA_SESSION_TEST::do_run(void)
 {
-  cerr << "libecasound_tester: eca-session - exception test" << endl;
+  cout << "libecasound_tester: eca-session - exception test" << endl;
   COMMAND_LINE cmdline;
   cmdline.push_back("-d:511");
   cmdline.push_back("-i:invalidinvalidinvalid");

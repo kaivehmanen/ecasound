@@ -50,7 +50,7 @@ private:
 
 void ECA_CONTROL_TEST::do_run(void)
 {
-  cerr << "libecasound_tester: eca-control - chainsetup creation stress test" << endl;
+  cout << "libecasound_tester: eca-control - chainsetup creation stress test" << endl;
   do_run_chainsetup_creation();
 }
 
@@ -62,7 +62,7 @@ void ECA_CONTROL_TEST::do_run_chainsetup_creation(void)
   int iterations = 127;
 
   for(int i = 0; i < iterations; i++) {
-    cerr << "libecasound_tester: do_run_chainsetup_creation() iteration " 
+    cout << "libecasound_tester: do_run_chainsetup_creation() iteration " 
 	 << i + 1 << " of " << iterations << "." << endl;
 
     ectrl->add_chainsetup("default");

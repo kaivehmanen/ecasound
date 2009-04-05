@@ -92,8 +92,6 @@ void ECA_CHAINSETUP_PARSER_TEST::do_run_format_options(void)
 
   ECA_LOG_MSG(ECA_LOGGER::info, afmt.format_string());
   ECA_LOG_MSG(ECA_LOGGER::info, csetup.default_audio_format().format_string());
-  cerr << (int)csetup.default_audio_format().sample_format() << endl;
-  cerr << (int)ECA_AUDIO_FORMAT::sfmt_f64_be << endl;
 
   p.interpret_option("-f:,6,");
   if (csetup.default_audio_format().channels() != 6)
