@@ -327,15 +327,14 @@ int test_sbuf_iter(void)
 
   /* case 2 */
   {
-    int ch, i;
     int ch_count = sbuf_a.number_of_channels();
     int i_count = sbuf_a.length_in_samples();
     t1.reset();
     t1.start();
     for(int n = 0; n < loops; n++) {
-      for (int ch = 0; ch < sbuf_a.number_of_channels(); ch++) {
+      for (int ch = 0; ch < ch_count; ch++) {
 	SAMPLE_BUFFER::sample_t *buf = sbuf_a.buffer[ch];
-	for (int i = 0; i < sbuf_a.length_in_samples(); i++) {
+	for (int i = 0; i < i_count; i++) {
 	  buf[i] *= multiplier;
 	}
       }
