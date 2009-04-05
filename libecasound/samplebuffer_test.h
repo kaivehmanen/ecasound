@@ -154,4 +154,25 @@ void SAMPLE_BUFFER_TEST::do_run(void)
       ECA_TEST_FAILURE("copy_all_content");
     }
   }
+
+  /* case: multiply_by */
+  {
+    std::fprintf(stdout, "%s: add_matching_channels\n",
+		 __FILE__);
+    SAMPLE_BUFFER sbuf_orig (bufsize, channels);
+    SAMPLE_BUFFER sbuf_ref (bufsize, channels);
+    SAMPLE_BUFFER sbuf_test (bufsize, channels);
+
+    fill_random_data(&sbuf_orig);
+
+    sbuf_test.copy_all_content(sbuf_orig);
+    sbuf_ref.copy_all_content(sbuf_orig);
+
+    sbuf_test.add_matching_channels(sbuf_orig);
+    sbuf_ref.add_matching_channels_ref(sbuf_orig);
+    
+    if (verify_content(sbuf_ref, sbuf_test) != true) {
+      ECA_TEST_FAILURE("optimized add_matching_channels");
+    }
+  }
 }
