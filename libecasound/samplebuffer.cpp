@@ -341,6 +341,18 @@ void SAMPLE_BUFFER::copy_range(const SAMPLE_BUFFER& src,
   }
 }
 
+void SAMPLE_BUFFER::multiply_by(SAMPLE_BUFFER::sample_t factor, int channel)
+{
+#ifdef ECA_USE_LIBOIL 
+  oil_scalarmultiply_f32_ns(reinterpret_cast<float*>(buffer[channel]), 
+			    reinterpret_cast<const float*>(buffer[channel]), 
+			    reinterpret_cast<const float*>(&factor), 
+			    buffersize_rep);
+#else
+  multiply_by_ref(factor, channel);
+#endif
+}
+
 void SAMPLE_BUFFER::multiply_by(SAMPLE_BUFFER::sample_t factor)
 {
 #ifdef ECA_USE_LIBOIL 
@@ -361,6 +373,13 @@ void SAMPLE_BUFFER::multiply_by_ref(SAMPLE_BUFFER::sample_t factor)
     for(buf_size_t m = 0; m < buffersize_rep; m++) {
       buffer[n][m] *= factor;
     }
+  }
+}
+
+void SAMPLE_BUFFER::multiply_by_ref(SAMPLE_BUFFER::sample_t factor, int channel)
+{
+  for(buf_size_t m = 0; m < buffersize_rep; m++) {
+    buffer[channel][m] *= factor;
   }
 }
 

@@ -91,9 +91,9 @@ class SAMPLE_BUFFER {
   void divide_by(sample_t dvalue);
   void divide_by_ref(sample_t dvalue);
   void multiply_by(sample_t factor);
-  void multiply_by(sample_t factor, int channel)
+  void multiply_by(sample_t factor, int channel);
   void multiply_by_ref(sample_t factor);
-  void multiply_by_ref(sample_t factor, int channel)
+  void multiply_by_ref(sample_t factor, int channel);
   void limit_values(void);
   void limit_values_ref(void);
   void make_empty(void);
