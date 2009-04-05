@@ -47,6 +47,8 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- added: -eadb chainop, like -ea/-eac, but gain given in dB;
 		 documented in ecasound(1)
 	- added: -chselect chainop; see ecasound(1)
+	- added: optional inner loop optimizations using liboil;
+		 enable with '--enable-liboil'
 	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
 	           all builds, expressing that the codebase expects 
 		   the build environment be compatible with the Single 
