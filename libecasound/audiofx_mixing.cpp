@@ -324,8 +324,7 @@ EFFECT_CHANNEL_SELECT* EFFECT_CHANNEL_SELECT::clone(void) const
 {
   EFFECT_CHANNEL_SELECT *obj =
     new EFFECT_CHANNEL_SELECT();
-  /* FIXME */
-  DBC_NEVER_REACHED();
+  /* note: obj->sbuf_repp is shared but this is ok */
   return obj;
 }
 
