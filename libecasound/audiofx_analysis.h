@@ -35,22 +35,19 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
  */
 class EFFECT_VOLUME_BUCKETS : public EFFECT_ANALYSIS {
 
-  static const int range_count;
+private:
 
-  mutable std::vector<unsigned long int> num_of_samples; // number of samples processed
-  mutable std::vector<std::vector<unsigned long int> > ranges;
-
-  mutable parameter_t max_pos_period, max_neg_period;
-  mutable unsigned long int clipped_pos_period, clipped_neg_period;
-  mutable pthread_mutex_t lock_rep;
-  mutable std::string status_rep;
-  
+  std::vector<unsigned long int> num_of_samples; // number of samples processed
+  std::vector<std::vector<unsigned long int> > pos_samples_db;
+  std::vector<std::vector<unsigned long int> > neg_samples_db;
   SAMPLE_SPECS::sample_t max_pos, max_neg;
-  bool cumulativemode_rep;
+
+  mutable pthread_mutex_t lock_rep;
   SAMPLE_ITERATOR_CHANNELS i;
 
-  void reset_stats(void);
-  void status_entry(int range, std::string& otemp) const;
+  void reset_all_stats(void);
+  void reset_period_stats(void);
+  void status_entry(const std::vector<unsigned long int>& buckets, std::string& otemp) const;
 
  public:
 

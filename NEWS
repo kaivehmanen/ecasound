@@ -70,6 +70,7 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- changed: optimized inner loops of -ea, -eadb, -eac, and -epp 
 	- changed: dropped tracking of 'clipped samples' from -ev as
 		   the results were of little use (and misleading)
+	- changed: '-ev' status output
 	- fixed: mp3 output was broken with lame 3.98 (and newer); 
 		 the default lame parameters have now been updated 
 		 and have been tested with lame 3.96, 3.97 and with

@@ -20,6 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <string>
 #include <cmath>
 
 #include <kvu_dbc.h>
@@ -28,13 +29,43 @@
 
 #include "samplebuffer_iterators.h"
 #include "audiofx_analysis.h"
+#include "audiofx_amplitude.h"
 
 #include "eca-logger.h"
 #include "eca-error.h"
 
-const int EFFECT_VOLUME_BUCKETS::range_count = 16;
+using namespace std;
 
+static string priv_align_right(const string txt, int width, char padchar)
+{
+  string res;
+  int pad = width - static_cast<int>(txt.size());
+  if (pad > 0) {
+    res.resize(pad, padchar);
+  }
+  return res + txt;
+}
 
+struct bucket {
+  const char *name;
+  int db; 
+  SAMPLE_SPECS::sample_t threshold;
+};
+
+#define BUCKET_ENTRY_DB(x) \
+ { #x, x, EFFECT_AMPLITUDE::db_to_linear(x) }
+
+static struct bucket bucket_table[] = 
+  { BUCKET_ENTRY_DB(-1),
+    BUCKET_ENTRY_DB(-3),
+    BUCKET_ENTRY_DB(-6),
+    BUCKET_ENTRY_DB(-9),
+    BUCKET_ENTRY_DB(-12),
+    BUCKET_ENTRY_DB(-15),
+    BUCKET_ENTRY_DB(-18),
+    BUCKET_ENTRY_DB(-24),
+    { "-inf", 0, -1 }
+  };
 
 EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
 {
@@ -43,8 +74,7 @@ EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
 
 EFFECT_VOLUME_BUCKETS::EFFECT_VOLUME_BUCKETS (void)
 {
-  reset_stats();
-  cumulativemode_rep = false;
+  reset_all_stats();
   int res = pthread_mutex_init(&lock_rep, NULL);
   DBC_CHECK(res == 0);
 }
@@ -53,30 +83,47 @@ EFFECT_VOLUME_BUCKETS::~EFFECT_VOLUME_BUCKETS (void)
 {
 }
 
-void EFFECT_VOLUME_BUCKETS::status_entry(int range, std::string& otemp) const
+void EFFECT_VOLUME_BUCKETS::status_entry(const std::vector<unsigned long int>& buckets, std::string& otemp) const
 {
   /* note: is called with 'lock_rep' taken */
 
-  for(int n = 0; n < channels(); n++) {
-    otemp += "\t " + kvu_numtostr(ranges[range][n]);
-    if (cumulativemode_rep == true) {
-      otemp += ",";
-      otemp += kvu_numtostr(100.0f *  
-			    ranges[range][n] / 
-			    num_of_samples[n], 3) + "%\t";
-    }
+  for(unsigned int n = 0; n < buckets.size(); n++) {
+    string samples = kvu_numtostr(buckets[n]);
+
+    otemp += priv_align_right(samples, 8, '_');
+
+#if NEVER_USED_PRINT_PERCENTAGE
+    otemp += " (";
+    otemp += priv_align_right(kvu_numtostr(100.0f *  
+					   buckets[n] / 
+					   num_of_samples[n], 2),
+			      6, '_');
+    otemp += "%)";
+#endif
+    if (n != buckets.size())
+      otemp += " ";
   }
 } 
 
-void EFFECT_VOLUME_BUCKETS::reset_stats(void)
+
+void EFFECT_VOLUME_BUCKETS::reset_all_stats(void)
 {
-  for(unsigned int nm = 0; nm < ranges.size(); nm++)
-    for(unsigned int ch = 0; ch < ranges[nm].size(); ch++)
-      ranges[nm][ch] = 0;
+  reset_period_stats();
+  max_pos = max_neg = 0.0f;
+}
+
+void EFFECT_VOLUME_BUCKETS::reset_period_stats(void)
+{
+  for(unsigned int nm = 0; nm < pos_samples_db.size(); nm++)
+    for(unsigned int ch = 0; ch < pos_samples_db[nm].size(); ch++)
+      pos_samples_db[nm][ch] = 0;
+
+  for(unsigned int nm = 0; nm < neg_samples_db.size(); nm++)
+    for(unsigned int ch = 0; ch < neg_samples_db[nm].size(); ch++)
+      neg_samples_db[nm][ch] = 0;
+
   for(unsigned int nm = 0; nm < num_of_samples.size(); nm++)
     num_of_samples[nm] = 0;
-  max_pos = max_neg = 0.0f;
-  max_pos_period = max_neg_period = 0.0f;
 }
 
 string EFFECT_VOLUME_BUCKETS::status(void) const
@@ -84,48 +131,39 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
   int res = pthread_mutex_lock(&lock_rep);
   DBC_CHECK(res == 0);
 
-  status_rep = "(audiofx) -- Amplitude statistics -----------------------------\n";
-  status_rep += "Range, pos/neg, count,(%), ch1...n";
+  std::string status_str;
 
-  status_rep += "\nPos   -1.0 dB: "; status_entry(0, status_rep);
-  status_rep += "\nPos   -2.0 dB: "; status_entry(1, status_rep);
-  status_rep += "\nPos   -4.0 dB: "; status_entry(2, status_rep);
-  status_rep += "\nPos   -8.0 dB: "; status_entry(3, status_rep);
-  status_rep += "\nPos  -16.0 dB: "; status_entry(4, status_rep);
-  status_rep += "\nPos  -32.0 dB: "; status_entry(5, status_rep);
-  status_rep += "\nPos  -64.0 dB: "; status_entry(6, status_rep);
-  status_rep += "\nPos -inf.0 dB: "; status_entry(7, status_rep);
-  status_rep += "\nNeg -inf.0 dB: "; status_entry(8, status_rep);
-  status_rep += "\nNeg  -64.0 dB: "; status_entry(9, status_rep);
-  status_rep += "\nNeg  -32.0 dB: "; status_entry(10, status_rep);
-  status_rep += "\nNeg  -16.0 dB: "; status_entry(11, status_rep);
-  status_rep += "\nNeg   -8.0 dB: "; status_entry(12, status_rep);
-  status_rep += "\nNeg   -4.0 dB: "; status_entry(13, status_rep);
-  status_rep += "\nNeg   -2.0 dB: "; status_entry(14, status_rep);
-  status_rep += "\nNeg   -1.0 dB: "; status_entry(15, status_rep);
+  status_str = "Amplitude statistics -----------------------------\n";
+  status_str += "Pos/neg, count,(%), ch1...n";
 
-  status_rep += "\n(audiofx) Peak amplitude, period: pos=" + kvu_numtostr(max_pos_period,5) + " neg=" + kvu_numtostr(max_neg_period,5) + ".\n";
-  status_rep += "(audiofx) Peak amplitude, all   : pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
-  status_rep += "(audiofx) Max gain without clipping, all: " + kvu_numtostr(max_multiplier(),5) + ".\n";
-
-  if (cumulativemode_rep == true)
-    status_rep += "(audiofx) -- End of statistics --------------------------------\n";
-  else
-    status_rep += "(audiofx) -- End of statistics (periodical counters reseted) --\n";
-
-  if (cumulativemode_rep != true) {
-    for(unsigned int nm = 0; nm < ranges.size(); nm++)
-      for(unsigned int ch = 0; ch < ranges[nm].size(); ch++)
-	ranges[nm][ch] = 0;
-    for(unsigned int nm = 0; nm < num_of_samples.size(); nm++)
-      num_of_samples[nm] = 0;
-    max_pos_period = max_neg_period = 0.0f;
+  for(unsigned j = 0; j < pos_samples_db.size(); j++) {
+    status_str += std::string("\nPos ")
+      + priv_align_right(bucket_table[j].name, 4, '_')
+      + "dB: ";
+    status_entry(pos_samples_db[j], status_str);
   }
+
+  for(unsigned int j = neg_samples_db.size(); j > 0; j--) {
+    DBC_CHECK(j >= 0);
+    status_str += std::string("\nNeg ")
+      + priv_align_right(bucket_table[j-1].name, 4, '_')
+      + "dB: ";
+    status_entry(neg_samples_db[j-1], status_str);
+  }
+
+  status_str += std::string("\nTotal.....: ");
+  status_entry(num_of_samples, status_str);
+  status_str += "\n";
+
+  status_str += "(audiofx) Peak amplitude           : pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
+  status_str += "(audiofx) Max gain without clipping: " + kvu_numtostr(max_multiplier(),5) + ".\n";
+
+  status_str += "(audiofx) -- End of statistics --------------------------------\n";
 
   res = pthread_mutex_unlock(&lock_rep);
   DBC_CHECK(res == 0);
 
-  return status_rep;
+  return status_str;
 }
 
 void EFFECT_VOLUME_BUCKETS::parameter_description(int param, 
@@ -162,20 +200,16 @@ void EFFECT_VOLUME_BUCKETS::parameter_description(int param,
 
 void EFFECT_VOLUME_BUCKETS::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
-  switch (param) {
-  case 1: 
-    if (value != 0)
-      cumulativemode_rep = true;
-    else
-      cumulativemode_rep = false;
-  }
+  return;
 }
 
 CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::get_parameter(int param) const
 {
   switch (param) {
   case 1: 
-    if (cumulativemode_rep == true) return 1.0;
+    /* note: always enabled since 2.7.0, but keeping the parameter 
+     *       still for backwards compatibility */
+    return 1.0f;
     
   case 2:
     return max_multiplier();
@@ -202,50 +236,56 @@ void EFFECT_VOLUME_BUCKETS::init(SAMPLE_BUFFER* insample)
 {
   int res = pthread_mutex_lock(&lock_rep);
   DBC_CHECK(res == 0);
-
+  
   i.init(insample);
   set_channels(insample->number_of_channels());
-  num_of_samples.resize(channels(), 0);
-  ranges.resize(range_count, std::vector<unsigned long int> (channels()));
+  DBC_CHECK(channels() == insample->number_of_channels());
+  num_of_samples.resize(insample->number_of_channels(), 0);
 
+  int entries = sizeof(bucket_table) / sizeof(struct bucket);
+
+  pos_samples_db.resize(entries, std::vector<unsigned long int> (channels()));
+  neg_samples_db.resize(entries, std::vector<unsigned long int> (channels()));
+
+  reset_all_stats();
+  
   res = pthread_mutex_unlock(&lock_rep);
   DBC_CHECK(res == 0);
+
+  EFFECT_ANALYSIS::init(insample);
 }
 
 void EFFECT_VOLUME_BUCKETS::process(void)
 {
+  DBC_CHECK(static_cast<int>(num_of_samples.size()) == channels());
+
   int res = pthread_mutex_trylock(&lock_rep);
   if (res == 0) {
     i.begin();
     while(!i.end()) {
+
+      DBC_CHECK(num_of_samples.size() > static_cast<unsigned>(i.channel()));
       num_of_samples[i.channel()]++;
+
       if (*i.current() >= 0) {
 	if (*i.current() > max_pos) max_pos = *i.current();
-	if (*i.current() > max_pos_period) max_pos_period = *i.current();
-	if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.891f) {
-	  ranges[0][i.channel()]++;  // 0-1dB
+
+	for(unsigned j = 0; j < pos_samples_db.size(); j++) {
+	  if (*i.current() > bucket_table[j].threshold) {
+	    pos_samples_db[j][i.channel()]++;
+	    break;
+	  }
 	}
-	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.794f) ranges[1][i.channel()]++;  // 1-2dB
-	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.631f) ranges[2][i.channel()]++; // 2-4dB
-	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.398f) ranges[3][i.channel()]++; // 4-8dB
-	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.158f) ranges[4][i.channel()]++; // 8-16dB
-	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.025f) ranges[5][i.channel()]++; // 16-32dB
-	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.001f) ranges[6][i.channel()]++; // 32-64dB
-	else ranges[7][i.channel()]++; // 64-infdB
       }
       else {
 	if (-(*i.current()) > max_neg) max_neg = -(*i.current());
-	if (-(*i.current()) > max_neg_period) max_neg_period = -(*i.current());
-	if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.891f) {
-	  ranges[15][i.channel()]++;  // 0-1dB
+
+	for(unsigned j = 0; j < neg_samples_db.size(); j++) {
+	  if (*i.current() < -bucket_table[j].threshold) {
+	    neg_samples_db[j][i.channel()]++;
+	    break;
+	  }
 	}
-	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.794f) ranges[14][i.channel()]++;  // 1-2dB
-	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.631f) ranges[13][i.channel()]++; // 2-4dB
-	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.398f) ranges[12][i.channel()]++; // 4-8dB
-	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.158f) ranges[11][i.channel()]++; // 8-16dB
-	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.025f) ranges[10][i.channel()]++; // 16-32dB
-	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.001f) ranges[9][i.channel()]++; // 32-64dB
-	else ranges[8][i.channel()]++; // 64-infdB
       }
       i.next();
     }

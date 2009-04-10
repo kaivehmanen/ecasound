@@ -15,7 +15,7 @@ class EFFECT_AMPLITUDE : public EFFECT_BASE {
 
  public:
 
-  parameter_t db_to_linear(parameter_t value);
+  static parameter_t db_to_linear(parameter_t value);
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void release(void);
