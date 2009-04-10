@@ -30,6 +30,7 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
 
   parameter_t gain_rep;
   SAMPLE_ITERATOR i;
+  SAMPLE_BUFFER* sbuf_repp;
 
  public:
 
@@ -41,7 +42,9 @@ class EFFECT_AMPLIFY: public EFFECT_AMPLITUDE {
   virtual parameter_t get_parameter(int param) const;
 
   virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
   virtual void process(void);
+  virtual void process_ref(void);
 
   EFFECT_AMPLIFY (parameter_t multiplier_percent = 100.0);
   virtual ~EFFECT_AMPLIFY(void);

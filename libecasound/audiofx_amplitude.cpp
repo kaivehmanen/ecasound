@@ -72,9 +72,24 @@ void EFFECT_AMPLIFY::parameter_description(int param, struct PARAM_DESCRIPTION *
   OPERATOR::parameter_description(param, pd);
 }
 
-void EFFECT_AMPLIFY::init(SAMPLE_BUFFER* sbuf) { i.init(sbuf); }
+void EFFECT_AMPLIFY::init(SAMPLE_BUFFER* sbuf)
+{
+  i.init(sbuf);
+  sbuf_repp = sbuf;
+}
 
-void EFFECT_AMPLIFY::process(void) {
+void EFFECT_AMPLIFY::release(void)
+{
+  sbuf_repp = 0;
+}
+
+void EFFECT_AMPLIFY::process(void)
+{
+  sbuf_repp->multiply_by(gain_rep);
+}
+
+void EFFECT_AMPLIFY::process_ref(void)
+{
   i.begin();
   while(!i.end()) {
     *i.current() = *i.current() *  gain_rep;
