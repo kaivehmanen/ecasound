@@ -303,6 +303,7 @@ ecasound_controller_src = \
 ecasound_general_src = 	eca-chain.cpp \
 			eca-engine.cpp \
 			samplebuffer.cpp \
+			samplebuffer_functions.cpp \
 			eca-session.cpp \
 			eca-resources.cpp \
 			resource-file.cpp \
