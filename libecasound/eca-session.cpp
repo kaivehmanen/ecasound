@@ -69,11 +69,13 @@ ECA_SESSION::ECA_SESSION(void)
 
 ECA_SESSION::~ECA_SESSION(void)
 {
-  // ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_SESSION destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_SESSION destructor-in");
 
   for(std::vector<ECA_CHAINSETUP*>::iterator q = chainsetups_rep.begin(); q != chainsetups_rep.end(); q++) {
     delete *q;
   }
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_SESSION destructor-out");
 }
 
 ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)

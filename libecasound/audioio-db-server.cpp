@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-db-server.cpp: Audio i/o engine serving db clients.
-// Copyright (C) 2000-2005 Kai Vehmanen
+// Copyright (C) 2000-2005,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -147,6 +147,8 @@ AUDIO_IO_DB_SERVER::~AUDIO_IO_DB_SERVER(void)
   delete impl_repp;
 
   DB_PROFILING_STATEMENT(dump_profile_counters());
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "destructor-out");
 }
 
 /**

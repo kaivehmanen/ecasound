@@ -181,7 +181,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
  */
 ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_CHAINSETUP destructor!");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_CHAINSETUP destructor-in");
 
   DBC_CHECK(is_locked() != true);
   if (is_enabled() == true) {
@@ -256,6 +256,8 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
   }
 
   delete impl_repp;
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ECA_CHAINSETUP destructor-out");
 }
 
 /**
