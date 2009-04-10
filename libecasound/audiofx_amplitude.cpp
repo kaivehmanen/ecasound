@@ -780,9 +780,9 @@ void EFFECT_NORMAL_PAN::init(SAMPLE_BUFFER *insample)
 
 void EFFECT_NORMAL_PAN::process(void)
 {
-  if (cur_sbuf_repp->number_of_channels() < 2) 
-    return;
-  
+  /* to match with out_channels() */
+  cur_sbuf_repp->number_of_channels(2);
+ 
   cur_sbuf_repp->multiply_by(l_gain, SAMPLE_SPECS::ch_left);
   cur_sbuf_repp->multiply_by(r_gain, SAMPLE_SPECS::ch_right);
 }
