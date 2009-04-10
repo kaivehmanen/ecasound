@@ -70,6 +70,7 @@ ECA_TEST_REPOSITORY& ECA_TEST_REPOSITORY::instance(void)
 ECA_TEST_REPOSITORY::ECA_TEST_REPOSITORY(void)
 {
   test_cases_rep.push_back(new EFFECT_AMPLIFY_TEST());
+  test_cases_rep.push_back(new EFFECT_AMPLIFY_CHANNEL_TEST());
   test_cases_rep.push_back(new ECA_AUDIO_TIME_TEST());
   test_cases_rep.push_back(new ECA_SESSION_TEST());
   test_cases_rep.push_back(new ECA_CONTROL_TEST());

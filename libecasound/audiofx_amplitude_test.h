@@ -87,3 +87,59 @@ void EFFECT_AMPLIFY_TEST::do_run(void)
     }
   }
 }
+
+/**
+ * Unit test for EFFECT_AMPLIFY_CHANNEL
+ */
+class EFFECT_AMPLIFY_CHANNEL_TEST : public ECA_TEST_CASE {
+
+protected:
+
+  virtual string do_name(void) const { return("EFFECT_AMPLIFY_CHANNEL"); }
+  virtual void do_run(void);
+
+public:
+
+  virtual ~EFFECT_AMPLIFY_CHANNEL_TEST(void) { }
+
+private:
+
+};
+
+void EFFECT_AMPLIFY_CHANNEL_TEST::do_run(void)
+{
+  const int bufsize = 1024;
+  const int channels = 12;
+  const SAMPLE_BUFFER::sample_t multiplier = 112.1f;
+
+  std::fprintf(stdout, "%s: tests for %s class\n",
+	       name().c_str(), __FILE__);
+
+  /* case: process() */
+  {
+    std::fprintf(stdout, "%s: process()\n", __FILE__);
+    SAMPLE_BUFFER sbuf_test (bufsize, channels);
+    SAMPLE_BUFFER sbuf_ref (bufsize, channels);
+
+    EFFECT_AMPLIFY_CHANNEL amp_test;
+    EFFECT_AMPLIFY_CHANNEL amp_ref;
+    
+    SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(&sbuf_ref);
+    sbuf_test.copy_all_content(sbuf_ref);
+
+    amp_test.init(&sbuf_test);
+    amp_ref.init(&sbuf_ref);
+    
+    amp_test.set_parameter(1, multiplier);
+    amp_test.set_parameter(2, 3);
+    amp_ref.set_parameter(1, multiplier);
+    amp_ref.set_parameter(2, 3);
+
+    amp_test.process();
+    amp_ref.process_ref();
+    
+    if (SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(sbuf_ref, sbuf_test) != true) {
+      ECA_TEST_FAILURE("optimized process()");
+    }
+  }
+}
