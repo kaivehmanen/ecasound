@@ -48,19 +48,17 @@ EFFECT_VOLUME_BUCKETS::EFFECT_VOLUME_BUCKETS (void)
 {
   reset_stats();
   cumulativemode_rep = false;
-  lock_repp = new pthread_mutex_t;
-  int res = pthread_mutex_init(lock_repp, NULL);
+  int res = pthread_mutex_init(&lock_rep, NULL);
   DBC_CHECK(res == 0);
 }
 
 EFFECT_VOLUME_BUCKETS::~EFFECT_VOLUME_BUCKETS (void)
 {
-  delete lock_repp;
 }
 
 void EFFECT_VOLUME_BUCKETS::status_entry(int range, std::string& otemp) const
 {
-  /* note: is called with 'lock_repp' taken */
+  /* note: is called with 'lock_rep' taken */
 
   for(int n = 0; n < channels(); n++) {
     otemp += "\t " + kvu_numtostr(ranges[range][n]);
@@ -82,13 +80,11 @@ void EFFECT_VOLUME_BUCKETS::reset_stats(void)
     num_of_samples[nm] = 0;
   max_pos = max_neg = 0.0f;
   max_pos_period = max_neg_period = 0.0f;
-  clipped_pos_period =  clipped_neg_period = 0;
-  clipped_pos = clipped_neg = 0;
 }
 
 string EFFECT_VOLUME_BUCKETS::status(void) const
 {
-  int res = pthread_mutex_lock(lock_repp);
+  int res = pthread_mutex_lock(&lock_rep);
   DBC_CHECK(res == 0);
 
   status_rep = "(audiofx) -- Amplitude statistics -----------------------------\n";
@@ -132,7 +128,7 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
     clipped_pos_period =  clipped_neg_period = 0;
   }
 
-  res = pthread_mutex_unlock(lock_repp);
+  res = pthread_mutex_unlock(&lock_rep);
   DBC_CHECK(res == 0);
 
   return status_rep;
@@ -210,7 +206,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_VOLUME_BUCKETS::max_multiplier(void) const
 
 void EFFECT_VOLUME_BUCKETS::init(SAMPLE_BUFFER* insample)
 {
-  int res = pthread_mutex_lock(lock_repp);
+  int res = pthread_mutex_lock(&lock_rep);
   DBC_CHECK(res == 0);
 
   i.init(insample);
@@ -218,13 +214,13 @@ void EFFECT_VOLUME_BUCKETS::init(SAMPLE_BUFFER* insample)
   num_of_samples.resize(channels(), 0);
   ranges.resize(range_count, std::vector<unsigned long int> (channels()));
 
-  res = pthread_mutex_unlock(lock_repp);
+  res = pthread_mutex_unlock(&lock_rep);
   DBC_CHECK(res == 0);
 }
 
 void EFFECT_VOLUME_BUCKETS::process(void)
 {
-  int res = pthread_mutex_trylock(lock_repp);
+  int res = pthread_mutex_trylock(&lock_rep);
   if (res == 0) {
     i.begin();
     while(!i.end()) {
@@ -266,9 +262,9 @@ void EFFECT_VOLUME_BUCKETS::process(void)
       i.next();
     }
 
-    res = pthread_mutex_unlock(lock_repp);
+    res = pthread_mutex_unlock(&lock_rep);
     DBC_CHECK(res == 0);
-  } 
+  }
   // else { std::cerr << "(audiofx_analysis) lock taken, skipping process().\n"; }
 }
 

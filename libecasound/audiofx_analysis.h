@@ -47,7 +47,7 @@ class EFFECT_VOLUME_BUCKETS : public EFFECT_ANALYSIS {
 
   mutable parameter_t max_pos_period, max_neg_period;
   mutable unsigned long int clipped_pos_period, clipped_neg_period;
-  mutable pthread_mutex_t* lock_repp;
+  mutable pthread_mutex_t lock_rep;
   mutable std::string status_rep;
   
   SAMPLE_SPECS::sample_t max_pos, max_neg;
