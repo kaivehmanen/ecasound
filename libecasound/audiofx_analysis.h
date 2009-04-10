@@ -17,10 +17,6 @@ class MESSAGE_ITEM;
  */
 class EFFECT_ANALYSIS : public EFFECT_BASE {
 
- protected:
-
-  static const SAMPLE_SPECS::sample_t clip_amplitude;
-
  public:
 
   virtual void set_parameter(int param, parameter_t value) { }
@@ -40,7 +36,6 @@ class EFFECT_ANALYSIS : public EFFECT_BASE {
 class EFFECT_VOLUME_BUCKETS : public EFFECT_ANALYSIS {
 
   static const int range_count;
-  static const SAMPLE_SPECS::sample_t clip_amplitude;
 
   mutable std::vector<unsigned long int> num_of_samples; // number of samples processed
   mutable std::vector<std::vector<unsigned long int> > ranges;
@@ -51,7 +46,6 @@ class EFFECT_VOLUME_BUCKETS : public EFFECT_ANALYSIS {
   mutable std::string status_rep;
   
   SAMPLE_SPECS::sample_t max_pos, max_neg;
-  unsigned long int clipped_pos, clipped_neg;
   bool cumulativemode_rep;
   SAMPLE_ITERATOR_CHANNELS i;
 

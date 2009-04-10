@@ -32,12 +32,9 @@
 #include "eca-logger.h"
 #include "eca-error.h"
 
-/* 'max-(max/2^15)' */
-const SAMPLE_SPECS::sample_t EFFECT_ANALYSIS::clip_amplitude =
-                                SAMPLE_SPECS::max_amplitude - 
-                                SAMPLE_SPECS::max_amplitude / 16384.0f;
-
 const int EFFECT_VOLUME_BUCKETS::range_count = 16;
+
+
 
 EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
 {
@@ -109,8 +106,6 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
 
   status_rep += "\n(audiofx) Peak amplitude, period: pos=" + kvu_numtostr(max_pos_period,5) + " neg=" + kvu_numtostr(max_neg_period,5) + ".\n";
   status_rep += "(audiofx) Peak amplitude, all   : pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
-  status_rep += "(audiofx) Clipped samples, period: pos=" + kvu_numtostr(clipped_pos_period) + " neg=" + kvu_numtostr(clipped_neg_period) + ".\n";
-  status_rep += "(audiofx) Clipped samples, all   : pos=" + kvu_numtostr(clipped_pos) + " neg=" + kvu_numtostr(clipped_neg) + ".\n";
   status_rep += "(audiofx) Max gain without clipping, all: " + kvu_numtostr(max_multiplier(),5) + ".\n";
 
   if (cumulativemode_rep == true)
@@ -125,7 +120,6 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
     for(unsigned int nm = 0; nm < num_of_samples.size(); nm++)
       num_of_samples[nm] = 0;
     max_pos_period = max_neg_period = 0.0f;
-    clipped_pos_period =  clipped_neg_period = 0;
   }
 
   res = pthread_mutex_unlock(&lock_rep);
@@ -229,9 +223,6 @@ void EFFECT_VOLUME_BUCKETS::process(void)
 	if (*i.current() > max_pos) max_pos = *i.current();
 	if (*i.current() > max_pos_period) max_pos_period = *i.current();
 	if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.891f) {
-	  if (*i.current() >= EFFECT_ANALYSIS::clip_amplitude) {
-	    clipped_pos_period++; clipped_pos++;
-	  }
 	  ranges[0][i.channel()]++;  // 0-1dB
 	}
 	else if (*i.current() > SAMPLE_SPECS::max_amplitude * 0.794f) ranges[1][i.channel()]++;  // 1-2dB
@@ -246,9 +237,6 @@ void EFFECT_VOLUME_BUCKETS::process(void)
 	if (-(*i.current()) > max_neg) max_neg = -(*i.current());
 	if (-(*i.current()) > max_neg_period) max_neg_period = -(*i.current());
 	if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.891f) {
-	  if (*i.current() <= -EFFECT_ANALYSIS::clip_amplitude) {
-	    clipped_neg_period++; clipped_neg++;
-	  }
 	  ranges[15][i.channel()]++;  // 0-1dB
 	}
 	else if (*i.current() < SAMPLE_SPECS::max_amplitude * -0.794f) ranges[14][i.channel()]++;  // 1-2dB

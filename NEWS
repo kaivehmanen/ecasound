@@ -67,7 +67,9 @@ xxyy2009 (v2.x.y) -** stable release **-
 	 	   defaults are already set in the program binaries)
 	- changed: optimized inner loops in core chain routing and
 		   mixdown functions (with liboil if available)
-	- changed: optimied innter loops of -ea, -ead, -eac, and -epp 
+	- changed: optimized inner loops of -ea, -eadb, -eac, and -epp 
+	- changed: dropped tracking of 'clipped samples' from -ev as
+		   the results were of little use (and misleading)
 	- fixed: mp3 output was broken with lame 3.98 (and newer); 
 		 the default lame parameters have now been updated 
 		 and have been tested with lame 3.96, 3.97 and with
