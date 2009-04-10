@@ -59,7 +59,7 @@ void ECA_CONTROL_TEST::do_run_chainsetup_creation(void)
   ECA_SESSION *esession = new ECA_SESSION();
   ECA_CONTROL *ectrl = new ECA_CONTROL(esession);
 
-  int iterations = 127;
+  int iterations = 15;
 
   for(int i = 0; i < iterations; i++) {
     cout << "libecasound_tester: do_run_chainsetup_creation() iteration " 

@@ -53,6 +53,10 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
+  cerr << "-------------------------------------------------------------------------" << endl;
+  cerr << "libecasound_tester start:" << endl;
+  cerr << "-------------------------------------------------------------------------" << endl;
+
   if (argc > 1)
     /* note: run one test case */
     repo.run(std::string(argv[1]));
