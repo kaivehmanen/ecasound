@@ -1122,7 +1122,6 @@ dnl ------------------------------------------------------------------
 
 dnl All non-std external libraries that libecasound depends on
 AC_SUBST(ECA_S_EXTRA_CPPFLAGS)
-AC_SUBST(ECA_S_EXTRA_CFLAGS)
 AC_SUBST(ECA_S_EXTRA_LIBS)
 
 dnl ------------------------------------------------------------------
@@ -1402,9 +1401,6 @@ if test x$enable_sysreadline = xyes ; then
 fi  
 if test "x$ECA_S_EXTRA_CPPFLAGS" != "x" ; then
 	echo "Extra headers:          "$ECA_S_EXTRA_CPPFLAGS
-fi
-if test "x$ECA_S_EXTRA_CFLAGS" != "x" ; then
-	echo "Extra compile options: "$ECA_S_EXTRA_CFLAGS
 fi
 if test "x$ECA_S_EXTRA_LIBS" != "x" ; then
 	echo "Extra libs:            "$ECA_S_EXTRA_LIBS

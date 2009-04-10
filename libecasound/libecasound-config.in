@@ -45,7 +45,7 @@ do
 	  esac
 	  ;;
     --cflags)
-	  flags="$flags -I$includedir/libecasound -I$includedir/kvutils @ECA_S_EXTRA_CFLAGS@"
+	  flags="$flags -I$includedir/libecasound -I$includedir/kvutils @ECA_S_EXTRA_CPPFLAGS@"
 	  ;;
     --version)
 	  echo @VERSION@
