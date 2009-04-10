@@ -40,6 +40,18 @@ EFFECT_AMPLITUDE::parameter_t EFFECT_AMPLITUDE::db_to_linear(parameter_t value)
   return std::pow(10.0f, static_cast<float>(value * 0.05f));
 }
 
+void EFFECT_AMPLITUDE::init(SAMPLE_BUFFER* sbuf)
+{
+  cur_sbuf_repp = sbuf;
+  EFFECT_BASE::init(sbuf);
+}
+
+void EFFECT_AMPLITUDE::release(void)
+{
+  cur_sbuf_repp = 0;
+  EFFECT_BASE::release();
+}
+
 EFFECT_AMPLIFY::EFFECT_AMPLIFY (EFFECT_AMPLITUDE::parameter_t multiplier_percent)
 {
   set_parameter(1, multiplier_percent);
@@ -88,6 +100,9 @@ void EFFECT_AMPLIFY::process(void)
   sbuf_repp->multiply_by(gain_rep);
 }
 
+/**
+ * Unoptimized version of process().
+ */
 void EFFECT_AMPLIFY::process_ref(void)
 {
   i.begin();
@@ -161,6 +176,7 @@ void EFFECT_AMPLIFY_DB::init(SAMPLE_BUFFER* sbuf)
   else {
     i_all.init(sbuf);
   }
+  EFFECT_BASE::init(sbuf);
 }
 
 void EFFECT_AMPLIFY_DB::release(void)
@@ -170,7 +186,20 @@ void EFFECT_AMPLIFY_DB::release(void)
 
 void EFFECT_AMPLIFY_DB::process(void)
 {
-  if (channel_rep > 0) {
+  if (channel_rep > 0 && channel_rep <= channels()) {
+    sbuf_repp->multiply_by(gain_rep, channel_rep - 1);
+  }  
+  else {
+    sbuf_repp->multiply_by(gain_rep);
+  }
+}
+
+/**
+ * Unoptimized version of process().
+ */
+void EFFECT_AMPLIFY_DB::process_ref(void)
+{
+  if (channel_rep > 0 && channel_rep < channels()) {
     i_ch.begin();
     while(!i_ch.end()) {
       *i_ch.current() *= gain_rep;
@@ -321,11 +350,21 @@ void EFFECT_AMPLIFY_CHANNEL::parameter_description(int param, struct PARAM_DESCR
 
 void EFFECT_AMPLIFY_CHANNEL::init(SAMPLE_BUFFER *insample)
 {
-  EFFECT_BASE::init(insample);
   i.init(insample);
+  EFFECT_AMPLITUDE::init(insample);
 }
 
 void EFFECT_AMPLIFY_CHANNEL::process(void)
+{
+  if (channel_rep >= 0 && channel_rep < channels()) {
+    cur_sbuf_repp->multiply_by(gain, channel_rep);
+  }
+}
+
+/**
+ * Unoptimized version of process().
+ */
+void EFFECT_AMPLIFY_CHANNEL::process_ref(void)
 {
   if (channel_rep >= 0 && channel_rep < channels()) {
     i.begin(channel_rep);
@@ -734,9 +773,25 @@ void EFFECT_NORMAL_PAN::parameter_description(int param, struct PARAM_DESCRIPTIO
   }
 }
 
-void EFFECT_NORMAL_PAN::init(SAMPLE_BUFFER *insample) { i.init(insample); }
+void EFFECT_NORMAL_PAN::init(SAMPLE_BUFFER *insample)
+{
+  i.init(insample);
+  EFFECT_AMPLITUDE::init(insample);
+}
 
 void EFFECT_NORMAL_PAN::process(void)
+{
+  if (cur_sbuf_repp->number_of_channels() < 2) 
+    return;
+  
+  cur_sbuf_repp->multiply_by(l_gain, SAMPLE_SPECS::ch_left);
+  cur_sbuf_repp->multiply_by(r_gain, SAMPLE_SPECS::ch_right);
+}
+
+/**
+ * Unoptimized version of process().
+ */
+void EFFECT_NORMAL_PAN::process_ref(void)
 {
   i.begin(0);
   while(!i.end()) {

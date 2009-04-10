@@ -1,5 +1,8 @@
 2009-04-10  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
+	* audiofx_amplitude.cpp: Added EFFECT_AMPLIFY::process_ref(),
+	EFFECT_AMPLIFY_DB::process_ref(), EFFECT_AMPLIFY_CHANNEL::process_ref()
+	and EFFECT_NORMAL_PAN::process_ref().
 	* samplebuffer_functions.h: Added fill_with_random_samples(), 
 	is_almost_equal().
 

@@ -38,7 +38,7 @@
 #include "samplebuffer_functions.h"
 
 /* ignore one bit errors in significand */
-static const uint32_t diff_threshold_ints = 1;
+static const uint32_t diff_threshold_ints = 0;
 
 void SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(SAMPLE_BUFFER *sbuf)
 {

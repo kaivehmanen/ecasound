@@ -65,6 +65,9 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- changed: comment out many entries in the global installed
 		   'ecasoundrc' file (entries are redundant as the same
 	 	   defaults are already set in the program binaries)
+	- changed: optimized inner loops in core chain routing and
+		   mixdown functions (with liboil if available)
+	- changed: optimied innter loops of -ea, -ead, -eac, and -epp 
 	- fixed: mp3 output was broken with lame 3.98 (and newer); 
 		 the default lame parameters have now been updated 
 		 and have been tested with lame 3.96, 3.97 and with

@@ -17,7 +17,14 @@ class EFFECT_AMPLITUDE : public EFFECT_BASE {
 
   parameter_t db_to_linear(parameter_t value);
 
+  virtual void init(SAMPLE_BUFFER *insample);
+  virtual void release(void);
   virtual ~EFFECT_AMPLITUDE(void);
+
+protected:
+
+  SAMPLE_BUFFER *cur_sbuf_repp;
+
 };
 
 #include "audiofx_compressor.h"
@@ -78,6 +85,7 @@ class EFFECT_AMPLIFY_DB: public EFFECT_AMPLITUDE {
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void release(void);
   virtual void process(void);
+  virtual void process_ref(void);
 
   virtual int output_channels(int i_channels) const;
 
@@ -137,6 +145,7 @@ class EFFECT_AMPLIFY_CHANNEL: public EFFECT_AMPLITUDE {
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
+  virtual void process_ref(void);
 
   EFFECT_AMPLIFY_CHANNEL* clone(void) const { return new EFFECT_AMPLIFY_CHANNEL(*this); }
   EFFECT_AMPLIFY_CHANNEL* new_expr(void) const { return new EFFECT_AMPLIFY_CHANNEL(); }
@@ -276,6 +285,7 @@ public:
 
   virtual void init(SAMPLE_BUFFER *insample);
   virtual void process(void);
+  virtual void process_ref(void);
     
   EFFECT_NORMAL_PAN* clone(void) const { return new EFFECT_NORMAL_PAN(*this); }
   EFFECT_NORMAL_PAN* new_expr(void) const { return new EFFECT_NORMAL_PAN(); }
