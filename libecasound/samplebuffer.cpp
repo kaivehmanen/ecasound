@@ -58,8 +58,6 @@ extern "C" {
 #include "samplebuffer_impl.h"
 #include "eca-logger.h"
 
-#undef ECA_USE_LIBOIL 
-
 /* Debug resampling operations */ 
 // #define DEBUG_RESAMPLING
 
