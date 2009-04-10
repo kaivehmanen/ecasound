@@ -18,69 +18,16 @@
 // ------------------------------------------------------------------------
 
 #include <string>
-#include <cassert>
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
 
 #include "kvu_dbc.h"
 #include "kvu_inttypes.h"
 
 #include "samplebuffer.h"
+#include "samplebuffer_functions.h"
 #include "eca-test-case.h"
 
 using namespace std;
-
-/* ignore one bit errors in significand */
-static const uint32_t diff_threshold_ints = 1;
-
-static void fill_random_data(SAMPLE_BUFFER *sbuf)
-{
-  std::srand(time(0));
-  int ch_count = sbuf->number_of_channels();
-  int i_count = sbuf->length_in_samples();
-
-  for (int ch = 0; ch < ch_count; ch++) {
-    SAMPLE_BUFFER::sample_t *buf = sbuf->buffer[ch];
-    for (int i = 0; i < i_count; i++) {
-      int foo = std::rand();
-      assert(sizeof(SAMPLE_BUFFER::sample_t) <= sizeof(foo));
-      std::memcpy(buf, &foo, sizeof(SAMPLE_BUFFER::sample_t));
-    }
-  }
-}
-
-static bool verify_content(SAMPLE_BUFFER& a, SAMPLE_BUFFER& b)
-{
-  if (a.number_of_channels() !=
-      b.number_of_channels())
-    return false;
-
-  if (a.length_in_samples() !=
-      b.length_in_samples())
-    return false;
-  
-  int ch_count = a.number_of_channels();
-  int i_count = a.length_in_samples();
-
-  for (int ch = 0; ch < ch_count; ch++) {
-    for (int i = 0; i < i_count; i++) {
-      if (a.buffer[ch][i] != b.buffer[ch][i]) {
-	assert(sizeof(SAMPLE_BUFFER::sample_t) == sizeof(uint32_t));
-	uint32_t diff = std::labs(*reinterpret_cast<uint32_t*>(&a.buffer[ch][i]) -
-				  *reinterpret_cast<uint32_t*>(&b.buffer[ch][i]));
-	if (diff > diff_threshold_ints) {
-	    std::fprintf(stderr, "%s: ERROR sample ch%d[%d], diff %d (%.03f<->%.03f)\n",
-			 __FILE__, ch, i, diff, a.buffer[ch][i], b.buffer[ch][i]);
-	    return false;
-	}
-      }
-    }
-  }
-
-  return true;
-}
 
 /**
  * Unit test for SAMPLE_BUFFER
@@ -117,7 +64,7 @@ void SAMPLE_BUFFER_TEST::do_run(void)
     SAMPLE_BUFFER sbuf_ref (bufsize, channels);
     SAMPLE_BUFFER sbuf_test (bufsize, channels);
 
-    fill_random_data(&sbuf_orig);
+    SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(&sbuf_orig);
     
     sbuf_test.copy_all_content(sbuf_orig);
     sbuf_ref.copy_all_content(sbuf_orig);
@@ -125,7 +72,7 @@ void SAMPLE_BUFFER_TEST::do_run(void)
     sbuf_test.multiply_by(multiplier);
     sbuf_ref.multiply_by_ref(multiplier);
     
-    if (verify_content(sbuf_ref, sbuf_test) != true) {
+    if (SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(sbuf_ref, sbuf_test) != true) {
       ECA_TEST_FAILURE("optimized multiple_by");
     }
   }
@@ -139,7 +86,7 @@ void SAMPLE_BUFFER_TEST::do_run(void)
     SAMPLE_BUFFER sbuf_ref (bufsize, channels);
     SAMPLE_BUFFER sbuf_test (bufsize, channels);
 
-    fill_random_data(&sbuf_orig);
+    SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(&sbuf_orig);
 
     /* note: copy_all_content should modify the destination
      *       channel and sample counts to match those of
@@ -149,8 +96,8 @@ void SAMPLE_BUFFER_TEST::do_run(void)
 
     sbuf_test.copy_all_content(sbuf_orig);
     sbuf_ref.copy_matching_channels(sbuf_orig);
-    
-    if (verify_content(sbuf_ref, sbuf_test) != true) {
+
+    if (SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(sbuf_ref, sbuf_test) != true) { 
       ECA_TEST_FAILURE("copy_all_content");
     }
   }
@@ -163,7 +110,7 @@ void SAMPLE_BUFFER_TEST::do_run(void)
     SAMPLE_BUFFER sbuf_ref (bufsize, channels);
     SAMPLE_BUFFER sbuf_test (bufsize, channels);
 
-    fill_random_data(&sbuf_orig);
+    SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(&sbuf_orig);
 
     sbuf_test.copy_all_content(sbuf_orig);
     sbuf_ref.copy_all_content(sbuf_orig);
@@ -171,7 +118,7 @@ void SAMPLE_BUFFER_TEST::do_run(void)
     sbuf_test.add_matching_channels(sbuf_orig);
     sbuf_ref.add_matching_channels_ref(sbuf_orig);
     
-    if (verify_content(sbuf_ref, sbuf_test) != true) {
+    if (SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(sbuf_ref, sbuf_test) != true) { 
       ECA_TEST_FAILURE("optimized add_matching_channels");
     }
   }
