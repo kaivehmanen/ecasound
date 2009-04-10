@@ -1,3 +1,8 @@
+2009-04-10  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* samplebuffer_functions.h: Added fill_with_random_samples(), 
+	is_almost_equal().
+
 2009-04-04  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* samplebuffer.h: Added member functions multiply_by() (two overloaded
