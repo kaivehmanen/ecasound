@@ -330,7 +330,7 @@ int test_sbuf_iter(void)
   SAMPLE_BUFFER sbuf_a (bufsize, channels);
   EFFECT_AMPLIFY amplify (multiplier);
 
-  /* case 1 */
+  /* case 1a */
   {
     amplify.init(&sbuf_a);
     amplify.process();
@@ -343,6 +343,21 @@ int test_sbuf_iter(void)
     t1.stop();
   
     helper_print_one_result("effect_amplify", t1, loops, bufsize);
+  }
+
+  /* case 1b */
+  {
+    amplify.init(&sbuf_a);
+    amplify.process_ref();
+    
+    t1.reset();
+    t1.start();
+    for(int n = 0; n < loops; n++) {
+      amplify.process_ref();
+    }
+    t1.stop();
+  
+    helper_print_one_result("effect_amplify_ref", t1, loops, bufsize);
   }
 
   /* case 2 */
