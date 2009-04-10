@@ -113,7 +113,8 @@ void EFFECT_AMPLIFY::process_ref(void)
 }
 
 EFFECT_AMPLIFY_DB::EFFECT_AMPLIFY_DB(parameter_t gain, int channel)
-  : sbuf_repp(0) 
+  : channel_rep(-1),
+    sbuf_repp(0) 
 {
   set_parameter(1, gain);
   set_parameter(2, channel);
@@ -309,10 +310,8 @@ void EFFECT_AMPLIFY_CHANNEL::set_parameter(int param, parameter_t value)
       break;
       
     case 2: 
-      if (value > 0) {
-	channel_rep = static_cast<int>(value);
-	channel_rep--;
-      }
+      channel_rep = static_cast<int>(value);
+      channel_rep--;
       break;
   default:
     DBC_NEVER_REACHED();
