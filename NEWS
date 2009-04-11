@@ -72,6 +72,12 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- changed: dropped tracking of 'clipped samples' from -ev as
 		   the results were of little use (and misleading)
 	- changed: '-ev' status output
+	- changed: cosmetic changes to the default ncurses trace output;
+		   reduced number of subsystem-level trace messages 
+	- changed: the name for default chainsetup created from command 
+	           line is now "untitled-chainsetup"
+	- changed: do not automatically connect chainsetups loaded
+		   with '-s'
 	- fixed: mp3 output was broken with lame 3.98 (and newer); 
 		 the default lame parameters have now been updated 
 		 and have been tested with lame 3.96, 3.97 and with
