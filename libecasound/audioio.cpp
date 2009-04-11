@@ -243,8 +243,8 @@ string AUDIO_IO::get_parameter(int param) const
 string AUDIO_IO::parameter_get_to_string(int param) const
 {
   return string("get param ")
-    + kvu_numtostr(param) + " of '" + label() + "': '" 
-    + kvu_numtostr(param) + "'";
+    + kvu_numtostr(param) + " of \"" + label() + "\": \"" 
+    + kvu_numtostr(param) + "\"";
 }
 
 /** 
@@ -253,8 +253,8 @@ string AUDIO_IO::parameter_get_to_string(int param) const
 string AUDIO_IO::parameter_set_to_string(int param, string value) const
 {
   return string("set param ")
-    + kvu_numtostr(param) + " of '" 
-    + label() + "' to '" + value + "'";
+    + kvu_numtostr(param) + " of \"" 
+    + label() + "\" to \"" + value + "\"";
 }
 
 // ===================================================================
@@ -401,9 +401,9 @@ void AUDIO_IO::set_samples_per_second(SAMPLE_SPECS::sample_rate_t v)
   ECA_AUDIO_FORMAT::set_samples_per_second(v);
   ECA_AUDIO_POSITION::set_samples_per_second(v);
   ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		"set srate, aobj '" +
+		"set srate, aobj \"" +
 		name() + ":" + label() +
-		"' to " + 
+		"\" to " + 
 		kvu_numtostr(v) + ".");
 }
 
@@ -418,8 +418,8 @@ SAMPLE_SPECS::sample_pos_t AUDIO_IO::seek_position(SAMPLE_SPECS::sample_pos_t po
   if (supports_seeking() != true &&
       pos != 0) {
     ECA_LOG_MSG(ECA_LOGGER::info,
-		"WARNING: seeking not supported by audio objects of type '" +
-		name() + ".");
+		"WARNING: seeking not supported by audio objects of type \"" +
+		name() + "\".");
     return position_in_samples();
   }
 

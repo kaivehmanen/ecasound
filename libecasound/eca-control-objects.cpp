@@ -493,7 +493,7 @@ void ECA_CONTROL_OBJECTS::connect_chainsetup(void)
   }
   try {
     session_repp->connect_chainsetup();
-    ECA_LOG_MSG(ECA_LOGGER::info, "Connected chainsetup:  \"" + connected_chainsetup() + "\".");
+    ECA_LOG_MSG(ECA_LOGGER::subsystems, "Connected chainsetup: \"" + connected_chainsetup() + "\"");
   }
   catch(ECA_ERROR& e) {
     errmsg = e.error_message();

@@ -48,7 +48,7 @@ ECA_RESOURCES::ECA_RESOURCES(void)
 
     globalrc_repp = new RESOURCE_FILE(ecasound_resource_path + "/ecasoundrc");
     if (globalrc_repp->keywords().size() == 0) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Global resource file '" + ecasound_resource_path + "/ecasoundrc" + "' not available! Ecasound may not function properly!");
+      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Global resource file \"" + ecasound_resource_path + "/ecasoundrc" + "\" not available! Ecasound may not function properly!");
       resources_found_rep = false;
     }
     
@@ -60,7 +60,7 @@ ECA_RESOURCES::ECA_RESOURCES(void)
 
       userrc_repp = new RESOURCE_FILE(user_ecasoundrc_path + "/ecasoundrc");
       if (userrc_repp && userrc_repp->has("user-resource-directory") == true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Old resource data found in '" + user_ecasoundrc_path + ". You can reset configuration parameters by removing the old rc-file.");
+	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Old resource data found in \"" + user_ecasoundrc_path + "\". You can reset configuration parameters by removing the old rc-file.");
       }
     }
     else
@@ -75,7 +75,7 @@ ECA_RESOURCES::ECA_RESOURCES(void)
 
     overriderc_repp = new RESOURCE_FILE(ECA_RESOURCES::rc_override_file);
     if (overriderc_repp->keywords().size() == 0) {
-      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Override resource file '" + ECA_RESOURCES::rc_override_file + "' not available! Ecasound may not function properly!");
+      ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: Override resource file \"" + ECA_RESOURCES::rc_override_file + "\" not available! Ecasound may not function properly!");
       resources_found_rep = false;
     }
   }

@@ -317,7 +317,10 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
     }
     else {
       if (is_valid() == true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "WARNING: No chainsetup connected. Trying to connect currently selected chainsetup.");
+	ECA_LOG_MSG(ECA_LOGGER::info, 
+		    "NOTE: No chainsetup connected. Trying to connect currently selected chainsetup \""
+		    + selected_chainsetup_repp->name() 
+		    + "\"");
 	connect_chainsetup();
       }
       if (is_connected() != true) {

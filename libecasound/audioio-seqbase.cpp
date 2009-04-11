@@ -155,8 +155,8 @@ void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
     if (len_tmp.seconds() < 
 	child_length_rep.seconds()) 
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "WARNING: object '" + child()->label() +
-		  "' is too short, reducing segment length to '" 
+		  "WARNING: object \"" + child()->label() +
+		  "\" is too short, reducing segment length to '" 
 		  + kvu_numtostr(len_tmp.seconds()) + "'sec.");
   }
 
@@ -242,7 +242,7 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
 
     // dump_child_debug("case2-in");
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"child-object '" + child()->label() + "' activated.");
+		"child-object \"" + child()->label() + "\" activated.");
 
     /* step: read segment of audio and copy it to the correct 
      *       location */
@@ -439,8 +439,8 @@ void AUDIO_SEQUENCER_BASE::set_child_start_position(const ECA_AUDIO_TIME& v)
   if (is_open() == true &&
       child()->supports_seeking_sample_accurate() != true) {
     ECA_LOG_MSG(ECA_LOGGER::errors, 
-		"ERROR: object '" + child()->label() +
-		"' does not support sample accurate seeking, unable to set start position.");
+		"ERROR: object \"" + child()->label() +
+		"\" does not support sample accurate seeking, unable to set start position.");
     return;
   }
 

@@ -61,7 +61,7 @@ using std::vector;
 
 ECA_SESSION::ECA_SESSION(void)
 {
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created (empty)");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Session created (empty)");
   connected_chainsetup_repp = 0;
   selected_chainsetup_repp = 0;
   cs_defaults_set_rep = false;
@@ -95,7 +95,7 @@ ECA_SESSION::ECA_SESSION(COMMAND_LINE& cline) throw(ECA_ERROR&)
 
   /* NOTE: must be printed after general options are parsed 
   *        in case user has specified -q (quiet operation) */
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Session created");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Session created");
 
   if (errors > 0) {
     throw(ECA_ERROR("ECA-SESSION", "Errors parsing session-level options. Unable to create session."));
@@ -383,7 +383,7 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&)
   DBC_REQUIRE(selected_chainsetup_repp->is_valid());
   // --------
 
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Connecting chainsetup");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Connecting chainsetup");
 
   if (selected_chainsetup_repp == connected_chainsetup_repp) return;
 
@@ -398,7 +398,7 @@ void ECA_SESSION::connect_chainsetup(void) throw(ECA_ERROR&)
   selected_chainsetup_repp->enable();
   connected_chainsetup_repp = selected_chainsetup_repp;
 
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup connected");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Chainsetup connected");
  
   // --------
   // ensure:
@@ -415,7 +415,7 @@ void ECA_SESSION::disconnect_chainsetup(void)
   connected_chainsetup_repp->disable();
   connected_chainsetup_repp = 0;
 
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup disconnected");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Chainsetup disconnected");
 
   // --------
   DBC_ENSURE(connected_chainsetup_repp == 0);
@@ -619,7 +619,7 @@ int ECA_SESSION::interpret_chainsetup_option (const std::string& argu)
       load_chainsetup(tname);
       if (selected_chainsetup_repp == 0 || 
 	  selected_chainsetup_repp->is_valid_for_connection(true) != true) {
-	ECA_LOG_MSG(ECA_LOGGER::info, "Chainsetup loaded from '" + tname + "' is not valid!");
+	ECA_LOG_MSG(ECA_LOGGER::info, "Chainsetup loaded from \"" + tname + "\" is not valid!");
 	++errors;
       }
     }

@@ -175,7 +175,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(const std::vector<string>& opts)
       interpret_global_option(*p);
       ECA_LOGGER::instance().set_log_level_bitmask(dlevel);
       if (interpret_match_found() != true) {
-	interpret_set_result(false, string("Invalid argument, unable to parse: '") + *p + "'");
+	interpret_set_result(false, string("Invalid argument, unable to parse: \"") + *p + "\"");
 	break;
       }
       else {
@@ -581,8 +581,8 @@ void ECA_CHAINSETUP_PARSER::interpret_audio_format (const string& argu)
       }
       catch(ECA_ERROR& e) {
 	interpret_set_result(false, 
-			     string("Unable to parse sample format '") +
-			     sample_fmt + "' passed to -f.");
+			     string("Unable to parse sample format \"") +
+			     sample_fmt + "\" passed to -f.");
 	istatus_rep = true;
 	return;
       }
@@ -716,9 +716,9 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	if ((audio_input->supported_io_modes() &
 	     AUDIO_IO::io_read) != AUDIO_IO::io_read) {
 	  interpret_set_result(false, 
-			       string("Audio object '") + 
+			       string("Audio object \"") + 
 			       tname +
-			       "' cannot be opened for input.");
+			       "\" cannot be opened for input.");
 	}
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"adding file \"" + tname + "\".");
@@ -753,7 +753,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	  truncate = true;
 	}
 	if (((audio_output->supported_io_modes() & mode_tmp) != mode_tmp)) {
-	  interpret_set_result(false, string("io_write/io_readwrite access modes not supported by output '") + audio_output->name() + "'.");
+	  interpret_set_result(false, string("io_write/io_readwrite access modes not supported by output \"") + audio_output->name() + "\".");
 	}
 	else {
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"adding file \"" + tname + "\".");
@@ -782,7 +782,7 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 	if (newpos > 0.0f &&
 	    last_object &&
 	    last_object->supports_seeking() != true) {
-	  interpret_set_result(false, string("Audio object does not support seeking, unable to set a non-zero starting offset. Object generating the error is '") + last_object->name() + "'.");
+	  interpret_set_result(false, string("Audio object does not support seeking, unable to set a non-zero starting offset. Object generating the error is \"") + last_object->name() + "\".");
 	}
 	else {
 
@@ -812,9 +812,9 @@ void ECA_CHAINSETUP_PARSER::interpret_audioio_device (const string& argu)
 
   if (print_error == true) {
     interpret_set_result(false, 
-			 string("Audio object '") +
+			 string("Audio object \"") +
 			 tname + 
-			 "' does not match any of the known audio device types or "
+			 "\" does not match any of the known audio device types or "
 			 "file formats. You can check the list of supported "
 			 "audio object types by issuing the command 'aio-register' in "
 			 "ecasound's interactive mode.");

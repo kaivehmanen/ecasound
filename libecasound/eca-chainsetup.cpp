@@ -103,9 +103,6 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
   : cparser_rep(this),
     is_enabled_rep(false)
 {
-
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (cmdline)");
-
   impl_repp = new ECA_CHAINSETUP_impl;
 
   // FIXME: set default audio format here!
@@ -124,6 +121,8 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
     add_default_output();
     add_default_midi_device();
   }
+
+  ECA_LOG_MSG(ECA_LOGGER::info, "Chainsetup \"" + setup_name_rep + "\"");
 }
 
 /**
@@ -135,12 +134,12 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(void)
   : cparser_rep(this),
     is_enabled_rep(false)
 {
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (empty)");
-
   impl_repp = new ECA_CHAINSETUP_impl;
 
   setup_name_rep = "";
   set_defaults();
+
+  ECA_LOG_MSG(ECA_LOGGER::info, "Chainsetup created (empty)");
 }
 
 /**
@@ -157,8 +156,6 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
   : cparser_rep(this),
     is_enabled_rep(false)
 {
-  ECA_LOG_MSG(ECA_LOGGER::subsystems, "Chainsetup created (file)");
-
   impl_repp = new ECA_CHAINSETUP_impl;
 
   setup_name_rep = "";
@@ -174,6 +171,11 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const string& setup_file)
      * it might hide real problems */
     add_default_output();
   }
+
+  ECA_LOG_MSG(ECA_LOGGER::info, 
+	      "Chainsetup \"" 
+	      + name() + "\" created (file: "
+	      + setup_file + ")"); 
 }
 
 /**
@@ -349,8 +351,8 @@ string ECA_CHAINSETUP::set_resource_helper(const ECA_RESOURCES& ecaresources, co
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::system_objects,
-		"Using hardcoded defaults for '" +
-		tag + "'.");
+		"Using hardcoded defaults for \"" +
+		tag + "\".");
     return alternative;
   }
 }
@@ -460,9 +462,9 @@ void ECA_CHAINSETUP::set_buffering_mode(Buffering_mode_t value)
 void ECA_CHAINSETUP::set_audio_io_manager_option(const string& mgrname, const string& optionstr)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      "Set manager '" +
-	      mgrname + "' option string to '" +
-	      optionstr + "'.");
+	      "Set manager \"" +
+	      mgrname + "\" option string to \"" +
+	      optionstr + "\".");
 
   aio_manager_option_map_rep[mgrname] = optionstr;
   propagate_audio_io_manager_options();
@@ -546,19 +548,19 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void)
     case ECA_CHAINSETUP::cs_bmode_nonrt: { 
       impl_repp->bmode_active_rep = impl_repp->bmode_nonrt_rep;
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "'nonrt' buffering mode selected.");
+		    "\"nonrt\" buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rt: { 
       impl_repp->bmode_active_rep = impl_repp->bmode_rt_rep;
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "'rt' buffering mode selected.");
+		    "\"rt\" buffering mode selected.");
       break; 
     }
     case ECA_CHAINSETUP::cs_bmode_rtlowlatency: { 
       impl_repp->bmode_active_rep = impl_repp->bmode_rtlowlatency_rep;
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		    "'rtlowlatency' buffering mode selected.");
+		    "\"rtlowlatency\" buffering mode selected.");
       break;
     }
     default: { /* error! */ }
@@ -1170,10 +1172,10 @@ AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_manager(AUDIO_IO* aio) const
     if ((*q)->is_managed_type(aio) && 
 	(*q)->get_object_id(aio) != -1) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    "Found object manager '" +
+		    "Found object manager \"" +
 		    (*q)->name() + 
-		    "' for aio '" +
-		    aio->label() + "'.");
+		    "\" for aio \"" +
+		    aio->label() + "\".");
       
       return *q;
     }
@@ -1192,10 +1194,10 @@ AUDIO_IO_MANAGER* ECA_CHAINSETUP::get_audio_object_type_manager(AUDIO_IO* aio) c
   for(vector<AUDIO_IO_MANAGER*>::const_iterator q = aio_managers_rep.begin(); q != aio_managers_rep.end(); q++) {
     if ((*q)->is_managed_type(aio) == true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    "Found object manager '" +
+		    "Found object manager \"" +
 		    (*q)->name() + 
-		    "' for aio type '" +
-		    aio->name() + "'.");
+		    "\" for aio type \"" +
+		    aio->name() + "\".");
       
       return *q;
     }
@@ -1214,9 +1216,9 @@ void ECA_CHAINSETUP::register_engine_driver(AUDIO_IO_MANAGER* amgr)
   if (driver != 0) {
     engine_driver_repp = driver;
     ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		  "Registered audio i/o manager '" +
+		  "Registered audio i/o manager \"" +
 		  amgr->name() +
-		  "' as the current engine driver.");
+		  "\" as the current engine driver.");
   }
 }
 
@@ -1232,10 +1234,10 @@ void ECA_CHAINSETUP::register_audio_object_to_manager(AUDIO_IO* aio)
     mgr = aio->create_object_manager();
     if (mgr != 0) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    "Creating object manager '" +
+		    "Creating object manager \"" +
 		    mgr->name() + 
-		    "' for aio '" +
-		    aio->name() + "'.");
+		    "\" for aio \"" +
+		    aio->name() + "\".");
       aio_managers_rep.push_back(mgr);
       propagate_audio_io_manager_options();
       mgr->register_object(aio);
@@ -1259,10 +1261,10 @@ void ECA_CHAINSETUP::unregister_audio_object_from_manager(AUDIO_IO* aio)
     int id = mgr->get_object_id(aio);
     if (id != -1) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    "Unregistering object '" +
+		    "Unregistering object \"" +
 		    aio->name() + 
-		    "' from manager '" +
-		    mgr->name() + "'.");
+		    "\" from manager \"" +
+		    mgr->name() + "\".");
       mgr->unregister_object(id);
     }
   }
@@ -1283,10 +1285,10 @@ void ECA_CHAINSETUP::propagate_audio_io_manager_options(void)
       for(int n = 0; n < numparams; n++) {
 	(*q)->set_parameter(n + 1, kvu_get_argument_number(n + 1, optstring));
 	ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		    "Manager '" +
-		    (*q)->name() + "', " + 
-		    kvu_numtostr(n + 1) + ". parameter set to '" +
-		    (*q)->get_parameter(n + 1) + "'.");
+		    "Manager \"" +
+		    (*q)->name() + "\", " + 
+		    kvu_numtostr(n + 1) + ". parameter set to \"" +
+		    (*q)->get_parameter(n + 1) + "\".");
       }
     }      
   }
@@ -1583,7 +1585,7 @@ void ECA_CHAINSETUP::audio_object_open_info(const AUDIO_IO* aio)
   DBC_REQUIRE(aio != 0);
   // --------
 
-  string temp = "Opening ";
+  string temp = "Opened ";
   
   temp += (aio->io_mode() == AUDIO_IO::io_read) ? "input" : "output";
   temp += " \"" + aio->label();
@@ -1751,9 +1753,9 @@ void ECA_CHAINSETUP::check_object_samplerate(const AUDIO_IO* obj,
   if (obj->samples_per_second() != srate) {
     throw(ECA_ERROR("ECA-CHAINSETUP", 
 		    string("All audio objects must have a common") +
-		    " sampling rate; sampling rate of audio object '" +
+		    " sampling rate; sampling rate of audio object \"" +
  		    obj->label() +
-		    "' differs from engine rate (" +
+		    "\" differs from engine rate (" +
 		    kvu_numtostr(obj->samples_per_second()) +
 		    " <-> " + 
 		    kvu_numtostr(srate) + 
@@ -2084,7 +2086,7 @@ static void priv_seek_position_helper(std::vector<AUDIO_IO*>* objs, SAMPLE_SPECS
 	    (*q)->position_in_samples() != pos)
 	  ECA_LOG_MSG(ECA_LOGGER::info,
 		      "WARNING: sample accurate seek failed with " +
-		      tag + " '" + (*q)->name() + "'");
+		      tag + " \"" + (*q)->name() + "\"");
       }
     }
   }
@@ -2096,9 +2098,9 @@ static void priv_seek_position_helper(std::vector<AUDIO_IO*>* objs, SAMPLE_SPECS
 SAMPLE_SPECS::sample_pos_t ECA_CHAINSETUP::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-	      "seek position, chainsetup '" +
+	      "seek position, chainsetup \"" +
 	      name() +
-	      "' to pos in sec " + 
+	      "\" to pos in sec " + 
 	      kvu_numtostr(pos) + ".");
 
   if (is_enabled() == true) {
@@ -2112,8 +2114,8 @@ SAMPLE_SPECS::sample_pos_t ECA_CHAINSETUP::seek_position(SAMPLE_SPECS::sample_po
     (*q)->seek_position_in_samples(pos);
     if ((*q)->position_in_samples() != pos)
       ECA_LOG_MSG(ECA_LOGGER::info,
-		  "WARNING: sample accurate seek failed with chainop '" +
-		  (*q)->name() + "'");
+		  "WARNING: sample accurate seek failed with chainop \"" +
+		  (*q)->name() + "\"");
     
   }
 
