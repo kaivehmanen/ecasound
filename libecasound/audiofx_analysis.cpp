@@ -133,12 +133,12 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
 
   std::string status_str;
 
-  status_str = "Amplitude statistics -----------------------------\n";
+  status_str = "-- Amplitude statistics --\n";
   status_str += "Pos/neg, count,(%), ch1...n";
 
   for(unsigned j = 0; j < pos_samples_db.size(); j++) {
     status_str += std::string("\nPos ")
-      + priv_align_right(bucket_table[j].name, 4, '_')
+      + priv_align_right(bucket_table[j].name, 4, ' ')
       + "dB: ";
     status_entry(pos_samples_db[j], status_str);
   }
@@ -146,7 +146,7 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
   for(unsigned int j = neg_samples_db.size(); j > 0; j--) {
     DBC_CHECK(j >= 0);
     status_str += std::string("\nNeg ")
-      + priv_align_right(bucket_table[j-1].name, 4, '_')
+      + priv_align_right(bucket_table[j-1].name, 4, ' ')
       + "dB: ";
     status_entry(neg_samples_db[j-1], status_str);
   }
@@ -158,7 +158,7 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
   status_str += "(audiofx) Peak amplitude           : pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
   status_str += "(audiofx) Max gain without clipping: " + kvu_numtostr(max_multiplier(),5) + ".\n";
 
-  status_str += "(audiofx) -- End of statistics --------------------------------\n";
+  status_str += "(audiofx) -- End of statistics --\n";
 
   res = pthread_mutex_unlock(&lock_rep);
   DBC_CHECK(res == 0);
