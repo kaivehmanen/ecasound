@@ -25,13 +25,13 @@
 #endif
 
 #include <iostream>
+#include <cstdlib>
 #include <string>
-#include <vector>
 #include <algorithm>
 
 #include <eca-logger-interface.h>
-#include <kvu_utils.h>
 
+#include "ecasound.h"
 #include "textdebug.h"
 
 #ifdef ECA_USE_NCURSES_H
@@ -47,40 +47,75 @@
 
 using namespace std;
 
+const static int tb_terminal_width_default = ECASOUND_TERM_WIDTH_DEFAULT;
+
 /**
  * Set terminal width used in pretty-printing ecasound console output.
- *
- * Value of 79 guarantees that output is readable even in 80x25 terminal mode.
  */
-const static int tb_terminal_width = 74;
+static int tb_terminal_width = tb_terminal_width_default;
+
+/**
+ * Set terminal width used in pretty-printing banners and 
+ * other purely cosmetic traces.
+ */
+static int tb_terminal_width_banners = tb_terminal_width_default;
 
 /**
  * Wraps text 'msg' by adding <newline> + "... " breaks so that none 
  * of the lines exceed 'width' characteds.
  */
-static string tb_wrap(const string& msg, int width, int offset)
+static string tb_wrap(const string& msg, int width, int first_line_offset)
 {
-  int counter = offset;
-  vector<string> vec = kvu_string_to_vector(msg, ' ');
   string result;
-  for(vector<string>::const_iterator p = vec.begin(); p != vec.end(); ) {
-    /* check if adding the next token would go over the limit */
-    if ((counter + static_cast<int>(p->size())) > width) {
-      result += "\n... ";
-      counter = 0;
+  int wrlines = 0;
+  int offset = first_line_offset;
+  const string wrap_prefix ("... ");
+  size_t wrap_offset = wrap_prefix.size();
+  size_t begin, end;
+
+  for(begin = 0, end = 0; end < msg.size(); end++) {
+
+    if (begin == end)
+      continue;
+
+    /* case: trace messages has a newline itself, no wrap needed */
+    if (msg[end] == '\n') {
+      result += string(msg, begin, end - begin);
+      begin = end;
+      offset = 0;
+      ++wrlines;
     }
-    result += *p;
-    /* check if line already contains a newline */
-    if (find(p->begin(), p->end(), '\n') != p->end()) {
-      counter = 0;
+    /* case: current line exceeds the width, wrap */
+    else if (end - begin + offset >= static_cast<size_t>(width)) {
+      string tmpstr (msg, begin, end - begin);
+      size_t last_space = tmpstr.find_last_of(" ");
+
+      /* case: spaces on the line, wrap before last token */
+      if (last_space != string::npos) {
+	result += string(tmpstr, 0, last_space);
+	begin += last_space + 1;
+      }
+      /* case: no spaces on the line, cannot wrap */
+      else {
+	/* note: with first line, wrap all input */
+	if (static_cast<size_t>(first_line_offset) > wrap_offset &&
+	    wrlines == 0) {
+	  /* nop */
+	}
+	else {
+	  result += tmpstr;
+	  begin = end;
+	}
+      }
+
+      result += "\n" + wrap_prefix;
+      offset = wrap_offset;
+      ++wrlines;
     }
-    else {
-      counter += p->size();
-    }
-    ++p;
-    if (p != vec.end()) {
-      result += " ";
-    }
+  }
+
+  if ((end - begin) > 1) {
+    result += string(msg, begin, end - begin);
   }
   return result;
 }
@@ -115,11 +150,13 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
     else if (module_name.size() > 0 &&
 	     is_log_level_set(ECA_LOGGER::module_names) == true &&
 	     level != ECA_LOGGER::eiam_return_values) {
+      std::string module_name_without_ext 
+	= std::string(module_name.begin(), 
+		      find(module_name.begin(), module_name.end(), '.'));
       *dostream_repp << "(" 
-		     << std::string(module_name.begin(), 
-				    find(module_name.begin(), module_name.end(), '.'))
+		     << module_name_without_ext
 		     << ") ";
-      offset += module_name.size() + 2;
+      offset += module_name_without_ext.size() + 3;
     }
     
     *dostream_repp << tb_wrap(log_message, tb_terminal_width, offset);
@@ -131,8 +168,12 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
 #else
       *dostream_repp << " ] ";
 #endif
-      if (log_message.size() < static_cast<int>(tb_terminal_width)) {
-	for (unsigned char n = 0; n < (tb_terminal_width - log_message.size() - 1); n++) *dostream_repp << "-";
+      offset += 3;
+      int fillchars = tb_terminal_width_banners
+	- (static_cast<int>(log_message.size()) + offset);
+      if (fillchars > 0) {
+	string fillstr (fillchars, '-');
+	*dostream_repp << fillstr;
       }
     }
   
@@ -142,6 +183,23 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
 
 TEXTDEBUG::TEXTDEBUG(void)
 {
+  char *columns_str = getenv("COLUMNS");
+  if (columns_str) {
+    tb_terminal_width =
+      std::atoi(columns_str) - 4;
+    if (tb_terminal_width < 8)
+      tb_terminal_width = tb_terminal_width_default;
+  }
+#if defined(ECA_USE_NCURSES_H) || defined(ECA_USE_NCURSES_NCURSES_H) || defined(ECA_USE_CURSES_H)
+  else if (COLS > 0) {
+    tb_terminal_width = COLS - 4;
+  }
+#endif
+
+  if (tb_terminal_width < 
+      tb_terminal_width_banners)
+    tb_terminal_width_banners = tb_terminal_width;
+      
   dostream_repp = &std::cout;
 }
 

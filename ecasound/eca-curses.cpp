@@ -82,7 +82,11 @@ void ECA_CURSES::print(const std::string& msg)
 
 void ECA_CURSES::print_banner(void)
 {
-  std::cout << ECASOUND_BANNER_ASTERISK_BAR;
+  int width = COLS - 4;
+  if (width > ECASOUND_TERM_WIDTH_DEFAULT)
+    width = ECASOUND_TERM_WIDTH_DEFAULT;
+  string banner (width, '*');
+  std::cout << banner << std::endl;
   std::cout << "*";
   putp(tigetstr("bold"));
   std::cout << "        ecasound v" 
@@ -90,7 +94,7 @@ void ECA_CURSES::print_banner(void)
        << ECASOUND_COPYRIGHT;
   putp(tigetstr("sgr0"));
   std::cout << "\n";
-  std::cout << ECASOUND_BANNER_ASTERISK_BAR;
+  std::cout << banner << std::endl;
 }
 
 void ECA_CURSES::read_command(const std::string& prompt)

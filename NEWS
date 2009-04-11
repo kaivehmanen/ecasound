@@ -49,6 +49,7 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- added: -chselect chainop; see ecasound(1)
 	- added: optional inner loop optimizations using liboil;
 		 enable with '--enable-liboil'
+	- added: in ncurses mode, honor COLUMNS environment variable
 	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
 	           all builds, expressing that the codebase expects 
 		   the build environment be compatible with the Single 

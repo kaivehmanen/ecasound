@@ -26,6 +26,8 @@ class ECA_SESSION;
 #define ECASOUND_RETVAL_RUNTIME_ERROR   3    /**< Error during processing */
 #define ECASOUND_RETVAL_CLEANUP_ERROR   4    /**< Error during cleanup/exit */
 
+#define ECASOUND_TERM_WIDTH_DEFAULT     74
+
 /**
  * Type definitions
  */
