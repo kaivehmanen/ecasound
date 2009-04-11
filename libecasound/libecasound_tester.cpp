@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // libecasound_tester.cpp: Runs all tests registered to ECA_TEST_REPOSITORY
-// Copyright (C) 2002-2003 Kai Vehmanen
+// Copyright (C) 2002-2003,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,9 +53,9 @@ int main(int argc, char *argv[]) {
   }
 #endif
 
-  cerr << "-------------------------------------------------------------------------" << endl;
-  cerr << "libecasound_tester start:" << endl;
-  cerr << "-------------------------------------------------------------------------" << endl;
+  cout << "-------------------------------------------------------------------------" << endl;
+  cout << "libecasound_tester start:" << endl;
+  cout << "-------------------------------------------------------------------------" << endl;
 
   if (argc > 1)
     /* note: run one test case */
@@ -64,32 +64,32 @@ int main(int argc, char *argv[]) {
     /* note: run all test cases */
     repo.run();
 
-  cerr << "-------------------------------------------------------------------------" << endl;
-  cerr << "libecasound_tester summary:" << endl;
-  cerr << "-------------------------------------------------------------------------" << endl;
-  cerr << endl;
+  cout << "-------------------------------------------------------------------------" << endl;
+  cout << "libecasound_tester summary:" << endl;
+  cout << "-------------------------------------------------------------------------" << endl;
+  cout << endl;
 
   if (repo.success() != true) {
-    cerr << repo.failures().size() << " failed test cases ";
-    cerr << "in ECA_TEST_REPOSITORY:" << endl << endl;
+    cout << repo.failures().size() << " failed test cases ";
+    cout << "in ECA_TEST_REPOSITORY:" << endl << endl;
 
     const list<string>& failures = repo.failures();
     list<string>::const_iterator q = failures.begin();
     int n = 1;
     while(q != failures.end()) {
-      cerr << n++ << ". " << *q << endl;
+      cout << n++ << ". " << *q << endl;
       ++q;
     }
     
     return -1;
   }
   else {
-    cerr << "All tests succesful." << endl;
+    cout << "All tests succesful." << endl;
   }
 
-  cerr << endl;
-  cerr << "-------------------------------------------------------------------------";
-  cerr << endl << endl;
+  cout << endl;
+  cout << "-------------------------------------------------------------------------";
+  cout << endl << endl;
 
   return 0;
 }
