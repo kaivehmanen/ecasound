@@ -11,9 +11,9 @@
 # License: GPL (see ecasound/{AUTHORS,COPYING})
 # ----------------------------------------------------------------------
 
-
-ECASOUND=../ecasound/ecasound_debug
-#ECASOUND=ecasound
+if test "x${ECASOUND}" = "x" ; then
+  ECASOUND=../../ecasound/ecasound_debug
+fi
 
 # whether to skip md5sum checks
 SKIP_MD5SUM=0

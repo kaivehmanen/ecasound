@@ -17,10 +17,10 @@ function check_ecabin() {
 
 function set_ecasound_envvar() {
   if test "x$TESTECASOUND" = "x"; then
-    if test -e "../ecasound/ecasound_debug" ; then
-      TESTECASOUND="../ecasound/ecasound_debug"
+    if test -e "../../ecasound/ecasound_debug" ; then
+      TESTECASOUND="../../ecasound/ecasound_debug"
     else
-      TESTECASOUND="../ecasound/ecasound"
+      TESTECASOUND="../../ecasound/ecasound"
     fi
   fi 
 }
