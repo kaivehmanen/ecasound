@@ -72,26 +72,24 @@ void kvu_dbc_report_failure(const char *action, const char* expr, const char* fi
 
 #endif /* <-- DBC DISABLED */
 
-/* note: no dependency to config.h from this file even 
- *       if we can't include features.h */
-# if defined HAVE_FEATURES_H
-# endif
-
 /* Adapted from glibc 2.9 assert.h (LGPL 2.1)
   
    Version 2.4 and later of GCC define a magical variable `__PRETTY_FUNCTION__'
    which contains the name of the function currently being defined.
    This is broken in G++ before version 2.6.
-   C9x has a similar variable called __KVU_FUNCTION, but prefer the GCC one since
+   C9x has a similar variable called __func__, but prefer the GCC one since
    it demangles C++ function names.  */
+
 # if defined HAVE_FEATURES_H
 #   include <features.h>
 #   if defined __cplusplus ? __GNUC_PREREQ (2, 6) : __GNUC_PREREQ (2, 4)
 #     define __KVU_FUNCTION	__PRETTY_FUNCTION__
 #   else
-#     define __KVU_FUNCTION	((__const char *) 0)
+#     undef __KVU_FUNCTION
 #   endif
-# else
+# endif
+
+# if !defined(__KVU_FUNCTION) || !defined(HAVE_FEATURES_H)
 #  if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
 #   define __KVU_FUNCTION	__func__
 #  else
