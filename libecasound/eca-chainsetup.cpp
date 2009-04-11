@@ -110,7 +110,7 @@ ECA_CHAINSETUP::ECA_CHAINSETUP(const vector<string>& opts)
 
   // FIXME: set default audio format here!
 
-  setup_name_rep = "command-line-setup";
+  setup_name_rep = "untitled-chainsetup";
   setup_filename_rep = "";
 
   set_defaults();
