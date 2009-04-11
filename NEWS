@@ -46,7 +46,7 @@ xxyy2009 (v2.x.y) -** stable release **-
 		 more details
 	- added: -eadb chainop, like -ea/-eac, but gain given in dB;
 		 documented in ecasound(1)
-	- added: -chselect chainop; see ecasound(1)
+	- added: -chorder chainop; see ecasound(1)
 	- added: optional inner loop optimizations using liboil;
 		 enable with '--enable-liboil'
 	- added: in ncurses mode, honor COLUMNS environment variable

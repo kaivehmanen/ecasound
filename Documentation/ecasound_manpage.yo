@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (11.04.2009)
+       (12.04.2009)
        ()
        (Multimedia software)
 
@@ -812,13 +812,13 @@ Copy channel 'from_channel' to 'to_channel', and mutes the source
 channel 'from_channel'. Channel indexing starts from 1.
 Option added to ecasound 2.4.5.
 
-dit(-chselect:ch1,...,chN)
+dit(-chorder:ch1,...,chN)
 Reorder, omit and/r duplicate chain channels. The resulting
 audio stream has total of 'N' channels. Each parameter specifies
 the source channel to use for given output channel. As an
-example, '-chselect:2,1' would reverse the channels of 
+example, '-chorder:2,1' would reverse the channels of 
 a stereo stream ('out1,out2' = 'in2,in1'). Specifying the same 
-source channel multiple times is allowed. For example, '-chselect:2,2'
+source channel multiple times is allowed. For example, '-chorder:2,2'
 would route the second channel to both two output channels 
 ('out1,out2' = 'in2,in2'). If 'chX' is zero, the given channel 'X' 
 will be muted in the output stream.

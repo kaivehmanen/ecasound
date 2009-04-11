@@ -314,26 +314,26 @@ void EFFECT_MIX_TO_CHANNEL::process(void)
   }
 }
 
-EFFECT_CHANNEL_SELECT::EFFECT_CHANNEL_SELECT (void)
+EFFECT_CHANNEL_ORDER::EFFECT_CHANNEL_ORDER (void)
   : sbuf_repp(0), 
     out_channels_rep(0)
 {
 }
 
-EFFECT_CHANNEL_SELECT* EFFECT_CHANNEL_SELECT::clone(void) const
+EFFECT_CHANNEL_ORDER* EFFECT_CHANNEL_ORDER::clone(void) const
 {
-  EFFECT_CHANNEL_SELECT *obj =
-    new EFFECT_CHANNEL_SELECT();
+  EFFECT_CHANNEL_ORDER *obj =
+    new EFFECT_CHANNEL_ORDER();
   /* note: obj->sbuf_repp is shared but this is ok */
   return obj;
 }
 
-int EFFECT_CHANNEL_SELECT::output_channels(int i_channels) const
+int EFFECT_CHANNEL_ORDER::output_channels(int i_channels) const
 {
   return out_channels_rep;
 }
 
-void EFFECT_CHANNEL_SELECT::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
+void EFFECT_CHANNEL_ORDER::parameter_description(int param, struct PARAM_DESCRIPTION *pd) const
 {
   /* these apply for all params */
   pd->default_value = 1;
@@ -348,7 +348,7 @@ void EFFECT_CHANNEL_SELECT::parameter_description(int param, struct PARAM_DESCRI
   pd->output = false;
 }
 
-void EFFECT_CHANNEL_SELECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
+void EFFECT_CHANNEL_ORDER::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
 {
   int src_ch = static_cast<int>(value);
   int dst_ch = param;
@@ -371,7 +371,7 @@ void EFFECT_CHANNEL_SELECT::set_parameter(int param, CHAIN_OPERATOR::parameter_t
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_SELECT::get_parameter(int param) const
+CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_ORDER::get_parameter(int param) const
 {
 
   /* note: we ignore zero-src channel at the end of
@@ -389,7 +389,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_CHANNEL_SELECT::get_parameter(int param) cons
   return 0.0;
 }
 
-std::string EFFECT_CHANNEL_SELECT::parameter_names(void) const 
+std::string EFFECT_CHANNEL_ORDER::parameter_names(void) const 
 {
   std::string params;
   int ch = 0;
@@ -403,7 +403,7 @@ std::string EFFECT_CHANNEL_SELECT::parameter_names(void) const
   //return param_names_rep;
 }
 
-void EFFECT_CHANNEL_SELECT::init(SAMPLE_BUFFER *insample)
+void EFFECT_CHANNEL_ORDER::init(SAMPLE_BUFFER *insample)
 {
   sbuf_repp = insample;
   bouncebuf_rep.number_of_channels(sbuf_repp->number_of_channels());
@@ -413,12 +413,12 @@ void EFFECT_CHANNEL_SELECT::init(SAMPLE_BUFFER *insample)
   t_iter.init(insample);
 }
 
-void EFFECT_CHANNEL_SELECT::release(void)
+void EFFECT_CHANNEL_ORDER::release(void)
 {
   sbuf_repp = 0;
 }
 
-void EFFECT_CHANNEL_SELECT::process(void)
+void EFFECT_CHANNEL_ORDER::process(void)
 {
   /* step: copy input buffer to a temporary buffer */
   bouncebuf_rep.copy_all_content(*sbuf_repp);

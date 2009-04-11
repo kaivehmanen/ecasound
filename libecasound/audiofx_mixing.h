@@ -138,7 +138,7 @@ public:
  * Arbitrary channel routing
  * @author Kai Vehmanen
  */
-class EFFECT_CHANNEL_SELECT : public EFFECT_MIXING {
+class EFFECT_CHANNEL_ORDER : public EFFECT_MIXING {
 
 private:
 
@@ -165,9 +165,9 @@ public:
   virtual void release(void);
   virtual void process(void);
 
-  EFFECT_CHANNEL_SELECT* clone(void) const;
-  EFFECT_CHANNEL_SELECT* new_expr(void) const { return new EFFECT_CHANNEL_SELECT(); }
-  EFFECT_CHANNEL_SELECT(void);
+  EFFECT_CHANNEL_ORDER* clone(void) const;
+  EFFECT_CHANNEL_ORDER* new_expr(void) const { return new EFFECT_CHANNEL_ORDER(); }
+  EFFECT_CHANNEL_ORDER(void);
 };
 
 #endif
