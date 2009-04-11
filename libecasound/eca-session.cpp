@@ -622,7 +622,6 @@ int ECA_SESSION::interpret_chainsetup_option (const std::string& argu)
 	ECA_LOG_MSG(ECA_LOGGER::info, "Chainsetup loaded from '" + tname + "' is not valid!");
 	++errors;
       }
-      if (errors == 0) connect_chainsetup();
     }
     break;
   }
