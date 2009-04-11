@@ -37,8 +37,11 @@
 #include "samplebuffer.h"
 #include "samplebuffer_functions.h"
 
-/* ignore one bit errors in significand */
-static const uint32_t diff_threshold_ints = 0;
+#undef NEVER_USED_CODE
+#undef VERBOSE
+
+/* uncomment for debugging */
+// #define VERBOSE 1 
 
 void SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(SAMPLE_BUFFER *sbuf)
 {
@@ -79,14 +82,45 @@ bool SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(const SAMPLE_BUFFER& a, const SAMP
   for (int ch = 0; ch < ch_count; ch++) {
     for (int i = 0; i < i_count; i++) {
       if (a.buffer[ch][i] != b.buffer[ch][i]) {
-	assert(sizeof(SAMPLE_BUFFER::sample_t) == sizeof(uint32_t));
-	uint32_t diff = std::labs(*reinterpret_cast<uint32_t*>(&a.buffer[ch][i]) -
-				  *reinterpret_cast<uint32_t*>(&b.buffer[ch][i]));
-	if (diff > diff_threshold_ints) {
-	    std::fprintf(stderr, "%s: ERROR sample ch%d[%d], diff %d (%.03f<->%.03f)\n",
-			 __FILE__, ch, i, diff, a.buffer[ch][i], b.buffer[ch][i]);
+
+	/* note: the following is intended only for comparing
+	 *       audio signals with a nominal range of [-1,1]
+	 *       and precision of 24 bit */
+
+	const SAMPLE_SPECS::sample_t diff_threshold = 1.0 / (1 << 24);
+
+	SAMPLE_SPECS::sample_t diff = 
+	  std::fabs(a.buffer[ch][i] - b.buffer[ch][i]);
+
+#if VERBOSE
+	    std::fprintf(stderr, 
+			 "%s: diff for sample ch%d[%d], diff %.30f [%s], (a=%.30f to b=%.30f, thrshd %.30f)\n",
+			 __FILE__, ch, i, 
+			 diff,
+			 diff > diff_threshold ? "MISMATCH" : "INRANGE",
+			 a.buffer[ch][i], b.buffer[ch][i],
+			 diff_threshold);
+#endif
+
+	if (diff > diff_threshold) {
 	    return false;
 	}
+
+	{
+#if NEVER_USED_CODE /* integer-based comparison */
+	  assert(sizeof(SAMPLE_BUFFER::sample_t) == sizeof(uint32_t));
+	  /* allow diff of one in binary representation */
+	  const int diff_threshold_ints = 1;
+	  uint32_t aint = *reinterpret_cast<uint32_t*>(&a.buffer[ch][i]);
+	  uint32_t bint = *reinterpret_cast<uint32_t*>(&b.buffer[ch][i]);
+	  uint32_t diff 
+	    = std::labs(aint - bint);
+	  if (diff_total > diff_threshold_ints) {
+	    return false;
+	  }
+#endif
+	}
+
       }
     }
   }
