@@ -1380,7 +1380,7 @@ if test x$samplerate_support = xyes ; then
 else
 	echo "Libsamplerate support   no"
 fi
-if test x$liboil_support = xyes ; then
+if test x$enable_liboil = xyes ; then
 	echo "Liboil support:         yes"
 else
 	echo "Liboil support:         no"
