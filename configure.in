@@ -1115,7 +1115,7 @@ AC_ARG_ENABLE(liboil,
 if test "x${enable_liboil}" = "xyes" ; then
   ECA_S_EXTRA_CPPFLAGS="${ECA_S_EXTRA_CPPFLAGS} ${LIBOIL_CFLAGS}"
   ECA_S_EXTRA_LIBS="${ECA_S_EXTRA_LIBS} ${LIBOIL_LIBS}"
-  AC_DEFINE([ECA_USE_LIBOIL], [], [Use liboil])
+  AC_DEFINE([ECA_USE_LIBOIL], 1, [Use liboil])
 fi
 
 dnl ------------------------------------------------------------------
