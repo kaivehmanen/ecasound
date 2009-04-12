@@ -24,7 +24,11 @@
 #include <config.h>
 #endif
 
+/* note: code assumes timespect struct to be defined in
+ *       time.h (i.e. SUSv2 or later) */
+
 #include <time.h>
+
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
@@ -48,7 +52,7 @@ int kvu_clock_is_monotonic(void)
   return 0;
 }
 
-int kvu_clock_getres(struct kvu_timespec *dst)
+int kvu_clock_getres(struct timespec *dst)
 {
   struct timespec tp;
   int res =
@@ -64,7 +68,7 @@ int kvu_clock_getres(struct kvu_timespec *dst)
   return res;
 }
 
-int kvu_clock_gettime(struct kvu_timespec *dst)
+int kvu_clock_gettime(struct timespec *dst)
 {
   struct timespec tp;
   int res =
@@ -90,7 +94,7 @@ int kvu_clock_is_monotonic(void)
   return 0;
 }
 
-int kvu_clock_getres(struct kvu_timespec *arg)
+int kvu_clock_getres(struct timespec *arg)
 {
   /* note: an estimate, actual resolution may
    *       be worse */
@@ -99,7 +103,7 @@ int kvu_clock_getres(struct kvu_timespec *arg)
   return 0;
 }
 
-int kvu_clock_gettime(struct kvu_timespec *arg)
+int kvu_clock_gettime(struct timespec *arg)
 {
   struct timeval tmp;
   int res =
@@ -123,13 +127,13 @@ int kvu_clock_is_monotonic(void)
   return 0;
 }
 
-int kvu_clock_getres(struct kvu_timespec *res)
+int kvu_clock_getres(struct timespec *res)
 {
   DBC_NEVER_REACHED();
   return -1;
 }
 
-int kvu_clock_gettime(struct kvu_timespec *tp)
+int kvu_clock_gettime(struct timespec *tp)
 {
   DBC_NEVER_REACHED();
   return -1;

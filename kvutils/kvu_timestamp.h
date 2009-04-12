@@ -23,10 +23,7 @@
 #ifndef INCLUDED_KVU_TIMESTAMP_H
 #define INCLUDED_KVU_TIMESTAMP_H
 
-struct kvu_timespec {
-  time_t   tv_sec;        /* seconds */
-  long     tv_nsec;       /* nanoseconds */
-};
+#include <time.h>
 
 /**
  * Returns non-zero if clock is monotonic.
@@ -48,12 +45,12 @@ int kvu_clock_getres(struct kvu_timespec *res);
  *
  * See POSIX clock_gettime()
  */
-int kvu_clock_gettime(struct kvu_timespec *tp);
+int kvu_clock_gettime(struct timespec *tp);
 
 /**
  * Returns the timestamp as seconds
   */
-static inline double kvu_timespec_seconds(struct kvu_timespec *tp)
+static inline double kvu_timespec_seconds(struct timespec *tp)
 {
   return tp->tv_sec + 
     (static_cast<double>(tp->tv_nsec) / 1000000000.0);

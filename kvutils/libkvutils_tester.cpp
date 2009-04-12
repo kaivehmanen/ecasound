@@ -449,7 +449,7 @@ static int kvu_test_5_timestamp(void)
 {
   ECA_TEST_ENTRY();
 
-  struct kvu_timespec stamp;
+  struct timespec stamp;
   int res;
   int monotonic =
     kvu_clock_is_monotonic();
