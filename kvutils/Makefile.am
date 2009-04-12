@@ -44,6 +44,7 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_inttypes.h \
 			kvu_locks.h \
 			kvu_message_item.h \
+			kvu_message_queue.h \
 			kvu_numtostr.h \
 			kvu_object_queue.h \
 			kvu_procedure_timer.h \

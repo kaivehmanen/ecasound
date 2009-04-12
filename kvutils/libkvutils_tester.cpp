@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // libkvutils_tester.cpp: Runs a set of libkvutils unit tests.
-// Copyright (C) 2002 Kai-2004 Vehmanen
+// Copyright (C) 2002-2004,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -27,12 +27,10 @@
 #include <string>
 
 #include <cstdio>
+#include <cstdlib>
 #include <stddef.h>  /* ANSI-C: size_t */
 #include <stdio.h>   /* for AIX */
-#include <stdlib.h>  /* ANSI-C: atoi() */
 #include <time.h>    /* ANSI-C: clock() */
-
-#include <unistd.h>  /* POSIX: sleep() */
 
 #include "kvu_dbc.h"
 #include "kvu_locks.h"
@@ -41,6 +39,7 @@
 #include "kvu_timestamp.h"
 #include "kvu_utils.h"
 #include "kvu_value_queue.h"
+#include "kvu_message_queue.h"
 
 using namespace std;
 
@@ -80,16 +79,16 @@ static int kvu_test_1(void);
 static int kvu_test_2(void);
 static int kvu_test_3(void);
 static int kvu_test_4(void);
-static void* kvu_test_1_helper(void* ptr);
-static void* kvu_test_4_helper(void* ptr);
 static int kvu_test_5_timestamp(void);
+static int kvu_test_6_msgqueue(void);
 
 static kvu_test_t kvu_funcs[] = { 
   kvu_test_1,  /* kvu_locks.h: ATOMIC_INTEGER */
   kvu_test_2,  /* kvu_utils.h: string handling */
   kvu_test_3,  /* kvu_utils.h: float2str */
   kvu_test_4,  /* kvu_value_queue.h */
-  kvu_test_5_timestamp,  /* kvu_timestamp.h */
+  kvu_test_5_timestamp, /* kvu_timestamp.h */
+  kvu_test_6_msgqueue,  /* kvu_message_queue.h */
   NULL 
 };
 
@@ -103,7 +102,7 @@ int main(int argc, char *argv[])
 
   if (argc > 1) {
     /* run just a single test */
-    size_t m = atoi(argv[1]);
+    size_t m = std::atoi(argv[1]);
     if (m > 0 && m < (sizeof(kvu_funcs) / sizeof(kvu_test_t))) {
       if (kvu_funcs[m - 1]() != 0) {
 	++failed;
@@ -356,6 +355,8 @@ static int kvu_test_3(void)
 static const int kvu_test_4_iterations_const = 16384;
 static int kvu_test_4_retval = 0;
 
+static void* kvu_test_4_helper(void* ptr);
+
 /**
  * Tests the VALUE_QUEUE_RT_C class implementation.
  */
@@ -371,14 +372,14 @@ static int kvu_test_4(void)
   pthread_t thread;
   pthread_create(&thread, NULL, kvu_test_4_helper, (void*)&rqueue);
 
-  sleep(1);
+  kvu_sleep(1, 0);
 
   ECA_TEST_NOTE("start-item-push");
 
   for(int iter = 0; iter < kvu_test_4_iterations_const; iter++) {
     // fprintf(stderr, "%s:%d push.\n", __FUNCTION__, __LINE__);
     rqueue.push_back(iter, 1.0f);
-    // sleep(1);
+    // kvu_sleep(1, 0);
   }
 
   void *res_ptr = 0;
@@ -491,4 +492,110 @@ static int kvu_test_5_timestamp(void)
   }
   
   ECA_TEST_SUCCESS();
+}
+
+/* note: around 50ms per iteration */
+static const int kvu_test_6_iterations_const = 100;
+static int kvu_test_6_retval = 0;
+
+static void* kvu_test_6_helper(void* ptr);
+
+/**
+ * Tests the MESSAGE_QUEUE_RT_C class implementation.
+ */
+static int kvu_test_6_msgqueue(void)
+{
+  ECA_TEST_ENTRY();
+
+  std::srand(std::time(0));
+
+  /* guarantee bounded execution time only upto 16 items */
+  MESSAGE_QUEUE_RT_C<std::string> rqueue (16);
+
+  ECA_TEST_NOTE("start-test");
+
+  pthread_t thread;
+  pthread_create(&thread, NULL, kvu_test_6_helper, (void*)&rqueue);
+
+  kvu_sleep(1, 0);
+
+  ECA_TEST_NOTE("start-item-push");
+
+  for(int iter = 0; iter < kvu_test_6_iterations_const; iter++) {
+    // fprintf(stderr, "%s:%d push.\n", __FUNCTION__, __LINE__);
+    std::string msg = kvu_numtostr(iter + 1);
+    std::fprintf(stdout, "%s:%d pushed '%s'\n", __FUNCTION__, __LINE__, msg.c_str());
+    rqueue.push_back(msg);
+    int sleep_ns = std::rand() % 100;
+
+    kvu_sleep(0, sleep_ns * 1000000); /* [0,100]ms */
+  }
+
+  void *res_ptr = 0;
+  pthread_join(thread, (void**)&res_ptr);
+  if (*(int*)res_ptr != 0) {
+    ECA_TEST_FAIL(1, "kvu_test_6 slave-thread-failed"); 
+  }
+
+  ECA_TEST_NOTE("end-test.");
+
+  ECA_TEST_SUCCESS();
+}
+
+/**
+ * The real-time consumer thread.
+ */
+static void* kvu_test_6_helper(void* ptr)
+{
+  MESSAGE_QUEUE_RT_C<std::string> *rqueue = 
+    static_cast<MESSAGE_QUEUE_RT_C<std::string>*>(ptr);
+
+  kvu_test_6_retval = 0;
+
+  ECA_TEST_NOTE("start-thread.");
+
+  int res = kvu_set_thread_scheduling(SCHED_FIFO, 1);
+  if (res == 0) {
+    ECA_TEST_NOTE("schedfifo-scheduling-enabled");
+  }
+  else {
+    ECA_TEST_NOTE("schedfifo-scheduling-disabled");
+  }
+
+  std::string last_received_v;
+  for(int received = 0; received < kvu_test_6_iterations_const; ) {
+    int sleep_ns = std::rand() % 100;
+
+    kvu_sleep(0, sleep_ns * 1000000); /* [0,100]ms */
+
+    if (rqueue->is_empty() != true) {
+      std::string ref;
+      int popres = rqueue->pop_front(&ref);
+      if (popres > 0) {
+	// std::fprintf(stdout, "%s:%d popped '%s'\n", __FUNCTION__, __LINE__, ref.c_str());
+	++received;
+	if (last_received_v == ref) {
+	  ECA_TEST_NOTE("queue-sync-error"); 
+	  kvu_test_6_retval = -1;
+	  break;
+	}
+	last_received_v = ref;
+      }
+      else {
+	ECA_TEST_NOTE("corner-case-queue-busy");
+      }
+    }
+  }
+
+  if (std::atoi(last_received_v.c_str()) != kvu_test_6_iterations_const) {
+    // std::fprintf(stdout, "%s:%d last item '%s'\n", __FUNCTION__, __LINE__, last_received_v.c_str());
+    ECA_TEST_NOTE("end-of-queue-sync-error"); 
+    kvu_test_6_retval = -1;
+  }
+
+  ECA_TEST_NOTE("exit-thread");
+
+  pthread_exit(&kvu_test_6_retval);
+  /* never reached */
+  return 0;
 }

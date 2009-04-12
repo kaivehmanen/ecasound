@@ -1,3 +1,7 @@
+2009-04-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_message_queue.h: file added.
+
 2009-03-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* kvu_timestamp.h: New interface.
