@@ -9,6 +9,11 @@ class CHAIN_OPERATOR;
 
 /**
  * Class for configuring ecasound library objects
+ *
+ * FIXME: This is just wrong, all the methods should be moved
+ *        to ECA_CONTROL class (implementation can stay in 
+ *        eca-control-base.cpp).
+ *
  * @author Kai Vehmanen
  */
 class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
@@ -133,6 +138,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void select_chain_operator(int chainop_id);
   void select_chain_operator_parameter(int param);
   void set_chain_operator_parameter(CHAIN_OPERATOR::parameter_t value);
+  void set_chain_operator_parameter(int chain, int op, int param, CHAIN_OPERATOR::parameter_t value);
 
   int selected_chain_operator(void) const;
   int selected_chain_operator_parameter(void) const;
