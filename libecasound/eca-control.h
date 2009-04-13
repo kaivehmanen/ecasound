@@ -35,7 +35,9 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 
   /*@}*/
 
-  /** @name Public functions for issuing command */
+  // -------------------------------------------------------------------
+
+  /** @name Public functions for issuing commands */
   /*@{*/
 
   /**
@@ -128,6 +130,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Public functions printing status information */
   /*@{*/
 
@@ -135,6 +139,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   std::string last_value_to_string(void);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
  private:
 

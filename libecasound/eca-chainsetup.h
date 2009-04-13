@@ -79,6 +79,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   friend class ECA_CONTROL_OBJECTS;
   friend class ECA_CHAINSETUP_PARSER;
 
+  // -------------------------------------------------------------------
+
   /** @name Public type definitions and constants */
   /*@{*/
 
@@ -97,6 +99,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for init and cleanup */
   /*@{*/
 
@@ -106,6 +110,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   virtual ~ECA_CHAINSETUP(void);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Functions for handling audio objects */
   /*@{*/
@@ -123,6 +129,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   vector<string> audio_output_names(void) const;
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Functions for handling chains */
   /*@{*/
@@ -145,6 +153,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for handling MIDI-objects */
   /*@{*/
 
@@ -154,6 +164,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for chain operators */
   /*@{*/
 
@@ -162,6 +174,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void set_target_to_controller(void);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Functions for configuration (default values, settings) */
   /*@{*/
@@ -188,6 +202,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for overriding current buffering mode parameters */
   /*@{*/
 
@@ -207,6 +223,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions that modify current state  */
   /*@{*/
 
@@ -222,6 +240,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
   /*@{*/
 
@@ -229,12 +249,16 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions implemented from ECA_AUDIO_POSITION */
   /*@{*/
 
   virtual SAMPLE_SPECS::sample_pos_t seek_position(SAMPLE_SPECS::sample_pos_t pos);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Functions for observing current state */
   /*@{*/
@@ -258,6 +282,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for string->state conversions */
   /*@{*/
 
@@ -277,15 +303,19 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for string<->state conversions */
   /*@{*/
 
   void save(void) throw(ECA_ERROR&);
   void save_to_file(const string& filename) throw(ECA_ERROR&);
 
- private:
-
   /*@}*/
+
+  // -------------------------------------------------------------------
+
+ private:
 
   /** @name Configuration data (settings and values)  */
   /*@{*/
@@ -301,6 +331,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   string default_midi_device_rep;
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Current setup data (internal state, objects) */
   /*@{*/
@@ -346,6 +378,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   ECA_ENGINE_DRIVER* engine_driver_repp;
 
   /*@}*/
+  // -------------------------------------------------------------------
 
   /** @name Functions for handling audio objects */
   /*@{*/
@@ -361,12 +394,16 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void remove_audio_object_loop(const string& label, AUDIO_IO* aio, int dir);
   void remove_audio_object_impl(const string& label, int dir, bool destroy);
 
+  // -------------------------------------------------------------------
+
   /** @name Functions for state<->string conversions */
   /*@{*/
 
   void load_from_file(const string& filename, vector<string>& opts) const throw(ECA_ERROR&);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Functions for internal state changes */
   /*@{*/
@@ -390,6 +427,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Private helper functions */
   /*@{*/
 
@@ -404,6 +443,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void calculate_processing_length(void);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Static private helper functions */
   /*@{*/
