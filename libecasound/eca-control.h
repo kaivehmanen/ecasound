@@ -8,6 +8,7 @@
 #include "eca-control-objects.h"
 #include "eca-control-dump.h"
 #include "sample-specs.h"
+#include "eca-chainsetup-edit.h"
 
 class CHAIN_OPERATOR;
 class ECA_CHAINSETUP;
@@ -61,6 +62,19 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void action(int action_id, const std::vector<std::string>& args);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
+
+  /** @name Public functions / execute edit objects */
+  /*@{*/
+
+
+  bool execute_edit_on_connected(const ECA::chainsetup_edit_t& edit);
+  bool execute_edit_on_selected(const ECA::chainsetup_edit_t& edit, int index = -1);
+
+  /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Public functions for getting session information */
   /*@{*/

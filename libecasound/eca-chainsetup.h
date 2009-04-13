@@ -30,6 +30,7 @@
 
 #include "eca-chainsetup-position.h"
 #include "eca-chainsetup-parser.h"
+#include "eca-chainsetup-edit.h"
 #include "eca-error.h"
 
 class AUDIO_IO;
@@ -216,6 +217,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
 
   const string& name(void) const { return setup_name_rep; }
   const string& filename(void) const { return setup_filename_rep; }
+
+  bool execute_edit(const ECA::chainsetup_edit_t& edit);
 
   /*@}*/
 

@@ -53,6 +53,7 @@
 #include "eca-chainop.h"
 #include "eca-error.h"
 #include "eca-logger.h"
+#include "eca-chainsetup-edit.h"
 #include "eca-engine.h"
 #include "eca-engine_impl.h"
 
@@ -330,7 +331,25 @@ int ECA_ENGINE::exec(bool batch_mode)
  */
 void ECA_ENGINE::command(Engine_command_t cmd, double arg)
 {
-  impl_repp->command_queue_rep.push_back(static_cast<int>(cmd),arg);
+  ECA_ENGINE::complex_command_t item;
+  item.type = cmd;
+  item.m.legacy.value = arg;
+  impl_repp->command_queue_rep.push_back(item);
+}
+
+/**
+ * Sends 'ccmd' to engines command queue. Commands are 
+ * processed in the server's main loop. Passing a complex
+ * command allows to address objects regardless of
+ * the state of ECA_CHAINSETUP iterators (i.e. currently
+ * selected objects).
+ *
+ * context: C-level-0
+ *          must no be called from exec() context
+ */
+void ECA_ENGINE::command(complex_command_t ccmd)
+{
+  impl_repp->command_queue_rep.push_back(ccmd);
 }
 
 /**
@@ -463,7 +482,118 @@ ECA_ENGINE::Engine_status_t ECA_ENGINE::status(void) const
  */
 void ECA_ENGINE::check_command_queue(void)
 {
-  interpret_queue();
+  while(impl_repp->command_queue_rep.is_empty() != true) {
+    ECA_ENGINE::complex_command_t item;
+    int popres = impl_repp->command_queue_rep.pop_front(&item);
+
+    if (popres <= 0) {
+      /* queue is empty or temporarily unavailable, unable to continue 
+       * processing messages without blocking */
+      break;
+    }
+
+    switch(item.type) 
+      {
+	// ---
+	// Basic commands.
+	// ---            
+      case ep_exit:
+	{
+	  edit_lock_rep = true;
+	  if (status() == engine_status_running || 
+	      status() == engine_status_finished) request_stop();
+	  impl_repp->command_queue_rep.clear();
+	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ecasound_queue: exit!");
+	  driver_repp->exit();
+	  return;
+	}
+
+	// ---
+	// Chain operators (stateless addressing)
+	// ---
+      case ep_exec_edit: {
+	csetup_repp->execute_edit(item.m.cs);
+	std::fprintf(stderr,
+		     "execute edit %p\n",
+		     (void*)&item.m.cs);
+	break;
+      }
+
+      case ep_prepare: { if (is_prepared() != true) prepare_operation(); break; }
+      case ep_start: { if (status() != engine_status_running) request_start(); break; }
+      case ep_stop: { if (status() == engine_status_running || 
+			  status() == engine_status_finished) request_stop(); break; }
+	
+	// ---
+	// Edit locks
+	// ---            
+      case ep_edit_lock: { edit_lock_rep = true; break; }
+      case ep_edit_unlock: { edit_lock_rep = false; break; }
+	
+	// ---
+	// Section/chain (en/dis)abling commands.
+	// ---
+      case ep_c_select: { csetup_repp->active_chain_index_rep = static_cast<size_t>(item.m.legacy.value); break; }
+      case ep_c_muting: { chain_muting(); break; }
+      case ep_c_bypass: { chain_processing(); break; }
+	
+	// ---
+	// Chain operators (stateful addressing)
+	// ---
+      case ep_cop_select: { 
+	csetup_repp->active_chainop_index_rep =  static_cast<size_t>(item.m.legacy.value);
+	if (csetup_repp->active_chainop_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_chain_operators()))
+	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator(csetup_repp->active_chainop_index_rep);
+	else 
+	  csetup_repp->active_chainop_index_rep = 0;
+	break;
+      }
+      case ep_copp_select: { 
+	csetup_repp->active_chainop_param_index_rep = static_cast<size_t>(item.m.legacy.value);
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator_parameter(csetup_repp->active_chainop_param_index_rep);
+	break;
+      }
+      case ep_copp_value: { 
+	assert(chains_repp != 0);
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_parameter(item.m.legacy.value);
+	break;
+      }
+	
+	// ---
+	// Controllers (stateful addressing)
+	// ---
+      case ep_ctrl_select: { 
+	csetup_repp->active_ctrl_index_rep =  static_cast<size_t>(item.m.legacy.value);
+	if (csetup_repp->active_ctrl_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_controllers()))
+	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller(csetup_repp->active_ctrl_index_rep);
+	else 
+	  csetup_repp->active_ctrl_index_rep = 0;
+	break;
+      }
+      case ep_ctrlp_select: { 
+	csetup_repp->active_ctrl_param_index_rep = static_cast<size_t>(item.m.legacy.value);
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller_parameter(csetup_repp->active_ctrl_param_index_rep);
+	break;
+      }
+      case ep_ctrlp_value: { 
+	assert(chains_repp != 0);
+	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_controller_parameter(item.m.legacy.value);
+	break;
+      }
+	// ---
+	// Global position
+	// ---
+      case ep_rewind: { change_position(- item.m.legacy.value); break; }
+      case ep_forward: { change_position(item.m.legacy.value); break; }
+      case ep_setpos: { set_position(item.m.legacy.value); break; }
+      case ep_setpos_samples: { set_position_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(item.m.legacy.value)); break; }
+      case ep_setpos_live_samples: { set_position_samples_live(static_cast<SAMPLE_SPECS::sample_pos_t>(item.m.legacy.value)); break; }
+
+      case ep_debug: break;
+
+      } /* switch */
+    
+  }
 }
 
 /**
@@ -797,7 +927,7 @@ int ECA_ENGINE::max_channels(void) const
  * Requests the engine driver to start operation.
  *
  * This function should only be called from 
- * interpret_queue().
+ * check_command_queue().
  * 
  * @pre status() != engine_status_running
  *
@@ -820,7 +950,7 @@ void ECA_ENGINE::request_start(void)
  * Requests the engine driver to stop operation.
  *
  * This function should only be called from 
- * interpret_queue().
+ * check_command_queue().
  *
  * @pre status() == ECA_ENGINE::engine_status_running ||
  *      status() == ECA_ENGINE::engine_status_finished
@@ -1165,127 +1295,6 @@ void ECA_ENGINE::posthandle_control_position(void)
       }
       state_change_to_finished();
     }
-  }
-}
-
-/**********************************************************************
- * Engine implementation - Private functions for cmd queue handling
- **********************************************************************/
-
-/**
- * Processes messages from the command queue.
- * If no messages are available, function
- * will return immediately.
- *
- * context: E-level-2
- *          can be run at the same time as engine_iteration(); 
- *          note! this is called with the engine lock held
- *          so no long operations allowed!
- *
- * @see check_command_queue()
- */
-void ECA_ENGINE::interpret_queue(void)
-{
-  while(impl_repp->command_queue_rep.is_empty() != true) {
-    const std::pair<int,double>* item_p = impl_repp->command_queue_rep.front();
-    std::pair<int,double> item;
-    if (item_p != impl_repp->command_queue_rep.invalid_item()) {
-      item = *item_p;
-    }
-    else {
-      /* queue temporarily unavailable, unable to continue processing
-       * messages */
-      break;
-    }
-
-    switch(item.first) 
-      {
-	// ---
-	// Basic commands.
-	// ---            
-      case ep_exit:
-	{
-	  edit_lock_rep = true;
-	  if (status() == engine_status_running || 
-	      status() == engine_status_finished) request_stop();
-	  while(impl_repp->command_queue_rep.is_empty() == false) impl_repp->command_queue_rep.pop_front();
-	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ecasound_queue: exit!");
-	  driver_repp->exit();
-	  return;
-	}
-
-      case ep_prepare: { if (is_prepared() != true) prepare_operation(); break; }
-      case ep_start: { if (status() != engine_status_running) request_start(); break; }
-      case ep_stop: { if (status() == engine_status_running || 
-			  status() == engine_status_finished) request_stop(); break; }
-	
-	// ---
-	// Edit locks
-	// ---            
-      case ep_edit_lock: { edit_lock_rep = true; break; }
-      case ep_edit_unlock: { edit_lock_rep = false; break; }
-	
-	// ---
-	// Section/chain (en/dis)abling commands.
-	// ---
-      case ep_c_select: { csetup_repp->active_chain_index_rep = static_cast<size_t>(item.second); break; }
-      case ep_c_muting: { chain_muting(); break; }
-      case ep_c_bypass: { chain_processing(); break; }
-	
-	// ---
-	// Chain operators
-	// ---
-      case ep_cop_select: { 
-	csetup_repp->active_chainop_index_rep =  static_cast<size_t>(item.second);
-	if (csetup_repp->active_chainop_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_chain_operators()))
-	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator(csetup_repp->active_chainop_index_rep);
-	else 
-	  csetup_repp->active_chainop_index_rep = 0;
-	break;
-      }
-      case ep_copp_select: { 
-	csetup_repp->active_chainop_param_index_rep = static_cast<size_t>(item.second);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator_parameter(csetup_repp->active_chainop_param_index_rep);
-	break;
-      }
-      case ep_copp_value: { 
-	assert(chains_repp != 0);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_parameter(item.second);
-	break;
-      }
-	
-	// ---
-	// Controllers
-	// ---
-      case ep_ctrl_select: { 
-	csetup_repp->active_ctrl_index_rep =  static_cast<size_t>(item.second);
-	if (csetup_repp->active_ctrl_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_controllers()))
-	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller(csetup_repp->active_ctrl_index_rep);
-	else 
-	  csetup_repp->active_ctrl_index_rep = 0;
-	break;
-      }
-      case ep_ctrlp_select: { 
-	csetup_repp->active_ctrl_param_index_rep = static_cast<size_t>(item.second);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller_parameter(csetup_repp->active_ctrl_param_index_rep);
-	break;
-      }
-      case ep_ctrlp_value: { 
-	assert(chains_repp != 0);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_controller_parameter(item.second);
-	break;
-      }
-	// ---
-	// Global position
-	// ---
-      case ep_rewind: { change_position(- item.second); break; }
-      case ep_forward: { change_position(item.second); break; }
-      case ep_setpos: { set_position(item.second); break; }
-      case ep_setpos_samples: { set_position_samples(static_cast<SAMPLE_SPECS::sample_pos_t>(item.second)); break; }
-      case ep_setpos_live_samples: { set_position_samples_live(static_cast<SAMPLE_SPECS::sample_pos_t>(item.second)); break; }
-      } /* switch */
-    
-    impl_repp->command_queue_rep.pop_front();
   }
 }
 

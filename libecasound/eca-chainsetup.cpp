@@ -83,6 +83,7 @@
 
 using std::cerr;
 using std::endl;
+using namespace ECA;
 
 const string ECA_CHAINSETUP::default_audio_format_const = "s16_le,2,44100,i";
 const string ECA_CHAINSETUP::default_bmode_nonrt_const = "1024,true,50,true,100000,true";
@@ -1962,6 +1963,43 @@ void ECA_CHAINSETUP::disable(void)
   // --------
   DBC_ENSURE(is_enabled() != true);
   // --------
+}
+
+/**
+ * Executes chainsetup edit 'edit'.
+ *
+ * @return true if succesful, false if edit cannot
+ *         be performed
+ */
+bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
+{
+  bool retval = true;
+
+  switch(edit.type)
+    {
+    case edit_cop_set_param:
+      {
+	CHAIN *ch = chains[edit.m.cop_set_param.chain];
+	int saved_op = ch->selected_chain_operator();
+	int saved_p = ch->selected_chain_operator_parameter();
+	ch->select_chain_operator(edit.m.cop_set_param.op + 1);
+	ch->select_chain_operator_parameter(edit.m.cop_set_param.param + 1);
+	ch->set_parameter(edit.m.cop_set_param.value);
+        ch->select_chain_operator(saved_op);
+	ch->select_chain_operator_parameter(saved_p);	
+	break;
+      }
+    default:
+      {
+	retval = false;
+	ECA_LOG_MSG(ECA_LOGGER::user_objects,
+		    "Unknown csetup edit type " +
+		    kvu_numtostr(static_cast<int>(edit.type)));
+	break;
+      }
+    }
+
+  return retval;
 }
 
 /**

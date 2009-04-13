@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:

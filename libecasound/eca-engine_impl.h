@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-#include <kvu_value_queue.h>
+#include <kvu_message_queue.h>
 #include <kvu_procedure_timer.h>
 
 #include "eca-chainsetup.h"
@@ -28,7 +28,7 @@ class ECA_ENGINE_impl {
   double looptimer_mid_rep;
   double looptimer_high_rep;
 
-  VALUE_QUEUE_RT_C command_queue_rep;
+  MESSAGE_QUEUE_RT_C<ECA_ENGINE::complex_command_t> command_queue_rep;
 
   pthread_cond_t ecasound_stop_cond_repp;
   pthread_mutex_t ecasound_stop_mutex_repp;

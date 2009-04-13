@@ -1,0 +1,69 @@
+// ------------------------------------------------------------------------
+// eca-chainsetup-edit.h: Chainsetup edit object
+// Copyright (C) 2009 Kai Vehmanen
+//
+// Attributes:
+//     eca-style-version: 3
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// ------------------------------------------------------------------------
+
+#ifndef INCLUDED_ECA_CHAINSETUP_EDIT_H
+#define INCLUDED_ECA_CHAINSETUP_EDIT_H
+
+namespace ECA {
+  enum Chainsetup_edit_type {
+  
+    edit_c_bypass,
+    edit_c_muting,
+    edit_cop_set_param,
+    edit_ctrl_set_param,
+  };
+
+  struct chainsetup_edit {
+
+    Chainsetup_edit_type type;
+  
+    union {
+      struct {
+	int chain; 
+	bool enabled;
+      } c_bypass;
+
+      struct {
+	int chain; 
+	bool enabled;
+      } c_muting;
+
+      struct {
+	int chain; 
+	int op;
+	int param;
+	double value;
+      } cop_set_param;
+      
+      struct {
+	int chain; 
+	int op;
+	int param;
+	double value;
+      } ctrl_set_param;
+    } m;
+  };
+
+  typedef struct chainsetup_edit chainsetup_edit_t;
+}
+
+#endif /* INCLUDED_ECA_CHAINSETUP_EDIT_H */
