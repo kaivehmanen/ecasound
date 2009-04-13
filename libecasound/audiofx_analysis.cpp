@@ -155,7 +155,7 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
   status_entry(num_of_samples, status_str);
   status_str += "\n";
 
-  status_str += "(audiofx) Peak amplitude           : pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
+  status_str += "(audiofx) Peak amplitude: pos=" + kvu_numtostr(max_pos,5) + " neg=" + kvu_numtostr(max_neg,5) + ".\n";
   status_str += "(audiofx) Max gain without clipping: " + kvu_numtostr(max_multiplier(),5) + ".\n";
 
   status_str += "(audiofx) -- End of statistics --\n";
