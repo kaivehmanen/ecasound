@@ -17,8 +17,7 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ------------------------------------------------------------------------
 
 #ifdef HAVE_CONFIG_H
@@ -284,6 +283,21 @@ int CHAIN::number_of_chain_operator_parameters(void) const
   DBC_REQUIRE(selected_chain_operator() > 0);
   // --------
   return selected_chainop_repp->number_of_params();
+}
+
+
+/**
+ * Returns the total number of parameters for the 
+ * chain operator 'index' ([0...N]).
+ *
+ * require:
+ *  index < number_of_chain_operators()
+ */
+int CHAIN::number_of_chain_operator_parameters(int index) const
+{
+  DBC_REQUIRE(index >= 0);
+  DBC_REQUIRE(index < number_of_chain_operators());
+  return chainops_rep[index]->number_of_params();
 }
 
 /**
