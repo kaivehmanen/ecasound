@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // textdebug.cpp: Implementation of console logging subsystem.
-// Copyright (C) 1999-2002,2004-2005,2008 Kai Vehmanen
+// Copyright (C) 1999-2002,2004-2005,2008,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -73,6 +73,13 @@ static string tb_wrap(const string& msg, int width, int first_line_offset)
   size_t wrap_offset = wrap_prefix.size();
   size_t begin, end;
 
+#undef VERBOSE_DEBUG
+#ifdef VERBOSE_DEBUG
+  fprintf(stdout, 
+	  "msg-in=<%s>\n",
+	  msg.c_str());
+#endif
+
   for(begin = 0, end = 0; end < msg.size(); end++) {
 
     if (begin == end)
@@ -114,9 +121,16 @@ static string tb_wrap(const string& msg, int width, int first_line_offset)
     }
   }
 
-  if ((end - begin) > 1) {
+  if ((end - begin) > 0) {
     result += string(msg, begin, end - begin);
   }
+
+#ifdef VERBOSE_DEBUG
+  fprintf(stdout, 
+	  "msg-out=<%s>\n",
+	  result.c_str());
+#endif
+
   return result;
 }
 
