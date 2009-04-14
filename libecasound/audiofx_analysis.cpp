@@ -48,23 +48,23 @@ static string priv_align_right(const string txt, int width, char padchar)
 
 struct bucket {
   const char *name;
-  int db; 
   SAMPLE_SPECS::sample_t threshold;
 };
 
 #define BUCKET_ENTRY_DB(x) \
- { #x, x, EFFECT_AMPLITUDE::db_to_linear(x) }
+ { #x, EFFECT_AMPLITUDE::db_to_linear(x) }
 
 static struct bucket bucket_table[] = 
-  { BUCKET_ENTRY_DB(-1),
+  { BUCKET_ENTRY_DB(3),
+    BUCKET_ENTRY_DB(0),
+    BUCKET_ENTRY_DB(-0.1),
     BUCKET_ENTRY_DB(-3),
     BUCKET_ENTRY_DB(-6),
-    BUCKET_ENTRY_DB(-9),
-    BUCKET_ENTRY_DB(-12),
-    BUCKET_ENTRY_DB(-15),
-    BUCKET_ENTRY_DB(-18),
-    BUCKET_ENTRY_DB(-24),
-    { "-inf", 0, -1 }
+    BUCKET_ENTRY_DB(-10),
+    BUCKET_ENTRY_DB(-20),
+    BUCKET_ENTRY_DB(-30),
+    BUCKET_ENTRY_DB(-60),
+    { "-inf", -1 }
   };
 
 EFFECT_ANALYSIS::~EFFECT_ANALYSIS(void)
