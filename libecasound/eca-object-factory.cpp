@@ -766,7 +766,7 @@ string ECA_OBJECT_FACTORY::operator_parameters_to_eos(const OPERATOR* chainop)
 string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod, const std::string& direction)
 {
   MESSAGE_ITEM t;
-  t << " -" << direction << ":";
+  t << "-" << direction << ":";
   for(int n = 0; n < aiod->number_of_params(); n++) {
     /* step: if parameter has commas, or whitespace, quote the whole parameter */
     std::string param = aiod->get_parameter(n + 1);
@@ -776,7 +776,7 @@ string ECA_OBJECT_FACTORY::audio_object_to_eos(const AUDIO_IO* aiod, const std::
       param = std::string("\"") + param + std::string("\"");
     }
 
-    /* step´: add processed parameter to the EOS string */
+    /* step: add processed parameter to the EOS string */
     t << param;
     if (n + 1 < aiod->number_of_params()) t << ",";
   }
