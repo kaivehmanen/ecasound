@@ -513,9 +513,6 @@ void ECA_ENGINE::check_command_queue(void)
 	// ---
       case ep_exec_edit: {
 	csetup_repp->execute_edit(item.m.cs);
-	std::fprintf(stderr,
-		     "execute edit %p\n",
-		     (void*)&item.m.cs);
 	break;
       }
 
@@ -533,53 +530,10 @@ void ECA_ENGINE::check_command_queue(void)
 	// ---
 	// Section/chain (en/dis)abling commands.
 	// ---
-      case ep_c_select: { csetup_repp->active_chain_index_rep = static_cast<size_t>(item.m.legacy.value); break; }
+      case ep_c_select: { csetup_repp->selected_chain_index_rep = static_cast<size_t>(item.m.legacy.value); break; }
       case ep_c_muting: { chain_muting(); break; }
       case ep_c_bypass: { chain_processing(); break; }
-	
-	// ---
-	// Chain operators (stateful addressing)
-	// ---
-      case ep_cop_select: { 
-	csetup_repp->active_chainop_index_rep =  static_cast<size_t>(item.m.legacy.value);
-	if (csetup_repp->active_chainop_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_chain_operators()))
-	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator(csetup_repp->active_chainop_index_rep);
-	else 
-	  csetup_repp->active_chainop_index_rep = 0;
-	break;
-      }
-      case ep_copp_select: { 
-	csetup_repp->active_chainop_param_index_rep = static_cast<size_t>(item.m.legacy.value);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_chain_operator_parameter(csetup_repp->active_chainop_param_index_rep);
-	break;
-      }
-      case ep_copp_value: { 
-	assert(chains_repp != 0);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_parameter(item.m.legacy.value);
-	break;
-      }
-	
-	// ---
-	// Controllers (stateful addressing)
-	// ---
-      case ep_ctrl_select: { 
-	csetup_repp->active_ctrl_index_rep =  static_cast<size_t>(item.m.legacy.value);
-	if (csetup_repp->active_ctrl_index_rep - 1 < static_cast<int>((*chains_repp)[csetup_repp->active_chain_index_rep]->number_of_controllers()))
-	  (*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller(csetup_repp->active_ctrl_index_rep);
-	else 
-	  csetup_repp->active_ctrl_index_rep = 0;
-	break;
-      }
-      case ep_ctrlp_select: { 
-	csetup_repp->active_ctrl_param_index_rep = static_cast<size_t>(item.m.legacy.value);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->select_controller_parameter(csetup_repp->active_ctrl_param_index_rep);
-	break;
-      }
-      case ep_ctrlp_value: { 
-	assert(chains_repp != 0);
-	(*chains_repp)[csetup_repp->active_chain_index_rep]->set_controller_parameter(item.m.legacy.value);
-	break;
-      }
+
 	// ---
 	// Global position
 	// ---
@@ -1797,10 +1751,10 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
  */
 void ECA_ENGINE::chain_muting(void)
 {
-  if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_muted()) 
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(false);
+  if ((*chains_repp)[csetup_repp->selected_chain_index_rep]->is_muted()) 
+    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_muting(false);
   else
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_muting(true);
+    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_muting(true);
 }
 
 /**
@@ -1808,10 +1762,10 @@ void ECA_ENGINE::chain_muting(void)
  */
 void ECA_ENGINE::chain_processing(void)
 {
-  if ((*chains_repp)[csetup_repp->active_chain_index_rep]->is_processing()) 
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(false);
+  if ((*chains_repp)[csetup_repp->selected_chain_index_rep]->is_processing()) 
+    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_processing(false);
   else
-    (*chains_repp)[csetup_repp->active_chain_index_rep]->toggle_processing(true);
+    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_processing(true);
 }
 
 /**********************************************************************

@@ -85,7 +85,7 @@ class ECA_ENGINE {
    * Commands used in ECA_ENGINE<->ECA_CONTROL communication.
    */
   enum Engine_command {
-    ep_prepare,
+    ep_prepare = 0,
     ep_start,
     ep_stop,
     ep_debug,
@@ -96,14 +96,6 @@ class ECA_ENGINE {
     ep_c_muting,
     ep_c_bypass,
     ep_c_select,
-    // --
-    ep_cop_select,
-    ep_copp_select,
-    ep_copp_value,
-    // --
-    ep_ctrl_select,
-    ep_ctrlp_select,
-    ep_ctrlp_value,
     // --
     ep_rewind,
     ep_forward,

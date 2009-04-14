@@ -818,18 +818,22 @@ void ECA_CONTROL::action(int action_id)
  * 
  * @pre is_connected()
  */
-bool ECA_CONTROL::execute_edit_on_connected(const chainsetup_edit_t& edit)
+bool ECA_CONTROL_OBJECTS::execute_edit_on_connected(const chainsetup_edit_t& edit)
 {
   DBC_REQUIRE(is_connected() == true);
 
   bool retval = false;
-
+  
   if (is_engine_running() == true) {
     ECA_ENGINE::complex_command_t engine_cmd;
     engine_cmd.type = ECA_ENGINE::ep_exec_edit;
     engine_cmd.m.cs = edit;
     engine_repp->command(engine_cmd);
     retval = true;
+  }
+  else {
+    /* note: engine not yet running, execute edit directly */
+    retval = session_repp->connected_chainsetup_repp->execute_edit(edit);
   }
 
   return retval;
@@ -840,10 +844,8 @@ bool ECA_CONTROL::execute_edit_on_connected(const chainsetup_edit_t& edit)
  * 
  * @param edit object specifying the edit action
  * @param index if non-negative, override the chainsetup selection
- * 
- * @pre is_connected()
  */
-bool ECA_CONTROL::execute_edit_on_selected(const chainsetup_edit_t& edit, int index)
+bool ECA_CONTROL_OBJECTS::execute_edit_on_selected(const chainsetup_edit_t& edit, int index)
 {
   bool retval = false;
 
@@ -971,7 +973,6 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
       result += ECA_OBJECT_FACTORY::audio_object_to_eos(cs->inputs[idx], "i");
     result += " ";
     result += (*chain_citer)->to_string();
-    result += " ";
     idx = (*chain_citer)->connected_output();
     if (idx >= 0)
       result += ECA_OBJECT_FACTORY::audio_object_to_eos(cs->outputs[idx], "o");

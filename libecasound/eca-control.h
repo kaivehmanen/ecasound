@@ -67,17 +67,6 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 
   // -------------------------------------------------------------------
 
-  /** @name Public functions / execute edit objects */
-  /*@{*/
-
-
-  bool execute_edit_on_connected(const ECA::chainsetup_edit_t& edit);
-  bool execute_edit_on_selected(const ECA::chainsetup_edit_t& edit, int index = -1);
-
-  /*@}*/
-
-  // -------------------------------------------------------------------
-
   /** @name Public functions for getting session information */
   /*@{*/
 

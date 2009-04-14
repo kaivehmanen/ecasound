@@ -342,7 +342,7 @@ void ECA_CONTROL_BASE::start_engine_sub(bool batchmode)
 
   unsigned int p = session_repp->connected_chainsetup_repp->first_selected_chain();
   if (p < session_repp->connected_chainsetup_repp->chains.size())
-    session_repp->connected_chainsetup_repp->active_chain_index_rep = p;
+    session_repp->connected_chainsetup_repp->selected_chain_index_rep = p;
   
   if (engine_repp)
     close_engine();

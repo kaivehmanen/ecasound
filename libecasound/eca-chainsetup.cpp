@@ -297,11 +297,9 @@ void ECA_CHAINSETUP::set_defaults(void)
   memory_locked_rep = false;
   midi_server_needed_rep = false;
   is_locked_rep = false;
-  active_chain_index_rep = 0;
-  active_chainop_index_rep = 0;
-  active_chainop_param_index_rep = 0;
-  active_ctrl_index_rep = 0;
-  active_ctrl_param_index_rep = 0;
+  selected_chain_index_rep = 0;
+  selected_ctrl_index_rep = 0;
+  selected_ctrl_param_index_rep = 0;
   multitrack_mode_offset_rep = -1;
 
   buffering_mode_rep = cs_bmode_auto;
@@ -855,7 +853,7 @@ void ECA_CHAINSETUP::select_all_chains(void)
 
 /**
  * Returns the index number of first selected chains. If no chains 
- * are selected, returns 'last_index + 1' (chains.size()).
+ * are selected, returns 'last_index + 1' (==chains.size()).
  */
 unsigned int ECA_CHAINSETUP::first_selected_chain(void) const
 {
@@ -1654,6 +1652,31 @@ const CHAIN* ECA_CHAINSETUP::get_chain_with_name(const string& name) const
 }
 
 /**
+ * Returns a non-zero index for chain 'name'. If the chain
+ * does not exist, -1 is returned.
+ * 
+ * The chain index can be used with ECA::chainsetup_edit_t 
+ * items passed to ECA_CHAINSETUP::execute_edit().
+ *
+ * Note: Mapping of chain names to indices can change if any
+ *       chains are either added or removed. If that happens,
+ *       the indices need to be recalculated. 
+ */
+int ECA_CHAINSETUP::get_chain_index(const string& name) const
+{
+  int retval = -1;
+  vector<CHAIN*>::const_iterator p = chains.begin();
+  for(int n = 1; p != chains.end(); n++) {
+    if ((*p)->name() == name) {
+      retval = n;
+      break;
+    }
+    ++p;
+  }
+  return retval;
+}
+
+/**
  * Attaches input 'obj' to all selected chains.
  *
  * @pre is_locked() != true
@@ -1975,25 +1998,42 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
 {
   bool retval = true;
 
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+	      "Executing edit type of " +
+	      kvu_numtostr(static_cast<int>(edit.type)));
+
+  if (edit.cs_ptr != this) {
+    ECA_LOG_MSG(ECA_LOGGER::errors, 
+		"ERROR: chainsetup edit executed on wrong object");
+    return false;
+  }
+
   switch(edit.type)
     {
     case edit_cop_set_param:
       {
-	CHAIN *ch = chains[edit.m.cop_set_param.chain];
-	int saved_op = ch->selected_chain_operator();
-	int saved_p = ch->selected_chain_operator_parameter();
-	ch->select_chain_operator(edit.m.cop_set_param.op + 1);
-	ch->select_chain_operator_parameter(edit.m.cop_set_param.param + 1);
-	ch->set_parameter(edit.m.cop_set_param.value);
-        ch->select_chain_operator(saved_op);
-	ch->select_chain_operator_parameter(saved_p);	
+	/* FIXME: validate index values */
+	CHAIN *ch = chains[edit.m.cop_set_param.chain - 1];
+	ch->set_parameter(edit.m.cop_set_param.op, 
+			  edit.m.cop_set_param.param,
+			  edit.m.cop_set_param.value);
+	break;
+      }
+    case edit_ctrl_set_param:
+      {
+	/* FIXME: validate index values */
+	CHAIN *ch = chains[edit.m.ctrl_set_param.chain - 1];
+	ch->set_controller_parameter(edit.m.ctrl_set_param.op,
+				     edit.m.ctrl_set_param.param,
+				     edit.m.ctrl_set_param.value);
 	break;
       }
     default:
       {
+	DBC_NEVER_REACHED();
 	retval = false;
-	ECA_LOG_MSG(ECA_LOGGER::user_objects,
-		    "Unknown csetup edit type " +
+	ECA_LOG_MSG(ECA_LOGGER::info,
+		    "Unknown edit of type " +
 		    kvu_numtostr(static_cast<int>(edit.type)));
 	break;
       }

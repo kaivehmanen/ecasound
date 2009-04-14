@@ -23,10 +23,13 @@
 #ifndef INCLUDED_ECA_CHAINSETUP_EDIT_H
 #define INCLUDED_ECA_CHAINSETUP_EDIT_H
 
+class CHAIN;
+class ECA_CHAINSETUP;
+
 namespace ECA {
   enum Chainsetup_edit_type {
   
-    edit_c_bypass,
+    edit_c_bypass = 0,
     edit_c_muting,
     edit_cop_set_param,
     edit_ctrl_set_param,
@@ -35,30 +38,34 @@ namespace ECA {
   struct chainsetup_edit {
 
     Chainsetup_edit_type type;
-  
+    const ECA_CHAINSETUP *cs_ptr;
+
+    /* FIXME: should a version tag be added as way to invalidate
+     *        edit objects in case chainsetup is modified */
+
     union {
       struct {
-	int chain; 
+	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
 	bool enabled;
       } c_bypass;
 
       struct {
-	int chain; 
+	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
 	bool enabled;
       } c_muting;
 
       struct {
-	int chain; 
-	int op;
-	int param;
-	double value;
+	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
+	int op;        /**< @see CHAIN::set_parameter() */
+	int param;     /**< @see CHAIN::set_parameter() */
+	double value;  /**< @see CHAIN::set_parameter() */
       } cop_set_param;
       
       struct {
-	int chain; 
-	int op;
-	int param;
-	double value;
+	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
+	int op;        /**< @see CHAIN::set_controller_parameter() */
+	int param;     /**< @see CHAIN::set_controller_parameter() */
+	double value;  /**< @see CHAIN::set_controller_parameter() */
       } ctrl_set_param;
     } m;
   };

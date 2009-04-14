@@ -1,6 +1,7 @@
 #ifndef INCLUDED_ECA_CONTROL_OBJECTS_H
 #define INCLUDED_ECA_CONTROL_OBJECTS_H
 
+#include "eca-chainsetup-edit.h"
 #include "eca-control-base.h"
 #include "audioio.h"
 #include "ctrl-source.h"
@@ -62,6 +63,7 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   double chainsetup_position(double seconds) const;
   const ECA_CHAINSETUP* get_chainsetup(void) const;
   const ECA_CHAINSETUP* get_chainsetup_filename(const std::string& filename) const;
+  const ECA_CHAINSETUP* get_connected_chainsetup(void) const;
   std::vector<std::string> chainsetup_names(void) const;
   const std::string& chainsetup_filename(void) const;
   int chainsetup_buffersize(void) const;
@@ -74,6 +76,16 @@ class ECA_CONTROL_OBJECTS : public ECA_CONTROL_BASE {
   void set_chainsetup_output_mode(int output_mode);
   void toggle_chainsetup_looping(void);
   void set_chainsetup_buffersize(int bsize);
+
+  // -------------------------------------------------------------------
+
+  /** @name Public functions / execute edit objects */
+  /*@{*/
+
+  bool execute_edit_on_connected(const ECA::chainsetup_edit_t& edit);
+  bool execute_edit_on_selected(const ECA::chainsetup_edit_t& edit, int index = -1);
+
+  /*@}*/
 
   // -------------------------------------------------------------------
   // Chains (if not specified, active chainsetup is used)

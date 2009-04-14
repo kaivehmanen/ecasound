@@ -119,6 +119,9 @@ class CHAIN : public ECA_AUDIO_POSITION {
 
   void add_chain_operator(CHAIN_OPERATOR* chainop);
   void add_controller(GENERIC_CONTROLLER* gcontroller);
+  void remove_chain_operator(int op_index);
+
+  void set_parameter(int op_index, int param_index, CHAIN_OPERATOR::parameter_t value);
 
   int number_of_chain_operators(void) const { return chainops_rep.size(); }
   int number_of_chain_operator_parameters(int index) const;
@@ -127,6 +130,7 @@ class CHAIN : public ECA_AUDIO_POSITION {
   const GENERIC_CONTROLLER* get_controller(int index) const { return gcontrollers_rep[index]; }
 
   int number_of_controllers(void) const { return gcontrollers_rep.size(); }
+  void set_controller_parameter(int op_index, int param_index, CHAIN_OPERATOR::parameter_t value);
 
   /*@}*/
 
@@ -135,14 +139,10 @@ class CHAIN : public ECA_AUDIO_POSITION {
   /** @name Access objects via stateful addressing */
   /*@{*/
 
-  void remove_chain_operator(void);
-  void select_chain_operator(int index);
-  void select_chain_operator_parameter(int index);
-  void set_parameter(CHAIN_OPERATOR::parameter_t value);
+  void select_chain_operator(int op_index);
+  void select_chain_operator_parameter(int param_index);
 
-  /**
-   * Index of selected chain operator
-   */
+  /** Index (1..N) of selected chain operator */
   int selected_chain_operator(void) const { return selected_chainop_number_rep; }
   int selected_chain_operator_parameter(void) const { return selected_chainop_parameter_rep; }
 
@@ -152,21 +152,18 @@ class CHAIN : public ECA_AUDIO_POSITION {
   std::string chain_operator_name(void) const;
   std::string chain_operator_parameter_name(void) const;
 
-  const CHAIN_OPERATOR* get_selected_chain_operator(void) const { return selected_chainop_repp; }
+  const CHAIN_OPERATOR* get_selected_chain_operator(void) const;
 
   void remove_controller(void);
   void select_controller(int index);
   void select_controller_parameter(int index);
-  void set_controller_parameter(CHAIN_OPERATOR::parameter_t value);
 
   const GENERIC_CONTROLLER* get_selected_controller(void) const { return selected_controller_repp; }
   int number_of_controller_parameters(void) const;
   std::string controller_parameter_name(void) const;
   CHAIN_OPERATOR::parameter_t get_controller_parameter(void) const;
 
-  /**
-   * Index of selected controller
-   */
+  /** Index (1...N) of selected controller */
   int selected_controller(void) const { return selected_controller_number_rep; }
   int selected_controller_parameter(void) const { return selected_controller_parameter_rep; }
 
@@ -216,7 +213,6 @@ class CHAIN : public ECA_AUDIO_POSITION {
   std::vector<CHAIN_OPERATOR*> chainops_rep;
   std::vector<GENERIC_CONTROLLER*> gcontrollers_rep;
 
-  CHAIN_OPERATOR* selected_chainop_repp;
   GENERIC_CONTROLLER* selected_controller_repp;
   OPERATOR* selected_dynobj_repp;
 

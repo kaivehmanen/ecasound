@@ -150,6 +150,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   vector<string> chain_names(void) const;
   vector<string> get_attached_chains_to_iodev(const string& filename) const;
   const CHAIN* get_chain_with_name(const string& name) const;
+  int get_chain_index(const string& name) const;
 
   /*@}*/
 
@@ -343,11 +344,14 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   bool multitrack_mode_override_rep;
   bool memory_locked_rep;
   bool midi_server_needed_rep;
-  int active_chain_index_rep;
-  int active_chainop_index_rep;
-  int active_chainop_param_index_rep;
-  int active_ctrl_index_rep;
-  int active_ctrl_param_index_rep;
+
+  /* FIXME: only needed by ECA_ENGINE */
+  int selected_chain_index_rep;
+  int selected_cop_index_rep;
+  int selected_cop_param_index_rep;
+  int selected_ctrl_index_rep;
+  int selected_ctrl_param_index_rep;
+
   int db_clients_rep;
   long int multitrack_mode_offset_rep;
   string setup_name_rep;
