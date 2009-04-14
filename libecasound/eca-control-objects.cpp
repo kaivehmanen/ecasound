@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -674,6 +674,15 @@ std::vector<string> ECA_CONTROL_OBJECTS::chainsetup_names(void) const
 const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_chainsetup(void) const
 {
   return selected_chainsetup_repp;
+}
+
+/**
+ * Gets a pointer to connected chainsetup, or 0 if no 
+ * chainsetup is selected.
+ */
+const ECA_CHAINSETUP* ECA_CONTROL_OBJECTS::get_connected_chainsetup(void) const
+{
+  return session_repp->connected_chainsetup_repp;
 }
 
 /**
@@ -1952,7 +1961,7 @@ void ECA_CONTROL_OBJECTS::remove_chain_operator(void)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
-    selected_chainsetup_repp->chains[p]->remove_chain_operator();
+    selected_chainsetup_repp->chains[p]->remove_chain_operator(-1);
 
   cond_start_after_editing(was_running);
 }
@@ -1975,15 +1984,9 @@ void ECA_CONTROL_OBJECTS::select_chain_operator(int chainop_id)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_running() == true &&
-	selected_chainsetup() == connected_chainsetup()) {
-      engine_repp->command(ECA_ENGINE::ep_c_select, p);
-      engine_repp->command(ECA_ENGINE::ep_cop_select, chainop_id);
-    }
-    if (chainop_id < selected_chainsetup_repp->chains[p]->number_of_chain_operators() + 1) {
-      selected_chainsetup_repp->chains[p]->select_chain_operator(chainop_id);
-      selected_chainsetup_repp->active_chain_index_rep = p;
-      selected_chainsetup_repp->active_chainop_index_rep = chainop_id;
+    CHAIN *ch = selected_chainsetup_repp->chains[p];
+    if (chainop_id < ch->number_of_chain_operators() + 1) {
+      ch->select_chain_operator(chainop_id);
     }
   }
 }
@@ -2043,15 +2046,7 @@ void ECA_CONTROL_OBJECTS::select_chain_operator_parameter(int param)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_running() == true && 
-	selected_chainsetup() == connected_chainsetup()) {
-      engine_repp->command(ECA_ENGINE::ep_copp_select, param);
-    }
-    else {
-      selected_chainsetup_repp->active_chainop_param_index_rep = param;
-    }
     selected_chainsetup_repp->chains[p]->select_chain_operator_parameter(param);
-
   } 
 }
 
@@ -2072,17 +2067,21 @@ void ECA_CONTROL_OBJECTS::set_chain_operator_parameter(CHAIN_OPERATOR::parameter
   DBC_REQUIRE(get_chain_operator() != 0);
   // --------
 
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_cop_set_param;
+  edit.cs_ptr = selected_chainsetup_repp;
+
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_running() == true && 
-	selected_chainsetup() == connected_chainsetup()) {
-      engine_repp->command(ECA_ENGINE::ep_copp_value, value);
-    }
-    else {
-      if (selected_chainsetup_repp->chains[p]->selected_chain_operator() > 0 &&
-	  selected_chainsetup_repp->chains[p]->selected_chain_operator_parameter() > 0)
-	selected_chainsetup_repp->chains[p]->set_parameter(value);
-    }
+    /* note: unlike all other functions, first_selected_chain()
+     *       returns 0..N */
+    CHAIN *chain = selected_chainsetup_repp->chains[p];
+    edit.m.cop_set_param.chain = p + 1;
+    edit.m.cop_set_param.op = chain->selected_chain_operator();
+    edit.m.cop_set_param.param = chain->selected_chain_operator_parameter();
+    edit.m.cop_set_param.value = value;
+
+    execute_edit_on_selected(edit);
   }
 }
 
@@ -2348,13 +2347,6 @@ void ECA_CONTROL_OBJECTS::select_controller_parameter(int param)
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_running() == true && 
-	selected_chainsetup() == connected_chainsetup()) {
-      engine_repp->command(ECA_ENGINE::ep_ctrlp_select, param);
-    }
-    else {
-      selected_chainsetup_repp->active_ctrl_param_index_rep = param;
-    }
     selected_chainsetup_repp->chains[p]->select_controller_parameter(param);
   } 
 }
@@ -2400,17 +2392,21 @@ void ECA_CONTROL_OBJECTS::set_controller_parameter(CHAIN_OPERATOR::parameter_t v
   DBC_REQUIRE(get_controller() != 0);
   // --------
 
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_ctrl_set_param;
+  edit.cs_ptr = selected_chainsetup_repp;
+
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    if (is_engine_running() == true && 
-	selected_chainsetup() == connected_chainsetup()) {
-      engine_repp->command(ECA_ENGINE::ep_ctrlp_value, value);
-    }
-    else {
-      if (selected_chainsetup_repp->chains[p]->selected_controller() > 0 &&
-	  selected_chainsetup_repp->chains[p]->selected_controller_parameter() > 0)
-	selected_chainsetup_repp->chains[p]->set_controller_parameter(value);
-    }
+    /* note: unlike all other functions, first_selected_chain()
+     *       returns 0..N */
+    CHAIN *chain = selected_chainsetup_repp->chains[p];
+    edit.m.ctrl_set_param.chain = p + 1;
+    edit.m.ctrl_set_param.op = chain->selected_controller();
+    edit.m.ctrl_set_param.param = chain->selected_controller_parameter();
+    edit.m.ctrl_set_param.value = value;
+
+    execute_edit_on_selected(edit);
   }
 }
 

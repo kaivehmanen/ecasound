@@ -8,6 +8,7 @@
 #include "eca-control-objects.h"
 #include "eca-control-dump.h"
 #include "sample-specs.h"
+#include "eca-chainsetup-edit.h"
 
 class CHAIN_OPERATOR;
 class ECA_CHAINSETUP;
@@ -34,7 +35,9 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 
   /*@}*/
 
-  /** @name Public functions for issuing command */
+  // -------------------------------------------------------------------
+
+  /** @name Public functions for issuing commands */
   /*@{*/
 
   /**
@@ -61,6 +64,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   void action(int action_id, const std::vector<std::string>& args);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
   /** @name Public functions for getting session information */
   /*@{*/
@@ -114,6 +119,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
   /** @name Public functions printing status information */
   /*@{*/
 
@@ -121,6 +128,8 @@ class ECA_CONTROL : public ECA_CONTROL_OBJECTS,
   std::string last_value_to_string(void);
 
   /*@}*/
+
+  // -------------------------------------------------------------------
 
  private:
 

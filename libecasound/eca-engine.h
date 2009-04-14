@@ -4,6 +4,7 @@
 #include <vector>
 #include "sample-specs.h"
 #include "eca-engine-driver.h"
+#include "eca-chainsetup-edit.h"
 
 class AUDIO_IO;
 class AUDIO_IO_DB_CLIENT;
@@ -79,28 +80,22 @@ class ECA_ENGINE {
 		       engine_status_error,
 		       engine_status_notready };
   typedef enum Engine_status Engine_status_t;
-  
+
   /**
    * Commands used in ECA_ENGINE<->ECA_CONTROL communication.
    */
   enum Engine_command {
-    ep_prepare,
+    ep_prepare = 0,
     ep_start,
     ep_stop,
     ep_debug,
     ep_exit,
     // --
+    ep_exec_edit,
+    // --
     ep_c_muting,
     ep_c_bypass,
     ep_c_select,
-    // --
-    ep_cop_select,
-    ep_copp_select,
-    ep_copp_value,
-    // --
-    ep_ctrl_select,
-    ep_ctrlp_select,
-    ep_ctrlp_value,
     // --
     ep_rewind,
     ep_forward,
@@ -113,6 +108,26 @@ class ECA_ENGINE {
   };
   typedef enum Engine_command Engine_command_t;
 
+  struct complex_command {
+    Engine_command_t type;
+    union {
+      struct {
+	double value;
+      } engine;
+
+      ECA::chainsetup_edit_t cs;
+
+      struct {
+	int chain;
+	int op;
+	int param;
+	double value;
+      } legacy;
+
+    } m;
+  };
+  typedef struct complex_command complex_command_t;
+
   /*@}*/
 
   /** @name Public functions */
@@ -123,6 +138,7 @@ class ECA_ENGINE {
 
   int exec(bool batch_mode);
   void command(Engine_command_t cmd, double arg);
+  void command(complex_command_t ccmd);
   void wait_for_stop(int timeout);
   void wait_for_exit(int timeout);
 

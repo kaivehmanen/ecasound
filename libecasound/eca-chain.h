@@ -1,3 +1,25 @@
+// ------------------------------------------------------------------------
+// eca-chain.cpp: Class representing an abstract audio signal chain.
+// Copyright (C) 1999-2009 Kai Vehmanen
+// Copyright (C) 2005 Stuart Allie
+//
+// Attributes:
+//     eca-style-version: 3
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// ------------------------------------------------------------------------
+
 #ifndef INCLUDED_CHAIN_H
 #define INCLUDED_CHAIN_H
 
@@ -18,8 +40,18 @@ class CHAIN : public ECA_AUDIO_POSITION {
  
  public:
 
+  /** @name Object construction and destruction */
+  /*@{*/
+
   CHAIN (void);
   virtual ~CHAIN (void);
+
+  /*@}*/
+
+  // -------------------------------------------------------------------
+
+  /** @name Chain state */
+  /*@{*/
 
   bool is_initialized(void) const { return initialized_rep; }
 
@@ -43,6 +75,21 @@ class CHAIN : public ECA_AUDIO_POSITION {
 
   bool is_valid(void) const;
 
+  void init(SAMPLE_BUFFER* sbuf = 0, int in_channels = 0, int out_channels = 0);
+  void release(void);
+  void process(void);
+  void controller_update(void);
+  void refresh_parameters(void);
+
+  std::string to_string(void) const;
+
+  /*@}*/
+
+  // -------------------------------------------------------------------
+
+  /** @name Input and output */
+  /*@{*/
+
   void connect_input(int input);
   void disconnect_input(void);
   void connect_output(int output);
@@ -61,43 +108,65 @@ class CHAIN : public ECA_AUDIO_POSITION {
    */
   int connected_output(void) const { return output_id_rep; }
 
-  void clear(void);
-  void add_chain_operator(CHAIN_OPERATOR* chainop);
-  void remove_chain_operator(void);
-  void select_chain_operator(int index);
-  void select_chain_operator_parameter(int index);
-  void set_parameter(CHAIN_OPERATOR::parameter_t value);
+  /*@}*/
 
-  /**
-   * Index of selected chain operator
-   */
+  // -------------------------------------------------------------------
+
+  /** @name Access objects via stateless addressing */
+  /*@{*/
+
+  void clear(void);
+
+  void add_chain_operator(CHAIN_OPERATOR* chainop);
+  void add_controller(GENERIC_CONTROLLER* gcontroller);
+  void remove_chain_operator(int op_index);
+
+  void set_parameter(int op_index, int param_index, CHAIN_OPERATOR::parameter_t value);
+
+  int number_of_chain_operators(void) const { return chainops_rep.size(); }
+  int number_of_chain_operator_parameters(int index) const;
+
+  const CHAIN_OPERATOR* get_chain_operator(int index) const { return chainops_rep[index]; }
+  const GENERIC_CONTROLLER* get_controller(int index) const { return gcontrollers_rep[index]; }
+
+  int number_of_controllers(void) const { return gcontrollers_rep.size(); }
+  void set_controller_parameter(int op_index, int param_index, CHAIN_OPERATOR::parameter_t value);
+
+  /*@}*/
+
+  // -------------------------------------------------------------------
+
+  /** @name Access objects via stateful addressing */
+  /*@{*/
+
+  void select_chain_operator(int op_index);
+  void select_chain_operator_parameter(int param_index);
+
+  /** Index (1..N) of selected chain operator */
   int selected_chain_operator(void) const { return selected_chainop_number_rep; }
   int selected_chain_operator_parameter(void) const { return selected_chainop_parameter_rep; }
-  int number_of_chain_operators(void) const { return chainops_rep.size(); }
+
   int number_of_chain_operator_parameters(void) const;
+
   CHAIN_OPERATOR::parameter_t get_parameter(void) const;
   std::string chain_operator_name(void) const;
   std::string chain_operator_parameter_name(void) const;
-  const CHAIN_OPERATOR* get_chain_operator(int index) const { return chainops_rep[index]; }
-  const CHAIN_OPERATOR* get_selected_chain_operator(void) const { return selected_chainop_repp; }
 
-  void add_controller(GENERIC_CONTROLLER* gcontroller);
+  const CHAIN_OPERATOR* get_selected_chain_operator(void) const;
+
   void remove_controller(void);
   void select_controller(int index);
   void select_controller_parameter(int index);
-  void set_controller_parameter(CHAIN_OPERATOR::parameter_t value);
-  const GENERIC_CONTROLLER* get_controller(int index) const { return gcontrollers_rep[index]; }
+
   const GENERIC_CONTROLLER* get_selected_controller(void) const { return selected_controller_repp; }
   int number_of_controller_parameters(void) const;
   std::string controller_parameter_name(void) const;
   CHAIN_OPERATOR::parameter_t get_controller_parameter(void) const;
 
-  /**
-   * Index of selected controller
-   */
+  /** Index (1...N) of selected controller */
   int selected_controller(void) const { return selected_controller_number_rep; }
   int selected_controller_parameter(void) const { return selected_controller_parameter_rep; }
-  int number_of_controllers(void) const { return gcontrollers_rep.size(); }
+
   std::string controller_name(void) const;
 
   void selected_chain_operator_as_target(void);
@@ -110,13 +179,9 @@ class CHAIN : public ECA_AUDIO_POSITION {
    */
   OPERATOR* selected_target(void) const { return selected_dynobj_repp; }
 
-  void init(SAMPLE_BUFFER* sbuf = 0, int in_channels = 0, int out_channels = 0);
-  void release(void);
-  void process(void);
-  void controller_update(void);
-  void refresh_parameters(void);
+  /*@}*/
 
-  std::string to_string(void) const;
+  // -------------------------------------------------------------------
 
   /** @name Functions implemented from ECA_SAMPLERATE_AWARE */
   /*@{*/
@@ -134,6 +199,8 @@ class CHAIN : public ECA_AUDIO_POSITION {
 
   /*@}*/
 
+  // -------------------------------------------------------------------
+
  private:
 
   bool initialized_rep;
@@ -146,7 +213,6 @@ class CHAIN : public ECA_AUDIO_POSITION {
   std::vector<CHAIN_OPERATOR*> chainops_rep;
   std::vector<GENERIC_CONTROLLER*> gcontrollers_rep;
 
-  CHAIN_OPERATOR* selected_chainop_repp;
   GENERIC_CONTROLLER* selected_controller_repp;
   OPERATOR* selected_dynobj_repp;
 

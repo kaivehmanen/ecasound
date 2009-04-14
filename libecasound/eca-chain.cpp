@@ -17,14 +17,14 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ------------------------------------------------------------------------
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
+#include <cassert>
 #include <cctype>
 #include <string>
 #include <vector>
@@ -68,7 +68,7 @@ CHAIN::CHAIN (void)
   initialized_rep = false;
   input_id_rep = output_id_rep = -1;
 
-  selected_chainop_repp = 0;
+  /* FIXME: remove these and only store the index */
   selected_controller_repp = 0;
   selected_dynobj_repp = 0;
 
@@ -161,7 +161,6 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
   }
 
   chainops_rep.push_back(chainop);
-  selected_chainop_repp = chainop;
   selected_chainop_number_rep = chainops_rep.size();
   initialized_rep = false;
 
@@ -174,54 +173,66 @@ void CHAIN::add_chain_operator(CHAIN_OPERATOR* chainop)
 /**
  * Removes the selected chain operator
  *
- * require:
- *  selected_chain_operator() <= number_of_chain_operators();
- *  selected_chain_operator() > 0
+ * @param op_index operator index (1...N), or -1 to use the selected op
  *
  * ensure:
  *  is_initialized() != true
  */
-void CHAIN::remove_chain_operator(void)
+void CHAIN::remove_chain_operator(int op_index)
 {
-  // --------
-  DBC_REQUIRE(selected_chain_operator() > 0);
-  DBC_REQUIRE(selected_chain_operator() <= number_of_chain_operators());
-  // --------
+  if (op_index < 0)
+    op_index = selected_chainop_number_rep;
 
-  int n = 0;
-  for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); 
-      p != chainops_rep.end(); 
-      p++) {
-    ++n;
-    if (n == selected_chain_operator()) {
-      for(std::vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); 
-	  q != gcontrollers_rep.end();) {
-	if ((*p) == (*q)->target_pointer()) {
-	  /* step: if the deleted controlled is selected, unselect it */ 
-	  if (selected_controller_repp == *q)
-	    selected_controller_repp = 0;
+  CHAIN_OPERATOR *to_remove = 0;
 
-	  /* step: remove the related controller */
-	  delete *q;
-	  gcontrollers_rep.erase(q);
+  if (op_index > 0 &&
+      op_index <= static_cast<int>(chainops_rep.size())) 
+    to_remove = chainops_rep[op_index - 1];
 
-	  /* step: in case there are multiple controllers per chainop */
-	  q = gcontrollers_rep.begin();
+  if (to_remove != 0) {
+    for(std::vector<CHAIN_OPERATOR*>::iterator p = chainops_rep.begin(); 
+	p != chainops_rep.end(); 
+	p++) {
+      
+      if (*p == to_remove) {
+	for(std::vector<GENERIC_CONTROLLER*>::iterator q = gcontrollers_rep.begin(); 
+	    q != gcontrollers_rep.end();) {
+	  if ((*p) == (*q)->target_pointer()) {
+	    
+	    /* step: if the deleted controller is selected, unselect it */ 
+	    if (selected_controller_repp == *q)
+	      selected_controller_repp = 0;
+	    
+	    /* step: remove the related controller */
+	    delete *q;
+	    gcontrollers_rep.erase(q);
+
+	    /* step: in case there are multiple controllers per chainop */
+	    q = gcontrollers_rep.begin();
+	  }
+	  else
+	    ++q;
 	}
-	else
-	  ++q;
+
+	/* step: delete and remove from the list */
+	delete *p;
+	chainops_rep.erase(p);
+
+	/* step: invalidate selection if the selected cop
+	 *       was affected */
+	if (op_index >= selected_chainop_number_rep) {
+	  selected_chainop_number_rep = -1;
+
+	  break;
+	}
       }
-      /* step: unselect, delete and remove from the list */
-      delete *p;
-      chainops_rep.erase(p);
-      selected_chainop_repp = 0;
-      break;
     }
+    
+    initialized_rep = false; 
   }
-  initialized_rep = false; 
 
   // --------
-  DBC_ENSURE(is_initialized() != true);
+  DBC_ENSURE(is_initialized() != true || to_remove == 0); 
   // --------
 }
 
@@ -233,10 +244,9 @@ void CHAIN::remove_chain_operator(void)
  */
 string CHAIN::chain_operator_name(void) const
 {
-  // --------
-  DBC_REQUIRE(selected_chain_operator() > 0);
-  // --------
-  return selected_chainop_repp->name();
+  assert(selected_chainop_number_rep > 0);
+  assert(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
+  return chainops_rep[selected_chainop_number_rep - 1]->name();
 }
 
 /**
@@ -248,11 +258,10 @@ string CHAIN::chain_operator_name(void) const
  */
 string CHAIN::chain_operator_parameter_name(void) const
 {
-  // --------
-  DBC_REQUIRE(selected_chain_operator() > 0);
-  DBC_REQUIRE(selected_chain_operator_parameter() > 0);
-  // --------
-  return selected_chainop_repp->get_parameter_name(selected_chain_operator_parameter());
+  assert(selected_chainop_number_rep > 0);
+  assert(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
+
+  return chainops_rep[selected_chainop_number_rep - 1]->get_parameter_name(selected_chain_operator_parameter());
 }
 
 /**
@@ -280,10 +289,25 @@ string CHAIN::controller_parameter_name(void) const
  */
 int CHAIN::number_of_chain_operator_parameters(void) const
 {
-  // --------
-  DBC_REQUIRE(selected_chain_operator() > 0);
-  // --------
-  return selected_chainop_repp->number_of_params();
+  assert(selected_chainop_number_rep > 0);
+  assert(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
+
+  return chainops_rep[selected_chainop_number_rep - 1]->number_of_params();
+}
+
+
+/**
+ * Returns the total number of parameters for the 
+ * chain operator 'index' ([0...N]).
+ *
+ * require:
+ *  index < number_of_chain_operators()
+ */
+int CHAIN::number_of_chain_operator_parameters(int index) const
+{
+  DBC_REQUIRE(index >= 0);
+  DBC_REQUIRE(index < number_of_chain_operators());
+  return chainops_rep[index]->number_of_params();
 }
 
 /**
@@ -317,20 +341,28 @@ string CHAIN::controller_name(void) const
 /**
  * Sets the parameter value (selected chain operator) 
  *
- * @param index parameter number
+ * @param op_index operator index (1...N), or -1 to use the selected op
+ * @param param_index param index (1...N), or -1 to use the selected param
  * @param value new value
- *
- * require:
- *  selected_chainop_number > 0 && selected_chainop_number <= number_of_chain_operators() &&
- *  selected_chain_operator_parameter() > 0
  */
-void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_t value)
+void CHAIN::set_parameter(int op_index, int param_index, CHAIN_OPERATOR::parameter_t value)
 {
-  // --------
-  DBC_REQUIRE(selected_chainop_number_rep > 0 && selected_chainop_number_rep <= number_of_chain_operators());
-  DBC_REQUIRE(selected_chain_operator_parameter() > 0);
-  // --------
-  selected_chainop_repp->set_parameter(selected_chainop_parameter_rep, value);
+  CHAIN_OPERATOR *cop = 0;
+
+  if (op_index < 0) {
+    if (selected_chainop_number_rep > 0 &&
+	selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()))
+      cop = chainops_rep[selected_chainop_number_rep - 1];
+  }
+  else if (op_index > 0 &&
+	   op_index <= static_cast<int>(chainops_rep.size())) 
+    cop = chainops_rep[op_index - 1];
+
+  if (param_index < 0)
+    param_index = selected_chainop_parameter_rep;
+
+  if (cop)
+    cop->set_parameter(param_index, value);
 }
 
 /**
@@ -344,11 +376,10 @@ void CHAIN::set_parameter(CHAIN_OPERATOR::parameter_t value)
  */
 CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const
 {
-  // --------
-  DBC_REQUIRE(selected_chain_operator_parameter() > 0);
-  DBC_REQUIRE(selected_chain_operator() != 0);
-  // --------
-  return selected_chainop_repp->get_parameter(selected_chainop_parameter_rep);
+  assert(selected_chainop_number_rep > 0);
+  assert(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
+
+  return chainops_rep[selected_chainop_number_rep - 1]->get_parameter(selected_chainop_parameter_rep);
 }
 
 /**
@@ -374,6 +405,14 @@ void CHAIN::add_controller(GENERIC_CONTROLLER* gcontroller)
   selected_controller_number_rep = gcontrollers_rep.size();
 }
 
+const CHAIN_OPERATOR* CHAIN::get_selected_chain_operator(void) const
+{
+  if (selected_chainop_number_rep > 0 &&
+      selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()))
+    return chainops_rep[selected_chainop_number_rep - 1];
+  return 0;
+}
+
 /**
  * Removes the selected controller
  *
@@ -395,7 +434,7 @@ void CHAIN::remove_controller(void)
     if ((n + 1) == selected_controller()) {
       delete *q;
       gcontrollers_rep.erase(q);
-      select_controller(0);
+      select_controller(-1);
       break;
     }
     ++n;
@@ -426,8 +465,7 @@ void CHAIN::clear(void)
  * Selects a chain operator. If no chain operators
  * are found with 'index', with index 'index'. 
  *
- * require:
- *  index > 0
+ * @param index 1...N
  *
  * ensure:
  *  index == selected_chain_operator() || 
@@ -435,14 +473,10 @@ void CHAIN::clear(void)
  */
 void CHAIN::select_chain_operator(int index)
 {
-  selected_chainop_repp = 0;
-  selected_chainop_number_rep = 0;
-  for(int chainop_sizet = 0; chainop_sizet != static_cast<int>(chainops_rep.size()); chainop_sizet++) {
-    if (chainop_sizet + 1 == index) {
-      selected_chainop_repp = chainops_rep[chainop_sizet];
-      selected_chainop_number_rep = index;
-      selected_chain_operator_as_target();
-    }
+  if (index > 0 &&
+      index <= static_cast<int>(chainops_rep.size())) {
+    selected_chainop_number_rep = index;
+    selected_chain_operator_as_target();
   }
 }
 
@@ -451,7 +485,7 @@ void CHAIN::select_chain_operator(int index)
  * current selection.
  *
  * require:
- *  index >= 0
+ *  index > 0
  *  selected_chain_operator() != 0 || index == 0
  *  index <= selected_chain_operator()->number_of_params()
  *
@@ -460,6 +494,7 @@ void CHAIN::select_chain_operator(int index)
  */
 void CHAIN::select_chain_operator_parameter(int index)
 {
+  DBC_REQUIRE(index > 0);
   selected_chainop_parameter_rep = index;
 }
 
@@ -468,8 +503,7 @@ void CHAIN::select_chain_operator_parameter(int index)
  * Selects a controller. Index of zero clears out 
  * current selection.
  *
- * require:
- *  index >= 0
+ * @param index 1...N, or negative to clear selection
  *
  * ensure:
  *  index == selected_controller() ||
@@ -477,6 +511,8 @@ void CHAIN::select_chain_operator_parameter(int index)
  */
 void CHAIN::select_controller(int index)
 {
+  DBC_REQUIRE(index != 0);
+
   selected_controller_repp = 0;
   selected_controller_number_rep = 0;
   for(int gcontroller_sizet = 0; gcontroller_sizet != static_cast<int>(gcontrollers_rep.size()); gcontroller_sizet++) {
@@ -492,7 +528,7 @@ void CHAIN::select_controller(int index)
  * current selection.
  *
  * require:
- *  index >= 0
+ *  index > 0
  *  selected_controller() != 0 || index == 0
  *  index <= selected_controller()->number_of_params()
  *
@@ -523,19 +559,30 @@ CHAIN_OPERATOR::parameter_t CHAIN::get_controller_parameter(void) const
 /**
  * Sets the value of the currently selected controller parameter.
  *
- * require:
- * selected_controller_number_rep > 0 && selected_controller_number_rep <= number_of_controllers()
- *  selected_controller() != 0
- *  selected_controller_parameter() != 0
+ * @param ctrl_index operator index (1...N), or -1 to use the selected ctrl
+ * @param param_index param index (1...N), or -1 to use the selected param
+ * @param value new value
  */
-void CHAIN::set_controller_parameter(CHAIN_OPERATOR::parameter_t value)
+void CHAIN::set_controller_parameter(int ctrl_index, int param_index, CHAIN_OPERATOR::parameter_t value) 
 {
-  // --------
-  DBC_REQUIRE(selected_controller_number_rep > 0 && selected_controller_number_rep <= number_of_controllers());
-  DBC_REQUIRE(selected_controller_parameter() > 0);
-  DBC_REQUIRE(selected_controller() != 0);
-  // --------
-  selected_controller_repp->set_parameter(selected_controller_parameter_rep, value);
+  GENERIC_CONTROLLER *ctrl = 0;
+
+  if (ctrl_index < 0) {
+    if (selected_controller_number_rep > 0 &&
+	selected_controller_number_rep <= static_cast<int>(gcontrollers_rep.size()))
+      ctrl = gcontrollers_rep[selected_controller_number_rep - 1];
+  }
+  else if (ctrl_index > 0 &&
+	   ctrl_index <= static_cast<int>(gcontrollers_rep.size())) 
+    ctrl = gcontrollers_rep[ctrl_index - 1];
+
+  if (param_index < 0)
+    param_index = selected_controller_parameter_rep;
+
+  DBC_CHECK(param_index > 0);
+
+  if (ctrl) 
+    ctrl->set_parameter(param_index, value);
 }
 
 /**
@@ -550,12 +597,13 @@ void CHAIN::set_controller_parameter(CHAIN_OPERATOR::parameter_t value)
  */
 void CHAIN::selected_chain_operator_as_target(void)
 {
+  assert(selected_chainop_number_rep > 0);
+  assert(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
+
+  selected_dynobj_repp = chainops_rep[selected_chainop_number_rep - 1];
+
   // --------
-  DBC_REQUIRE(selected_chainop_repp != 0);
-  // --------
-  selected_dynobj_repp = selected_chainop_repp;
-  // --------
-  DBC_ENSURE(selected_dynobj_repp == selected_chainop_repp);
+  DBC_ENSURE(selected_dynobj_repp == chainops_rep[selected_chainop_number_rep - 1]);
   // --------
 }
 

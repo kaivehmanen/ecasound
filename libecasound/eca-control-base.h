@@ -22,6 +22,11 @@ class ECA_ENGINE;
 /**
  * Base class providing basic functionality for controlling the 
  * ecasound library.
+ *
+ * FIXME: This is just wrong, all the methods should be moved
+ *        to ECA_CONTROL class (implementation can stay in 
+ *        eca-control-base.cpp).
+ *
  * @author Kai Vehmanen
  */
 class ECA_CONTROL_BASE {

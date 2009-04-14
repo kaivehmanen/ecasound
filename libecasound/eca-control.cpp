@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2005,2008 Kai Vehmanen
+// Copyright (C) 1999-2005,2008,2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -43,9 +43,10 @@
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 
-#include "eca-control.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
+#include "eca-control.h"
+#include "eca-engine.h"
 #include "eca-object-factory.h"
 #include "eca-object-map.h"
 #include "eca-preset-map.h"
@@ -71,6 +72,7 @@ using std::list;
 using std::vector;
 using std::cerr;
 using std::endl;
+using namespace ECA;
 
 /**
  * Declarations for private static functions
@@ -811,6 +813,71 @@ void ECA_CONTROL::action(int action_id)
   }
 }
 
+/**
+ * Executes chainsetup edit on connect chainsetup.
+ * 
+ * @pre is_connected()
+ */
+bool ECA_CONTROL_OBJECTS::execute_edit_on_connected(const chainsetup_edit_t& edit)
+{
+  DBC_REQUIRE(is_connected() == true);
+
+  bool retval = false;
+  
+  if (is_engine_running() == true) {
+    ECA_ENGINE::complex_command_t engine_cmd;
+    engine_cmd.type = ECA_ENGINE::ep_exec_edit;
+    engine_cmd.m.cs = edit;
+    engine_repp->command(engine_cmd);
+    retval = true;
+  }
+  else {
+    /* note: engine not yet running, execute edit directly */
+    retval = session_repp->connected_chainsetup_repp->execute_edit(edit);
+  }
+
+  return retval;
+}
+
+/**
+ * Executes chainsetup edit on selected chainsetup.
+ * 
+ * @param edit object specifying the edit action
+ * @param index if non-negative, override the chainsetup selection
+ */
+bool ECA_CONTROL_OBJECTS::execute_edit_on_selected(const chainsetup_edit_t& edit, int index)
+{
+  bool retval = false;
+
+  ECA_CHAINSETUP *csetup = 0;
+
+  if (index < 0) {
+    csetup = selected_chainsetup_repp;
+  }
+  else {
+    if (index >= 0 &&
+	index < static_cast<int>(session_repp->chainsetups_rep.size())) {
+      csetup = session_repp->chainsetups_rep[index];
+    }
+  }
+
+  /* note: make sure that if the selected chainsetup is 
+   *       in use by the engine, the edit is performed 
+   *       by the engine thread! 
+   */
+  if (csetup != 0) {
+    if (csetup->is_enabled() == true &&
+	is_engine_running() == true) {
+      execute_edit_on_connected(edit);
+    }
+    else {
+      csetup->execute_edit(edit);
+    }
+  }
+
+  return retval;
+}
+
 string ECA_CONTROL::last_value_to_string(void)
 {
   string type = last_type();
@@ -906,7 +973,6 @@ string ECA_CONTROL::chainsetup_details_to_string(const ECA_CHAINSETUP* cs) const
       result += ECA_OBJECT_FACTORY::audio_object_to_eos(cs->inputs[idx], "i");
     result += " ";
     result += (*chain_citer)->to_string();
-    result += " ";
     idx = (*chain_citer)->connected_output();
     if (idx >= 0)
       result += ECA_OBJECT_FACTORY::audio_object_to_eos(cs->outputs[idx], "o");

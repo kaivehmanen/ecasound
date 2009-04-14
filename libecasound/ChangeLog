@@ -1,6 +1,20 @@
+2009-04-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-chainsetup.h: Added get_chain_index().
+	* eca-control-objects.h: get_connected_chainsetup() added.
+	* eca-chain.h: New signature for set_parameter().
+	* eca-engine.h: Added new type ECA_ENGINE::complex_command_t and
+	new enum type ECA_ENGINE::ep_exec_edit. Removed enum types 
+	ECA_ENGINE::ep_ctrl_* and ECA_ENGINE::ep_cop_*.
+
+2009-04-12  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-chain.h: Added member function number_of_chain_operator_parameters().
+	* eca-osc.h: File added.
+
 2009-04-10  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
-	* audiofx_amplitude.cpp: Added EFFECT_AMPLIFY::process_ref(),
+	* audiofx_amplitude.h: Added EFFECT_AMPLIFY::process_ref(),
 	EFFECT_AMPLIFY_DB::process_ref(), EFFECT_AMPLIFY_CHANNEL::process_ref()
 	and EFFECT_NORMAL_PAN::process_ref().
 	* samplebuffer_functions.h: Added fill_with_random_samples(), 
