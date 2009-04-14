@@ -42,6 +42,10 @@
 #include <eca-session.h>
 #include <eca-version.h>
 
+#ifdef ECA_USE_LIBLO
+#include <eca-osc.h>
+#endif
+
 #include "eca-comhelp.h"
 #include "eca-console.h"
 #include "eca-curses.h"
@@ -74,6 +78,7 @@
 
 static void ecasound_create_eca_objects(ECASOUND_RUN_STATE* state, COMMAND_LINE& cline);
 static void ecasound_launch_neteci(ECASOUND_RUN_STATE* state);
+static void ecasound_launch_osc(ECASOUND_RUN_STATE* state);
 static int ecasound_pass_at_launch_commands(ECASOUND_RUN_STATE* state);
 static void ecasound_main_loop(ECASOUND_RUN_STATE* state);
 void ecasound_parse_command_line(ECASOUND_RUN_STATE* state, 
@@ -145,6 +150,7 @@ ECASOUND_RUN_STATE::ECASOUND_RUN_STATE(void)
     control(0),
     logger(0),
     eciserver(0),
+    osc(0),
     session(0),
     launchcmds(0),
     neteci_thread(0),
@@ -153,8 +159,10 @@ ECASOUND_RUN_STATE::ECASOUND_RUN_STATE(void)
     exit_request(0),
     signalset(0),
     retval(ECASOUND_RETVAL_SUCCESS),
-    neteci_tcp_port(2868),
     neteci_mode(false),
+    neteci_tcp_port(2868),
+    osc_mode(false),
+    osc_udp_port(-1),
     keep_running_mode(false),
     cerr_output_only_mode(false),
     interactive_mode(false),
@@ -172,6 +180,7 @@ ECASOUND_RUN_STATE::~ECASOUND_RUN_STATE(void)
 
   if (launchcmds != 0) { delete launchcmds; launchcmds = 0; }
   if (eciserver != 0) { delete eciserver; eciserver = 0; }
+  if (osc != 0) { delete osc; osc = 0; }
   if (console != 0) { delete console; console = 0; }
   if (neteci_thread != 0) { delete neteci_thread; neteci_thread = 0; }
   if (watchdog_thread != 0) { delete watchdog_thread; watchdog_thread = 0; }
@@ -230,10 +239,15 @@ int main(int argc, char *argv[])
     ecasound_create_eca_objects(&state, *clineout);
     delete clineout; clineout = 0;
 
-    /* 7. enable control over socket connection  */
+    /* 7. enable remote control over socket connection  */
     if (state.retval == ECASOUND_RETVAL_SUCCESS) {
+      /* 7.a) ... ECI over socket connection */
       if (state.neteci_mode == true) {
 	ecasound_launch_neteci(&state);
+      }
+      /* 7.b) ... over OSC */
+      else if (state.osc_mode == true) {
+	ecasound_launch_osc(&state);
       }
     }
 
@@ -347,6 +361,19 @@ void ecasound_launch_neteci(ECASOUND_RUN_STATE* state)
   // state->console->print("ecasound: NetECI server started");
 }
 
+/**
+ * Sets up and activates Ecasound OSC interface
+ */
+void ecasound_launch_osc(ECASOUND_RUN_STATE* state)
+{
+#ifdef ECA_USE_LIBLO
+  DBC_REQUIRE(state != 0);
+  state->osc = new ECA_OSC_INTERFACE (state->control, state->osc_udp_port);
+  if (state->osc)
+    state->osc->start();
+#endif
+}
+
 static int ecasound_pass_at_launch_commands(ECASOUND_RUN_STATE* state)
 {
   if (state->launchcmds) {
@@ -396,6 +423,14 @@ void ecasound_main_loop(ECASOUND_RUN_STATE* state)
   DBC_REQUIRE(state->console != 0);
 
   ECA_CONTROL* ctrl = state->control;
+
+#if 0
+  /* note: a temporary place for this code -- move outside
+   *       ecasound_main_loop() perhaps...? */
+   ECA_OSC_INTERFACE osc (ctrl);
+   osc.start();
+#endif
+
 
   if (state->interactive_mode == true) {
 
@@ -448,7 +483,12 @@ void ecasound_main_loop(ECASOUND_RUN_STATE* state)
     }
     else {
 
-      /* case: 2.2: non-interactive, NetECI active */
+      /* case: 2.2: non-interactive, NetECI active 
+       *
+       *             (special handling is needed as NetECI needs
+       *             to submit atomic bundles of ECI commands and thus
+       *             needs to be able to lock the ECA_CONTROL object
+       *             for itself) */
 
       int res = -1;
 
@@ -480,6 +520,10 @@ void ecasound_main_loop(ECASOUND_RUN_STATE* state)
       ecasound_check_for_quit(state, "quit");
     }
   }
+
+#if 0
+  osc.stop();
+#endif
   // cerr << endl << "ecasound: mainloop exiting..." << endl;
 }
 
@@ -497,6 +541,10 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
   else {
    cline.begin();
     while(cline.end() != true) {
+
+      fprintf(stdout,
+	      "input %s to %d.\n", cline.current().c_str(), state->osc_udp_port);
+
       if (cline.current() == "-o:stdout" ||
 	  cline.current() == "stdout" ||
 	  cline.current() == "-d:0" ||
@@ -549,6 +597,28 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 	       cline.current() == "--nodaemon") {
 	/* note: --daemon deprecated as of 2.6.0 */
 	state->neteci_mode = false;
+      }
+
+      else if (cline.current().find("--osc-udp-port") != string::npos) {
+	std::vector<std::string> argpair = 
+	  kvu_string_to_vector(cline.current(), '=');
+	if (argpair.size() > 1) {
+	  /* --osc-udp-port=XXXX */
+	  state->osc_udp_port = atoi(argpair[1].c_str());
+	  fprintf(stdout,
+		  "set UDP port based on %s to %d.\n", cline.current().c_str(), state->osc_udp_port);
+	}
+	fprintf(stdout,
+		"set(2) UDP port based on %s to %d.\n", cline.current().c_str(), state->osc_udp_port);
+      }
+
+      else if (cline.current().find("--osc") != string::npos) {
+#ifdef ECA_USE_LIBLO
+	state->osc_mode = true;
+#else
+	state->osc_mode = false;
+	cerr << "ERROR: ecasound was built without OSC support" << endl;
+#endif
       }
 
       else if (cline.current() == "-h" ||

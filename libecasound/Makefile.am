@@ -181,6 +181,7 @@ ecasound_general_include = 	\
 			eca-fileio.h  \
 			eca-fileio-stream.h \
 			eca-fileio-mmap.h \
+			eca-osc.h \
 			dynamic-parameters.h \
 			dynamic-object.h \
 			eca-object.h \
@@ -332,6 +333,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-audio-time.cpp \
 			eca-fileio-stream.cpp \
 			eca-fileio-mmap.cpp \
+			eca-osc.cpp \
 			eca-static-object-maps.cpp \
 			eca-object-map.cpp \
 			eca-preset-map.cpp
