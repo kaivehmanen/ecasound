@@ -46,7 +46,8 @@ EXTRA_DIST = 	$(man1_pages_to_install) \
 	    	$(srcdir)/examples.html \
 		$(srcdir)/manpages.html \
 		$(srcdir)/tutorials.html \
-		$(srcdir)/style_ecasound.css
+		$(srcdir)/style_ecasound.css \
+		$(srcdir)/ecasound_osc_interface.txt
 
 # ---------------------------------------------------------------------
 # local targets for generating docs from latex and yodl sources
