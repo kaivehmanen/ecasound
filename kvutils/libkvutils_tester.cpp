@@ -524,7 +524,7 @@ static int kvu_test_6_msgqueue(void)
   for(int iter = 0; iter < kvu_test_6_iterations_const; iter++) {
     // fprintf(stderr, "%s:%d push.\n", __FUNCTION__, __LINE__);
     std::string msg = kvu_numtostr(iter + 1);
-    std::fprintf(stdout, "%s:%d pushed '%s'\n", __FUNCTION__, __LINE__, msg.c_str());
+    //std::fprintf(stdout, "%s:%d pushed '%s'\n", __FUNCTION__, __LINE__, msg.c_str());
     rqueue.push_back(msg);
     int sleep_ns = std::rand() % 100;
 
