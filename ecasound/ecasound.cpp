@@ -36,7 +36,8 @@
 #include <kvu_com_line.h>
 #include <kvu_utils.h>
 
-#include <eca-control.h>
+#include <eca-control-main.h>
+#include <eca-control-mt.h>
 #include <eca-error.h>
 #include <eca-logger.h>
 #include <eca-session.h>
@@ -80,7 +81,8 @@ static void ecasound_create_eca_objects(ECASOUND_RUN_STATE* state, COMMAND_LINE&
 static void ecasound_launch_neteci(ECASOUND_RUN_STATE* state);
 static void ecasound_launch_osc(ECASOUND_RUN_STATE* state);
 static int ecasound_pass_at_launch_commands(ECASOUND_RUN_STATE* state);
-static void ecasound_main_loop(ECASOUND_RUN_STATE* state);
+static void ecasound_main_loop_interactive(ECASOUND_RUN_STATE* state);
+static void ecasound_main_loop_batch(ECASOUND_RUN_STATE* state);
 void ecasound_parse_command_line(ECASOUND_RUN_STATE* state, 
 				 const COMMAND_LINE& clinein,
 				 COMMAND_LINE* clineout);
@@ -246,7 +248,7 @@ int main(int argc, char *argv[])
 	ecasound_launch_neteci(&state);
       }
       /* 7.b) ... over OSC */
-      else if (state.osc_mode == true) {
+      if (state.osc_mode == true) {
 	ecasound_launch_osc(&state);
       }
     }
@@ -256,7 +258,10 @@ int main(int argc, char *argv[])
 
     /* 9. start processing */
     if (state.retval == ECASOUND_RETVAL_SUCCESS) {
-      ecasound_main_loop(&state);
+      if (state.interactive_mode == true)
+	ecasound_main_loop_interactive(&state);
+      else
+	ecasound_main_loop_batch(&state);
     }
   }
 
@@ -266,7 +271,8 @@ int main(int argc, char *argv[])
   if (state.neteci_mode == true) {
     /* wait until the NetECI thread has exited */
     state.exit_request = 1;
-    pthread_join(*state.neteci_thread, NULL);
+    if (state.neteci_thread)
+      pthread_join(*state.neteci_thread, NULL);
   }
 
   /* step: terminate the engine thread */
@@ -319,7 +325,7 @@ void ecasound_create_eca_objects(ECASOUND_RUN_STATE* state,
 
   try {
     state->session = new ECA_SESSION(cline);
-    state->control = new ECA_CONTROL(state->session);
+    state->control = new ECA_CONTROL_MT(state->session);
 
     DBC_ENSURE(state->session != 0);
     DBC_ENSURE(state->control != 0);
@@ -380,8 +386,9 @@ static int ecasound_pass_at_launch_commands(ECASOUND_RUN_STATE* state)
     std::vector<std::string>::const_iterator p = state->launchcmds->begin();
 
     while(p != state->launchcmds->end()) {
-      state->control->command(*p);
-      state->control->print_last_value();
+      struct eci_return_value retval;
+      state->control->command(*p, &retval);
+      state->control->print_last_value(&retval);
       ++p;
     }
   }
@@ -398,132 +405,102 @@ static void ecasound_check_for_quit(ECASOUND_RUN_STATE* state, const string& cmd
   }
 }
 
-static void ecasound_lock_ctrl_if_needed(ECASOUND_RUN_STATE* state)
-{
-  if (state->neteci_mode == true) {
-    int res = pthread_mutex_lock(state->lock);
-    DBC_CHECK(res == 0);
-  }
-}
-
-static void ecasound_unlock_ctrl_if_needed(ECASOUND_RUN_STATE* state)
-{
-  if (state->neteci_mode == true) {
-    int res = pthread_mutex_unlock(state->lock);
-    DBC_CHECK(res == 0);
-  }
-}
-
 /**
- * The main processing loop.
+ * The main processing loop for interactive use.
  */
-void ecasound_main_loop(ECASOUND_RUN_STATE* state)
+void ecasound_main_loop_interactive(ECASOUND_RUN_STATE* state)
 {
   DBC_REQUIRE(state != 0);
   DBC_REQUIRE(state->console != 0);
 
-  ECA_CONTROL* ctrl = state->control;
+  ECA_CONTROL_MAIN* ctrl = state->control;
 
-#if 0
-  /* note: a temporary place for this code -- move outside
-   *       ecasound_main_loop() perhaps...? */
-   ECA_OSC_INTERFACE osc (ctrl);
-   osc.start();
-#endif
+  while(state->exit_request == 0) {
+    state->console->read_command("ecasound ('h' for help)> ");
+    const string& cmd = state->console->last_command();
+    if (cmd.size() > 0 && state->exit_request == 0) {
+      
+      struct eci_return_value retval;
+      ctrl->command(cmd, &retval);
+      ctrl->print_last_value(&retval);
 
-
-  if (state->interactive_mode == true) {
-
-    /* case 1: interactive mode */
-
-    while(state->exit_request == 0) {
-      state->console->read_command("ecasound ('h' for help)> ");
-      const string& cmd = state->console->last_command();
-      if (cmd.size() > 0 && state->exit_request == 0) {
-
-	ecasound_lock_ctrl_if_needed(state);
-	ctrl->command(cmd);
-	ctrl->print_last_value();
-	ecasound_unlock_ctrl_if_needed(state);
-
-	ecasound_check_for_quit(state, cmd);
-      }
+      ecasound_check_for_quit(state, cmd);
     }
   }
-  else {
+}
 
-    /* case 2: non-interactive mode */
+/**
+ * The main processing loop for noninteractive use.
+ */
+void ecasound_main_loop_batch(ECASOUND_RUN_STATE* state)
+{
+  DBC_REQUIRE(state != 0);
+  DBC_REQUIRE(state->console != 0);
 
-    /* FIXME: to be split into separate functions */
+  ECA_CONTROL_MAIN* ctrl = state->control;
 
-    ecasound_lock_ctrl_if_needed(state);
-    if (ctrl->is_selected() == true && 
-	ctrl->is_valid() == true) {
-      ctrl->connect_chainsetup();
-    }
-    ecasound_unlock_ctrl_if_needed(state);
+  struct eci_return_value connect_retval;
 
-    if (state->neteci_mode != true) {
+  if (ctrl->is_selected() == true && 
+      ctrl->is_valid() == true) {
+    ctrl->connect_chainsetup(&connect_retval);
+  }
+  
+  if (state->neteci_mode != true) {
 
-      /* case: 2.1: non-interactive, NetECI not in use */
-
-      if (ctrl->is_connected() == true) {
-	if (!state->exit_request) {
-	  int res = ctrl->run(!state->keep_running_mode);
-	  if (res < 0) {
-	    state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
-	    cerr << "ecasound: Warning! Errors detected during processing." << endl;
-	  }
+    /* case: 2.1: non-interactive, neither NetECI or OSC is used,
+     *            so this thread can use 'ctrl' exclusively */
+    
+    if (ctrl->is_connected() == true) {
+      if (!state->exit_request) {
+	int res = ctrl->run(!state->keep_running_mode);
+	if (res < 0) {
+	  state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
+	  cerr << "ecasound: Warning! Errors detected during processing." << endl;
 	}
-      }
-      else {
-	ctrl->print_last_value();
-	state->retval = ECASOUND_RETVAL_START_ERROR;
       }
     }
     else {
-
+      ctrl->print_last_value(&connect_retval);
+      state->retval = ECASOUND_RETVAL_START_ERROR;
+    }
+  }
+  else {
+    
       /* case: 2.2: non-interactive, NetECI active 
        *
        *             (special handling is needed as NetECI needs
        *             to submit atomic bundles of ECI commands and thus
        *             needs to be able to lock the ECA_CONTROL object
        *             for itself) */
-
-      int res = -1;
-
-      ecasound_lock_ctrl_if_needed(state);
-      if (ctrl->is_connected() == true) {
-	res = ctrl->start();
-      }
-      ecasound_unlock_ctrl_if_needed(state);
-
-      /* note: if keep_running_mode is enabled, we do not 
-       *       exit even if there are errors during startup */
-      if (state->keep_running_mode != true &&
-	  res < 0) {
-	state->retval = ECASOUND_RETVAL_START_ERROR;
-	state->exit_request = 1;
-      }
-
-      while(state->exit_request == 0) {
-	
-	if (state->keep_running_mode != true &&
-	    ctrl->is_finished() == true)
-	  break;
-	
-	/* note: sleep for one second and let the NetECI thread
-	 *       access the ECA_CONTROL object for a while */
-	kvu_sleep(1, 0);
-      }
-
-      ecasound_check_for_quit(state, "quit");
+    
+    int res = -1;
+    
+    if (ctrl->is_connected() == true) {
+      res = ctrl->start();
     }
-  }
+    
+    /* note: if keep_running_mode is enabled, we do not 
+     *       exit even if there are errors during startup */
+    if (state->keep_running_mode != true &&
+	res < 0) {
+      state->retval = ECASOUND_RETVAL_START_ERROR;
+      state->exit_request = 1;
+    }
 
-#if 0
-  osc.stop();
-#endif
+    while(state->exit_request == 0) {
+      
+      if (state->keep_running_mode != true &&
+	  ctrl->is_finished() == true)
+	break;
+      
+      /* note: sleep for one second and let the NetECI thread
+       *       access the ECA_CONTROL object for a while */
+      kvu_sleep(1, 0);
+    }
+    
+    ecasound_check_for_quit(state, "quit");
+  }
   // cerr << endl << "ecasound: mainloop exiting..." << endl;
 }
 
@@ -541,9 +518,6 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
   else {
    cline.begin();
     while(cline.end() != true) {
-
-      fprintf(stdout,
-	      "input %s to %d.\n", cline.current().c_str(), state->osc_udp_port);
 
       if (cline.current() == "-o:stdout" ||
 	  cline.current() == "stdout" ||
@@ -608,17 +582,13 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 	  fprintf(stdout,
 		  "set UDP port based on %s to %d.\n", cline.current().c_str(), state->osc_udp_port);
 	}
-	fprintf(stdout,
-		"set(2) UDP port based on %s to %d.\n", cline.current().c_str(), state->osc_udp_port);
-      }
-
-      else if (cline.current().find("--osc") != string::npos) {
 #ifdef ECA_USE_LIBLO
 	state->osc_mode = true;
 #else
 	state->osc_mode = false;
 	cerr << "ERROR: ecasound was built without OSC support" << endl;
 #endif
+
       }
 
       else if (cline.current() == "-h" ||

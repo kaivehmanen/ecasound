@@ -8,7 +8,7 @@
 #include <signal.h>    /* POSIX: sigaction(), sigwait(), sig_atomic_t */
 
 class ECA_CONSOLE;
-class ECA_CONTROL;
+class ECA_CONTROL_MT;
 class ECA_LOGGER_INTERFACE;
 class ECA_NETECI_SERVER;
 class ECA_SESSION;
@@ -42,7 +42,7 @@ class ECASOUND_RUN_STATE {
   ~ECASOUND_RUN_STATE(void);
 
   ECA_CONSOLE* console;
-  ECA_CONTROL* control;
+  ECA_CONTROL_MT* control;
   ECA_LOGGER_INTERFACE* logger;
   ECA_NETECI_SERVER* eciserver;
   ECA_OSC_INTERFACE* osc;
