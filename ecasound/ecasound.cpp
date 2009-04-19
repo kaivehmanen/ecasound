@@ -446,7 +446,8 @@ void ecasound_main_loop_batch(ECASOUND_RUN_STATE* state)
     ctrl->connect_chainsetup(&connect_retval);
   }
   
-  if (state->neteci_mode != true) {
+  if (state->neteci_mode != true &&
+      state->osc_mode != true) {
 
     /* case: 2.1: non-interactive, neither NetECI or OSC is used,
      *            so this thread can use 'ctrl' exclusively */
