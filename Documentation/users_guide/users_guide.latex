@@ -339,9 +339,10 @@ This is possible, but there are some issues you should be aware of. If
 you try using multiple cheap soundcards to get more simultaneous 
 inputs for recording, it's likely that the resulting streams will not
 be in sync. This problem is explained in detail in the Linux
-Audio-Quality HOWTO,
-\url{http://www.linuxdj.com/audio/quality/},
-section "Notes on Full Duplex Recording, and Other Realtime Issues".
+Audio-Quality HOWTO section "Notes on Full Duplex Recording, and Other 
+Realtime Issues": \url{http://karmak.org/archive/2003/02/audio_quality_HOWTO.htm}.
+The original page at \url{http://www.linuxdj.com/audio/quality/} is no
+longer available. 
 
 \subsection{Problems with panning mono files}
 
