@@ -87,7 +87,7 @@ endif
 if ECA_AM_PYECASOUND_INSTALL
 uninstall-local:
 	rm -f $(pyecasound_uninstall_list1) $(pyecasound_uninstall_list2)
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(ECA_S_PYTHON_DLMODULES)
+	rmdir $(DESTDIR)$(ECA_S_PYTHON_DLMODULES) || echo "Skipping non-empty directory"
 else
 uninstall-local:
 endif

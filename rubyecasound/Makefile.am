@@ -43,7 +43,7 @@ endif
 if ECA_AM_RUBYECASOUND_INSTALL
 uninstall-local:
 	rm -f $(rubyecasound_uninstall_list1) $(rubyecasound_uninstall_list2)
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(ECA_S_RUBY_SITEDIR)
+	rmdir $(DESTDIR)$(ECA_S_RUBY_SITEDIR) || echo "Skipping non-empty directory"
 else
 uninstall-local:
 endif

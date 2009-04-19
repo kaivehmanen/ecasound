@@ -88,6 +88,6 @@ install-data-local:
 uninstall-local:
 	cd $(DESTDIR)$(includedir)/libecasoundc && \
 	rm -f   $(ecasoundc_includes)
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(includedir)/libecasoundc
+	rmdir $(DESTDIR)$(includedir)/libecasoundc || echo "Skipping non-empty directory"
 	rm -f 	$(DESTDIR)$(bindir)/libecasoundc-config
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(bindir)
+	rmdir $(DESTDIR)$(bindir) || echo "Skipping non-empty directory"

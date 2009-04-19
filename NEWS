@@ -84,13 +84,16 @@ xxyy2009 (v2.x.y) -** stable release **-
 		 and have been tested with lame 3.96, 3.97 and with
 		 the latest 3.98.2
 	- fixed: bad audio with 'resample' object, non-integer sampling 
-		 rate changes ratios and output to JACK; ecasound did
+		 rate change ratios and output to JACK; ecasound did
 		 emit warning about this, but did not raise a fatal 
 		 error; now the underlying problem is fixed and now
 		 'resample' and 'jack' objects maybe safely used 
 		 together
         - fixed: minor bug in ecamonitor; "cop-status" was used with
 		 multiple chains selected
+	- fixed: don't use '--ignore-fail-on-non-empty' rmdir option
+		 as it is not available on many platforms (e.g. OS X)
+		 and this breaks the uninstall target; sfbug:2772628
 08022009 (v2.6.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt

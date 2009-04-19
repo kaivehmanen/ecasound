@@ -29,7 +29,7 @@ uninstall-local:
 		$(DESTDIR)$(pkgdatadir)/ecasound.el \
 		$(DESTDIR)$(pkgdatadir)/generic_oscillators \
 		$(DESTDIR)$(pkgdatadir)/ecasoundrc
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(pkgdatadir)
+	rmdir $(DESTDIR)$(pkgdatadir) || echo "Skipping non-empty directory"
 
 ecasoundrc: ecasoundrc.in Makefile.am
 	sed -e "s%[@]VERSION[@]%$(VERSION)%" \

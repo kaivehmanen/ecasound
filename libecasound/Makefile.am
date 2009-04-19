@@ -402,6 +402,6 @@ uninstall-local:
 		$(ecasound_controller_include) \
 		$(ecasound_midi_include) \
 		$(ecasound_general_include)
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(includedir)/libecasound
+	rmdir $(DESTDIR)$(includedir)/libecasound || echo "Skipping"
 	rm -f 	$(DESTDIR)$(bindir)/libecasound-config
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(bindir)
+	rmdir $(DESTDIR)$(bindir) || echo "Skipping"

@@ -78,4 +78,4 @@ install-data-local:
 uninstall-local:
 	cd $(DESTDIR)$(includedir)/kvutils && \
 	rm -f $(kvutil_headers)
-	rmdir --ignore-fail-on-non-empty $(DESTDIR)$(includedir)/kvutils
+	rmdir $(DESTDIR)$(includedir)/kvutils || echo "Skipping non-empty directory"
