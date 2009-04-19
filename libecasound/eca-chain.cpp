@@ -298,16 +298,20 @@ int CHAIN::number_of_chain_operator_parameters(void) const
 
 /**
  * Returns the total number of parameters for the 
- * chain operator 'index' ([0...N]).
+ * chain operator 'index' ([1...N]).
  *
  * require:
  *  index < number_of_chain_operators()
  */
 int CHAIN::number_of_chain_operator_parameters(int index) const
 {
-  DBC_REQUIRE(index >= 0);
-  DBC_REQUIRE(index < number_of_chain_operators());
-  return chainops_rep[index]->number_of_params();
+  DBC_REQUIRE(index > 0);
+  DBC_REQUIRE(index <= number_of_chain_operators());
+  if (index > 0 &&
+      index <= number_of_chain_operators())
+    return chainops_rep[index - 1]->number_of_params();
+
+  return -1;
 }
 
 /**
@@ -376,10 +380,15 @@ void CHAIN::set_parameter(int op_index, int param_index, CHAIN_OPERATOR::paramet
  */
 CHAIN_OPERATOR::parameter_t CHAIN::get_parameter(void) const
 {
-  assert(selected_chainop_number_rep > 0);
-  assert(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
+  DBC_CHECK(selected_chainop_number_rep > 0);
+  DBC_CHECK(selected_chainop_number_rep <= static_cast<int>(chainops_rep.size()));
 
-  return chainops_rep[selected_chainop_number_rep - 1]->get_parameter(selected_chainop_parameter_rep);
+  if (selected_chainop_number_rep > 0 &&
+      selected_chainop_number_rep <= static_cast<int>(chainops_rep.size())) {
+    return chainops_rep[selected_chainop_number_rep - 1]->get_parameter(selected_chainop_parameter_rep);
+  }
+
+  return 0.0f;
 }
 
 /**
