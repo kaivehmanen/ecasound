@@ -30,6 +30,10 @@ class ECA_CONTROL_MT;
 
 /**
  * Ecasound Open Source Control Control (OSC) interface 
+ *
+ * The interface is documented in Ecasound codebase:
+ *   - ecasound/Documentation/ecasound_osc_interface.txt
+ *   - http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound;a=blob;f=Documentation/ecasound_osc_interface.txt;hb=HEAD
  */
 class ECA_OSC_INTERFACE {
 
