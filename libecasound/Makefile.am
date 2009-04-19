@@ -172,11 +172,9 @@ ecasound_general_include = 	\
 			eca-chainsetup-parser.h \
 			eca-chainsetup-position.h \
 			eca-control.h \
-			eca-control-base.h \
 			eca-control-dump.h \
 			eca-control-main.h \
 			eca-control-mt.h \
-			eca-control-objects.h \
 			eca-iamode-parser.h \
 			eca-iamode-parser_impl.h \
 			eca-audio-position.h \
