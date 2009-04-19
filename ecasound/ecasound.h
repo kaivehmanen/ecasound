@@ -69,28 +69,4 @@ class ECASOUND_RUN_STATE {
   bool quiet_mode;
 };
 
-#if 0
-struct ecasound_state {
-  ECA_CONSOLE* console;
-  ECA_CONTROL* control;
-  ECA_LOGGER_INTERFACE* logger;
-  ECA_NETECI_SERVER* eciserver;
-  ECA_SESSION* session;
-  std::vector<std::string>* launchcmds;
-  pthread_t* neteci_thread;
-  pthread_mutex_t* lock;
-  sig_atomic_t exit_request;
-  sigset_t* signalset;
-  int retval;
-  bool neteci_mode;
-  int neteci_tcp_port;
-  bool osc_mode;
-  int osc_udp_port;
-  bool keep_running_mode;
-  bool cerr_output_only_mode;
-  bool interactive_mode;
-  bool quiet_mode;
-};
-#endif
-
 #endif /* INCLUDED_ECASOUND_H */
