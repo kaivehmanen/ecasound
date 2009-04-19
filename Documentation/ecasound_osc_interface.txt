@@ -1,0 +1,64 @@
+:editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
+:version: 1
+:syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
+
+===========================================
+Ecasound Open Sound Control (OSC) Interface
+===========================================
+
+Introduction
+~~~~~~~~~~~~
+
+OSC support was added as to Ecasound version 2.7.0. However,
+the OSC interface (as defined by this document), is still 
+considered experimental, and the interface may change in
+later Ecasound versions.
+
+To understand Ecasound concepts such as "chain", "chain operator" and
+"controller", please see the User's Guide at:
+http://eca.cx/ecasound/Documentation/users_guide/html_uguide/users_guide.html
+
+Specification
+~~~~~~~~~~~~~
+
+Modify chain operator parameter
+-------------------------------
+
+/ecasound/chain/NAME/op/OID/param/PID FVAL
+
+NAME =
+   A name of a chain in the currently connected chainsetup
+OID = 
+   The OIDth (1...N) chain operator in chain NAME.
+PID = 
+   The PIDth (1...N) parameter of chain op OID.
+FVAL =
+   New parameter value as an OSC float32 value
+
+Related ECI action is 'cop-set' (see ecasound-iam(1) man page).
+
+Modify controller parameter
+---------------------------
+
+/ecasound/chain/NAME/ctrl/OID/param/PID FVAL
+
+NAME =
+   A name of a chain in the currently connected chainsetup
+OID = 
+   The OIDth (1...N) controller in chain NAME.
+PID = 
+   The PIDth (1...N) parameter of chain op OID.
+FVAL =
+   New parameter value as an OSC float32 value
+
+Related ECI action is 'ctrlp-set' (see ecasound-iam(1) man page).
+
+References
+~~~~~~~~~~
+
+http://archive.cnmat.berkeley.edu/OpenSoundControl/OSC-spec.html
+
+Examples
+~~~~~~~~
+
+TBD
