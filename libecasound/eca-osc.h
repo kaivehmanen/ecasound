@@ -22,7 +22,7 @@
 #ifndef INCLUDED_ECA_OSC_H
 #define INCLUDED_ECA_OSC_H
 
-class ECA_CONTROL;
+class ECA_CONTROL_MT;
 
 #ifdef ECA_USE_LIBLO
 
@@ -37,7 +37,7 @@ class ECA_OSC_INTERFACE {
 
   public:
 
-  ECA_OSC_INTERFACE(ECA_CONTROL *ecacontrol, int port = -1);
+  ECA_OSC_INTERFACE(ECA_CONTROL_MT *ecacontrol, int port = -1);
   ~ECA_OSC_INTERFACE(void);
 
   void start(void);
@@ -50,7 +50,7 @@ class ECA_OSC_INTERFACE {
   int handle_chain_message(const string &path, const char *types, lo_arg **argv, int argc);
   int handle_osc_message(const char *path, const char *types, lo_arg **argv, int argc);
 
-  ECA_CONTROL* ec_repp;
+  ECA_CONTROL_MT* ec_repp;
   bool running_rep;
   int udp_port_rep;
   lo_server_thread lo_thr_repp;

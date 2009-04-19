@@ -40,22 +40,18 @@
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 
-#include "eca-control.h"
+#include "eca-control-mt.h"
 #include "eca-chainsetup-edit.h"
 #include "eca-chainsetup.h"
 #include "eca-logger.h"
 
 #include "eca-osc.h"
 
+#define VERBOSE_FOR_DEBUGGING 1
+
 using namespace std;
 
 const std::string eca_osc_interface_namespace_const ("ecasound");
-
-/** 
- * scratch:
- * - test with e.g.:
- *   sh> oscsend localhost 12345 /ecasound ii 3 3
- */
 
 static void cb_lo_err_handler(int num, const char *msg, const char *where)
 {
@@ -71,7 +67,7 @@ int cb_lo_method_handler(const char *path, const char *types, lo_arg **argv, int
   ECA_OSC_INTERFACE* self = 
     reinterpret_cast<ECA_OSC_INTERFACE*>(user_data);
 
-#if 0
+#ifdef VERBOSE_FOR_DEBUGGING
   std::fprintf(stdout, 
 	       "lo_method: path=%s, types=%s, args=%d, userdata=%p.\n",
 	       path, types, argc, user_data);
@@ -79,8 +75,7 @@ int cb_lo_method_handler(const char *path, const char *types, lo_arg **argv, int
 
   retval = self->handle_osc_message(path, types, argv, argc);
 
-#define VERBOSE_FOR_DEBUGGING 1
-#if VERBOSE_FOR_DEBUGGING
+#ifdef VERBOSE_FOR_DEBUGGING
   for(int n = 0; n < argc; n++) {
     switch (types[n]) {
     case 'i':
@@ -109,7 +104,17 @@ int cb_lo_method_handler(const char *path, const char *types, lo_arg **argv, int
   return 0;
 }
 
-ECA_OSC_INTERFACE::ECA_OSC_INTERFACE(ECA_CONTROL *ecacontrol, int port)
+/**
+ * Constructor
+ *
+ * If any other object may use the control object, passed to 
+ * ECA_OSC_INTERFACE, at the same time, ECA_CONTROL_MT should
+ * be used to guarantee thread-safety access to control
+ * functions.
+ *
+ * @param ecacontrol if the control object is u
+ */
+ECA_OSC_INTERFACE::ECA_OSC_INTERFACE(ECA_CONTROL_MT *ecacontrol, int port)
   : ec_repp(ecacontrol),
     running_rep(false),
     udp_port_rep(port),
@@ -218,6 +223,8 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 {
   int retval = -1;
   string chain_s = priv_path_get_front(path);
+  
+  ec_repp->lock_control();
 
   const ECA_CHAINSETUP *cs = ec_repp->get_connected_chainsetup();
   int c_index = cs ? cs->get_chain_index(chain_s) : -1;
@@ -245,6 +252,7 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 	edit.m.cop_set_param.param = param;
 	edit.m.cop_set_param.value = argv[0]->f;
 	
+#ifdef VERBOSE_FOR_DEBUGGING
 	std::fprintf(stdout, 
 		     "chain=%s (id=%d), op=%d, param=%d to %.03f\n",
 		     chain_s.c_str(), 
@@ -252,6 +260,7 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 		     edit.m.cop_set_param.op,
 		     edit.m.cop_set_param.param,
 		     edit.m.cop_set_param.value);
+#endif
 
 	ec_repp->execute_edit_on_connected(edit);
 	
@@ -274,6 +283,7 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 	edit.m.ctrl_set_param.param = param;
 	edit.m.ctrl_set_param.value = argv[0]->f;
 	
+#ifdef VERBOSE_FOR_DEBUGGING
 	std::fprintf(stdout, 
 		     "chain=%s (id=%d), ctrl=%d, param=%d to %.03f\n",
 		     chain_s.c_str(), 
@@ -281,6 +291,7 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 		     edit.m.ctrl_set_param.op,
 		     edit.m.ctrl_set_param.param,
 		     edit.m.ctrl_set_param.value);
+#endif
 
 	ec_repp->execute_edit_on_connected(edit);
 	
@@ -292,14 +303,16 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
     }
   }
   else {
+#ifdef VERBOSE_FOR_DEBUGGING
     std::fprintf(stdout, 
 		 "full=%s, chain=%s (id=%d), op=-, param=- to -\n",
 		 path.c_str(),chain_s.c_str(), 
 		 c_index);
-
+#endif
     DBC_NEVER_REACHED();
   }
-    
+
+  ec_repp->unlock_control();    
 
   if (cs == 0) {
     ECA_LOG_MSG(ECA_LOGGER::info,
@@ -321,9 +334,11 @@ int ECA_OSC_INTERFACE::handle_osc_message(const char *path, const char *types, l
     left_s = priv_path_pop_front(left_s);
     string component_s = priv_path_get_front(left_s);
 
+#ifdef VERBOSE_FOR_DEBUGGING
     std::fprintf(stdout, 
 		 "full=%s, left=%s, component=%s\n",
 		 path, left_s.c_str(), component_s.c_str());
+#endif
 
     if (component_s == "chain") {
       left_s = priv_path_pop_front(left_s);
@@ -331,9 +346,11 @@ int ECA_OSC_INTERFACE::handle_osc_message(const char *path, const char *types, l
     }
   }
   else {
+#ifdef VERBOSE_FOR_DEBUGGING
     std::fprintf(stdout, 
 		 "full=%s, left=%s, ignoring...\n",
 		 path, left_s.c_str());
+#endif
 
     retval = -1;
   }
