@@ -17,14 +17,14 @@
 // GNU General Public License for more details.
 // 
 // You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // ------------------------------------------------------------------------
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
+#include <cassert>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -43,9 +43,12 @@
 #include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 
+#include "audioio.h"
+#include "eca-chain.h"
 #include "eca-chainop.h"
 #include "eca-chainsetup.h"
 #include "eca-control.h"
+#include "eca-control-main.h"
 #include "eca-engine.h"
 #include "eca-object-factory.h"
 #include "eca-object-map.h"
@@ -84,19 +87,40 @@ static string eca_aio_register_sub(ECA_OBJECT_MAP& objmap);
  */
 
 ECA_CONTROL::ECA_CONTROL (ECA_SESSION* psession) 
-  : ECA_CONTROL_OBJECTS(psession),
-    wellformed_mode_rep(false),
-    ctrl_dump_rep(this)
+  : ctrl_dump_rep(this),
+    wellformed_mode_rep(false)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_CONTROL constructor");
+
+  session_repp = psession;
+  selected_chainsetup_repp = psession->selected_chainsetup_repp;
+  engine_repp = 0;
+  engine_pid_rep = -1;
+  engine_exited_rep.set(0);
+  float_to_string_precision_rep = 3;
+  joining_rep = false;
+  DBC_CHECK(is_engine_created() != true);
+
+  selected_audio_object_repp = 0;
+  selected_audio_input_repp = 0;
+  selected_audio_output_repp = 0;
 }
 
 ECA_CONTROL::~ECA_CONTROL(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "ECA_CONTROL destructor");
+  close_engine();
 }
 
-void ECA_CONTROL::command(const string& cmd_and_args)
+void ECA_CONTROL::fill_command_retval(struct eci_return_value *retval) const
+{
+  if (retval == 0)
+    return;
+
+  *retval = last_retval_rep;
+}
+
+void ECA_CONTROL::command(const string& cmd_and_args, struct eci_return_value *retval)
 {
   clear_last_values();
   clear_action_arguments();
@@ -142,6 +166,8 @@ void ECA_CONTROL::command(const string& cmd_and_args)
       }
     }
   }
+
+  fill_command_retval(retval);
 }
 
 void ECA_CONTROL::set_action_argument(const string& s)
@@ -226,13 +252,14 @@ SAMPLE_SPECS::sample_pos_t ECA_CONTROL::first_action_argument_as_samples(void) c
 #endif
 }
 
-void ECA_CONTROL::command_float_arg(const string& cmd, double arg)
+void ECA_CONTROL::command_float_arg(const string& cmd, double arg, struct eci_return_value *retval)
 {
   clear_action_arguments();
   set_action_argument(arg);
   int action_id = ec_unknown;
   action_id = ECA_IAMODE_PARSER::command_to_action_id(cmd);
   action(action_id);
+  fill_command_retval(retval);
 }
 
 /**
@@ -323,7 +350,7 @@ void ECA_CONTROL::check_action_preconditions(int action_id)
 		    "NOTE: No chainsetup connected. Trying to connect currently selected chainsetup \""
 		    + selected_chainsetup_repp->name() 
 		    + "\"");
-	connect_chainsetup();
+	connect_chainsetup(0);
       }
       if (is_connected() != true) {
 	/* connect_chainsetup() sets last_error() so we just add to it */
@@ -432,7 +459,7 @@ void ECA_CONTROL::action(int action_id)
   case ec_cs_connect: 
     { 
       if (is_valid() != false) {
-	connect_chainsetup(); 
+	connect_chainsetup(0); 
       }
       else {
 	set_last_error("Can't connect; chainsetup not valid!");
@@ -799,7 +826,7 @@ void ECA_CONTROL::action(int action_id)
       set_last_error("Can't reconnect chainsetup.");
     }
     else {
-      connect_chainsetup();
+      connect_chainsetup(0);
       if (selected_chainsetup() != connected_chainsetup()) {
 	set_last_error("Can't reconnect chainsetup.");
       }
@@ -818,7 +845,7 @@ void ECA_CONTROL::action(int action_id)
  * 
  * @pre is_connected()
  */
-bool ECA_CONTROL_OBJECTS::execute_edit_on_connected(const chainsetup_edit_t& edit)
+bool ECA_CONTROL::execute_edit_on_connected(const chainsetup_edit_t& edit)
 {
   DBC_REQUIRE(is_connected() == true);
 
@@ -845,7 +872,7 @@ bool ECA_CONTROL_OBJECTS::execute_edit_on_connected(const chainsetup_edit_t& edi
  * @param edit object specifying the edit action
  * @param index if non-negative, override the chainsetup selection
  */
-bool ECA_CONTROL_OBJECTS::execute_edit_on_selected(const chainsetup_edit_t& edit, int index)
+bool ECA_CONTROL::execute_edit_on_selected(const chainsetup_edit_t& edit, int index)
 {
   bool retval = false;
 
@@ -878,48 +905,25 @@ bool ECA_CONTROL_OBJECTS::execute_edit_on_selected(const chainsetup_edit_t& edit
   return retval;
 }
 
-string ECA_CONTROL::last_value_to_string(void)
+void ECA_CONTROL::print_last_value(struct eci_return_value *retval) const
 {
-  string type = last_type();
-  string result;
+  std::string result;
 
-  if (type == "e") {
-    result = last_error();
-  }
-  else if (type == "s")
-    result = last_string();
-  else if (type == "S") {
-    result = kvu_vector_to_string(kvu_vector_search_and_replace(last_string_list(), ",", "\\,"), ",");
-  }
-  else if (type == "i")
-    result = kvu_numtostr(last_integer());
-  else if (type == "li")
-    result = kvu_numtostr(last_long_integer());
-  else if (type == "f")
-    result = ECA_CONTROL_BASE::float_to_string(last_float());
-
-  return result;
-}
-
-void ECA_CONTROL::print_last_value(void)
-{
-  string type = last_type();
-  string result;
-
-  if (type == "e") {
+  if (retval->type == eci_return_value::retval_error) {
     result += "ERROR: ";
   }
 
-  result += last_value_to_string();
+  result += ECA_CONTROL_MAIN::return_value_to_string(retval);
 
   if (wellformed_mode_rep != true) {
-    if (result.size() > 0) {
+    if (result.size() > 0) 
       ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, result);
-    }
   }
   else {
     /* in wellformed-output-mode we always create return output */
-    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, type + " " + result);
+    ECA_LOG_MSG(ECA_LOGGER::eiam_return_values, 
+		std::string(return_value_type_to_string(retval)) +
+		" " + result);
   }
 }
 
@@ -1066,7 +1070,7 @@ string ECA_CONTROL::chain_operator_status(void) const
 	msg << "[" << n + 1 << "] ";
 	msg << cop->get_parameter_name(n + 1);
 	msg << " ";
-	msg << ECA_CONTROL_BASE::float_to_string(cop->get_parameter(n + 1));
+	msg << float_to_string(cop->get_parameter(n + 1));
 	if (n + 1 < cop->number_of_params()) msg <<  ", ";
       }
       st_info_string = cop->status();
@@ -1104,7 +1108,7 @@ string ECA_CONTROL::controller_status(void) const
 	mitem << "\n\t\t[" << n + 1 << "] ";
 	mitem << gtrl->get_parameter_name(n + 1);
 	mitem << " ";
-	mitem << ECA_CONTROL_BASE::float_to_string(gtrl->get_parameter(n + 1));
+	mitem << float_to_string(gtrl->get_parameter(n + 1));
 	if (n + 1 < gtrl->number_of_params()) mitem <<  ", ";
       }
       st_info_string = gtrl->status();
@@ -1385,15 +1389,15 @@ void ECA_CONTROL::operator_descriptions_helper(const ECA_OBJECT_MAP& arg, string
 	/* 5.2 description */
 	*result += "," + kvu_string_search_and_replace(pd.description, ',', '_');
 	/* 5.3 default value */
-	*result += "," + ECA_CONTROL_BASE::float_to_string(pd.default_value);
+	*result += "," + float_to_string(pd.default_value);
 	/* 5.4 is bounded above (1=yes, 0=no) */
 	*result += ",above=" + kvu_numtostr(static_cast<int>(pd.bounded_above));
 	/* 5.5 upper bound */
-	*result += ",upper=" + ECA_CONTROL_BASE::float_to_string(pd.upper_bound);
+	*result += ",upper=" + float_to_string(pd.upper_bound);
 	/* 5.6 is bounded below (1=yes, 0=no) */
 	*result += ",below=" + kvu_numtostr(static_cast<int>(pd.bounded_below));
 	/* 5.7 lower bound */
-	*result += ",lower=" + ECA_CONTROL_BASE::float_to_string(pd.lower_bound);
+	*result += ",lower=" + float_to_string(pd.lower_bound);
 	/* 5.8. is toggled (1=yes, 0=no) */
 	*result += "," + kvu_numtostr(static_cast<int>(pd.toggled));
 	/* 5.9. is integer value (1=yes, 0=no) */

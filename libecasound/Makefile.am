@@ -173,8 +173,10 @@ ecasound_general_include = 	\
 			eca-chainsetup-position.h \
 			eca-control.h \
 			eca-control-base.h \
-			eca-control-objects.h \
 			eca-control-dump.h \
+			eca-control-main.h \
+			eca-control-mt.h \
+			eca-control-objects.h \
 			eca-iamode-parser.h \
 			eca-iamode-parser_impl.h \
 			eca-audio-position.h \
@@ -324,8 +326,10 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-chainsetup-position.cpp \
 			eca-control.cpp \
 			eca-control-base.cpp \
-			eca-control-objects.cpp \
 			eca-control-dump.cpp \
+			eca-control-main.cpp \
+			eca-control-mt.cpp \
+			eca-control-objects.cpp \
 			eca-iamode-parser.cpp \
 			eca-samplerate-aware.cpp \
 			eca-audio-position.cpp \
