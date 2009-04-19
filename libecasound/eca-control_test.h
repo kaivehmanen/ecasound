@@ -21,6 +21,7 @@
 
 #include "kvu_utils.h" /* kvu_sleep() */
 
+#include "eca-session.h"
 #include "eca-control.h"
 #include "eca-test-case.h"
 
@@ -75,7 +76,7 @@ void ECA_CONTROL_TEST::do_run_chainsetup_creation(void)
     ectrl->add_chain_operator("-ea:100");
     if (ectrl->selected_chain_operator() < 0 ||
 	ectrl->selected_chain_operator() > 1) ECA_TEST_FAILURE("Chain operator addition failed.");
-    ectrl->connect_chainsetup();
+    ectrl->connect_chainsetup(0);
     if (ectrl->is_connected() != true) ECA_TEST_FAILURE("Chainsetup connection failed.");
     ectrl->start();
     kvu_sleep(0, 200000000); /* 200ms */

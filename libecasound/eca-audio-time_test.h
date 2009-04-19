@@ -21,9 +21,8 @@
 
 #include "kvu_utils.h" /* kvu_sleep() */
 
-#include "eca-control.h"
+#include "eca-audio-time.h"
 #include "eca-test-case.h"
-
 using namespace std;
 
 /**

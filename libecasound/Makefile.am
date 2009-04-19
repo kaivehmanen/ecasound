@@ -142,6 +142,7 @@ ecasound_controller_include = \
 ecasound_general_include = 	\
 			eca-chain.h \
 			eca-chainop.h \
+			eca-chainsetup-edit.h \
 			eca-error.h \
 			eca-logger.h \
 			eca-logger-default.h \
@@ -198,6 +199,9 @@ ecasound_extra_include = \
 ecasound_test_framework_include = \
 			eca-test-repository.h \
 			eca-test-case.h \
+			audiofx_amplitude_test.h \
+			audioio_test.h \
+			audioio-device_test.h \
 			eca-audio-time_test.h \
 			eca-chainsetup_test.h \
 			eca-chainsetup-parser_test.h \
@@ -205,8 +209,6 @@ ecasound_test_framework_include = \
 			eca-session_test.h \
 			eca-object-factory_test.h \
 			eca-sample-conversion_test.h \
-			audioio_test.h \
-			audioio-device_test.h \
 			samplebuffer_test.h
 
 # note! also remembers to update install-data-local and 
