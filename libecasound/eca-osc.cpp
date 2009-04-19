@@ -47,7 +47,8 @@
 
 #include "eca-osc.h"
 
-#define VERBOSE_FOR_DEBUGGING 1
+// #define VERBOSE_FOR_DEBUGGING 1
+#undef VERBOSE_FOR_DEBUGGING
 
 using namespace std;
 
@@ -309,7 +310,6 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 		 path.c_str(),chain_s.c_str(), 
 		 c_index);
 #endif
-    DBC_NEVER_REACHED();
   }
 
   ec_repp->unlock_control();    
