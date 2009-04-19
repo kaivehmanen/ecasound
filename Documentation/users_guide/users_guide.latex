@@ -6,7 +6,7 @@
 
 \title{Ecasound User's Guide}
 \author{Kai Vehmanen}
-\date{29012009}
+\date{19042009}
 \begin{document}
 
 \maketitle
@@ -31,6 +31,9 @@ Ecasound version.
 % ----------------------------------------------------------------------
 \chapter{Document history}
 \begin{itemize}
+\item 19.04.2009 - Removed duplicate Ecasound history section and added
+                   more web URLs pointing to other sources of 
+		   documentation.
 \item 31.01.2009 - Lots of minor improvements in preparation for 
                    2.6.0 release.
 \item 29.01.2009 - Updated ``JACK Audio Server'' section to match 
@@ -91,21 +94,6 @@ Effects and audio objects can be combined in various ways, and their
 parameters can be controlled by operator objects like oscillators 
 and MIDI-CCs. A versatile console mode user-interface is included in 
 the package.
-
-% ----------------------------------------------------------------------
-\section{History}
-
-I've programmed Ecasound for my own recording purposes. The first 
-versions ran under IBM Os/2. I used them for finalizing my analog 
-4-track recordings. My 4-track was a nice tool, but it had its limits.
-So eventually I started to use Windows-based multitrack software. I
-still used Ecasound for fx processing and finalizing. When I 
-ported Ecasound to Linux, a lot of the code was rewritten from 
-scratch. During this I also added multitrack capabilities
-to Ecasound. It took a lot of work, but in the end I was able to 
-get rid of all my Windows recording software. Nowadays I use 
-Ecasound for all my music projects. Because of this, I also 
-continue to improve and develop Ecasound.
 
 % ----------------------------------------------------------------------
 % ----------------------------------------------------------------------
@@ -204,12 +192,12 @@ Most of Ecasound's functionality is located in one
 central library (libecasound). One thing that this library 
 provides is a simple interpreter, which can be used for
 controlling Ecasound. This mode of operation is better
-known as Ecasound's interactive mode.
+known as Ecasound's Interactive Mode (EIAM)
 
-The most common frontend for EIAM is the console-mode
-Ecasound program. You can enter interactive mode 
+The most common frontend for the Interactive Mode is the console-mode
+Ecasound program. You can enter its Enteractive Mode 
 by issuing ``ecasound -c''. For more detailed information
-about EIAM, see \texttt{ecasound-iam(1)} man page.
+the available commands, see \texttt{ecasound-iam(1)} man page.
 
 % ----------------------------------------------------------------------
 \section{Ecasound Option Syntax - EOS}
@@ -218,7 +206,7 @@ One very notable feature of the console-mode ecasound
 program is its command-line option syntax. You can 
 do pretty much everything from the command-line.
 
-But it doesn't end with the console-mode ecasound. In
+But it doesn't end with the console mode ecasound. In
 fact, interpreting these options is located in
 the main libecasound library, and is very closely tied
 to the interactive mode. 
@@ -227,7 +215,7 @@ As a result, the same syntax (tokens that look like
 ``-prefix:arg1,arg2,...,argN''), is used in various
 parts of libecasound. Note that if any of the arguments
 contain commas, those arguments need to be enclosed in 
-double-quotes (for example ``-prefix:\"ar,g1\",arg2'').
+double-quotes (for example ``-prefix:"ar,g1",arg2'').
 
 Following is a partial list of the places where EOS syntax 
 has been used:
@@ -238,9 +226,9 @@ has been used:
       [2.1dev4 and newer])
 \item saved chainsetup-files (.ecs format)
 \item effect preset definitions (see for example 
-      ``{prefix}/share/ecasound/effect\_presets'')
+      ``/usr/share/ecasound/effect\_presets'')
 \item generic oscillator definitions (see for example 
-      ``{prefix}/share/ecasound/generic\_oscillators''
+      ``/usr/share/ecasound/generic\_oscillators''
 \end{itemize}
 
 % ----------------------------------------------------------------------
@@ -260,14 +248,14 @@ to multitrack recording and mixing.
 This flexibility doesn't come for free. It's difficult to describe
 Ecasound's features in a few phrases. Because of this, new users
 are encouraged to start from the \texttt{Examples page} at 
-\ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}.
+\url{http://www.eca.cx/ecasound/Documentation/examples.html}.
 It isn't a perfect introduction, and definitely shows only one way to
 use the software, but it does give an overall view of what can be done,
 and more importantly, it shows that many tasks are actually quite simple
 to do.
 
 % ----------------------------------------------------------------------
-\section{Rules for editing chainsetups}
+\section{Rules for creating and modifying chainsetups}
 
 Here are a few rules that help writing valid chainsetups.
 Whether you are editing chainsetup files (.ecs),  some 
@@ -303,17 +291,18 @@ chain objects.
 \section{Configuration}
 
 User preferences are stored in \emph{\textasciitilde /.ecasound/ecasoundrc}.
-See the \texttt{ecasoundrc(5)} manual page for details.
+See the \href{http://eca.cx/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
+manual page for details.
 
 By default, files for effect presets and oscillator presets are 
-in \emph{{prefix}/share/ecasound}.
+in \emph{/usr/share/ecasound}.
 
 % ----------------------------------------------------------------------
 \section{Common problems}
 
 \subsection{I get occasional audio dropouts during operation? How to get rid of them?}
 
-Check \ahrefurl{http://www.oreillynet.com/pub/a/linux/2000/11/17/low\_latency.html}
+Check \url{http://www.oreillynet.com/pub/a/linux/2000/11/17/low_latency.html}
 where you'll find a very good article written by Dave Phillips on
 Linux low-latency issues. If you are in a hurry (or desperate :)),
 here's a quick list of things to try:
@@ -335,13 +324,13 @@ here's a quick list of things to try:
 
 There has been a lot of discussion about tuning your system for better
 performance on linux-audio-dev and linux-audio-user mailing lists. You
-can browse the list archives at \ahrefurl{http://www.linuxdj.com/audio/lad/archive.php}.
+can browse the list archives at \url{http://www.linuxdj.com/audio/lad/archive.php}.
 
 Here are links to selected messages from the ecasound-list archives:
 \begin{itemize}
-\item Tuning parameters for reliable recording, \ahrefurl{http://eca.cx/ecasound-list/2005/04/0038.html}
-\item Smart Buffering, \ahrefurl{http://eca.cx/ecasound-list/2001/10/0020.html}
-\item Ecasound for Recording, \ahrefurl{http://eca.cx/ecasound-list/2001/06/0016.html}
+\item Tuning parameters for reliable recording \url{http://eca.cx/ecasound-list/2005/04/0038.html}.
+\item Smart Buffering \url{http://eca.cx/ecasound-list/2001/10/0020.html}.
+\item Ecasound for Recording \url{http://eca.cx/ecasound-list/2001/06/0016.html}.
 \end{itemize}
 
 \subsection{Can I use multiple soundcards?}
@@ -350,9 +339,10 @@ This is possible, but there are some issues you should be aware of. If
 you try using multiple cheap soundcards to get more simultaneous 
 inputs for recording, it's likely that the resulting streams will not
 be in sync. This problem is explained in detail in the Linux
-Audio-Quality HOWTO,
-\ahrefurl{http://www.linuxdj.com/audio/quality/},
-section "Notes on Full Duplex Recording, and Other Realtime Issues".
+Audio-Quality HOWTO section "Notes on Full Duplex Recording, and Other 
+Realtime Issues": \url{http://karmak.org/archive/2003/02/audio_quality_HOWTO.htm}.
+The original page at \url{http://www.linuxdj.com/audio/quality/} is no
+longer available. 
 
 \subsection{Problems with panning mono files}
 
@@ -429,7 +419,7 @@ one of the backslashes away before passing the string to ecasound.
 \chapter{User interfaces and Applications}
 
 For a complete list of user-interfaces and applications built
-on top of Ecasound, visit Ecasound's web site at \ahrefurl{http://www.eca.cx}.
+on top of Ecasound, visit Ecasound's web site at \url{http://www.eca.cx}.
 
 % ----------------------------------------------------------------------
 \section{Ecasound}
@@ -439,7 +429,7 @@ for Ecasound.
 
 See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page and the \texttt{Examples web page}
-at \ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}.
+at \url{http://www.eca.cx/ecasound/Documentation/examples.html}.
 
 % ----------------------------------------------------------------------
 \section{Ecasignalview}
@@ -567,7 +557,7 @@ and others. You may choose between EWF and these audio object types
 based on your specific needs. See 
 \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page and the \texttt{Examples web page}
-at \ahrefurl{http://www.eca.cx/ecasound/Documentation/examples.html}
+at \url{http://www.eca.cx/ecasound/Documentation/examples.html}
 for many examples of using these.
 
 Writing to EWF file is nowadays considered to be a deprecated
@@ -577,8 +567,8 @@ feature and it may be removed in a future release.
 
 Ewf-files are stored in ascii format. The syntax is based on ``key=value''
 pairs. The same syntax is used with Ecasound resource files. See
-\texttt{ecasoundrc(5)} man page for detailed info. Currently
-recognized ewf keywords are:
+\href{http://eca.cx/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
+man page for detailed info. Currently recognized ewf keywords are:
 
 \begin{itemize}
 \item  source - audio object name (string) {[}read,write{]}
@@ -625,8 +615,8 @@ new effects by combining basic effects and controllers.
 
 Presets can be stored into separate files or they can be stored
 into a global database. Either way, the preset format is the same
-(also see \texttt{ecasoundrc(5)} man page, the same file format 
-and syntax is used):
+(also see \href{http://eca.cx/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
+ man page, the same file format and syntax is used):
 
 \begin{verbatim} 
 preset_name = effects controllers | ... | effects controllers 
@@ -807,7 +797,7 @@ should recompile after installing the LADSPA SDK.
 
 Also, check Dave Phillips' great
 article on Oreillynet - 
-\ahrefurl{http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html}.
+\url{http://www.oreillynet.com/pub/a/linux/2001/02/02/ladspa.html}.
 
 % ----------------------------------------------------------------------
 \section{JACK Audio Server}
@@ -1052,15 +1042,15 @@ privileges for changing scheduling and locking memory. On recent Linux systems,
 there are couple ways to achieve this.
 
 The Realtime Linux Security Module (LSM) is one practical solution 
-(see \ahrefurl{http://sourceforge.net/projects/realtime-lsm/} and 
-\ahrefurl{http://lwn.net/Articles/106009/}). This module is a loadable extension for 
+(see \url{http://sourceforge.net/projects/realtime-lsm/} and 
+\url{http://lwn.net/Articles/106009/}). This module is a loadable extension for 
 Linux 2.6 kernels. It selectively grants realtime permissions to specific user groups 
 or applications. Unfortunately Realtime LSM does not yet come with the standard Linux 
 kernel, so you need to install it separately.
 
 A more recent approach, and one that might be adopted by popular GNU/Linux distributions, 
 is the \emph{rtprio} extension to Linux resource limits. See 
-\ahrefurl{http://lwn.net/Articles/134460/} for a good overview of this approach and how 
+\href{http://lwn.net/Articles/134460/} for a good overview of this approach and how 
 it compared to the LSM mechanism described above.
 
 \end{document}

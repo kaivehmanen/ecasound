@@ -173,14 +173,17 @@ ecasound_general_include = 	\
 			eca-chainsetup-position.h \
 			eca-control.h \
 			eca-control-base.h \
-			eca-control-objects.h \
 			eca-control-dump.h \
+			eca-control-main.h \
+			eca-control-mt.h \
+			eca-control-objects.h \
 			eca-iamode-parser.h \
 			eca-iamode-parser_impl.h \
 			eca-audio-position.h \
 			eca-fileio.h  \
 			eca-fileio-stream.h \
 			eca-fileio-mmap.h \
+			eca-osc.h \
 			dynamic-parameters.h \
 			dynamic-object.h \
 			eca-object.h \
@@ -323,8 +326,10 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-chainsetup-position.cpp \
 			eca-control.cpp \
 			eca-control-base.cpp \
-			eca-control-objects.cpp \
 			eca-control-dump.cpp \
+			eca-control-main.cpp \
+			eca-control-mt.cpp \
+			eca-control-objects.cpp \
 			eca-iamode-parser.cpp \
 			eca-samplerate-aware.cpp \
 			eca-audio-position.cpp \
@@ -332,6 +337,7 @@ ecasound_general_src = 	eca-chain.cpp \
 			eca-audio-time.cpp \
 			eca-fileio-stream.cpp \
 			eca-fileio-mmap.cpp \
+			eca-osc.cpp \
 			eca-static-object-maps.cpp \
 			eca-object-map.cpp \
 			eca-preset-map.cpp

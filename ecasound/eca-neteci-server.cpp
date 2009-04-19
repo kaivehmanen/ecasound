@@ -20,6 +20,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <cassert>
 #include <cstring>        /* memcpy() */
 #include <iostream>
 #include <string>
@@ -38,7 +39,7 @@
 #include <kvu_numtostr.h>
 #include <kvu_utils.h>
 
-#include <eca-control.h>
+#include <eca-control-mt.h>
 #include <eca-logger.h>
 #include <eca-logger-wellformed.h>
 
@@ -100,6 +101,12 @@ void* ECA_NETECI_SERVER::launch_server_thread(void* arg)
   return 0;
 }
 
+/**
+ * Starts running the NetECI server. 
+ *
+ * After calling this function, the ECA_CONTROL_MAIN object
+ * may be used at any time from the NetECI server thread.
+ */ 
 void ECA_NETECI_SERVER::run(void)
 {
   create_server_socket();
@@ -457,22 +464,20 @@ void ECA_NETECI_SERVER::parse_raw_incoming_data(const char* buffer,
 
 void ECA_NETECI_SERVER::handle_eci_command(const string& cmd, struct ecasound_neteci_server_client* client)
 {
-  ECA_CONTROL* ctrl = state_repp->control;
+  ECA_CONTROL_MT* ctrl = state_repp->control;
 
   NETECI_DEBUG(cerr << "handle eci command: " << cmd << endl);
 
-  int res = pthread_mutex_lock(state_repp->lock);
-  DBC_CHECK(res == 0);
+  assert(ctrl != 0);
 
-  DBC_CHECK(ctrl != 0);
-  ctrl->command(cmd);
+  struct eci_return_value retval;
+  ctrl->command(cmd, &retval);
 
   string strtosend =
     ECA_LOGGER_WELLFORMED::create_wellformed_message(ECA_LOGGER::eiam_return_values,
-						     ctrl->last_type() + " " + ctrl->last_value_to_string());
-
-  res = pthread_mutex_unlock(state_repp->lock);
-  DBC_CHECK(res == 0);
+      std::string(ECA_CONTROL_MAIN::return_value_type_to_string(&retval))
+      + " " + 
+      ECA_CONTROL_MAIN::return_value_to_string(&retval));
 
   int bytes_to_send = strtosend.size();
   while(bytes_to_send > 0) {

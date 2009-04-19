@@ -76,47 +76,50 @@ always something to improve.
 
 To run Ecasound, you need...:
 
-- operating system that provides standard POSIX/SUS interfaces; has been 
-  tested with various combinations of GNU/Linux (Linux 2.2+ and 
-  glibc 2.1+ combinations), FreeBSD 4.x+, Solaris 2.6+,
-  Mac OS X 10.3+ and Cygwin 1.3.20+
-- POSIX/SUS threads support; has been tested with glibc linuxthreads 
-  and the Native POSIX Thread Library (NPTL)
+- Operating system that provides standard POSIX/SUS interfaces. Ecasound
+  has been reported to run succefully on various combinations of GNU/Linux 
+  (starting from Linux 2.2+ and glibc 2.1+), FreeBSD 4.x+, Solaris 2.6+,
+  Mac OS X 10.3+ and Win32/Cygwin 1.3.20+.
   
 Optional when running Ecasound:
 
-- for soundcard input/output: OSS, OSS/Lite or ALSA drivers
-- for JACK-support, the JACK runtime environment
-- for mp3 support, mpg123 (input) and lame (output) packages
-- for tracker module support, MikMod package
-- for .aiff/.au/.snd/etc support, libaudiofile (SGI audio file) library
-- for .w64/.aiff/.snd/etc support, libsndfile library
+- for real-time audio input/output: ALSA, JACK or OSS runtime
+- for mp3 support: mpg123 (input) and lame (output) packages
 - for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
-- for .mid input support, Timidity++
 - for .aac/.m4a/.mp4 file support, the FAAC/FAAD2 tools
 - for .flac support, the FLAC package
-- for aRts support, the aRts server package
-- for higher quality resampling, libsamplerate
+- for MIDI .mid file input: Timidity++
+- for tracker module support: MikMod package
+- for aRts (legacy KDE) support: the aRts server package
 
 To compile Ecasound, you also need...:
 
-- standard C++ build environment (with support for STL and 
-  exceptions); tested with egcs 1.1.2, gcc versions 2.91.66, 
-  2.95.X, 3.0-3.4, 4.0, and Sun Workshop 6 C5.2 C++ (STL and 
-  exceptions need to be supported)
-- GNU make, automake and autoconf packages
+- POSIX/SUS development environment, compatible with
+  'The Single UNIX Specification, Version 2' (UNIX98):
+     - http://www.unix.org/version2/
+     - http://www.opengroup.org/onlinepubs/007908799/index.html
+  Ecasound requires the following feature groups:
+     - "Realtime":
+       http://www.opengroup.org/onlinepubs/007908799/xsh/realtime.html
+     - "Realtime Threads":
+       http://www.opengroup.org/onlinepubs/007908799/xsh/feature.html#tag_000_005_003
+- Standard C++ build environment (with support for STL and
+  exceptions); tested with egcs 1.1.2, gcc versions 2.91.66,
+  2.95.X, 3.0-3.4, 4.0-4.3, and Sun Workshop 6 C5.2 C++.
+- GNU make
 
 Optional when compiling Ecasound:
 
+- for extented file format support (aiff, snd, w64 and so forth): 
+     - libaudiofile (SGI audio file  library) runtime, and/or
+     - libsndfile 
+- for higher quality resampling: libsamplerate
 - for pyecasound, the Python devel package
 - for curses support, the ncurses devel package
 - for LADSPA support, the LADSPA SDK package
 - for ALSA support, the ALSA devel package
 - for JACK support, the JACK devel package
-- for .aiff/.au/.snd support libaudiofile devel package
-- for .w64/.aiff/.snd/etc support, libsndfile library
 - for aRts support, the aRts C-API devel package
-- for higher quality resampling, libsamplerate devel package
 
 -----------------------------------------------------------------------
  Installing

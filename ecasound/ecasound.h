@@ -8,10 +8,11 @@
 #include <signal.h>    /* POSIX: sigaction(), sigwait(), sig_atomic_t */
 
 class ECA_CONSOLE;
-class ECA_CONTROL;
+class ECA_CONTROL_MT;
 class ECA_LOGGER_INTERFACE;
 class ECA_NETECI_SERVER;
 class ECA_SESSION;
+class ECA_OSC_INTERFACE;
 
 /**
  * String constants
@@ -41,39 +42,27 @@ class ECASOUND_RUN_STATE {
   ~ECASOUND_RUN_STATE(void);
 
   ECA_CONSOLE* console;
-  ECA_CONTROL* control;
+  ECA_CONTROL_MT* control;
   ECA_LOGGER_INTERFACE* logger;
   ECA_NETECI_SERVER* eciserver;
+  ECA_OSC_INTERFACE* osc;
   ECA_SESSION* session;
   std::vector<std::string>* launchcmds;
+
   pthread_t* neteci_thread;
   pthread_t* watchdog_thread;
   pthread_mutex_t* lock;
   sig_atomic_t exit_request;
   sigset_t* signalset;
-  int retval;
-  int neteci_tcp_port;
-  bool neteci_mode;
-  bool keep_running_mode;
-  bool cerr_output_only_mode;
-  bool interactive_mode;
-  bool quiet_mode;
-};
 
-struct ecasound_state {
-  ECA_CONSOLE* console;
-  ECA_CONTROL* control;
-  ECA_LOGGER_INTERFACE* logger;
-  ECA_NETECI_SERVER* eciserver;
-  ECA_SESSION* session;
-  std::vector<std::string>* launchcmds;
-  pthread_t* neteci_thread;
-  pthread_mutex_t* lock;
-  sig_atomic_t exit_request;
-  sigset_t* signalset;
   int retval;
-  int neteci_tcp_port;
+
   bool neteci_mode;
+  int neteci_tcp_port;
+
+  bool osc_mode;
+  int osc_udp_port;
+
   bool keep_running_mode;
   bool cerr_output_only_mode;
   bool interactive_mode;

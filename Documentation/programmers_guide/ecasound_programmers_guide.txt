@@ -1,5 +1,5 @@
 :editor: -*- mode: fundamental; tab-width: 4; indent-tabs-mode: nil -*-
-:version: 20050821-8
+:version: 20090419-9
 :syntax: loosely follows restructured text, http://docutils.sourceforge.net/rst.html
 :author: Kai Vehmanen
 
@@ -34,6 +34,7 @@ Hmm, why doesn't this work...?
 
 ::
 
+| 19.04.2009 - Minor updates to NetECI and ECA_CONTROL.
 | 21.08.2005 - Typos fixed, removed duplicated section on audio
 |              routing. Minor updates to various sections.
 | 25.04.2005 - Minor updates.
@@ -603,6 +604,15 @@ On important part of ECA_CONTROL is the functionality for
 interpreting EOS (Ecasound Option Syntax) and EAIM (Ecasound 
 Interactive Mode) commands.
 
+ECA_CONTROL_MAIN (eca-control-main.h) is an abstract base class that 
+defines a subset of core ECA_CONTROL functionality. This interface
+is implemented by e.g. ECA_CONTROL (the default implementation)
+and ECA_CONTROL_MT (a thread-safe variant that allows simultaneous
+use from multiple threads). 
+
+It is recommended that applications use the subset defined
+by ECA_CONTROL_MAIN.
+
 ECA_CONTROL_INTERFACE - eca-control-interface.h
 -----------------------------------------------
 
@@ -639,8 +649,7 @@ ECA_CHAINSETUP - eca-chainsetup.h
 
 ECA_CHAINSETUP is the central class for storing user-visible 
 objects. All inputs, output, chain operator and controller 
-objects belonging to one logical setup are attributes of on
-ECA_CHAINSETUP object.
+objects are attached to some ECA_CHAINSETUP object.
 
 ECA_ENGINE - eca-engine.h 
 -------------------------
@@ -1085,19 +1094,19 @@ Specific tasks ECI is aimed at:
 
 
 NetECI - [various]
-======================
+==================
 
 NetECI is a network version of the ECI API. When Ecasound is
-started in daemon mode (the --daemon option), it creates 
-a server for incoming TCP connections. Client applications
-can connect to this socket and use the connection to 
+started in server mode (see ecasound(1) for the related options), it 
+listens for incoming NetECI commands on a TCP socket. Client 
+applications can connect to this socket and use the connection to 
 control and observe the active session. Multiple clients
 can connect to the same session.
 
-The protocol is identical to one used in ECI. Clients 
-write EIAM commands to the socket, followed by a CRLF pair.
-The server will reply using the well-formed output mode 
-syntax.
+The protocol is identical to one used in ECI (see section "Ecasound
+Interactive Mode - Well-Formed Output Mode" below). Clients write EIAM
+commands to the socket, followed by a CRLF pair. The server will reply
+using the well-formed output mode syntax.
 
 See implementation of ecamonitor (part of ecatools), 
 for a working example.

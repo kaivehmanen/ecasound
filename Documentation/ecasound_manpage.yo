@@ -85,6 +85,9 @@ activated, clients can connect to the running ecasound
 session, and use interactive mode commands to control and
 observe ecasound processing.
 
+The NetECI protocol is defined in 
+url(Ecasound's Programmer Guide)(http://eca.cx/ecasound/Documentation/programmers_guide/ecasound_programmers_guide.html#neteci-various)
+
 One example client using this feature is ecamonitor(1). This
 utility is included in the Ecasound distribution package (requires
 a working Python environment).
@@ -104,6 +107,17 @@ This option replaces '--daemon-port' (deprecated in 2.6.0).
 dit(--no-server)
 Disable ecasound's daemon mode. This is the default.
 This option replaces '--nodaemon' (deprecated in 2.6.0).
+
+dit(--osc-udp-port=NNN)
+Enables support for Open Source Control (OSC). Ecasound will listen
+for incoming OSC messages on UDP port NNN. Ecasound's OSC interface
+is documented at:
+<http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound;a=blob;f=Documentation/ecasound_osc_interface.txt;hb=HEAD>
+
+Note that OSC support is still experimental and the interface
+might change in later versions of Ecasound.
+
+This option was added to ecasound 2.7.0.
 
 dit(--keep-running,-K)
 Do not exit when processing is finished/stopped. Only affects

@@ -49,6 +49,7 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- added: -chorder chainop; see ecasound(1)
 	- added: optional inner loop optimizations using liboil;
 		 enable with '--enable-liboil'
+        - added: OSC support added, see ecasound(1)
 	- added: in ncurses mode, honor COLUMNS environment variable
 	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
 	           all builds, expressing that the codebase expects 
@@ -88,6 +89,8 @@ xxyy2009 (v2.x.y) -** stable release **-
 		 error; now the underlying problem is fixed and now
 		 'resample' and 'jack' objects maybe safely used 
 		 together
+        - fixed: minor bug in ecamonitor; "cop-status" was used with
+		 multiple chains selected
 08022009 (v2.6.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt

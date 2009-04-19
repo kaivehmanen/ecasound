@@ -1,3 +1,18 @@
+2009-04-18  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* eca-control-base.h: File removed, ECA_CONTROL_BASE
+	combined into ECA_CONTROL and defined in eca-control.h.
+	* eca-control-objects.h: File removed, ECA_CONTROL_OBJECTS
+	combined into ECA_CONTROL and defined in eca-control.h.
+	* eca-control-main.h: File added. A new abstract interface
+	class defining a minimal public interface to ECA_CONTROL.
+	* eca-control-mt.h: File added.
+	* eca-control.h: Updated signature for command() and 
+	command_float_arg().
+	* eca-control.h: Moved various members functions, not part
+	of the functionality set defined by ECA_CONTROL_MAIN, to
+	private visibility scope.
+	
 2009-04-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-chainsetup.h: Added get_chain_index().

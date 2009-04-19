@@ -2,7 +2,7 @@
 
 # ------------------------------------------------------------------------
 # ecamonitor: Ecasound monitor client implemented using NetECI
-# Copyright (C) 2002-2003 Kai Vehmanen (kai.vehmanen@wakkanet.fi)
+# Copyright (C) 2002-2003,2009 Kai Vehmanen
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import time
 
 ecamonitor_remote_host = "localhost"
 ecamonitor_remote_port = 2868
-ecamonitor_version     = "v20030317-6"
+ecamonitor_version     = "v20090419-7"
 
 # TODO:
 #  - nothing at the moment
@@ -171,10 +171,14 @@ def main():
                 pad.addstr("\n------------------------------------------------------------")
                 pad.addstr("\nEngine status: ")
                 pad.addstr((issue_eiam_command(s, 'engine-status')[1]), curses.A_BOLD)
-                pad.addstr("\nSelected chainsetup: ")
-                pad.addstr(issue_eiam_command(s, 'cs-selected')[1], curses.A_BOLD)
                 pad.addstr("\nConnected chainsetup: ")
                 pad.addstr(issue_eiam_command(s, 'cs-connected')[1], curses.A_BOLD)
+                pad.addstr("\nSelected chainsetup: ")
+                pad.addstr(issue_eiam_command(s, 'cs-selected')[1], curses.A_BOLD)
+
+                #pad.addstr("\nSelected chainsetup status:: ")
+                #pad.addstr(issue_eiam_command(s, 'cs-status')[1])
+
                 pad.addstr("\n\nPosition: ")
                 pad.addstr(issue_eiam_command(s, 'cs-get-position')[1] + "s", curses.A_BOLD)
                 pad.addstr(" / Length: ")
@@ -185,8 +189,6 @@ def main():
                 pad.addstr(str(len(string.split(issue_eiam_command(s, 'ai-list')[1],','))), curses.A_BOLD)
                 pad.addstr(" / Outputs: ")
                 pad.addstr(str(len(string.split(issue_eiam_command(s, 'ao-list')[1],','))), curses.A_BOLD)
-                pad.addstr(" / Chainops: ")
-                pad.addstr(str(len(string.split(issue_eiam_command(s, 'cop-list')[1],','))), curses.A_BOLD)
 
                 pad.addstr("\n\n------------------------------------------------------------\n")
                 res = issue_eiam_command(s, 'aio-status')
