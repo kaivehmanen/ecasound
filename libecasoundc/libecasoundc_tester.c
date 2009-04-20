@@ -41,11 +41,13 @@
 #define ECA_TEST_SUCCESS() do { printf("%s:%d - Test passed\n", __FILE__, __LINE__); return 0; } while(0)
 #define ECA_TEST_FAIL(x,y) do { printf("\n%s:%d - Test failed: \"%s\"\n", __FILE__, __LINE__, y); return x; } while(0)
 #define ECA_TEST_NOTE(x)   do { printf("%s:%d - %s\n", __FILE__, __LINE__, x); fflush(stdout); } while(0)
+#define ECA_TEST_TRACE(x)  do { x; } while(0)
 #else
 #define ECA_TEST_ENTRY()   ((void) 0)
 #define ECA_TEST_SUCCESS() return 0
 #define ECA_TEST_FAIL(x,y) return x
 #define ECA_TEST_NOTE(x)   ((void) 0)
+#define ECA_TEST_TRACE(x)  do { ; } while(0)
 #endif
 
 /* --------------------------------------------------------------------- 
@@ -84,13 +86,19 @@ static eci_test_t eci_funcs[] = {
 int main(int argc, char *argv[])
 {
   int n, failed = 0;
-  
-#if NDEBUG
-  putenv("ECASOUND=../ecasound/ecasound");
-#else
-  putenv("ECASOUND=../ecasound/ecasound_debug");
-#endif
 
+  const char *binpath =   
+#ifdef NDEBUG
+    "ECASOUND=" TEST_TOP_BUILDDIR "/ecasound/ecasound"
+#else
+    "ECASOUND=" TEST_TOP_BUILDDIR "/ecasound/ecasound_debug"
+#endif
+    ;
+
+  ECA_TEST_TRACE(printf("Running %s tests with %s.\n", __FILE__, binpath));
+
+  putenv(binpath);
+       
   if (argc > 1) {
     /* run just a single test */
     size_t m = atoi(argv[1]);

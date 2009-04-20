@@ -73,6 +73,8 @@ libecasoundc_tester_LDADD = $(lib_LTLIBRARIES)
 ecicpp_tester_SOURCES = ecicpp_tester.cpp
 ecicpp_tester_LDADD = $(lib_LTLIBRARIES)
 
+AM_CPPFLAGS += "-DTEST_TOP_BUILDDIR=\"$(top_builddir)\""
+
 # ---------------------------------------------------------------------
 # Install targets
 install-data-local:
