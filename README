@@ -88,9 +88,11 @@ Optional when running Ecasound:
 - for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
 - for .aac/.m4a/.mp4 file support, the FAAC/FAAD2 tools
 - for .flac support, the FLAC package
+     - note: since ecasound 2.4.5, libsndfile is the preferred
+	     way for reading and writing FLAC files
 - for MIDI .mid file input: Timidity++
 - for tracker module support: MikMod package
-- for aRts (legacy KDE) support: the aRts server package
+- for aRts (legacy KDE) support: the aRts server suntime
 
 To compile Ecasound, you also need...:
 
@@ -120,6 +122,9 @@ Optional when compiling Ecasound:
 - for ALSA support, the ALSA devel package
 - for JACK support, the JACK devel package
 - for aRts support, the aRts C-API devel package
+- for inner loop optimizations (performance improvements), 
+  the liboil package
+- for Open Sound Control (OSC) support, liblo package
 
 -----------------------------------------------------------------------
  Installing
