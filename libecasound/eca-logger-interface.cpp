@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-logger-interface.cpp: Logging subsystem interface
-// Copyright (C) 2002-2004 Kai Vehmanen
+// Copyright (C) 2002-2004,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -41,8 +41,6 @@ using namespace std;
 
 const static int eca_l_i_default_log_history_len = 0;
 const static int eca_l_i_default_extlog_level = ECA_LOGGER::errors | ECA_LOGGER::info | ECA_LOGGER::subsystems | ECA_LOGGER::module_names | ECA_LOGGER::user_objects | ECA_LOGGER::system_objects | ECA_LOGGER::eiam_return_values;
-
-static void priv_make_logmsg(std::string *logmsg, ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message);
 
 /**
  * Class constructor. Initializes log level to 'disabled'.
@@ -105,10 +103,9 @@ void ECA_LOGGER_INTERFACE::msg(ECA_LOGGER::Msg_level_t level, const std::string&
    *        could create a loop when the backlog itself is printed) */
   if (log_history_len_rep > 0 &&
       level != ECA_LOGGER::eiam_return_values) {
-    priv_make_logmsg(&logmsg, level, module_name, log_message);
+    format_log_msg(&logmsg, level, module_name, log_message);
     log_history_rep.push_back(string("[") + ECA_LOGGER::level_to_string(level) + "] ("
-			      + std::string(module_name.begin(), 
-					    find(module_name.begin(), module_name.end(), '.'))
+			      + ECA_LOGGER_INTERFACE::filter_module_name(module_name)
 			      + ") " + log_message);
     if (static_cast<int>(log_history_rep.size()) > log_history_len_rep) {
       log_history_rep.pop_front();
@@ -126,7 +123,7 @@ void ECA_LOGGER_INTERFACE::msg(ECA_LOGGER::Msg_level_t level, const std::string&
       static unsigned long counter = 0;
 
       if (logmsg.size() == 0) 
-	priv_make_logmsg(&logmsg, level, module_name, log_message);
+	format_log_msg(&logmsg, level, module_name, log_message);
 
       logmsg += " <" + kvu_numtostr(counter++) + ">\n";
       
@@ -181,12 +178,37 @@ void ECA_LOGGER_INTERFACE::set_log_history_length(int len)
   log_history_len_rep = len;
 }
 
-static void priv_make_logmsg(std::string *logmsg, ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message)
+/**
+ * Formats module name for logging purposes.
+ *
+ * Both "foobar.cpp" and "../src/foobar.cpp" return 
+ * the same formatted string "foobar".
+ */
+string ECA_LOGGER_INTERFACE::filter_module_name(const string& rawmodule)
+{
+  string retval;
+  
+  size_t begin =
+    rawmodule.rfind("/");
+  if (begin == string::npos)
+    begin = 0;
+  else
+    /* skip the initial "/" */
+    ++begin;
+
+  size_t end =
+    rawmodule.rfind(".");
+
+  if (end > begin)
+    return string(rawmodule, begin, end - begin);
+
+  return rawmodule;
+}
+
+void ECA_LOGGER_INTERFACE::format_log_msg(std::string *logmsg, ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message)
 {
   *logmsg = 
     string("[") + ECA_LOGGER::level_to_string(level)  + "] ("
-    + std::string(module_name.begin(), module_name.end() - 4) + ") " 
+    + ECA_LOGGER_INTERFACE::filter_module_name(module_name) + ") " 
     + log_message;
-/*     + std::string(module_name.begin(), find(module_name.begin(),
-       module_name.end(), '.')) */
 }

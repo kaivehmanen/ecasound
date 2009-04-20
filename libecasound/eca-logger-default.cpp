@@ -35,8 +35,7 @@ void ECA_LOGGER_DEFAULT::do_msg(ECA_LOGGER::Msg_level_t level, const std::string
 	     is_log_level_set(ECA_LOGGER::module_names) == true &&
 	     level != ECA_LOGGER::eiam_return_values) {
       std::cout << "(" 
-		<< std::string(module_name.begin(), 
-			       find(module_name.begin(), module_name.end(), '.'))
+		<< ECA_LOGGER_INTERFACE::filter_module_name(module_name)
 		<< ") ";
     }
     

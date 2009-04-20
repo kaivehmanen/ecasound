@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-logger-interface.h: Logging subsystem interface
-// Copyright (C) 2002-2004 Kai Vehmanen
+// Copyright (C) 2002-2004,2009 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -67,6 +67,9 @@ class ECA_LOGGER_INTERFACE {
   virtual void do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message) = 0;
   virtual void do_flush(void) = 0;
   virtual void do_log_level_changed(void) = 0;
+
+  static std::string filter_module_name(const std::string& rawmodule);
+  static void format_log_msg(std::string *logmsg, ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message);
 
   private:
 

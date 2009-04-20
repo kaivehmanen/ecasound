@@ -165,8 +165,7 @@ void TEXTDEBUG::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_
 	     is_log_level_set(ECA_LOGGER::module_names) == true &&
 	     level != ECA_LOGGER::eiam_return_values) {
       std::string module_name_without_ext 
-	= std::string(module_name.begin(), 
-		      find(module_name.begin(), module_name.end(), '.'));
+	= ECA_LOGGER_INTERFACE::filter_module_name(module_name);
       *dostream_repp << "(" 
 		     << module_name_without_ext
 		     << ") ";
