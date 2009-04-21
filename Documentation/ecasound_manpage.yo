@@ -835,7 +835,7 @@ a stereo stream ('out1,out2' = 'in2,in1'). Specifying the same
 source channel multiple times is allowed. For example, '-chorder:2,2'
 would route the second channel to both two output channels 
 ('out1,out2' = 'in2,in2'). If 'chX' is zero, the given channel 'X' 
-will be muted in the output stream.
+will be muted in the output stream. Option added to ecasound 2.7.0.
 
 dit(-chmix:to-channel)
 Mix all source channels to channel 'to_channel'.  If 'to_channel' 
