@@ -26,7 +26,7 @@ ECA_CONTROL_MT::ECA_CONTROL_MT(ECA_SESSION* psession)
 {
   pthread_mutexattr_t mutex_attr;
   pthread_mutexattr_init(&mutex_attr);
-  pthread_mutexattr_settype(&mutex_attr, PTHREAD_MUTEX_RECURSIVE_NP);
+  pthread_mutexattr_settype(&mutex_attr, PTHREAD_MUTEX_RECURSIVE);
   pthread_mutex_init(&mutex_rep, &mutex_attr);
   ec_repp = new ECA_CONTROL(psession);
 }
