@@ -1151,7 +1151,7 @@ AC_ARG_ENABLE(liblo,
     esac
   ],
   [
-    enable_liblo=yes
+    enable_liblo=${HAVE_LIBLO}
     AC_MSG_RESULT(${enable_liblo})
   ]
 )
