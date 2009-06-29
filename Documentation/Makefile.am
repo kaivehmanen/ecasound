@@ -17,6 +17,7 @@ man1_pages_to_install = \
 		ecasound.1 \
 		ecasound-iam.1 \
 		ecatools.1 \
+		ecaconvert.1 \
 		ecafixdc.1 \
 		ecalength.1 \
 		ecaplay.1 \
