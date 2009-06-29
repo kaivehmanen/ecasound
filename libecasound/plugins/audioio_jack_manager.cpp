@@ -1623,7 +1623,7 @@ long int AUDIO_IO_JACK_MANAGER::read_samples(int client_id, void* target_buffer,
 void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, long int samples)
 {
   // DEBUG_CFLOW_STATEMENT(cerr << endl << "write_samples:" << client_id);
-
+  size_t sample_size = sizeof(jack_default_audio_sample_t);
   long int writesamples = (samples <= buffersize_rep) ? samples : buffersize_rep;
   jack_default_audio_sample_t* ptr =
     static_cast<jack_default_audio_sample_t*>(target_buffer);
@@ -1632,8 +1632,11 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
   list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
   while(p != node->ports.end()) {
     if ((*p)->cb_buffer != 0) {
-      memcpy((*p)->cb_buffer, ptr, writesamples * sizeof(jack_default_audio_sample_t));
+      memcpy((*p)->cb_buffer, ptr, writesamples * sample_size);
       ptr += writesamples;
+      memset((*p)->cb_buffer + (writesamples * sample_size),
+	     0,
+	     (buffersize_rep - writesamples) * sample_size);
     }
     ++p;
   }
