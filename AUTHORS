@@ -71,7 +71,6 @@ Uekawa, Junichi [juekawa]
 Weil, Jan [janweil] (Jan -dot- Weil -at- web -dot- de)
 	Wrote the Ruby ECI implementation.
 
-
 Contributions
 ==============
 
@@ -150,6 +149,109 @@ Wever, Mark de [koraq]
 Wróblewski, Artur [wrobell]
 	PLD-Linux RPM-specfile, readline and destdir patches.
 
+Contributions - Patches, Bug Hunting and Feature Proposals
+==========================================================
+
+Starting from 2.2.1 release (in Feb/2003), contributors have
+been listed in the release notes. For all past releases notes,
+see:
+
+  - http://eca.cx/relnotes/
+
+Below is a list of all contributors to 2.2.1 and beyond, collected
+from the published releases notes, and listed in the order they appear
+in the release notes:
+
+Junichi Uekawa
+Kai Vehmanen
+Janne Halttunen
+Antti Boman
+William Goldsmith
+Oliver Thuns
+Mario Lang
+Michael Hellwig
+Janno Liivak
+Raoul Megelas
+Jan Stary
+Daniel Kruszyna
+Jeremy Hall
+Vegard Lima
+Carsten Bauer
+Ismail Donmez
+Lars Henrik Mai
+Stephan Niemz
+Al Oemens
+Tommi Uimonen
+Hirendra Hindocha
+Stefan Bundt
+Dave Phillips
+Jan Weil
+Mark de Wever
+Fernando Pablo Lopez-Lezcano
+Michael Ewe
+Eric Dantan Rzewnicki
+Pierre Lorenzon
+Jesse Chappell
+Sean Bolton
+Adam Linson
+Paul Winkler
+Didier Bellamy
+Manfred Berndtgen
+Stéphane Letz
+Paul Marquardt
+kito -at- gentoo-org
+jcwjcw -at- qwest-net
+Vitaly Belostotsky
+Steve Harris
+Tim Blechmann
+Aaron Heller
+Kamil Wencel
+Julien Claassen
+Erik de Castro Lopo
+Frederik Eaton
+Philippe Schelté aka Dubphil
+Julian Dobson
+Alexey Shchepin
+Brad Fuller
+Peter Lutek
+Stuart Allie
+Jeffrey Cunningham
+Kyle Kirkland
+Olivier Guilyardi
+Jack O'Quin
+Pierre Lorenzon
+Pedro Lopez-Cabanillas
+Pedro Antonio Fructuoso Merino
+Arieh Skliarouk
+Tom Rosenfeld
+Valery -at- vslash -dot com
+Markus Grabner
+Michael Willoughby
+Rocco <linuxmedia -at- netscape-net>
+Dave Serls
+Stephen Stocker
+Aaron Heller
+Chris Head
+Zrajm Akfohg
+Florian Ladstaedter
+Koen <kbr -at- patat-org>
+Kurt Konolige
+Brad Bowman
+Joel Roth
+Martin Michlmayr
+Joe Planisky
+Rémi Rouaud
+Etienne Deleflie
+Klaus Schulz
+Keith Creasy
+Cyril Brulebois
+Fabian Groffen
+Andrew Lees
+Sergei Steshenko
+Alexis Ballier
+Avuton Olrich
+Dominic Sacré
+Erik Nomitch
 
 Code from other projects
 ========================
