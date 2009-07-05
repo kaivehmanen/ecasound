@@ -2,12 +2,23 @@
 *** Ecasound - AUTHORS file                                         ***
 =======================================================================
 
+Note about author information in version control (git)
+------------------------------------------------------
+
+For recent development history (since August 2008), the Ecasound git
+repository (see:
+ - http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound ) 
+... contains accurate author information. For earlier commits, the git
+repository does not provide an accurate view, as all of these
+pre-2008/Aug patches were committed by the release manager. However,
+even in the older commits, the original author (if different from
+commit author), is identified in the patch description (e.g. "Patch
+from.." or "Patch by..").
 
 Main author, coordination of development
 ========================================
 
 Kai Vehmanen [kaiv] (kvehmanen -at- eca -dot- cx)
-
 
 New functionality, refactoring old code
 =======================================
