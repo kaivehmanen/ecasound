@@ -548,7 +548,7 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 	state->neteci_mode = true;
       }
 
-      else if (cline.current().find("-E") != string::npos) {
+      else if (cline.current().compare(0, 2, "-E") == 0) {
 	cline.next();
 	if (cline.end() != true) {
 	  state->launchcmds = 
