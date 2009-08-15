@@ -94,6 +94,12 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- fixed: don't use '--ignore-fail-on-non-empty' rmdir option
 		 as it is not available on many platforms (e.g. OS X)
 		 and this breaks the uninstall target; sfbug:2772628
+	- fixed: bug in ecasound frontend parser for '-E' option that
+		 broken passing arguments containing the substring 
+ 		 "-E"; introduced in 2.5.2 release
+        - fixed: stale audio was written to JACK output ports in case
+	   	 of multiple streams, connected to different JACK ports,
+		 reaching end-of-stream at different times [jedahu]
 08022009 (v2.6.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
