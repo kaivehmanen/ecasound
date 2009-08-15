@@ -110,6 +110,8 @@ Heller, Aaron [aheller]
 	Fixes to big-endian support.
 Harris, Steve [swharris]
 	gcc 2.96 (RH7.0) testing and fixes.
+Hughes, Jeremy [jedahu]
+	Bugfix for JACK port muting
 Lavallée, Marc
 	Rpm-spec for Mandrake.
 Merino, Pedro Antonio Fructuoso [pfructuoso]
