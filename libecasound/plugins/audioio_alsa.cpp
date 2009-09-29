@@ -333,14 +333,8 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void)
 						  pcm_sw_params_repp,
 						  buffer_size_rep * 2);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params/start_threshold: " + string(snd_strerror(err))));
-  
-  /* 3. set align to one frame (like the OSS-emulation layer) */
-  err = snd_pcm_sw_params_set_xfer_align(audio_fd_repp,
-					 pcm_sw_params_repp,
-					 1);
-  if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params_repp/xfer_align: " + string(snd_strerror(err))));
-  
-  /* 4. activate params */
+
+  /* 3. activate params */
   err = snd_pcm_sw_params(audio_fd_repp, pcm_sw_params_repp);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params_repp: " + string(snd_strerror(err))));
 }
