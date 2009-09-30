@@ -1641,9 +1641,10 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
   list<eca_jack_port_data*>::const_iterator p = node->ports.begin();
   while(p != node->ports.end()) {
     if ((*p)->cb_buffer != 0) {
+      /* note: cb_buffer points to jack_default_audio_sample_t* */
       memcpy((*p)->cb_buffer, ptr, writesamples * sample_size);
       ptr += writesamples;
-      memset((*p)->cb_buffer + (writesamples * sample_size),
+      memset((*p)->cb_buffer + writesamples,
 	     0,
 	     (buffersize_rep - writesamples) * sample_size);
     }
