@@ -28,6 +28,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <ctime>
 #include <stddef.h>  /* ANSI-C: size_t */
 #include <stdio.h>   /* for AIX */
 #include <time.h>    /* ANSI-C: clock() */
