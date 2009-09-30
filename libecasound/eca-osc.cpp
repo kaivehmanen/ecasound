@@ -35,6 +35,7 @@
 #ifdef ECA_USE_LIBLO
 
 #include <cstdio>
+#include <cstdlib>
 #include <string>
 
 #include <kvu_dbc.h>
