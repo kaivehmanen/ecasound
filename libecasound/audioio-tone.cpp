@@ -158,15 +158,16 @@ void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
   sbuf->number_of_channels(channels());
 
   /* set the length according to our buffersize */
-  if (ECA_AUDIO_POSITION::length_set() &&
-      (position_in_samples() + buffersize()) 
-      >= ECA_AUDIO_POSITION::length_in_samples()) {
+  if ((ECA_AUDIO_POSITION::length_set() == true) &&
+      ((position_in_samples() + buffersize()) 
+       >= ECA_AUDIO_POSITION::length_in_samples())) {
     /* over requested duration, adjust buffersize */
     SAMPLE_BUFFER::buf_size_t partialbuflen = 
       ECA_AUDIO_POSITION::length_in_samples() 
       - position_in_samples();
     if (partialbuflen < 0)
       partialbuflen = 0;
+    DBC_CHECK(partialbuflen <= buffersize());
     sbuf->length_in_samples(partialbuflen);
     finished_rep = true;
   }
