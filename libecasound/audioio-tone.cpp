@@ -169,6 +169,7 @@ void AUDIO_IO_TONE::read_buffer(SAMPLE_BUFFER* sbuf)
       partialbuflen = 0;
     DBC_CHECK(partialbuflen <= buffersize());
     sbuf->length_in_samples(partialbuflen);
+    sbuf->event_tag_set(SAMPLE_BUFFER::tag_end_of_stream);
     finished_rep = true;
   }
   else
