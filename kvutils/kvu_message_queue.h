@@ -5,6 +5,7 @@
 
 #include <errno.h>
 #include <pthread.h>
+#include <sys/time.h>
 
 #include "kvu_timestamp.h"
 
@@ -117,17 +118,19 @@ public:
    * @pre is_empty() != true
    */
   void poll(int timeout_sec, long int timeout_usec) {
-    struct timespec now;
-    struct timespec timeout;
-    int retcode;
+    struct timeval nowtmp;
+    struct timespec now, timeout;
+    int retcode = 0;
 
-    timeout.tv_sec += timeout_sec;
-    timeout.tv_nsec += timeout_usec * 1000;
+    gettimeofday(&nowtmp, NULL);
+
+    now.tv_sec = nowtmp.tv_sec;
+    now.tv_nsec = nowtmp.tv_usec * 1000;
+    timeout.tv_sec = timeout_sec;
+    timeout.tv_nsec = timeout_usec * 1000;
+    kvu_timespec_add(&now, &timeout, &timeout);
 
     pthread_mutex_lock(&lock_rep);
-    kvu_clock_gettime(&now);
-    kvu_timespec_add(&now, &timeout, &now);
-    retcode = 0;
     while (msgs_rep.empty() == true && retcode != ETIMEDOUT) {
       retcode = pthread_cond_timedwait(&cond_rep, &lock_rep, &timeout);
     }
