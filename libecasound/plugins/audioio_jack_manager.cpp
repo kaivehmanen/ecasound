@@ -1070,14 +1070,23 @@ int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     }
   }
 
+  DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: out of exec" << endl);
+
   if (is_connection_active() == true) {
     deactivate_server_connection();
   }
 
+  DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: deactivated" << endl);
+
+  pthread_mutex_lock(&engine_mod_lock_rep);
+  exit_request_rep = 0;
   engine_repp = 0;
+  pthread_mutex_unlock(&engine_mod_lock_rep);
 
   /* signal exit() that we are done */
   signal_exit();
+
+  DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: exit" << endl);
 
   return result;
 }
