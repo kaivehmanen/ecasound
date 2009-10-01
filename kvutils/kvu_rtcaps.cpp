@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_rtcaps.h: Routines for utilizing POSIX RT extensions.
-// Copyright (C) 2001-2003 Kai Vehmanen
+// Copyright (C) 2001-2003,2009 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,10 +50,10 @@ bool kvu_check_for_sched_sub(int policy)
     int prev_policy = sched_getscheduler(0);
     if (prev_policy >= 0) {
       /* get maximum priority for the tested policy */
-      int max_prio = sched_get_priority_max(policy);
-      if (max_prio >= 0) {
+      int min_prio = sched_get_priority_min(policy);
+      if (min_prio >= 0) {
 	struct sched_param sparam;
-	sparam.sched_priority = max_prio;
+	sparam.sched_priority = min_prio;
 	/* try to change scheduling according the new params */
         int ret = sched_setscheduler(curpid, policy, &sparam);
 	if (ret == 0) {
