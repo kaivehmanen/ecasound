@@ -283,8 +283,7 @@ void ECA_CHAINSETUP::set_defaults(void)
   midi_server_repp = &impl_repp->midi_server_rep;
   engine_driver_repp = 0;
 
-  if (kvu_check_for_mlockall() == true && 
-      kvu_check_for_sched_fifo() == true) {
+  if (kvu_check_for_sched_fifo() == true) {
     rtcaps_rep = true;
     ECA_LOG_MSG(ECA_LOGGER::system_objects, "Rtcaps detected.");
   }
@@ -511,6 +510,8 @@ void ECA_CHAINSETUP::select_active_buffering_mode(void)
 
       /* case 2: rt-objects without priviledges for rt-scheduling */
       else if (rtcaps_rep != true) {
+	ECA_LOG_MSG(ECA_LOGGER::info,
+		    "NOTE: Real-time configuration, but insufficient privileges to utilize real-time scheduling (SCHED_FIFO). With small buffersizes, this may cause audible glitches during processing.");
 	toggle_raised_priority(false);
 	active_buffering_mode_rep = ECA_CHAINSETUP::cs_bmode_rt;
 	ECA_LOG_MSG(ECA_LOGGER::system_objects, "bmode-selection case-2");
