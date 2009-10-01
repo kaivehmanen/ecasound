@@ -86,7 +86,7 @@ using std::endl;
 using namespace ECA;
 
 const string ECA_CHAINSETUP::default_audio_format_const = "s16_le,2,44100,i";
-const string ECA_CHAINSETUP::default_bmode_nonrt_const = "1024,true,50,true,100000,true";
+const string ECA_CHAINSETUP::default_bmode_nonrt_const = "1024,false,50,false,100000,true";
 const string ECA_CHAINSETUP::default_bmode_rt_const = "1024,true,50,true,100000,true";
 const string ECA_CHAINSETUP::default_bmode_rtlowlatency_const = "256,true,50,true,100000,false";
 
