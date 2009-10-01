@@ -676,9 +676,10 @@ See also '-eadb'.
 
 dit(-eadb:gain-dB[,channel])
 Adjusts signal level by 'gain-dB', with a gain of 0dB having no effect
-to the signal. The 'channel' parameter (1...n) is optional. If 'channel'
-parameter is specified, and its value is nonzero, gain is only applied 
-to the given channel (1...n).
+to the signal, negative gains attenuating the signal and positive
+gain values amplifying it. The 'channel' parameter (1...n) is optional. 
+If 'channel' parameter is specified, and its value is nonzero, gain is 
+only applied to the given channel (1...n).
 
 dit(-eaw:amplify%,max-clipped-samples)
 Amplifies signal by amplify-% percent (linear scale, i.e. individual

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (23.01.2009)
+       (01.10.2009)
        ()
        (Multimedia software)
 
@@ -56,7 +56,10 @@ manpagesection(GENERAL)
 startdit()
 dit(quit, q)
 Quit ecasound session. What this means in practice depends on the 
-client (library throws an exception). em([-])
+client implementation. In ecasound interactive mode, 'quit' terminates
+the ecasound process. When sent over ecasound server connection (aka 
+NetECI), 'quit' terminates the active network connection, but does not 
+terminate the ecasound server process. em([-])
 
 dit(start, t)
 Processing is started (play). Error string is return if any errors upon 
