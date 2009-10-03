@@ -25,26 +25,31 @@
 
 #include "eca-logger-default.h"
 
+ECA_LOGGER_DEFAULT::ECA_LOGGER_DEFAULT(std::ostream& output)
+  : output_rep(output)
+{
+}
+
 void ECA_LOGGER_DEFAULT::do_msg(ECA_LOGGER::Msg_level_t level, const std::string& module_name, const std::string& log_message)
 {
   if (is_log_level_set(level) == true) {
     if (level == ECA_LOGGER::subsystems) {
-      std::cerr << "[* ";
+      output_rep << "[* ";
     }
     else if (module_name.size() > 0 &&
 	     is_log_level_set(ECA_LOGGER::module_names) == true &&
 	     level != ECA_LOGGER::eiam_return_values) {
-      std::cerr << "(" 
+      output_rep << "(" 
 		<< ECA_LOGGER_INTERFACE::filter_module_name(module_name)
 		<< ") ";
     }
     
-    std::cerr << log_message;
+    output_rep << log_message;
     
     if (level == ECA_LOGGER::subsystems) {
-      std::cerr << " *]";
+      output_rep << " *]";
     }
-    std::cerr << std::endl;
+    output_rep << std::endl;
   }
 }
 
