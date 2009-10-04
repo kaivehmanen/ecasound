@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
   SAMPLE_BUFFER buf_a, buf_b;
   int buffersize = 1024;
   bool verbose = std::getenv("V") != 0 ? true : false;
- 
+  int res = 0;
+
   if (argc < 3) 
     return 1;
 
@@ -79,18 +80,19 @@ int main(int argc, char *argv[])
   if (a->length().samples() != 
       b->length().samples()) {
     ECA_LOG_MSG(ECA_LOGGER::errors, "File size mismatch");
-    return 1; 
+    res = 1;
   }
 
   while(1) {
     a->read_buffer(&buf_a);
     b->read_buffer(&buf_b);
 
-    /* note: use 15bit precision for checks */
-    if (SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(buf_a, buf_b, 15, verbose) != true) {
+    /* note: use 14bit precision for checks */
+    if (SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(buf_a, buf_b, 14, verbose) != true) {
       ECA_LOG_MSG(ECA_LOGGER::errors, "Files differ at pos " +
 		  kvu_numtostr(a->position_in_seconds_exact()));
-      return 1;
+      res = 2;
+      break;
     }
 
     if (a->finished() == true ||
@@ -101,5 +103,5 @@ int main(int argc, char *argv[])
   a->close();
   b->close();
 
-  return 0;
+  return res;
 }
