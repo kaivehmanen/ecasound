@@ -340,6 +340,25 @@ fi
 dnl ------------------------------------------------------------------
 
 dnl ---
+dnl Check for extra compile flags
+dnl
+dnl modifies: ECA_S_EXTRA_CPPFLAGS, ECA_S_EXTRA_LIBS
+dnk ---
+
+AC_ARG_WITH(extra-cppflags,
+	[  --with-extra-cppflags=FLAGS pass extra flags to cpp ],
+	[
+	    ECA_S_EXTRA_CPPFLAGS="${ECA_S_EXTRA_CPPFLAGS} ${withval}"
+	])
+AC_ARG_WITH(extra-libs,
+	[  --with-extra-libs=FLAGS pass extra flags to linker ],
+	[
+	    ECA_S_EXTRA_LIBS="${ECA_S_EXTRA_LIBS} ${withval}"
+	])
+
+dnl ------------------------------------------------------------------
+
+dnl ---
 dnl Check for LFS (--with-largefile, --disable-largefile
 dnl 
 dnl NOTE: AC_CHECK_LARGEFILE is defined in acinlude.m4 and

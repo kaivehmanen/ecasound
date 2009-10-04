@@ -160,6 +160,14 @@ Ecasound specific options
 	Enable rubyecasound. Defaults to yes if Ruby interpreter 
         is found on the system.
 
+`--with-extra-cppflags=ARG´
+	Pass extra options to preprocessor (cpp). This option should 
+	be used to add non-standard header paths to the search path.
+
+`--with-extra-libs=ARG´
+	Pass extra options to linked (ld). This option should 
+	be used to add non-standard library paths to the search 
+	path, as well as additional libraries to link against.
 
 Supported automake/autoconf features
 ====================================
