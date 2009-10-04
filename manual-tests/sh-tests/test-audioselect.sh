@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-# version:20080706-3
+# version:20091004-4
 #
 # Script to generate and test audio selecting.
 # The output files need to be verified manually.
@@ -18,6 +18,10 @@ fi
 
 check_ecabin
 
+# specify ecasound binary used to generate test reference files
+ECAS_REF=ecasound-2.6.0
+CMP=../utils/ecacompare
+
 set -x
 
 # generate source file
@@ -26,30 +30,33 @@ ln -s src44100.wav src44100.foobar
 
 # perform test 1
 set -x
+$ECAS_REF -q -f:16,1,44100 -i select,1,22000sa,src44100.wav -o as-dst22000sa-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,44100 -i select,1,22000sa,src44100.wav -o as-dst22000sa.wav -x || error_exit
 set +x
 samples=`sndfile-info as-dst22000sa.wav |grep Frames |cut -d ':' -f2`
 if [ $samples != "22000" ] ; then error_exit ; fi
-check_md5sum as-dst22000sa.wav 6074b14f616a40cb1c7c74d305719c47
+$CMP as-dst22000sa.wav as-dst22000sa-ref.wav
+if [ $? != 0 ] ; then error_exit ; fi
 
-# perform test 2
+# perform test 2 (lq -> ext resamplers are not necessarily supported)
 set -x
-$ECASOUND -q -f:16,1,88200 -i select,1.9,33000sa,resample,44100,src44100.wav -o as-dst33000sa.wav -x || error_exit
+$ECAS_REF -q -f:16,1,88200 -i select,1.9,33000sa,resample-lq,44100,src44100.wav -o as-dst33000sa-ref.wav -x || error_exit
+$ECASOUND -q -f:16,1,88200 -i select,1.9,33000sa,resample-lq,44100,src44100.wav -o as-dst33000sa.wav -x || error_exit
 set +x
 samples=`sndfile-info as-dst33000sa.wav |grep Frames |cut -d ':' -f2`
 if [ $samples != "33000" ] ; then error_exit ; fi
-check_md5sum as-dst33000sa.wav 6118d58a9149a55f0392684b4c0fec81
+$CMP as-dst33000sa.wav as-dst33000sa-ref.wav
+if [ $? != 0 ] ; then error_exit ; fi
 
 # perform test 3
 set -x
+$ECAS_REF -q -f:16,1,44100 -i select,40000sa,55000sa,typeselect,.wav,src44100.foobar -o as-dst55000sa-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,44100 -i select,40000sa,55000sa,typeselect,.wav,src44100.foobar -o as-dst55000sa.wav -x || error_exit
 set +x
 samples=`sndfile-info as-dst55000sa.wav |grep Frames |cut -d ':' -f2`
 if [ $samples != "55000" ] ; then error_exit ; fi
-
-check_md5sum as-dst55000sa.wav 7ee71a96d9bfee811e61e11ade0523dd
-# cur: 7ee71a96d9bfee811e61e11ade0523dd, size 110044
-# prev-1: 0d792fe459a75e0e69e64c530d682fb3, size <unknown>
+$CMP as-dst55000sa.wav as-dst55000sa-ref.wav
+if [ $? != 0 ] ; then error_exit ; fi
 
 echo "Test run succesful (no manual verification needed)."
 echo "Run './clean.sh' to remove created audio files."

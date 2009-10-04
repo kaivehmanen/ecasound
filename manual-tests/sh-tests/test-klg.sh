@@ -1,6 +1,6 @@
 #!/bin/bash
 # 
-# version:20080708-3
+# version:20091004-4
 #
 # Script to generate and test common resampling
 # use cases. The output files need to be verified
@@ -15,8 +15,9 @@ if test "x${ECASOUND}" = "x" ; then
   ECASOUND=../../ecasound/ecasound_debug
 fi
 
-# whether to skip md5sum checks
-SKIP_MD5SUM=0
+# specify ecasound binary used to generate test reference files
+ECAS_REF=ecasound-2.6.0
+CMP=../utils/ecacompare
 
 . test-common-sh
 
@@ -30,12 +31,20 @@ set -x
 #   10.5 -> 20.0:  20%  -> 80%
 #   20.0 -> 30.0:  80%  -> 10%
 #
-$ECASOUND -q -f:16,1,44100 -i tone,sine,440,30 -o klg-dst.wav -ea:100 -klg:1,0,100,5,0,0,5.5,1,10.5,0.2,20.0,0.8,30,0.1 -x  || error_exit
-check_1dbpeak_count klg-dst.wav 5753
-check_filesize klg-dst.wav 2646042
-# cur...: e7c1a4d352423eb9c40f184274546c8e, size 2646042
-# prev-2: e4a87025d0205016cb3c9f7e6b5aa63f, size 2646042
-# prev-1: e7c1a4d352423eb9c40f184274546c8e, size <unknown>
+$ECAS_REF -q -f:16,1,44100 -b:1024 -i tone,sine,440,30 -o klg-dst-ref.wav -ea:100 -klg:1,0,100,5,0,0,5.5,1,10.5,0.2,20.0,0.8,30,0.1 -x  || error_exit
+$ECASOUND -q -f:16,1,44100 -b:1024 -i tone,sine,440,30 -o klg-dst.wav -ea:100 -klg:1,0,100,5,0,0,5.5,1,10.5,0.2,20.0,0.8,30,0.1 -x  || error_exit
+#check_1dbpeak_count klg-dst.wav 5756
+check_filesize klg-dst.wav 2646044
+check_samples klg-dst.wav 1323000
+set -x
+$CMP klg-dst-ref.wav klg-dst.wav
+if [ $? != 0 ] ; then 
+  set +x
+  echo "NOTE: ecacompare returned failure, manual verification recommended."
+fi
 
+set +x 
 echo "Test run succesful."
+echo "Run './clean.sh' to remove created audio files."
+
 exit 0

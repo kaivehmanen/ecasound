@@ -40,9 +40,36 @@ function check_md5sum() {
 function check_filesize() {
   set +x
   if test "`stat --format=%s $1`" != "$2" ; then
-    echo -e "\n\nWARNING: size did not match (not necessarily an error, but"
-    echo -e "\tneeds to be manually verified).\n"
+    echo -e "WARNING: size did not match (not necessarily an error, but"
+    echo -e "\tneeds to be manually verified)."
     if test "x$SKIP_FILESIZE_CHECK" != "x1"; then
+      error_exit
+    fi
+  fi
+  set -x
+}
+
+function check_zerosum() {
+  set +x
+  ecasound -a:1 -i $1 -a:2 -i $2 -ea:-100 -a:1,2 -o dst-tmp.wav -x -q || error_exit
+  sigmax=`sndfile-info dst-tmp.wav |grep "Signal Max" |cut -d ':' -f2 |cut -d ' ' -f2 |cut -d ' ' -f2`
+  sndfile-info dst-tmp.wav |grep "Signal Max"
+  if [ $sigmax != "0" -a $sigmax != "1" ] ; then 
+    echo -e "WARNING: zerosum signal left $sigmax, manual verification required."
+    if test "$SKIP_ZEROSUM_CHECK" = "x" ; then
+      error_exit
+    fi
+  fi
+  set -x
+}
+
+function check_samples() {
+  set +x
+  samples=`sndfile-info $1 |grep Frames |cut -d ':' -f2`
+  if [ $samples != $2 ] ; then 
+    echo -e "WARNING: sample count did not match (not necessarily an error, but"
+    echo -e "\tneeds to be manually verified)."
+    if test "$SKIP_SAMPLECNT_CHECK" = "x" ; then
       error_exit
     fi
   fi
@@ -55,12 +82,12 @@ function check_filesize() {
 # went above -1dB
 #
 function check_1dbpeak_count() {
-  set -x
+  set +x
   count=`ecasound -i $1 -o null -ev |grep "Pos -1.0" |cut -d':' -f2 |cut -d',' -f1 |cut -c4-`
   if test $count != $2 ; then
-   echo -e "\n\nWARNING: peak count samples didt match (not necessarily an error, but"
-    echo -e "\tneeds to be manually verified).\n"
-    if test "x$SKIP_1DBPEAK_CHECK" != "x1"; then
+    echo -e "WARNING: peak count samples did not match (not necessarily an error, but"
+    echo -e "\tneeds to be manually verified)."
+    if test "x$SKIP_1DBPEAK_CHECK" = "x"; then
       error_exit
     fi
    fi

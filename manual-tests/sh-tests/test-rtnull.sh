@@ -11,9 +11,6 @@
 # License: GPL (see ecasound/{AUTHORS,COPYING})
 # ----------------------------------------------------------------------
 
-# whether to skip md5sum checks
-SKIP_MD5SUM=0
-
 . test-common-sh
 
 set_ecasound_envvar

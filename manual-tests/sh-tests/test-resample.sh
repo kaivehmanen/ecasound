@@ -15,7 +15,9 @@ if test "x${ECASOUND}" = "x" ; then
   ECASOUND=../../ecasound/ecasound_debug
 fi
 
-SKIP_MD5SUM=1
+# specify ecasound binary used to generate test reference files
+ECAS_REF=ecasound
+CMP=../utils/ecacompare
 
 . test-common-sh
 
@@ -24,19 +26,35 @@ check_ecabin
 set -x
 
 # generate source file
-$ECASOUND -q -f:16,1,96000 -i tone,sine,880,0 -o src96k.wav -t:5 || error_exit
+$ECASOUND -q -f:16,1,96000 -b:1024 -i tone,sine,880,5 -o src96k.wav || error_exit
+check_samples src96k.wav 480000
 
 # perform resampling
+$ECAS_REF -q -f:16,1,48000 -i resample,auto,src96k.wav -o re-dst48000-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,48000 -i resample,auto,src96k.wav -o re-dst48000.wav -x || error_exit
-check_md5sum re-dst48000.wav 41a6a6bbdf41fde8026d43cfa21fa804
+check_zerosum re-dst48000-ref.wav re-dst48000.wav
+$CMP re-dst48000.wav re-dst48000-ref.wav ; if [ $? != 0 ] ; then echo "Note: diff" ; fi
+check_samples re-dst48000.wav 240000
+
+$ECAS_REF -q -f:16,1,44100 -i resample,auto,src96k.wav -o re-dst44100-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,44100 -i resample,auto,src96k.wav -o re-dst44100.wav -x || error_exit
-check_md5sum re-dst44100.wav e763f450cbd21dd9dca536d5693dd395
+check_zerosum re-dst44100-ref.wav re-dst44100.wav
+#check_samples re-dst44100.wav 220450
+
+$ECAS_REF -q -f:16,1,22050 -i resample,auto,src96k.wav -o re-dst22050-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,22050 -i resample,auto,src96k.wav -o re-dst22050.wav -x || error_exit
-check_md5sum re-dst22050.wav 9eab303aa8657fe1b505721bf2810948
+check_zerosum re-dst22050-ref.wav re-dst22050.wav
+#check_samples re-dst22050.wav 110250
+
+$ECAS_REF -q -f:16,1,16000 -i resample,auto,src96k.wav -o re-dst16000-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,16000 -i resample,auto,src96k.wav -o re-dst16000.wav -x || error_exit
-check_md5sum re-dst16000.wav 4629e0fedd434d1be0eaf596ca9eec1b
+check_zerosum re-dst16000-ref.wav re-dst16000.wav
+#check_samples re-dst16000.wav 60000
+
+$ECAS_REF -q -f:16,1,8000  -i resample,auto,src96k.wav -o re-dst8000-ref.wav -x || error_exit
 $ECASOUND -q -f:16,1,8000  -i resample,auto,src96k.wav -o re-dst8000.wav -x || error_exit
-check_md5sum re-dst8000.wav e6d715a18d3850781e6abcf96196a54d
+check_zerosum re-dst8000-ref.wav re-dst8000.wav
+#check_samples re-dst8000.wav 30000
 
 echo "Test run succesful."
 exit 0
