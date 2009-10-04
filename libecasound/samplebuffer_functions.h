@@ -99,7 +99,7 @@ class SAMPLE_BUFFER_FUNCTIONS {
   }
 
   static void fill_with_random_samples(SAMPLE_BUFFER *sbuf);
-  static bool is_almost_equal(const SAMPLE_BUFFER& a, const SAMPLE_BUFFER& b);
+  static bool is_almost_equal(const SAMPLE_BUFFER& a, const SAMPLE_BUFFER& b, int bitprec = 24, bool verbose_stderr = false);
 
 };
 

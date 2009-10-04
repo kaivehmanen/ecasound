@@ -38,10 +38,6 @@
 #include "samplebuffer_functions.h"
 
 #undef NEVER_USED_CODE
-#undef VERBOSE
-
-/* uncomment for debugging */
-// #define VERBOSE 1 
 
 void SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(SAMPLE_BUFFER *sbuf)
 {
@@ -65,8 +61,12 @@ void SAMPLE_BUFFER_FUNCTIONS::fill_with_random_samples(SAMPLE_BUFFER *sbuf)
  * other considering the limits imposed by implementation (e.g.
  * precision of the floating point type used to represent
  * a sample). 
+ *
+ * @param bitprec adjust precision (defaults to 24)
+ * @param verbose_stderr whether to output comparison traces to
+ *        stderr
  */
-bool SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(const SAMPLE_BUFFER& a, const SAMPLE_BUFFER& b)
+bool SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(const SAMPLE_BUFFER& a, const SAMPLE_BUFFER& b, int bitprec, bool verbose_stderr)
 {
   if (a.number_of_channels() !=
       b.number_of_channels())
@@ -85,22 +85,22 @@ bool SAMPLE_BUFFER_FUNCTIONS::is_almost_equal(const SAMPLE_BUFFER& a, const SAMP
 
 	/* note: the following is intended only for comparing
 	 *       audio signals with a nominal range of [-1,1]
-	 *       and precision of 24 bit */
+	 *       and precision of 'bitprec' bits */
 
-	const SAMPLE_SPECS::sample_t diff_threshold = 1.0 / (1 << 24);
+	const SAMPLE_SPECS::sample_t diff_threshold = 1.0 / ((1 << bitprec) - 1);
 
 	SAMPLE_SPECS::sample_t diff = 
 	  std::fabs(a.buffer[ch][i] - b.buffer[ch][i]);
 
-#if VERBOSE
-	    std::fprintf(stderr, 
-			 "%s: diff for sample ch%d[%d], diff %.30f [%s], (a=%.30f to b=%.30f, thrshd %.30f)\n",
-			 __FILE__, ch, i, 
-			 diff,
-			 diff > diff_threshold ? "MISMATCH" : "INRANGE",
-			 a.buffer[ch][i], b.buffer[ch][i],
-			 diff_threshold);
-#endif
+	if (verbose_stderr == true) {	
+	  std::fprintf(stderr, 
+		       "%s: diff for sample ch%d[%d], diff %.30f [%s], (a=%.30f to b=%.30f, thrshd %.30f)\n",
+		       __FILE__, ch, i, 
+		       diff,
+		       diff > diff_threshold ? "MISMATCH" : "INRANGE",
+		       a.buffer[ch][i], b.buffer[ch][i],
+		       diff_threshold);
+	}
 
 	if (diff > diff_threshold) {
 	    return false;
