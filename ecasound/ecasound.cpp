@@ -40,6 +40,7 @@
 #include <eca-control-mt.h>
 #include <eca-error.h>
 #include <eca-logger.h>
+#include <eca-logger-default.h>
 #include <eca-session.h>
 #include <eca-version.h>
 
@@ -198,6 +199,13 @@ ECASOUND_RUN_STATE::~ECASOUND_RUN_STATE(void)
 int main(int argc, char *argv[])
 {
   ECASOUND_RUN_STATE state;
+  bool have_curses =
+#if defined(ECA_PLATFORM_CURSES) 
+    true
+#else
+    false
+#endif
+    ;
 
   /* 1. setup signals and the signal watchdog thread */
   ecasound_signal_setup(&state);
@@ -211,19 +219,18 @@ int main(int argc, char *argv[])
   /* 3. create console interface */
   if (state.retval == ECASOUND_RETVAL_SUCCESS) {
 
-#if defined(ECA_PLATFORM_CURSES) 
-    if (state.quiet_mode != true &&
+    if (have_curses == true &&
+	state.quiet_mode != true &&
 	state.cerr_output_only_mode != true) {
       state.console = new ECA_CURSES();
       state.logger = new TEXTDEBUG();
-      ECA_LOGGER::attach_logger(state.logger);
     }
-    else 
-#endif
-      {
-	ostream* ostr = (state.cerr_output_only_mode == true) ? &cerr : &cout;
-	state.console = new ECA_PLAIN_TEXT(ostr);
-      }
+    else {
+      ostream* ostr = (state.cerr_output_only_mode == true) ? &cerr : &cout;
+      state.console = new ECA_PLAIN_TEXT(ostr);
+      state.logger = new ECA_LOGGER_DEFAULT(*ostr);
+    }
+    ECA_LOGGER::attach_logger(state.logger);
     
     if (state.quiet_mode != true) {
       /* 4. print banner */
@@ -521,10 +528,14 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
     while(cline.end() != true) {
 
       if (cline.current() == "-o:stdout" ||
-	  cline.current() == "stdout" ||
-	  cline.current() == "-d:0" ||
-	  cline.current() == "-q") {
+	  cline.current() == "stdout") {
+	state->cerr_output_only_mode = true;
+	/* pass option to libecasound */
+	clineout->push_back(cline.current());
+      }
 
+      else if (cline.current() == "-d:0" ||
+	       cline.current() == "-q") {
 	state->quiet_mode = true;
 	/* pass option to libecasound */
 	clineout->push_back(cline.current());
