@@ -2013,7 +2013,11 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
     {
     case edit_cop_set_param:
       {
-	/* FIXME: validate index values */
+	if (edit.m.cop_set_param.chain < 1 ||
+	    edit.m.cop_set_param.chain > static_cast<int>(chains.size())) {
+	  retval = false;
+	  break;
+	}
 	CHAIN *ch = chains[edit.m.cop_set_param.chain - 1];
 	ch->set_parameter(edit.m.cop_set_param.op, 
 			  edit.m.cop_set_param.param,
@@ -2022,7 +2026,11 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
       }
     case edit_ctrl_set_param:
       {
-	/* FIXME: validate index values */
+	if (edit.m.ctrl_set_param.chain < 1 ||
+	    edit.m.ctrl_set_param.chain > static_cast<int>(chains.size())) {
+	  retval = false;
+	  break;
+	}
 	CHAIN *ch = chains[edit.m.ctrl_set_param.chain - 1];
 	ch->set_controller_parameter(edit.m.ctrl_set_param.op,
 				     edit.m.ctrl_set_param.param,
