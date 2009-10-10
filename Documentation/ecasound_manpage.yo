@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (12.04.2009)
+       (10.10.2009)
        ()
        (Multimedia software)
 
@@ -112,7 +112,7 @@ dit(--osc-udp-port=NNN)
 Enables support for Open Source Control (OSC). Ecasound will listen
 for incoming OSC messages on UDP port NNN. Ecasound's OSC interface
 is documented at:
-<http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound;a=blob;f=Documentation/ecasound_osc_interface.txt;hb=HEAD>
+<http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound/ecasound;a=blob;f=Documentation/ecasound_osc_interface.txt;hb=HEAD>
 
 Note that OSC support is still experimental and the interface
 might change in later versions of Ecasound.
