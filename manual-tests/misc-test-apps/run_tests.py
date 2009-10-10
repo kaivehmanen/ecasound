@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+# -----------------------------------------------------------------------
+# Runs all misc-test-apps test cases
+#
+# Copyright (C) 2009 Kai Vehmanen
+# Licensed under GPL. See the file 'COPYING' for more information.
+# -----------------------------------------------------------------------
+
 import sys
 import os
 import string
@@ -23,6 +30,8 @@ def run_tests():
 
     failed = 0
     for line in lines:
+        if line[0] == "#":
+            continue
         testcases = string.split(line)
         for testcase in testcases:
             print "Running test " + testcase + ":"

@@ -33,6 +33,10 @@ int test_sbuf_constructor(void);
 int test_sbuf_mix(void);
 int test_sbuf_iter(void);
 
+#ifndef LIBECASOUND_VERSION
+#define LIBECASOUND_VERSION 22
+#endif
+
 int main(int argc, char *argv[])
 {
   int res = 0;
