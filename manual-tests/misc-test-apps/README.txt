@@ -24,13 +24,12 @@ Most tests are performed using ecasound's 'null' and
 real audio objects. In these cases, the following 
 files and device are used:
 
-./ecasound_test	  - a symbolic link to ecasound executable; 
-		    alternative ECASOUND environment variable
-		    can be set to select the ecasound binary
-		    to run
+./ecasound_test	  = ecasound executable to use in tests
+./libecasound-config
+		  = library configuration script to
+		    use in building module tests
 ./foo.wav	  - generic input wav-file
 ./bigfoo.wav	  - a big (>10MB) input file
-/dev/dsp	  - OSS output file
 
 ---
 List of test categories
@@ -48,6 +47,8 @@ CON-1 - Simple tests for command-line options and basic
         operations.
 CON-2 - Tests for various rt and nonrt object combinations.
         Should be run both with and without root-priviledges.
+
+OSC-1 - Test Ecasound's OSC interface
 
 ECI-1 - Initializing the ECI C-interface multiple times.
 ECI-2 - Like ECI-1, but uses re-entrant API functions.
