@@ -1,0 +1,155 @@
+#!/usr/bin/expect -f
+#
+# ------------------------------------------------------------------------
+# Copyright (C) 2009 Kai Vehmanen
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
+# ------------------------------------------------------------------------
+#
+# refs:
+#  - expect(1)
+#  - http://www.tcl.tk/man/tcl8.5/tutorial/tcltutorial.html
+
+proc start_ecasound {} {
+    global opts expect_out spawn_id osc_udp_port
+    spawn ./ecasound_test -c --osc-udp-port=$osc_udp_port
+
+    expect {
+	"ecasound ('h' for help)>" { }
+	timeout {
+	    failed "unable to start ecasound"
+	}
+    }
+}
+
+proc send_ecasound {command} {
+    global opts expect_out spawn_id
+    send $command
+    expect {
+	"ecasound ('h' for help)>" { }
+    }
+}
+
+proc setup_ecasound {} {
+    global opts expect_out spawn_id
+    send_ecasound "cs-iselect 1\n"
+    send_ecasound "cs-remove\n"
+    send_ecasound "cs-add test\n"
+    send_ecasound "c-iselect\n"
+    send_ecasound "c-remove\n"
+    send_ecasound "c-add ch1\n"
+    send_ecasound "ai-add null\n"
+    send_ecasound "ao-add rtnull\n"
+    send_ecasound "cop-add -ea:100\n"
+    send_ecasound "cop-add -epp:100\n"
+    send_ecasound "ctrl-add -kos:1,0,100,0.2,0\n"
+    send_ecasound "c-add ch2\n"
+    send_ecasound "ai-add null\n"
+    send_ecasound "ao-add rtnull\n"
+    send_ecasound "cop-add -efl:2000\n"
+    send_ecasound "cop-add -epp:100\n"
+    send_ecasound "ctrl-add -kl:1,0,100,200\n"
+    send_ecasound "cs-connect\n"
+}
+
+proc osc_send_command {command} {
+   global opts expect_out spawn_id
+
+   send_user "\nTRACE: sending\n$command\n\n"
+   system $command
+   sleep 1
+}
+
+proc osc_user_check {casedesc} {
+    global timeout
+
+    send_user "\nTRACE: USER INPUT NEEDED\n"
+    send_user $casedesc
+    send_user "\nTRACE: press <enter> to continue (timeout in $timeout secs)\n"
+    expect_user {
+	"\n" { }
+	timeout { send_user "TRACE: time out, continuing other tests\n" }
+    }
+    send_user "TRACE: continuing...\n"
+}
+
+proc osc_test_banner {} {
+    global timeout osc_udp_port
+
+    send_user "**************************************************************\n"
+    send_user "This is an interactive test for Ecasound OSC interface\n"
+    send_user "\n"
+    send_user "Dependencies: expect, ecasound_test, oscsend, and free \n"
+    send_user "UDP/$osc_udp_port port.\n"
+    send_user "\n"
+    send_user "Follow the verification instructions (prefixed with 'TRACE'),\n"
+    send_user "and continue tests by pressing <enter>. If no response within\n"
+    send_user "$timeout seconds, tests will continue automatically.\n"
+    send_user "Press <enter> to start.\n"
+    send_user "**************************************************************\n"
+
+    expect_user {
+	"\n" { }
+	timeout { send_user "TRACE: time out, continuing other tests\n" }
+    }
+}
+
+proc osc_test {} {
+    global opts expect_out spawn_id
+
+    send_ecasound "status\n"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/1/param/1 f 300"
+    send_ecasound "status\n"
+    osc_user_check "Check ch1 change -ea:100 to -ea:300"
+
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/0/param/1 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/-1/param/1 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/3/param/1 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/1/param/0 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/1/param/-1 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1/op/1/param/3 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch1t/op/1/param/1 f 400"
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/tch1/op/1/param/1 f 400"
+    osc_send_command "oscsend localhost 34000 \"/ecasound/chain/ ch1/op/1/param/1\" f 400"
+    send_ecasound "status\n"
+    osc_user_check "ch1: should still be -ea:300"
+
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch2/op/1/param/1 f 1234"
+    send_ecasound "status\n"
+    osc_user_check "ch2: -efl should be set to 1234Hz"
+
+    osc_send_command "oscsend localhost 34000 /ecasound/chain/ch2/ctrl/1/param/3 f 123"
+    send_ecasound "status\n"
+    osc_user_check "ch2: -kl 3rd param should be 123"
+}
+
+proc quit_ecasound {} {
+    global opts expect_out spawn_id
+
+    send_ecasound "quit\n"
+    wait
+}
+
+set timeout 15
+set osc_udp_port 34000
+
+osc_test_banner
+start_ecasound
+setup_ecasound
+send_ecasound "start\n"
+osc_test
+quit_ecasound
+
+
