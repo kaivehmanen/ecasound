@@ -409,6 +409,7 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   SAMPLE_SPECS::sample_pos_t first_action_argument_as_samples(void) const;
   const std::vector<std::string>& action_arguments_as_vector(void) const;
   void fill_command_retval(struct eci_return_value *retval) const;
+  bool action_helper_check_cop_op_args(int copid, int coppid);
 
   ECA_ENGINE* engine_repp;
   ECA_SESSION* session_repp;

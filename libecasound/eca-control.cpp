@@ -380,6 +380,37 @@ void ECA_CONTROL::action(int action_id,
   action(action_id);
 }
 
+bool ECA_CONTROL::action_helper_check_cop_op_args(int copid, int coppid)
+{
+  DBC_REQUIRE(is_selected() == true);
+
+  const vector<string>& selchains =
+    selected_chainsetup_repp->selected_chains();
+  bool res = false;
+
+  if (selchains.size() == 0) {
+    set_last_error("No chain selected, unable to identify chainop");
+  }
+  else if (selchains.size() > 1) {
+    set_last_error("More than one chain selected, unable to identify chainop");
+  }
+  else {
+    const CHAIN* selch = 
+      selected_chainsetup_repp->get_chain_with_name(selchains[0]);
+    if (copid < 1 || copid > selch->number_of_chain_operators()) {
+      set_last_error("Invalid chainop-id, unable to identify chainop");
+    }
+    else if (coppid < 1) {
+      set_last_error("Invalid copp-id, indexing starts from 1.");
+    }
+    else {
+      res = true;
+    }
+  }
+
+  return res;
+}
+
 void ECA_CONTROL::action(int action_id)
 {
   clear_last_values();
@@ -661,13 +692,14 @@ void ECA_CONTROL::action(int action_id)
       int id2 = atoi(a[1].c_str());
       CHAIN_OPERATOR::parameter_t v = atof(a[2].c_str());
 
-      if (id1 > 0 && id2 > 0) {
+      bool valid = 
+	action_helper_check_cop_op_args(id1, id2);
+      if (valid == true) {
 	select_chain_operator(id1);
 	select_chain_operator_parameter(id2);
 	set_chain_operator_parameter(v);
       }
-      else
-	set_last_error("Chain operator indexing starts from 1.");
+      // note: helper func sets the error string if needed
       break; 
     }
   case ec_cop_get:
@@ -680,14 +712,14 @@ void ECA_CONTROL::action(int action_id)
       }
       int id1 = atoi(a[0].c_str());
       int id2 = atoi(a[1].c_str());
-
-      if (id1 > 0 && id2 > 0) {
+      bool valid = 
+	action_helper_check_cop_op_args(id1, id2);
+      if (valid == true) {
         select_chain_operator(id1);
         select_chain_operator_parameter(id2);
         set_last_float(get_chain_operator_parameter());
       }
-      else
-        set_last_error("Chain operator indexing starts from 1.");
+      // note: helper func sets the error string if needed
       break;
     }
 
