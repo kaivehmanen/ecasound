@@ -55,6 +55,8 @@ Leake, Tony [tonyleake]
 	PHP ECI extension.
 Lees, Andrew [andrewl]
 	Reopen functionality to threshold gate (-ge).
+Linson, Adam [alinson]
+	Adding the cop-get command
 Lopez-Cabanillas, Pedro [pedrolc] (pedro -dot- lopez-cabanillas -at- gmail -dot -com)
 	ALSA sequencer interface support.
 Massy, S. [smassy]

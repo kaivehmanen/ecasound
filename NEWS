@@ -49,10 +49,12 @@ xxyy2009 (v2.x.y) -** stable release **-
 	- added: -chorder chainop; see ecasound(1)
 	- added: optional inner loop optimizations using liboil;
 		 enable with '--enable-liboil'
-        - added: OSC support added, see ecasound(1); sffeat:2541462
+        - added: OSC support added, see ecasound(1) and 
+	         Documentation/ecasound_osc_interface.txt; sffeat:2541462
 	- added: in ncurses mode, honor COLUMNS environment variable
 	- added: configure - added '--with-extra-cppflags' and 
 	         '--with-extra-libs' options
+        - added: new 'cop-get' command; see ecasound-iam(1) [alinson]
 	- changed: ecasound now defines "-D_XOPEN_SOURCE=500" for 
 	           all builds, expressing that the codebase expects 
 		   the build environment be compatible with the Single 
