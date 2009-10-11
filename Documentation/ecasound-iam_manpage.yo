@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (01.10.2009)
+       (11.10.2009)
        ()
        (Multimedia software)
 
@@ -460,9 +460,15 @@ Selects a chain operator. em([-])
 dit(cop-selected)
 Returns the index number of currently selected chain operator. em([i])
 
-dit(cop-set 'chainop_id, param_id, value')
+dit(cop-set 'chainop_id,param_id,value')
 Changes the value of a single chain operator parameter. Unlike other
-chain operator commands, this can also be used during processing. em([-])
+chain operator commands, this can also be used during processing. 
+See also 'cop-get'. em([-])
+
+dit(cop-get 'chainop_id,param_id')
+Returns the current value of chain operator parameter identified by
+'chainop_id' and 'param_id'. This command is a shorthand for
+'cop-select chainop_id ; copp-iselect param_id ; copp-get'. em([f])
 
 dit(cop-status)
 Returns info about chain operator status. em([s])
@@ -480,7 +486,7 @@ dit(copp-set 'value')
 Sets the selected parameter value to 'value'. em([-])
 
 dit(copp-get)
-Returns the selected parameter value. em([f])
+Returns the selected parameter value. See also 'cop-get'. em([f])
 
 dit(cop-register)
 Prints a list of registered chain operators. em([s])
