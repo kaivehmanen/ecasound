@@ -2,6 +2,7 @@
 // eca-control.cpp: Class for controlling the whole ecasound library
 // Copyright (C) 1999-2005,2008,2009 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
+// Copyright (C) 2009 Adam Linson
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -669,6 +670,27 @@ void ECA_CONTROL::action(int action_id)
 	set_last_error("Chain operator indexing starts from 1.");
       break; 
     }
+  case ec_cop_get:
+    {
+      vector<string> a =
+	kvu_string_to_vector(first_action_argument_as_string(), ',');
+      if (a.size() < 2) {
+        set_last_error("Not enough parameters!");
+        break;
+      }
+      int id1 = atoi(a[0].c_str());
+      int id2 = atoi(a[1].c_str());
+
+      if (id1 > 0 && id2 > 0) {
+        select_chain_operator(id1);
+        select_chain_operator_parameter(id2);
+        set_last_float(get_chain_operator_parameter());
+      }
+      else
+        set_last_error("Chain operator indexing starts from 1.");
+      break;
+    }
+
   case ec_cop_status: 
     { 
       set_last_string(chain_operator_status()); 

@@ -116,6 +116,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_cop_select,
     ec_cop_selected,
     ec_cop_set,
+    ec_cop_get,
     ec_cop_status,
     ec_cop_register,
     ec_copp_list,

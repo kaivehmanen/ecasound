@@ -275,6 +275,7 @@ void ECA_IAMODE_PARSER::register_commands_cop(void)
   (*cmd_map_repp)["cop-register"] = ec_cop_register;
   (*cmd_map_repp)["cop-selected"] = ec_cop_selected;
   (*cmd_map_repp)["cop-set"] = ec_cop_set;
+  (*cmd_map_repp)["cop-get"] = ec_cop_get;
   (*cmd_map_repp)["cop-status"] = ec_cop_status;
 }
 
@@ -391,6 +392,7 @@ bool ECA_IAMODE_PARSER::action_requires_params(int id)
   case ec_cop_add:
   case ec_cop_select:
   case ec_cop_set:
+  case ec_cop_get:
 
   case ec_copp_select:
   case ec_copp_set:
@@ -510,6 +512,7 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id)
   case ec_cop_select:
   case ec_cop_selected:
   case ec_cop_set:
+  case ec_cop_get:
   case ec_cop_status:
 
   case ec_copp_list:
