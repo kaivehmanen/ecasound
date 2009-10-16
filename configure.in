@@ -16,7 +16,7 @@ dnl ------------------------------------------------------------------
 dnl ---
 dnl Initialize autoconf and automake
 dnl ---
-AC_INIT([ecasound], [2.7.0+dev])
+AC_INIT([ecasound], [2.7.0])
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR([libecasound/audiofx.h])
 AM_INIT_AUTOMAKE([1.6.1])
@@ -343,7 +343,7 @@ dnl ---
 dnl Check for extra compile flags
 dnl
 dnl modifies: ECA_S_EXTRA_CPPFLAGS, ECA_S_EXTRA_LIBS
-dnk ---
+dnl ---
 
 AC_ARG_WITH(extra-cppflags,
 	[  --with-extra-cppflags=FLAGS pass extra flags to cpp ],
