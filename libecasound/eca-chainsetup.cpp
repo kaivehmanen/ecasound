@@ -1323,6 +1323,7 @@ void ECA_CHAINSETUP::remove_audio_object_proxy(AUDIO_IO* aio)
   AUDIO_IO_DB_CLIENT* p = dynamic_cast<AUDIO_IO_DB_CLIENT*>(aio);
   if (p != 0) {
     /* a proxied object */
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Delete proxy object " + aio->label() + ".");
     delete aio;
     --db_clients_rep;
   }
@@ -1511,7 +1512,8 @@ void ECA_CHAINSETUP::remove_audio_object_impl(const string& label, int dir, bool
 
     /* delete proxy object if any */ 
     if (obj_to_remove != obj_dir_to_remove) {
-      remove_audio_object_proxy(obj_dir_to_remove);
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, "Audio object proxied: " + obj_to_remove->label());
+      remove_audio_object_proxy(obj_to_remove);
     }
    
     priv_erase_object(objs, obj_to_remove);
