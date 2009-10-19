@@ -32,6 +32,10 @@
 #include <errno.h>
 
 #include <alsa/version.h>
+
+#define MY_SND_LIB_VERSION(maj,min,sub) \
+  ((maj<<16)| (min<<8)| sub)
+
   
 /* error if alsa-lib older than 0.9.0, use old API if 0.9.0->0.9.8, 
    otherwise do nothing */
@@ -334,7 +338,16 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void)
 						  buffer_size_rep * 2);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params/start_threshold: " + string(snd_strerror(err))));
 
-  /* 3. activate params */
+#if SND_LIB_VERSION <= MY_SND_LIB_VERSION(1,0,15)
+  /* note: deprecated in alsa-lib-1.0.16 (2008/Feb) */
+  /* 3. set align to one frame (like the OSS-emulation layer) */
+  err = snd_pcm_sw_params_set_xfer_align(audio_fd_repp,
+                                         pcm_sw_params_repp,
+                                         1);
+  if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params_repp/xfer_align: " + string(snd_strerror(err))));
+#endif
+
+  /* 4. activate params */
   err = snd_pcm_sw_params(audio_fd_repp, pcm_sw_params_repp);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params_repp: " + string(snd_strerror(err))));
 }
