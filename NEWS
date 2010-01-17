@@ -40,14 +40,16 @@ Howto for reading the entries:
 
 ***********************************************************************
 
-xxyy2009 (v2.7.1) -** stable release **-
+xxyy2010 (v2.7.1) -** stable release **-
 	- fixed: glitches in ALSA capture/playback with some sound 
 	  	 hardware/configurations, and using alsa-lib
 	    	 older than 1.0.15; related to deprecated ALSA API
 		 function snd_pcm_sw_params_set_xfer_align()
-        - fixed: bug in removing audio outputs when disk double
+        - fixed: bug in removing audio objects when disk double
 	  	 buffering is used (-z:db); could cause a segfault
 		 in some scenarios (e.g. with ecasignalview)
+        - fixed: interactive mode; c-selected segfauls if issued
+	    	 with no chainsetup selected
 17102009 (v2.7.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_7_0_relnotes.txt
