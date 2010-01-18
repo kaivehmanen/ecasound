@@ -184,7 +184,9 @@ ECASOUND_RUN_STATE::~ECASOUND_RUN_STATE(void)
 
   if (launchcmds != 0) { delete launchcmds; launchcmds = 0; }
   if (eciserver != 0) { delete eciserver; eciserver = 0; }
+#ifdef ECA_USE_LIBLO
   if (osc != 0) { delete osc; osc = 0; }
+#endif
   if (console != 0) { delete console; console = 0; }
   if (neteci_thread != 0) { delete neteci_thread; neteci_thread = 0; }
   if (watchdog_thread != 0) { delete watchdog_thread; watchdog_thread = 0; }
