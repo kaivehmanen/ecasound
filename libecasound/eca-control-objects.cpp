@@ -565,11 +565,9 @@ void ECA_CONTROL::change_chainsetup_position(double seconds)
 
   if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
     if (seconds < 0)
-      send_chain_commands_to_engine(ECA_ENGINE::ep_rewind, 
-				    -seconds);
+      engine_repp->command(ECA_ENGINE::ep_rewind, -seconds);
     else
-      send_chain_commands_to_engine(ECA_ENGINE::ep_forward,
-				    seconds);
+      engine_repp->command(ECA_ENGINE::ep_forward, seconds);
   }
   else {
     selected_chainsetup_repp->seek_position_in_seconds(selected_chainsetup_repp->position_in_seconds()
@@ -621,7 +619,7 @@ void ECA_CONTROL::set_chainsetup_position(double seconds)
   //        raise an error if not (note: see other similar FIXMEs)
 
   if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_setpos, seconds);
+    engine_repp->command(ECA_ENGINE::ep_setpos, seconds);
   }
   else {
     selected_chainsetup_repp->seek_position_in_seconds(seconds);

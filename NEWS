@@ -50,6 +50,11 @@ xxyy2010 (v2.7.1) -** stable release **-
 		 in some scenarios (e.g. with ecasignalview)
         - fixed: interactive mode; c-selected segfauls if issued
 	    	 with no chainsetup selected
+        - fixed: build errors when no liblo is available
+	- fixed: interactive-mode; cs-setpos, cs-rewind and cs-forward
+	    	 did not work if chainsetup was connected, and no
+		 chains (or an invalid chain) was selected; bug 
+		 reported by Joel Roth
 17102009 (v2.7.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_7_0_relnotes.txt
