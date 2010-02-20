@@ -657,16 +657,13 @@ void ECA_CHAINSETUP::switch_to_db_mode_helper(vector<AUDIO_IO*>* objs,
 						 const vector<AUDIO_IO*>& directobjs)
 {
   // --
+  DBC_REQUIRE(db_clients_rep == 0);
   DBC_CHECK(objs->size() == directobjs.size());
   // --
 
   for(size_t n = 0; n < directobjs.size(); n++) {
     (*objs)[n] = add_audio_object_helper(directobjs[n]);
   } 
-
-  // --
-  DBC_ENSURE(db_clients_rep > 0);
-  // --
 }
 
 /**
