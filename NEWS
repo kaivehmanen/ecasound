@@ -40,7 +40,7 @@ Howto for reading the entries:
 
 ***********************************************************************
 
-xxyy2010 (v2.7.1) -** stable release **-
+xxxx2010 (v2.7.1) -** stable release **-
 	- fixed: glitches in ALSA capture/playback with some sound 
 	  	 hardware/configurations, and using alsa-lib
 	    	 older than 1.0.15; related to deprecated ALSA API
@@ -55,6 +55,9 @@ xxyy2010 (v2.7.1) -** stable release **-
 	    	 did not work if chainsetup was connected, and no
 		 chains (or an invalid chain) was selected; bug 
 		 reported by Joel Roth
+        - fixed: ecalength choked filenames with whitespace; patch
+	  	 from FUJI project
+		 (http://students.mimuw.edu.pl/~tk197881/a8cas/)
 17102009 (v2.7.0) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_7_0_relnotes.txt
