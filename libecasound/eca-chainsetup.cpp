@@ -199,14 +199,6 @@ ECA_CHAINSETUP::~ECA_CHAINSETUP(void)
     *q = 0;
   }
 
-  /* take the garbage out (must be done before deleting input 
-   * and output objects) */
-  for(list<AUDIO_IO*>::iterator q = aobj_garbage_rep.begin(); q != aobj_garbage_rep.end(); q++) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Deleting garbage audio object \"" + (*q)->label() + "\".");
-    delete *q;
-    *q = 0;
-  }
-
   /* delete input db objects; reset all pointers to null */
   for(vector<AUDIO_IO*>::iterator q = inputs.begin(); q != inputs.end(); q++) {
     if (dynamic_cast<AUDIO_IO_DB_CLIENT*>(*q) != 0) {
@@ -648,7 +640,6 @@ void ECA_CHAINSETUP::switch_to_direct_mode_helper(vector<AUDIO_IO*>* objs,
   for(size_t n = 0; n < objs->size(); n++) {
     AUDIO_IO_DB_CLIENT* pobj = dynamic_cast<AUDIO_IO_DB_CLIENT*>((*objs)[n]);
     if (pobj != 0) {
-      //  aobj_garbage_rep.push_back((*objs)[n]);
       delete (*objs)[n];
       (*objs)[n] = directobjs[n];
       --db_clients_rep;

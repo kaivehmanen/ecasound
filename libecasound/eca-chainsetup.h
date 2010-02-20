@@ -375,7 +375,6 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   map<string,string> aio_manager_option_map_rep;
   vector<CHAIN*> chains;
   vector<MIDI_IO*> midi_devices;
-  std::list<AUDIO_IO*> aobj_garbage_rep;
 
   AUDIO_IO_DB_SERVER* pserver_repp;
   MIDI_SERVER* midi_server_repp;
