@@ -41,6 +41,8 @@ Howto for reading the entries:
 ***********************************************************************
 
 20022010 (v2.7.1) -** stable release **-
+	- note: key changes are described in more detail at:
+                http://eca.cx/relnotes/ecasound_v2_7_1_relnotes.txt
 	- fixed: glitches in ALSA capture/playback with some sound 
 	  	 hardware/configurations, and using alsa-lib
 	    	 older than 1.0.15; related to deprecated ALSA API
