@@ -78,10 +78,10 @@ struct options {
 
 int main(int argc, char *argv[]) { 
   char cmd[512], fstring[16], status = 0, *optstr = "ftsmhbcra:u"; 
-  int curopt;
+  int curopt, curarg;
   unsigned char sec; 
   float curfilelength, totlength = 0; 
-  unsigned int min, curarg; 
+  unsigned int min;
   FILE *file; 
   struct options opts; 
 
