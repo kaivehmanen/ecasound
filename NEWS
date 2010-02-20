@@ -40,7 +40,7 @@ Howto for reading the entries:
 
 ***********************************************************************
 
-xxxx2010 (v2.7.1) -** stable release **-
+20022010 (v2.7.1) -** stable release **-
 	- fixed: glitches in ALSA capture/playback with some sound 
 	  	 hardware/configurations, and using alsa-lib
 	    	 older than 1.0.15; related to deprecated ALSA API
