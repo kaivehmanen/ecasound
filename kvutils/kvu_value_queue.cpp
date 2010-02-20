@@ -209,8 +209,9 @@ const pair<int,double>* VALUE_QUEUE_RT_C::front(void)
   if (ret == 0) {
     /* now that we have the lock, we can safely process
      * any pending pop requests */
-    DBC_CHECK(cmds_rep.size() - pending_pops_rep > 0);
-    while(pending_pops_rep > 0) {
+    DBC_CHECK(cmds_rep.size() >= pending_pops_rep);
+    while(pending_pops_rep > 0 &&
+	  cmds_rep.size() > 0) {
       cmds_rep.pop_front();
       --pending_pops_rep;
       KVU_NOTE_SD("dec-pending-pop=", pending_pops_rep);
