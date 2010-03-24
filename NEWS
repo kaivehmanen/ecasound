@@ -40,6 +40,9 @@ Howto for reading the entries:
 
 ***********************************************************************
 
+xxyy2010 (v2.7.2) -** stable release **-
+	 - fixed: bug with 'resample' objects and early seeks (e.g.
+	   	  with '-y' offsets); reported by Artur
 20022010 (v2.7.1) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_7_1_relnotes.txt
