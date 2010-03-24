@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-resample.cpp: A proxy class that resamples the child 
 //                       object's data.
-// Copyright (C) 2002-2004,2008,2009 Kai Vehmanen
+// Copyright (C) 2002-2004,2008,2009,2010 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -71,6 +71,9 @@ void AUDIO_IO_RESAMPLE::recalculate_psfactor(void)
    
   psfactor_rep = static_cast<float>(samples_per_second()) / child_srate_conf_rep;
   child()->set_buffersize(static_cast<long int>(std::floor(buffersize() * (1.0f / psfactor_rep))));
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+	      "recalc; psfactor=" + kvu_numtostr(psfactor_rep));
 }
 
 void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
@@ -145,8 +148,10 @@ void AUDIO_IO_RESAMPLE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   /* same for the post processing */ 
   SAMPLE_SPECS::sample_rate_t orig_srate = samples_per_second();
   if (child()->locked_audio_format() == true) {
-    set_audio_format(child()->audio_format());
+    set_channels(child()->channels());
+    set_sample_format(child()->sample_format());
     set_samples_per_second(orig_srate);
+    toggle_interleaved_channels(child()->interleaved_channels());
   }
 
   sbuf_rep.length_in_samples(buffersize());
