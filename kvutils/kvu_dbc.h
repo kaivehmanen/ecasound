@@ -80,21 +80,26 @@ void kvu_dbc_report_failure(const char *action, const char* expr, const char* fi
    C9x has a similar variable called __func__, but prefer the GCC one since
    it demangles C++ function names.  */
 
-# if defined HAVE_FEATURES_H
-#   include <features.h>
-#   if defined __cplusplus ? __GNUC_PREREQ (2, 6) : __GNUC_PREREQ (2, 4)
-#     define __KVU_FUNCTION	__PRETTY_FUNCTION__
-#   else
-#     undef __KVU_FUNCTION
-#   endif
-# endif
+#undef __KVU_FUNCTION
 
-# if !defined(__KVU_FUNCTION) || !defined(HAVE_FEATURES_H)
-#  if defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
-#   define __KVU_FUNCTION	__func__
-#  else
-#   define __KVU_FUNCTION	((__const char *) 0)
-#  endif
-# endif
+#if defined HAVE_FEATURES_H
+#    include <features.h>
+#endif
+
+#if defined __GNUC_PREREQ
+/*   1.  gcc pretty-printer */
+#    if __GNUC_PREREQ(2, 6)
+#        define __KVU_FUNCTION  __PRETTY_FUNCTION__
+#    endif
+#elif defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L
+/*   2. check for C99 (not defined at all in C90, nor in C++1998) */
+#    define __KVU_FUNCTION	__func__
+#elif defined __GNUC__ && __GNUC__ >= 2
+/*   3. as per http://gcc.gnu.org/onlinedocs/gcc/Function-Names.html */
+#    define __KVU_FUNCTION       __FUNCTION__
+#else
+/*   4. not supported */
+#    define __KVU_FUNCTION	"__func__"
+#endif
 
 #endif /* INCLUDED_DBC_H */
