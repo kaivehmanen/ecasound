@@ -98,23 +98,24 @@ To compile Ecasound, you also need...:
 
 - POSIX/SUS development environment, compatible with
   'The Single UNIX Specification, Version 2' (UNIX98):
-     - http://www.unix.org/version2/
-     - http://www.opengroup.org/onlinepubs/007908799/index.html
+    - http://www.unix.org/version2/
+    - http://www.opengroup.org/onlinepubs/007908799/index.html
   Ecasound requires the following feature groups:
-     - "Realtime":
-       http://www.opengroup.org/onlinepubs/007908799/xsh/realtime.html
-     - "Realtime Threads":
-       http://www.opengroup.org/onlinepubs/007908799/xsh/feature.html#tag_000_005_003
+    - "Realtime":
+      http://www.opengroup.org/onlinepubs/007908799/xsh/realtime.html
+    - "Realtime Threads":
+      http://www.opengroup.org/onlinepubs/007908799/xsh/feature.html#tag_000_005_003
 - Standard C++ build environment (with support for STL and
   exceptions); tested with egcs 1.1.2, gcc versions 2.91.66,
   2.95.X, 3.0-3.4, 4.0-4.3, and Sun Workshop 6 C5.2 C++.
 - GNU make
+    - http://www.gnu.org/software/make/
 
 Optional when compiling Ecasound:
 
 - for extented file format support (aiff, snd, w64 and so forth): 
-     - libaudiofile (SGI audio file  library) runtime, and/or
-     - libsndfile 
+    - libaudiofile (SGI audio file  library) runtime, and/or
+    - libsndfile 
 - for higher quality resampling: libsamplerate
 - for pyecasound, the Python devel package
 - for curses support, the ncurses devel package
@@ -125,6 +126,18 @@ Optional when compiling Ecasound:
 - for inner loop optimizations (performance improvements), 
   the liboil package
 - for Open Sound Control (OSC) support, liblo package
+
+Additional packages needed, when building Ecasound from a clean
+version control checkout:
+
+- automake
+    - http://www.gnu.org/software/automake/
+- autoconf 2.50+
+    - http://www.gnu.org/software/autoconf/
+- libtool
+    - http://www.gnu.org/software/libtool/    
+- pkg-config
+    - http://pkg-config.freedesktop.org/wiki/
 
 -----------------------------------------------------------------------
  Installing
