@@ -42,9 +42,12 @@
 
 int kvu_clock_is_monotonic(void)
 {
+  int res = -1;
+
+#if defined CLOCK_MONOTONIC
   struct timespec tp;
-  int res =
-    clock_getres(CLOCK_MONOTONIC, &tp);
+  res = clock_getres(CLOCK_MONOTONIC, &tp);
+#endif
 
   if (res == 0)
     return 1;
@@ -55,8 +58,12 @@ int kvu_clock_is_monotonic(void)
 int kvu_clock_getres(struct timespec *dst)
 {
   struct timespec tp;
-  int res =
-    clock_getres(CLOCK_MONOTONIC, &tp);
+  int res = -1;
+
+#if defined CLOCK_MONOTONIC
+  res = clock_getres(CLOCK_MONOTONIC, &tp);
+#endif
+
   if (res < 0) 
     res =
       clock_getres(CLOCK_REALTIME, &tp);
@@ -71,8 +78,12 @@ int kvu_clock_getres(struct timespec *dst)
 int kvu_clock_gettime(struct timespec *dst)
 {
   struct timespec tp;
-  int res =
-    clock_gettime(CLOCK_MONOTONIC, &tp);
+  int res = -1;
+
+#if defined CLOCK_MONOTONIC
+  res = clock_gettime(CLOCK_MONOTONIC, &tp);
+#endif
+
   if (res < 0) 
     res =
       clock_gettime(CLOCK_REALTIME, &tp);
