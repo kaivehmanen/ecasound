@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (10.10.2009)
+       (28.03.2010)
        ()
        (Multimedia software)
 
@@ -1067,6 +1067,12 @@ manpagesection(ENVIRONMENT)
 	Ecasound honors the em(COLUMNS) environment variable when 
 	formatting printed trace messages. If em(COLUMNS) is not set, 
 	a default of 74 is used.
+
+	dit(TMPDIR)
+	Some functions of Ecasound (e.g. "cs-edit" interactive command) require
+	creation of temporary files. By default, these files are created under
+	"/tmp", but this can be overridden by setting the em(TMPDIR) environment
+	variable.
 	enddit()
 
 manpagesection(RETURN VALUES)
