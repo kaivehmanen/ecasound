@@ -1469,9 +1469,6 @@ fi
 if test x$rubyecasound_support != xnone ; then
 	echo "Ruby module dir:        "$ECA_S_RUBY_SITEDIR
 fi
-if test x$enable_sysreadline = xyes ; then
-  	echo "readline includes:      "$ECA_S_READLINE_INCLUDES
-fi  
 if test "x$ECA_S_EXTRA_CPPFLAGS" != "x" ; then
 	echo "Extra headers:          "$ECA_S_EXTRA_CPPFLAGS
 fi
