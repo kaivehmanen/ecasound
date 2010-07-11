@@ -41,8 +41,13 @@ Howto for reading the entries:
 ***********************************************************************
 
 xxyy2010 (v2.7.2) -** stable release **-
+	 - changed: liboil now enabled by default if the library 
+	   	    development files are available when running
+		    configure
 	 - fixed: bug with 'resample' objects and early seeks (e.g.
 	   	  with '-y' offsets); reported by Artur
+         - fixed: bugs in kvutils that broke some old/non-glibc 
+	   	  builds (e.g. cygwin); bug reported by Al Oomens
 20022010 (v2.7.1) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_7_1_relnotes.txt
