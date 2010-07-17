@@ -85,7 +85,7 @@ Optional when running Ecasound:
 
 - for real-time audio input/output: ALSA, JACK or OSS runtime
 - for mp3 support: mpg123 (input) and lame (output) packages
-- for Ogg Vorbis support, the vorbis-tools package (ogg123 and vorbize)
+- for Ogg Vorbis support, the vorbis-tools package (ogg123 and oggenc)
 - for .aac/.m4a/.mp4 file support, the FAAC/FAAD2 tools
 - for .flac support, the FLAC package
      - note: since ecasound 2.4.5, libsndfile is the preferred
