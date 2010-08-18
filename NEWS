@@ -49,6 +49,8 @@ xxyy2010 (v2.7.2) -** stable release **-
 	   	  with '-y' offsets); reported by Artur
          - fixed: bugs in kvutils that broke some old/non-glibc 
 	   	  builds (e.g. cygwin); bug reported by Al Oomens
+         - fixed: bugs in saving chainsetups with stacked audio
+	   	  objects ("audioloop", "select", "playat")
 20022010 (v2.7.1) -** stable release **-
 	- note: key changes are described in more detail at:
                 http://eca.cx/relnotes/ecasound_v2_7_1_relnotes.txt
