@@ -88,7 +88,7 @@ class AUDIO_SEQUENCER_BASE : public AUDIO_IO_PROXY {
    */
   void set_child_object_string(const std::string& v);
 
-  const std::string& child_object_string(void) const { return child_name_rep; }
+  const std::string& child_object_string(void) const { return child_object_str_rep; }
 
   /**
    * Sets start offset for the child object. 
@@ -160,10 +160,12 @@ private:
                  child_start_pos_rep,
                  child_length_rep;
   bool child_length_set_by_client_rep;
-  std::string child_name_rep;
+  std::string child_object_str_rep;
   long int buffersize_rep;
   bool child_write_started;
   bool init_rep;
+
+  void change_child_name(const string& child_name) throw(AUDIO_IO::SETUP_ERROR &);
   
   AUDIO_SEQUENCER_BASE& operator=(const AUDIO_SEQUENCER_BASE& x) { return *this; }
   AUDIO_SEQUENCER_BASE (const AUDIO_SEQUENCER_BASE& x) { }

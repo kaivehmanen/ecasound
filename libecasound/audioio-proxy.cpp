@@ -45,13 +45,12 @@ AUDIO_IO_PROXY::~AUDIO_IO_PROXY(void)
  */
 void AUDIO_IO_PROXY::set_child(AUDIO_IO* v)
 { 
-  if (v != child_repp)
-    child_initialized_rep = false;
-
   if (child_repp != 0) 
     delete child_repp;
   
   child_repp = v;
+
+  child_initialized_rep = true;
 }
 
 /**
@@ -60,6 +59,7 @@ void AUDIO_IO_PROXY::set_child(AUDIO_IO* v)
 void AUDIO_IO_PROXY::release_child_no_delete(void)
 {
   child_repp = new NULLFILE("uninitialized proxy child");
+  child_initialized_rep = false;
 }
 
 /**
@@ -80,9 +80,6 @@ void AUDIO_IO_PROXY::pre_child_open(void)
  * Checks if any audio parameters were changed
  * during child's open(), fetches any changes and
  * sets the object length.
- *
- * @post is_child_initialized() != true
- * @post is_child_initialized() == true
  */
 void AUDIO_IO_PROXY::post_child_open(void)
 {
@@ -90,7 +87,6 @@ void AUDIO_IO_PROXY::post_child_open(void)
     set_audio_format(child()->audio_format());
   }
   set_length_in_samples(child()->length_in_samples());
-  child_initialized_rep = true;
 }
 
 void AUDIO_IO_PROXY::set_buffersize(long int samples)

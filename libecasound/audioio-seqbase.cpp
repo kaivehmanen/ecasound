@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-seqbase.cpp: Base class for audio sequencer objects
-// Copyright (C) 1999,2002,2005,2008,2009 Kai Vehmanen
+// Copyright (C) 1999,2002,2005,2008,2009,2010 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -103,24 +103,26 @@ AUDIO_SEQUENCER_BASE* AUDIO_SEQUENCER_BASE::clone(void) const
   return target;
 }
 
+void AUDIO_SEQUENCER_BASE::change_child_name(const string& child_name) throw(AUDIO_IO::SETUP_ERROR &)
+{
+  AUDIO_IO* tmp = 0;
+
+  if (child_name.size() > 0)
+    tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name);
+
+  if (tmp == 0) 
+    throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Could not create child object."));
+
+  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Creating audio sequencer file:" + tmp->label() + ".");
+
+  set_child(tmp);
+  init_rep = true;
+}
+
 void AUDIO_SEQUENCER_BASE::open(void) throw(AUDIO_IO::SETUP_ERROR &)
 {
-  if (init_rep != true) {
-    AUDIO_IO* tmp = 0;
-
-    const string& objname = child_name_rep;
-
-    if (objname.size() > 0)
-      tmp = ECA_OBJECT_FACTORY::create_audio_object(child_name_rep);
-
-    if (tmp == 0) 
-      throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-SEQBASE: Couldn't open child object."));
-
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Opening audio sequencer file:" + tmp->label() + ".");
-
-    set_child(tmp);
-    init_rep = true;
-  }
+  if (init_rep != true)
+    change_child_name(child_object_str_rep);
 
   pre_child_open();
   child()->open();
@@ -426,7 +428,8 @@ SAMPLE_SPECS::sample_pos_t AUDIO_SEQUENCER_BASE::seek_position(SAMPLE_SPECS::sam
 
 void AUDIO_SEQUENCER_BASE::set_child_object_string(const std::string& v)
 {
-  child_name_rep = v;
+  child_object_str_rep = v;
+  change_child_name(child_object_str_rep);
 }
 
 void AUDIO_SEQUENCER_BASE::set_child_offset(const ECA_AUDIO_TIME& v)

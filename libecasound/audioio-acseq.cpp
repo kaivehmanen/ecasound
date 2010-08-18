@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-audioseq.cpp: Audio clip sequencer class.
-// Copyright (C) 2008 Kai Vehmanen
+// Copyright (C) 2008,2010 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -126,7 +126,31 @@ void AUDIO_CLIP_SEQUENCER::close(void)
 
 std::string AUDIO_CLIP_SEQUENCER::parameter_names(void) const
 {
-  return string("acseqtype," + child()->parameter_names()); 
+  std::string baseparams;
+
+  if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_loop)
+    baseparams += std::string("audioloop");
+  else if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_select)
+    baseparams += std::string("select,start-sec,dur-sec");
+  else if (cseq_mode_rep == AUDIO_CLIP_SEQUENCER::cseq_play_at)
+    baseparams += std::string("playat,pos-sec");
+  else
+    baseparams += std::string("acseqtype");
+
+  if (is_child_initialized() == true) {
+    baseparams += "," + child()->parameter_names();
+  }
+  else {
+    /* create a generic parameter name list */
+    for (size_t i = 1; i < params_rep.size(); i++) {
+      baseparams += ",param" + kvu_numtostr(i);
+    }
+  }
+    
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+	      "param list: " + baseparams);
+
+  return baseparams;
 }
 
 void AUDIO_CLIP_SEQUENCER::set_parameter(int param, string value)
