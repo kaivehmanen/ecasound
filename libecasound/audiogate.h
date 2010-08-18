@@ -122,4 +122,32 @@ private:
   bool is_opened_rep, is_closed_rep;
 };
 
+/**
+ * Manual gate. 
+ *
+ * A trivial object that ly changes gate state 
+ */
+class MANUAL_GATE : public GATE_BASE {
+
+public:
+
+  // Functions returning info about effect and its parameters.
+  // ---
+  virtual parameter_t get_parameter(int param) const;
+  virtual void set_parameter(int param, parameter_t value);
+
+  virtual std::string name(void) const { return("Manual gate"); }
+  virtual std::string parameter_names(void) const { return("state"); }
+
+  virtual void analyze(SAMPLE_BUFFER* insample);
+
+  MANUAL_GATE* clone(void) const { return new MANUAL_GATE(*this); }
+  MANUAL_GATE* new_expr(void) const { return new MANUAL_GATE(); }
+  MANUAL_GATE (void) : open_rep(true) {}
+  
+private:
+  
+  bool open_rep;
+};
+
 #endif

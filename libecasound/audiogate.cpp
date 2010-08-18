@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiogate.cpp: Signal gates.
-// Copyright (C) 1999-2002,2005-2008 Kai Vehmanen
+// Copyright (C) 1999-2002,2005-2008,2010 Kai Vehmanen
 // Copyrtigh (C) 2008 Andrew Lees
 //
 // Attributes:
@@ -210,6 +210,41 @@ void THRESHOLD_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
     break;
   case 4:
     reopen_count_param_rep = static_cast<int>(value);
+    break;
+  }
+}
+
+void MANUAL_GATE::analyze(SAMPLE_BUFFER* sbuf)
+{
+  if (is_open() == true &&
+      open_rep != true) {
+    close_gate();
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Manual gate closed");
+  }
+  else if (is_open() != true &&
+	   open_rep == true) {
+    open_gate();
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Manual gate opened");
+  }
+}
+
+CHAIN_OPERATOR::parameter_t MANUAL_GATE::get_parameter(int param) const 
+{ 
+  switch (param) {
+  case 1: 
+    return open_rep == true ? 1 : 0;
+  }
+  return 0.0;
+}
+
+void MANUAL_GATE::set_parameter(int param, CHAIN_OPERATOR::parameter_t value) 
+{
+  switch (param) {
+  case 1: 
+    if (value > 0)
+      open_rep = true;
+    else
+      open_rep = false;
     break;
   }
 }

@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (28.03.2010)
+       (18.08.2010)
        ()
        (Multimedia software)
 
@@ -952,6 +952,12 @@ in recording vinyl and tapes, where you can set things up and then recording
 starts whenever the needle is on the vinyl, and stops when it's off. As many sides 
 as you like can be recorded in one session.  You will need to experiment with 
 buffer lengths and start/stop levels to get reliable settings for your equipment.
+
+dit(-gm:state)
+Manual gate. If 'state' is 1, gate is open and all samples are
+passed through. If 'state' is zero, gate is closed an no samples are
+let through. This chain operator is useful when writing to an output
+needs to be stopped dynamically (without stopping the whole engine).
 
 enddit()
 

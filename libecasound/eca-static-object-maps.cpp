@@ -368,6 +368,7 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("ezx", "^ezx$", new EFFECT_DCFIX());
   objmap->register_object("gc", "^gc$", new TIME_CROP_GATE());
   objmap->register_object("ge", "^ge$", new THRESHOLD_GATE());
+  objmap->register_object("gm", "^gm$", new MANUAL_GATE());
 #endif
 }
 
