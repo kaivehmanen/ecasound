@@ -40,7 +40,7 @@ Howto for reading the entries:
 
 ***********************************************************************
 
-xxyy2010 (v2.7.2) -** stable release **-
+19082010 (v2.7.2) -** stable release **-
 	 - added: manual gate (-gm); see ecasound(1) man page
 	 - changed: liboil now enabled by default if the library 
 	   	    development files are available when running
