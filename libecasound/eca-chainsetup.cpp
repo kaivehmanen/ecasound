@@ -2095,7 +2095,7 @@ long int ECA_CHAINSETUP::check_for_locked_buffersize(void) const
   /* contact jackd only if there is at least one jack audio object 
    * present */
   if (jackobjs > 0) {
-    jack_client_t *client = jack_client_new (cname.c_str());
+    jack_client_t *client = jack_client_open(cname.c_str(), JackNullOption, NULL);
     if (client != 0) {
       // xxx = static_cast<long int>(jack_get_sample_rate(client);
       result = static_cast<long int>(jack_get_buffer_size(client));

@@ -1671,7 +1671,7 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
   int n;
 
   for(n = 0; n < AUDIO_IO_JACK_MANAGER::instance_limit; n++) {
-    client_repp = jack_client_new (client_name.c_str());
+    client_repp = jack_client_open (client_name.c_str(), JackNullOption, NULL);
     if (client_repp != 0) break;
     client_name = jackname_rep + "_" + kvu_numtostr(n + 2);
   }

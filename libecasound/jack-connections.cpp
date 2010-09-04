@@ -51,7 +51,7 @@ static jack_client_t *priv_prepare(void)
 {
  int pid = getpid();
  std::string clntname = "libecasound-ctrl-" + kvu_numtostr(pid);
- jack_client_t *client = jack_client_new (clntname.c_str());
+ jack_client_t *client = jack_client_open(clntname.c_str(), JackNullOption, NULL);
  return client;
 }
 

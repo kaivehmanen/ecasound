@@ -623,24 +623,14 @@ std::string ECA_OBJECT_FACTORY::probe_default_output_device(void)
       int pid = getpid();
       string cname = "ecasound-autodetect-" + kvu_numtostr(pid);
 
-      bool env_changed = false;
-      char* oldenv = getenv("JACK_NO_START_SERVER");
-      if (oldenv == NULL) {
-	env_changed = true;
-	setenv("JACK_NO_START_SERVER", "yes", 1);
-      }
-      
-      jack_client_t *client = jack_client_new (cname.c_str());
+      jack_client_t *client = jack_client_open(cname.c_str(), JackNoStartServer, NULL);
       if (client != 0) {
 	jack_client_close(client);
 	
 	default_output = "jack_alsa";
 	output_selected = true;
       }
-      
-      if (env_changed == true) {
-	unsetenv("JACK_NO_START_SERVER");
-      }
+     
 #endif
       
       /* phase 2: check for ALSA support */

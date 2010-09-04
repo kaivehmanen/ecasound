@@ -40,6 +40,9 @@ Howto for reading the entries:
 
 ***********************************************************************
 
+xxyy2010 (v2.7.?) -** stable release **-
+	 - changed: no longer use the deprecated (since 2004) jack_client_new()
+	   	    API in JACK client code
 19082010 (v2.7.2) -** stable release **-
 	 - added: manual gate (-gm); see ecasound(1) man page
 	 - changed: liboil now enabled by default if the library 
