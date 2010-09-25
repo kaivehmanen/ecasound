@@ -709,6 +709,7 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
 #endif
 
+  shutdown_request_rep = false;
   cb_allocated_frames_rep = 0;
   buffersize_rep = 0;
 }
@@ -992,7 +993,6 @@ int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
   engine_repp = engine;
   engine->init_engine_state();
 
-  shutdown_request_rep = false;
   exit_request_rep = false;
   stop_request_rep = 0;
   j_stopped_rounds_rep = 0;
@@ -1729,13 +1729,8 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
   // FIXME: add proper unregistration
   // iterate over cids: unregister_jack_ports()
 
-  if (shutdown_request_rep != true) {
-    jack_client_close (client_repp);
-  }
-  else {
-    shutdown_request_rep = false;
-  }
-
+  jack_client_close (client_repp);
+  shutdown_request_rep = false;
   open_rep = false;
 
   port_numbers_rep.clear();
