@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-device.cpp: Virtual base class for real-time devices.
-// Copyright (C) 1999-2001 Kai Vehmanen
+// Copyright (C) 1999-2001,2010 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,6 @@ AUDIO_IO_DEVICE::~AUDIO_IO_DEVICE(void)
   if (is_open() == true)
     close();
 
-  DBC_CHECK(is_prepared() != true);
   DBC_CHECK(is_running() != true);
 }
 
