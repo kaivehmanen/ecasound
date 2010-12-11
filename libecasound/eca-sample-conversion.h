@@ -35,7 +35,7 @@
 #endif
 
 #ifndef UINT8_MAX
-#define UINT8_MAX (255)
+#define UINT8_MAX (255U)
 #endif
 
 #ifndef INT16_MAX
@@ -60,50 +60,53 @@
 
 static inline uint8_t eca_sample_convert_float_to_u8(float inval)
 {
-  if (inval < 0.0f) 
-    return((uint8_t)((float)(inval * (INT8_MAX + 1)) + (INT8_MAX + 1)));
+  const float pos_limit = ((float)0x7f) / 0x80;
+  if (inval >= pos_limit)
+    return UINT8_MAX;
 
-  return((uint8_t)((float)(inval * INT8_MAX) + (INT8_MAX + 1)));
+  return (uint8_t)(inval * 0x80 + 0x80);
 }
 
 static inline int16_t eca_sample_convert_float_to_s16(float inval)
 {
-  if (inval < 0.0f)
-    return((int16_t)(float)((inval * (INT16_MAX + 1))));
+  const float pos_limit = ((float)0x7fff) / 0x8000;
+  if (inval >= pos_limit)
+    return INT16_MAX;
 
-  return((int16_t)((float)(inval * INT16_MAX)));
+  return (int16_t)(inval * 0x8000);
 }
 
 static inline int32_t eca_sample_convert_float_to_s32(float inval)
 {
-  if (inval < 0.0f)
-    return((int32_t)((float)(inval * (INT32_MAX))));
+  /* 32bit float precision is limited to 24bit */
+  const float pos_limit_24b = ((float)0x7fffff) / 0x800000;
+  if (inval >= pos_limit_24b)
+    return INT32_MAX;
 
-  return((int32_t)((float)(inval * INT32_MAX) - 0.5f));
+  return (int32_t)(inval * 0x80000000);
 }
 
 static inline float eca_sample_convert_u8_to_float(uint8_t inval)
 {
+#if 0
   /* NOTE: this is sub-optimal, but at least gcc-2.91.66 otherwise
    *       compiles the test incorrectly) */
   int16_t inval_b = inval;
   if (inval_b <= INT8_MAX)
     return(((((float)inval) - INT8_MAX) / INT8_MAX));
+#endif
 
-  return(((((float)inval) - (INT8_MAX + 1)) / INT8_MAX));
+  return ((float)(inval - 0x80)) / 0x80;
 }
 
 static inline float eca_sample_convert_s16_to_float(int16_t inval)
 {
-  if (inval < 0)
-    return(((float)inval) / (INT16_MAX + 1));
-
-  return(((float)inval) / INT16_MAX);
+  return ((float)inval) / 0x8000;
 }
 
 static inline float eca_sample_convert_s32_to_float(int32_t inval)
 {
-  return(((float)inval) / INT32_MAX);
+  return ((float)inval) / 0x80000000;
 }
 
 #endif

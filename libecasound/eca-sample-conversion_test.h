@@ -115,7 +115,7 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
 
   cur = eca_sample_convert_u8_to_float(UINT8_MAX);
   if (verbose) cout << "u8max to float =" << cur << "\n";
-  if (cur < 1.0f || cur > 1.0f) {
+  if (cur > 1.0f) {
     ECA_TEST_FAILURE("to_float: u8max");
   }
 
@@ -135,7 +135,7 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
 
   cur = eca_sample_convert_s16_to_float(INT16_MAX);
   if (verbose) cout << "s16max to float =" << cur << "\n";
-  if (cur < 1.0f || cur > 1.0f) {
+  if (cur > 1.0f) {
     ECA_TEST_FAILURE("to_float: s16max");
   }
 
@@ -189,6 +189,7 @@ void ECA_SAMPLE_CONVERSION_TEST::do_run(void)
   }
 
   S32INTFLOATINT(INT32_MAX);
+  S32INTFLOATINT(-INT32_MAX);
   S32INTFLOATINT(INT32_MIN);
   S32INTFLOATINT(0);
   S32INTFLOATINT(1);
