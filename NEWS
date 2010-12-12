@@ -40,9 +40,15 @@ Howto for reading the entries:
 
 ***********************************************************************
 
-xxyy2010 (v2.7.?) -** stable release **-
+xxyy2010 (v2.8.?) -** stable release **-
+	 - changed: the int-float conversion routines have been modified
+	   	    to be symmetric (previously asymmetric); as this 
+		    impact all use-cases involving fixed point audio, 
+		    the minor version is bumped to reflect the change
 	 - changed: no longer use the deprecated (since 2004) jack_client_new()
 	   	    API in JACK client code
+         - fixed: sample type of loop objects shown incorrectly (the real
+	   	  sample type is always that of the engine)
 19082010 (v2.7.2) -** stable release **-
 	 - added: manual gate (-gm); see ecasound(1) man page
 	 - changed: liboil now enabled by default if the library 
