@@ -24,6 +24,8 @@ class ECA_AUDIO_FORMAT : public ECA_SAMPLERATE_AWARE {
   /** @name Public type definitions and constants */
   /*@{*/
 
+  /* FIXME: move the Sample* enums to sample-specs.h */
+
   enum Sample_format {
     sfmt_none,
 
