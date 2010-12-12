@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio.cpp: Routines common for all audio IO-devices.
-// Copyright (C) 1999-2004,2008,2009 Kai Vehmanen
+// Copyright (C) 1999-2004,2008,2009,2010 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -138,8 +138,21 @@ bool AUDIO_IO::supports_seeking_sample_accurate(void) const { return AUDIO_IO::s
 bool AUDIO_IO::finite_length_stream(void) const { return true; }
 
 /**
- * Whether audio format is locked. If this is true, audio object
- * has a known audio format, and doesn't allow overriding it.
+ * Whether audio format is fully or partially locked. If this is true,
+ * audio object has a known audio format, and may not allow to
+ * override some or all of the values.
+ *
+ * Example 1: When working with existing audio files (reading
+ *            or updating), the audio parameters are locked to values
+ *            specified in the file header.
+ *
+ * Example 2: File format (or audio subsystem interface specification)
+ *            may hardcode some of the parameters (e.g. only support
+ *            float samples). In these cases locked_audio_format()
+ *            will return true, although some of the parameters may
+ *            still be freely set. Client should check after open()
+ *            which values were set according to its wishes, and which
+ *            were limited by the audio object implementation.
  *
  * By default, audio format is not locked.
  */
