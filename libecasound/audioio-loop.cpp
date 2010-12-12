@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-loop.cpp: Audio object that routes data between reads and writes
-// Copyright (C) 2000-2001,2004,2007,2008 Kai Vehmanen
+// Copyright (C) 2000-2001,2004,2007,2008,2010 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -54,6 +54,15 @@ LOOP_DEVICE::~LOOP_DEVICE(void)
   if (is_open() == true) {
     close();
   }
+}
+
+void LOOP_DEVICE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
+{
+  /* FIXME: once the enum is moved to sample-specs.h, 
+   *        set this to whatever is set as the default
+   *        in sample-specs.h */
+  set_sample_format(ECA_AUDIO_FORMAT::sfmt_f32);
+  AUDIO_IO::open();
 }
 
 LOOP_DEVICE* LOOP_DEVICE::clone(void) const
