@@ -128,6 +128,16 @@ void AUDIO_IO_JACK::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 			kvu_numtostr(jackd_bsize) + "."));
     }
 
+    /* - check whether channel count needs to be adjusted
+     *   (must be done before registering to manager) */
+    if (label() == "jack_multi") {
+      /* if user has enumerated N JACK ports to connect to, make the ecasound
+       * visible channel count at least N */
+      int jack_ports = static_cast<int>(params_rep.size() - 1);
+      if (channels() < jack_ports)
+	set_channels(jack_ports);
+    }
+
     if (io_mode() == AUDIO_IO::io_read) {
       jackmgr_rep->register_jack_ports(myid_rep, channels(), my_in_portname);
     }
