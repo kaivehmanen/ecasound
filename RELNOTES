@@ -1,0 +1,103 @@
+subject: Ecasound 2.8.y released
+
+1. Summary of changes in this release
+-------------------------------------
+
+TBD
+
+2. What is Ecasound?
+--------------------
+
+Ecasound is a software package designed for multitrack audio processing.
+It can be used for simple tasks like audio playback, recording and format
+conversions, as well as for multitrack effect processing, mixing,
+recording and signal recycling. Ecasound supports a wide range of audio
+inputs, outputs and effect algorithms. Effects and audio objects can be
+combined in various ways, and their parameters can be controlled by
+operator objects like oscillators and MIDI-CCs. A versatile console mode
+user-interface is included in the package.
+
+Primary platform for running Ecasound is GNU/Linux. Ecasound can also be
+run on many UNIX-derived systems such as FreeBSD, Mac OS X and Solaris.
+Limited support for Windows is available through Cygwin. Ecasound is
+licensed under the GPL. The Ecasound Control Interface (ECI) is licensed
+under the LGPL.
+
+3. Changes in 2.8.x series
+--------------------------
+
+* The int-float conversion routines have been modified to be symmetric 
+  (previously asymmetric). As this impacts all use-cases involving fixed
+  point audio, the minor version was bumped to reflect the change.
+  Ecasound now scales with 2^N for both int-to-float and float-to-int.
+  For 0dBFS signals created in floating point domain, and normalized
+  to [-1,1] range, the positive values are clipped just before 0dbFS to
+  avoid overflow (positive values exceeding 2^N-1).
+
+  Pointers to how other projects handle this issue:
+    - Case for symmetric conversions:
+      http://lists.apple.com/archives/coreaudio-api/2009/Dec/msg00120.html
+    - Blog entry to which the above is a response:
+      http://blog.bjornroche.com/2009/12/int-float-int-its-jungle-out-there.html
+    - libsndfile FAQ on the topic:
+      http://www.mega-nerd.com/libsndfile/FAQ.html#Q010
+    - Discussion around the topic on JACK devel list:
+      http://comments.gmane.org/gmane.comp.audio.jackit/20499
+
+* Bugfixes to loop objects, jack_multi, false DBC warnings.
+
+For full list of changes, see git commit history.
+ - http://www.eca.cx/ecasound/history.php
+
+4. Interface and configuration file changes in 2.8 series
+---------------------------------------------------------
+
+TBD
+
+5. Contributors to 2.8 series
+-----------------------------
+
+Patches - Accepted code, documentation and build system changes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Extracted with 'git-shortlog -s':
+
+v2.8.0:
+TBD
+
+Bug Hunting - Reports that led to bugfixes (items closed)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+v2.8.NEXT
+  * Joel Roth (2)
+      wrong sample type displayed for loop objects
+      incorrect channel count for jack_multi objects
+  * Julien Claassen (1)
+      runtime DBC warnings
+  * Dan Muresan, Sergei Steshenko (1)
+      problems of asymmetry in int-float conversions
+  * foo (1)
+      TBD
+ 
+Feature suggestions - Ideas that led to new features (items)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+v2.8.0:
+  * foo (1)
+      TBD
+
+6. Links and files
+------------------
+   
+Web site (and mirrors):
+	http://eca.cx/ecasound (fi)
+	http://ecasound.seul.org (us)
+	http://ecasound.sourceforge.net (us)
+
+Source package:
+	http://eca.cx/ecasound/download.php
+	ecasound-2.x.y.tar.gz, md5sum:
+	TBD
+
+List of distributions with maintained Ecasound support:
+	See http://eca.cx/ecasound/download.php
