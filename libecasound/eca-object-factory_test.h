@@ -99,7 +99,7 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
       ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 		  "libecasound_tester: Object type \"" +
 		  obj->name() +
-		  "\" succesfully created.");
+		  "\" successfully created.");
       
       T* target = dynamic_cast<T*>(obj->new_expr());
       test_object_types<T>(obj, target, "new_expr");

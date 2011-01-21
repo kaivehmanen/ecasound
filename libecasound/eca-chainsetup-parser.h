@@ -29,7 +29,7 @@ class ECA_CHAINSETUP_PARSER {
    * Returns the result of last call to interpret_option(), interpret_global_option() 
    * or interpret_object_option().
    *
-   * @result true if options interpreted succesfully, otherwise false
+   * @result true if options interpreted successfully, otherwise false
    */
   bool interpret_result(void) const { return(interpret_result_rep); }
   const std::string& interpret_result_verbose(void) const { return(interpret_result_verbose_rep); }

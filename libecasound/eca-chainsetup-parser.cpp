@@ -65,7 +65,7 @@ ECA_CHAINSETUP_PARSER::ECA_CHAINSETUP_PARSER(ECA_CHAINSETUP* csetup)
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  * 
- * @post (option succesfully interpreted && interpret_result() ==  true) ||
+ * @post (option successfully interpreted && interpret_result() ==  true) ||
  *       (unknown or invalid option && interpret_result() != true)
  */
 void ECA_CHAINSETUP_PARSER::interpret_option (const string& arg)
@@ -85,7 +85,7 @@ void ECA_CHAINSETUP_PARSER::interpret_option (const string& arg)
  *
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
- * @post (option succesfully interpreted && interpretation_result() ==  true) ||
+ * @post (option successfully interpreted && interpretation_result() ==  true) ||
  *       (unknown or invalid option && interpretation_result() == false)
  */
 void ECA_CHAINSETUP_PARSER::interpret_global_option (const string& arg)
@@ -107,7 +107,7 @@ void ECA_CHAINSETUP_PARSER::interpret_global_option (const string& arg)
  * @pre argu.size() > 0
  * @pre argu[0] == '-'
  * 
- * @post (option succesfully interpreted && interpretation_result() ==  true) ||
+ * @post (option successfully interpreted && interpretation_result() ==  true) ||
  *       (unknown or invalid option && interpretation_result() == false)
  */
 void ECA_CHAINSETUP_PARSER::interpret_object_option (const string& arg)
@@ -196,7 +196,7 @@ void ECA_CHAINSETUP_PARSER::interpret_options(const std::vector<string>& opts)
 		kvu_numtostr(global_matches) +
 		" of the expected " +
 		kvu_numtostr(optcount) +
-		" parameters were recognized succesfully.");
+		" parameters were recognized successfully.");
   }
 }
 

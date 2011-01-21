@@ -1655,7 +1655,7 @@ void AUDIO_IO_JACK_MANAGER::write_samples(int client_id, void* target_buffer, lo
 /**
  * Opens connection to the JACK server. Sets
  * is_open() to 'true' if connection is 
- * succesfully opened.
+ * successfully opened.
  *
  * @pre is_open() != true
  *
@@ -1704,7 +1704,7 @@ void AUDIO_IO_JACK_MANAGER::open_server_connection(void)
 #endif
 
     ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"Succesfully opened JACK server connection.");
+		"Successfully opened JACK server connection.");
   }
   else {
     ECA_LOG_MSG(ECA_LOGGER::info, "Error! Cannot connect to JACK server!");
@@ -1736,7 +1736,7 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
   port_numbers_rep.clear();
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		"Succesfully closed JACK server connection.");
+		"Successfully closed JACK server connection.");
 
 #ifdef PROFILE_CALLBACK_EXECUTION
   cerr << profile_callback_timer.to_string() << endl;

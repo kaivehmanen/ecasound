@@ -90,7 +90,7 @@ string ECA_TEST_CASE::name(void) const
 }
 
 /**
- * Whether test was run succesfully.
+ * Whether test was run successfully.
  */
 bool ECA_TEST_CASE::success(void) const
 {

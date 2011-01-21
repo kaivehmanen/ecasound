@@ -292,7 +292,7 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
    * Returns the result of last call to interpret_option(), interpret_global_option() 
    * or interpret_object_option().
    *
-   * @result true if options interpreted succesfully, otherwise false
+   * @result true if options interpreted successfully, otherwise false
    */
   bool interpret_result(void) const { return cparser_rep.interpret_result(); }
   const string& interpret_result_verbose(void) const { return cparser_rep.interpret_result_verbose(); }

@@ -207,9 +207,9 @@ int ECA_CONTROL::run(bool batchmode)
 	}
       }
       else {
-	/* engine was started succesfully (processing_started == true) */
+	/* engine was started successfully (processing_started == true) */
 	if (is_running() != true) {
-	  /* operation succesfully completed, exit from run() unless
+	  /* operation successfully completed, exit from run() unless
 	   * infinite operation is requested (batchmode) */
 	  if (batchmode == true) break;
 	}
@@ -406,7 +406,7 @@ void ECA_CONTROL::close_engine(void)
   }
 
   if (engine_exited_rep.get() == 1) {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine thread has exited succesfully.");
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Engine thread has exited successfully.");
     delete engine_repp;
     engine_repp = 0;
     engine_exited_rep.set(0);
