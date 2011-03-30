@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // generic-linear-envelope.cpp: Generic linear envelope
-// Copyright (C) 2000-2002,2006,2008 Kai Vehmanen
+// Copyright (C) 2000-2002,2006,2008,2011 Kai Vehmanen
 // Copyright (C) 2001 Arto Hamara
 //
 // Attributes:
@@ -50,38 +50,61 @@ GENERIC_LINEAR_ENVELOPE::~GENERIC_LINEAR_ENVELOPE(void)
 {
 } 
 
+bool GENERIC_LINEAR_ENVELOPE::is_valid_for_stage(double pos, int stage) const
+{
+  if ((stage >= 0) &&
+      (stage < static_cast<int>(pos_rep.size()-1)) &&
+       (pos >= pos_rep[stage]) &&
+       (pos < pos_rep[stage+1]))
+      return true;
+
+  return false;
+}
+
+void GENERIC_LINEAR_ENVELOPE::set_stage(double curpos)
+{
+  /* case: init not called yet */
+  if (curstage == -2)
+    return;
+
+  if (curpos < pos_rep[0]) {
+    curstage = -1;
+    return;
+  }
+  
+  int n;
+  for(n = 0; n < static_cast<int>(pos_rep.size() - 1); n++) {
+    if (curpos < pos_rep[n + 1]) {
+	break;
+    }
+  }
+  curstage = n;
+}
+
 CONTROLLER_SOURCE::parameter_t GENERIC_LINEAR_ENVELOPE::value(double curpos)
 {
-  /* FIXME: not really seeking-safe */
+  if (is_valid_for_stage(curpos, curstage)) {
+    curval = (((curpos - pos_rep[curstage]) * val_rep[curstage+1] +
+	       (pos_rep[curstage+1] - curpos) * val_rep[curstage]) /
+	      (pos_rep[curstage+1] - pos_rep[curstage]));
+  }
+  else {
+    set_stage(curpos);
 
-  if (curpos < pos_rep[0] || curstage == -2) {
-    /* not reached the first position yet, or processing not 
-       started yet */
-    curval = val_rep[0];
-  } else if (curstage < static_cast<int>(pos_rep.size())-1) {
-    if (curpos >= pos_rep[curstage+1]) {
-      ++curstage;
-      if (curstage < static_cast<int>(pos_rep.size())-1) {
-	curval = (((curpos - pos_rep[curstage]) * val_rep[curstage+1] +
-		   (pos_rep[curstage+1] - curpos) * val_rep[curstage]) /
-		   (pos_rep[curstage+1] - pos_rep[curstage]));
-      }
-      else {
-	curval = val_rep.back();
-      }
-    } else {
-      curval = (((curpos - pos_rep[curstage]) * val_rep[curstage+1] +
-		 (pos_rep[curstage+1] - curpos) * val_rep[curstage]) /
-		(pos_rep[curstage+1] - pos_rep[curstage]));
-    }
+    if (is_valid_for_stage(curpos, curstage))
+      return value(curpos);
+
+    if (curstage < 0)
+      curval = val_rep[0];
+    else
+      curval = val_rep.back();
   }
 
   DEBUG_CTRL_STATEMENT(std::cerr << "generic-linear-envelope: type '"
-		       << name() << "', pos_sec " 
-		       << position_in_seconds_exact() 
-		       << ", curpos " << curpos
-		       << ", curval " << curval
-		       << ", curstage " << curstage << "." << std::endl);
+		       << name()
+		       << "', pos " << curpos
+		       << ", value " << curval
+		       << ", stage " << curstage << "." << std::endl);
   
   return curval;
 } 
@@ -122,6 +145,8 @@ void GENERIC_LINEAR_ENVELOPE::set_parameter(int param, parameter_t value)
     break;
   default:
     int pointnum = param/2 - 1;
+    if (pointnum >= static_cast<int>(pos_rep.size()))
+      break;
     if (param % 2 == 0)
       pos_rep[pointnum] = value;
     else

@@ -39,7 +39,9 @@ private:
   parameter_t curval;
   int curstage;
   std::string param_names_rep;
-  
+
+  bool is_valid_for_stage(double pos, int stage) const;
+  void set_stage(double pos);
   void set_param_count(int params);
 };
 
