@@ -209,6 +209,7 @@ ecasound_test_framework_include = \
 			eca-session_test.h \
 			eca-object-factory_test.h \
 			eca-sample-conversion_test.h \
+			generic-linear-envelope_test.h \
 			samplebuffer_test.h
 
 # note! also remembers to update install-data-local and 
