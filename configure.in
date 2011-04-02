@@ -1393,11 +1393,6 @@ if test x$enable_effects_d = xyes ; then
 else
 	echo "Effects enabled:        no"	
 fi
-if test x$enable_largefile = xyes ; then
-	echo "Largefile support:      yes"
-else
-	echo "Largefile support:      no"
-fi
 if test x$termcap_library = xtermcap ; then
 	echo "Termcap:                termcap"
 fi
