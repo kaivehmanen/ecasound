@@ -888,7 +888,7 @@ void* ecasound_watchdog_thread(void* arg)
 
   TRACE_EXIT(cerr << endl << "(ecasound-watchdog) looping until main reaches join point..." << endl);
 
-  while(glovar_ecasound_exit_phase != 1) {
+  while(glovar_ecasound_exit_phase != ECASOUND_EXIT_PHASE_WAIT_FOR_WD) {
     
     TRACE_EXIT(cerr << "(ecasound-watchdog) watchdog thread exiting (looping)..." << endl);
 
