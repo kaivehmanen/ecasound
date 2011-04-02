@@ -118,11 +118,10 @@ extern "C" {
 /**
  * Global variable that is set to one of 'ECASOUND_EXIT_PHASE_*' 
  * 
- * When ecasound's main()
- * function is about to exit (all engine threads have
- * been terminated and only single thread aside the 
- * watchdog is left, and to '2' when all running state 
- * has been clearer in ~ECASOUND_RUN_STATE().
+ * When ecasound's main() function is about to exit (all engine 
+ * threads have been terminated and only single thread aside the 
+ * watchdog is left, and to ECASOUND_EXIT_PHASE_ONE_THREAD when 
+ * all running state has been clearer in ~ECASOUND_RUN_STATE().
  */
 static sig_atomic_t glovar_ecasound_exit_phase = ECASOUND_EXIT_PHASE_NONE;
 
@@ -136,7 +135,7 @@ static sig_atomic_t glovar_wd_signals_blocked = 0;
  * have been ignored. */
 static sig_atomic_t glovar_soft_signals_ignored = 0;
 
-/* Debuggin macros, see ENABLE_ECASOUND_EXIT_PROCESS_TRACES 
+/* Debugging macros, see ENABLE_ECASOUND_EXIT_PROCESS_TRACES 
  * above */
 #ifdef ENABLE_ECASOUND_EXIT_PROCESS_TRACES
 #define TRACE_EXIT(x) do { x; } while(0)
