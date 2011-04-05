@@ -61,18 +61,8 @@
  * Check build time reqs
  */
 #undef SIGNALS_CAN_BE_BLOCKED
-#if defined(HAVE_SIGWAIT)
-#  if defined(HAVE_SIGPROCMASK) || defined(HAVE_PTHREAD_SIGMASK)
-#    define SIGNALS_CAN_BE_BLOCKED
-#  else
-#    error "Either pthread_sigmask() or sigprocmask() needs to be supported."
-#    error "One option to try is to undefine HAVE_SIGWAIT and retry compilation "
-#    error "with plain pause() support."
-#  endif
-#elif defined(HAVE_PAUSE)
-   /* no op*/
-#else
-#  error ""
+#if defined(HAVE_SIGWAIT) && defined(HAVE_PTHREAD_SIGMASK) && defined(HAVE_SIGPROCMASK)
+#  define SIGNALS_CAN_BE_BLOCKED
 #endif
 
 /**
@@ -91,12 +81,14 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 static void ecasound_print_usage(void);
 static void ecasound_print_version_banner(void);
 static void ecasound_signal_setup(ECASOUND_RUN_STATE* state);
-static void ecasound_signal_unblock(ECASOUND_RUN_STATE* state);
+static void ecasound_signal_unblock(void);
 
+#ifdef SIGNALS_CAN_BE_BLOCKED
 extern "C" {
   static void* ecasound_watchdog_thread(void* arg); 
   static void ecasound_signal_handler(int signal);
 }
+#endif
 
 /* Define to get exit debug traces */
 // #define ENABLE_ECASOUND_EXIT_PROCESS_TRACES 1
@@ -127,8 +119,8 @@ static sig_atomic_t glovar_ecasound_exit_phase = ECASOUND_EXIT_PHASE_NONE;
 
 /* Global variable that is set to one, when common
  * POSIX signals are blocked and watchdog thread is
- * blocking on a call to pthread_sigmask(), sigprocmask(),
- * or pause(). */
+ * blocking on a call to sigwait().
+ */
 static sig_atomic_t glovar_wd_signals_blocked = 0;
 
 /* Global variable counting how many SIGINT signals
@@ -327,16 +319,20 @@ int main(int argc, char *argv[])
 
   TRACE_EXIT(cerr << endl << "ecasound: joining watchdog..." << endl);
 
-  /* step: Send a signal to the watchdog thread to wake it uP */
-  pthread_kill(*state.watchdog_thread, SIGHUP);
+  /* step: Send a signal to the watchdog thread to wake it up */
+  if (state.watchdog_thread)
+    pthread_kill(*state.watchdog_thread, SIGHUP);
 
   /* step: Unblock signals for the main thread as well. At this
    *       point the engine threads have been already terminated,
    *       so we don't have to anymore worry about which thread
    *       gets the signals. */
-  ecasound_signal_unblock(&state);
+  ecasound_signal_unblock();
 
-  pthread_join(*state.watchdog_thread, NULL);
+  TRACE_EXIT(cerr << endl << "ecasound: the actual join" << endl);
+ 
+  if (state.watchdog_thread)
+    pthread_join(*state.watchdog_thread, NULL);
 
   TRACE_EXIT(cerr << endl << "ecasound: joined watchdog..." << endl);
 
@@ -693,21 +689,17 @@ static void ecasound_signal_handler(int signal)
 #else /* !SIGNALS_CAN_BE_BLOCKED */
 
  {
-   static int ignored = 0;
+    /* note: user needs to see this, not using TRACE_EXIT() macro */
+    cerr << endl
+	 << "WARNING: Ecasound received signal (" << signal << ").\n"
+         << "         This version of Ecasound was built without sigwait() support\n"
+         << "         so process will be terminated immediately.\n"
+	 << "         Normal exit process is skipped, which may have some side-effects\n"
+	 << "         (e.g. file header information not updated).\n";
 
-   TRACE_EXIT(cerr << "ecasound_signal_handler, built with pause(), ignore count " 
-	      << ignored << endl);
-
-   /* note: When signal blocking is not possible, ignore
-    *       the first two signal (1st is the user sent signal, 
-    *       and second is the SIGHUP from ecasound main(). If
-    *       we receive a third one, only then it's time for
-    *       the emergency exit. */
-
-   if (++ignored <= 2) {
-     return;
-   }
+    exit(ECASOUND_RETVAL_CLEANUP_ERROR);
  }
+
 
 #endif
 
@@ -803,6 +795,11 @@ void ecasound_signal_setup(ECASOUND_RUN_STATE* state)
   sigaction(SIGFPE, &blockaction, 0);
 #endif
 
+#if defined(SIGNALS_CAN_BE_BLOCKED)
+  /* note: this is done on purpose before the thread creation so
+   *       that the signal mask is inherited */
+  pthread_sigmask(SIG_BLOCK, signalset, NULL);
+
   state->watchdog_thread = new pthread_t;
   int res = pthread_create(state->watchdog_thread, 
 			   NULL, 
@@ -812,76 +809,58 @@ void ecasound_signal_setup(ECASOUND_RUN_STATE* state)
     cerr << "ecasound: Warning! Unable to create watchdog thread." << endl;
   }
 
-  /* block all signals in 'signalset' (see above) */
-#if defined(HAVE_PTHREAD_SIGMASK)
-  pthread_sigmask(SIG_BLOCK, signalset, NULL);
-#elif defined(HAVE_SIGPROCMASK)
-  sigprocmask(SIG_BLOCK, signalset, NULL);
-#endif
-}
+  pthread_mutex_lock(&state->lock_rep);
+  /* note: specific to sigwait() logic */
+  glovar_wd_signals_blocked = 1;
+  while(state->wd_alive != true) {
+    pthread_cond_wait(&state->cond_rep, &state->lock_rep);
+  };
+  pthread_mutex_unlock(&state->lock_rep);
 
-static void ecasound_wd_wait_for_signals(ECASOUND_RUN_STATE* state)
-{
-#ifdef HAVE_SIGWAIT
-  {
-  /********************************************/
-  /* impl 1: sigwait()                        */
-  /********************************************/
-
-    int signalno = 0;
-
-# if defined(HAVE_PTHREAD_SIGMASK)
-    pthread_sigmask(SIG_BLOCK, state->signalset, NULL);
-# elif defined(HAVE_SIGPROCMASK)
-  /* the set of signals must be blocked before entering sigwait() */
-    sigprocmask(SIG_BLOCK, state->signalset, NULL);
-# else
-#   error "Build environment error."
-# endif
-
-    /* note: specific to sigwait() logic */
-    glovar_wd_signals_blocked = 1;
-
-    sigwait(state->signalset, &signalno);
-
-    TRACE_EXIT(cerr << endl << "(ecasound-watchdog) Received signal " << signalno << ". Cleaning up and exiting..." << endl);
-  }
-
-#elif HAVE_PAUSE /* !HAVE_SIGWAIT */
-
-  /**************************************************/
-  /* impl 2:  pause() (alternative to sigwait())
-  ***************************************************/
-
-  /* note: with pause() we don't set 'glovar_ecasound_signal_blocked' as
-   * it is normal to get signals when watchdog is running */
-
-  pause();
-
-  TRACE_EXIT(cerr << endl << "(ecasound-watchdog) Received signal and returned from pause(). Cleaning up and Exiting..." << endl);
-
-#else  /* !HAVE_SIGWAIT && !HAVE_PAUSE */
-#   error "Build environment error."
+#else /* !SIGNALS_CAN_BE_BLOCKED */
+  /* note: no sigwait() so no need to bother with a wd thread */
+  state->watchdog_thread = 0;
+  glovar_wd_signals_blocked = 0;
 #endif
 }
 
 /**
- * Unblocks signals defined for 'state' for the calling thread,
- * or with pthread_sigmask() is not supported, for the whole
- * process.
+ * Unblocks SIGTERM, SIGINT, SIGHUP, SIGPIPE and SIGQUIT signals for 
+ * the calling thread, or in case pthread_sigmask() is not supported,
+ * for the whole process.
  */
-static void ecasound_signal_unblock(ECASOUND_RUN_STATE* state)
+static void ecasound_signal_unblock(void)
 {
-#ifdef HAVE_SIGWAIT
-# if defined(HAVE_PTHREAD_SIGMASK)
-  pthread_sigmask(SIG_UNBLOCK, state->signalset, NULL);
-# elif defined(HAVE_SIGPROCMASK)
-  /* the set of signals must be blocked before entering sigwait() */
-  sigprocmask(SIG_UNBLOCK, state->signalset, NULL);
-# else
-#   error "Build environment error."
-# endif
+#ifdef SIGNALS_CAN_BE_BLOCKED
+  sigset_t sigs;
+  sigemptyset(&sigs);
+  sigaddset(&sigs, SIGTERM);
+  sigaddset(&sigs, SIGINT);
+  sigaddset(&sigs, SIGHUP);
+  sigaddset(&sigs, SIGPIPE);
+  sigaddset(&sigs, SIGQUIT);
+  sigprocmask(SIG_UNBLOCK, &sigs, NULL);
 #endif
+}
+
+/* 
+ * Signal watchdog implementation
+ * -------------------------------
+ */
+#ifdef SIGNALS_CAN_BE_BLOCKED
+
+static void ecasound_wd_prepare_for_signals(ECASOUND_RUN_STATE* state)
+{
+  /* only if sigwait() and pthread_sigmask() are available */
+  pthread_sigmask(SIG_BLOCK, state->signalset, NULL);
+  glovar_wd_signals_blocked = 1;
+}
+
+static void ecasound_wd_wait_for_signals(ECASOUND_RUN_STATE* state, int *signalno)
+{
+  /* only if sigwait() and pthread_sigmask() are available */
+  sigwait(state->signalset, signalno);
+  TRACE_EXIT(cerr << endl << "(ecasound-watchdog) Received signal " << *signalno << ". Cleaning up and exiting..." << endl);
 }
 
 /**
@@ -891,6 +870,11 @@ static void ecasound_signal_unblock(ECASOUND_RUN_STATE* state)
 void* ecasound_watchdog_thread(void* arg)
 {
   ECASOUND_RUN_STATE* state = reinterpret_cast<ECASOUND_RUN_STATE*>(arg);
+  int signalno = 0;
+
+  TRACE_EXIT(cerr << endl << "(ecasound-watchdog) thread started..." << endl);
+
+  ecasound_wd_prepare_for_signals(state);
 
   /* step: announce we are alive */
   // cerr << "Watchdog-thread created, pid=" << getpid() << "." << endl;
@@ -902,12 +886,18 @@ void* ecasound_watchdog_thread(void* arg)
   TRACE_EXIT(cerr << endl << "(ecasound-watchdog) startup sync done, waiting for signals" << endl);
 
   /* step: block until a signal is received */
-  ecasound_wd_wait_for_signals(state);
+  ecasound_wd_wait_for_signals(state, &signalno);
+
+  TRACE_EXIT(cerr << endl << "(ecasound-watchdog) out of sigwait" << endl);
 
   /* step: unblock signals for watchdog thread after process 
    *       termination has been started */
-  ecasound_signal_unblock(state);
+  ecasound_signal_unblock();
+  state->lock();
   glovar_wd_signals_blocked = 0;
+  state->unlock();
+
+  TRACE_EXIT(cerr << endl << "(ecasound-watchdog) signals unblocked, exit req up" << endl);
 
   /* step: signal the mainloop that process should terminate */
   state->exit_request();
@@ -958,3 +948,5 @@ void* ecasound_watchdog_thread(void* arg)
 
   return 0;
 }
+
+#endif /* SIGNALS_CAN_BE_BLOCKED */

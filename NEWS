@@ -41,6 +41,8 @@ Howto for reading the entries (2.7.2 and older):
 xxyy2011 (v2.8.?) -** stable release **-
 	 - note: NEWS format changed, see 01012011 meta entry below
 	 - changed: do not use deprecated  jack_client_new() 
+	 - changed: simplified signal handling for not-so-POSIX
+	   platforms 
 	 - fixed: seeks with -klg did not work
 	 - fixed: bug in int-float conversions
 	 - fixed: some false DBC warnings removed

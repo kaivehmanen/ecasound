@@ -48,6 +48,15 @@ under the LGPL.
   support for -klkg.
     - http://sourceforge.net/tracker/?func=detail&aid=2013827&group_id=4605&atid=104605
 
+* Signal handling has been simplified for not-so-POSIX platforms. For
+  system/environments which do not provide all three of sigwait(), sigprocmask()
+  and pthread_sigmask(), process will terminate immediately without
+  the usual cleanup procedure upon receing a signal (SIGINT, TERM, et al).
+  The old pause() based kludge has been removed from the codebase. For 
+  many, if not all, users this has no practical impact.
+
+30b9fbbcfbff9e235ae910bb5746e4f875d381cb
+
 For full list of changes, see git commit history.
  - http://www.eca.cx/ecasound/history.php
 
