@@ -44,7 +44,9 @@ under the LGPL.
     - Discussion around the topic on JACK devel list:
       http://comments.gmane.org/gmane.comp.audio.jackit/20499
 
-* Bugfixes to loop objects, jack_multi, false DBC warnings.
+* Bugfixes to loop objects, jack_multi, false DBC warnings, seek 
+  support for -klkg.
+    - http://sourceforge.net/tracker/?func=detail&aid=2013827&group_id=4605&atid=104605
 
 For full list of changes, see git commit history.
  - http://www.eca.cx/ecasound/history.php
@@ -69,9 +71,10 @@ Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 v2.8.NEXT
-  * Joel Roth (2)
+  * Joel Roth (3)
       wrong sample type displayed for loop objects
       incorrect channel count for jack_multi objects
+      -klg does maintain state across seeks
   * Julien Claassen (1)
       runtime DBC warnings
   * Dan Muresan, Sergei Steshenko (1)

@@ -17,7 +17,7 @@ Quick overview of various sources of change info
 ------------------------------------------------
 
   - NEWS. This file.
-        - 2.8.0 and newer: lists releases with dates.
+        - 2.8.0 and newer: a compact list of user-visible changes
         - 2.7.2 and older: details of all user-visible changes.
   - RELNOTES. The release notes file describe the most important changes in
     a bit more detail. This is maintained in the git tree and is sent
@@ -36,13 +36,26 @@ Howto for reading the entries (2.7.2 and older):
   changed       = changed behaviour, modified implementation, APIs, etc
   fixed         = fixed bugs, "features" and other sources of problems
 
-  [foobar]      = tag identifying the author of the change; see 
-	          README for a complete list contributor tags; entries 
-		  with no tags are from the main author(s)
-
 ***********************************************************************
 
 xxyy2011 (v2.8.?) -** stable release **-
+	 - note: NEWS format changed, see 01012011 meta entry below
+	 - changed: do not use deprecated  jack_client_new() 
+	 - fixed: seeks with -klg did not work
+	 - fixed: bug in int-float conversions
+	 - fixed: some false DBC warnings removed
+	 - fixed: bug in setting jack_multi channel count
+01012011 meta: notes on provided change information in this file
+	 - the release entries will be shorter from now on, only
+	   listing the affected features (e.g. which objects), 
+	   and type of change (addition, change, bugfix)
+	 - see RELNOTES and git commit history for a more detailed
+	   description
+	 - author tags will no longer be used, [foobar] used to
+	   indicate the author of the change, unless it was from
+	   someone from the main author(s); README still lists 
+	   all the developer tags used; instead git history 
+	   shows who did what
 19082010 (v2.7.2) -** stable release **-
 	 - added: manual gate (-gm); see ecasound(1) man page
 	 - changed: liboil now enabled by default if the library 
