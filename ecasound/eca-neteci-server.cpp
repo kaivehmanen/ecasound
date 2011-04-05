@@ -241,12 +241,12 @@ void ECA_NETECI_SERVER::listen_for_events(void)
    *   store retval, release lock, send the reply to client
    * - return to poll
    */
-  while(state_repp->exit_request == 0) {
+  while(state_repp->exit_requested() != true) {
     // NETECI_DEBUG(cerr << "checking for events" << endl);
     check_for_events(2000);
   }
 
-  if (state_repp->exit_request != 0) {
+  if (state_repp->exit_requested() == true) {
     NETECI_DEBUG(cerr << "exit_request received" << endl);
   }
 }

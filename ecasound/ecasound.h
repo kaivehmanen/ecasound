@@ -41,6 +41,11 @@ class ECASOUND_RUN_STATE {
   ECASOUND_RUN_STATE(void);
   ~ECASOUND_RUN_STATE(void);
 
+  void exit_request(void);
+  bool exit_requested(void);
+  void lock(void);
+  void unlock(void);
+
   ECA_CONSOLE* console;
   ECA_CONTROL_MT* control;
   ECA_LOGGER_INTERFACE* logger;
@@ -51,8 +56,10 @@ class ECASOUND_RUN_STATE {
 
   pthread_t* neteci_thread;
   pthread_t* watchdog_thread;
-  pthread_mutex_t* lock;
-  sig_atomic_t exit_request;
+  pthread_mutex_t lock_rep;
+  pthread_cond_t cond_rep;
+  bool wd_alive;
+  sig_atomic_t exit_request_rep;
   sigset_t* signalset;
 
   int retval;

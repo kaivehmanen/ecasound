@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // ecasound.cpp: Console mode user interface to ecasound.
-// Copyright (C) 2002-2010 Kai Vehmanen
+// Copyright (C) 2002-2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -158,8 +158,8 @@ ECASOUND_RUN_STATE::ECASOUND_RUN_STATE(void)
     launchcmds(0),
     neteci_thread(0),
     watchdog_thread(0),
-    lock(0),
-    exit_request(0),
+    wd_alive(false),
+    exit_request_rep(0),
     signalset(0),
     retval(ECASOUND_RETVAL_SUCCESS),
     neteci_mode(false),
@@ -171,6 +171,8 @@ ECASOUND_RUN_STATE::ECASOUND_RUN_STATE(void)
     interactive_mode(false),
     quiet_mode(false)
 {
+  pthread_mutex_init(&lock_rep, NULL);
+  pthread_cond_init(&cond_rep, NULL);
 }
 
 ECASOUND_RUN_STATE::~ECASOUND_RUN_STATE(void)
@@ -189,10 +191,35 @@ ECASOUND_RUN_STATE::~ECASOUND_RUN_STATE(void)
   if (console != 0) { delete console; console = 0; }
   if (neteci_thread != 0) { delete neteci_thread; neteci_thread = 0; }
   if (watchdog_thread != 0) { delete watchdog_thread; watchdog_thread = 0; }
-  if (lock != 0) { delete lock; lock = 0; }
   if (signalset != 0) { delete signalset; signalset = 0; }
 
   glovar_ecasound_exit_phase = ECASOUND_EXIT_PHASE_DONE;
+}
+
+void ECASOUND_RUN_STATE::lock(void)
+{
+  pthread_mutex_lock(&lock_rep);
+}
+
+void ECASOUND_RUN_STATE::unlock(void)
+{
+  pthread_mutex_unlock(&lock_rep);
+}
+
+void ECASOUND_RUN_STATE::exit_request(void)
+{
+  lock();
+  exit_request_rep = true;
+  unlock();
+}
+
+bool ECASOUND_RUN_STATE::exit_requested(void)
+{
+  bool v = false;
+  lock();
+  if (exit_request_rep) v = true;
+  unlock();
+  return v;
 }
 
 /**
@@ -279,7 +306,7 @@ int main(int argc, char *argv[])
   /* step: terminate neteci thread */
   if (state.neteci_mode == true) {
     /* wait until the NetECI thread has exited */
-    state.exit_request = 1;
+    state.exit_request();
     if (state.neteci_thread)
       pthread_join(*state.neteci_thread, NULL);
   }
@@ -294,7 +321,9 @@ int main(int argc, char *argv[])
     }
   }
 
+  state.lock();
   glovar_ecasound_exit_phase = ECASOUND_EXIT_PHASE_WAIT_FOR_WD;
+  state.unlock();
 
   TRACE_EXIT(cerr << endl << "ecasound: joining watchdog..." << endl);
 
@@ -358,8 +387,6 @@ void ecasound_launch_neteci(ECASOUND_RUN_STATE* state)
   // state->console->print("ecasound: starting the NetECI server.");
 
   state->neteci_thread = new pthread_t;
-  state->lock = new pthread_mutex_t;
-  pthread_mutex_init(state->lock, NULL);
   state->eciserver = new ECA_NETECI_SERVER(state);
 
   int res = pthread_create(state->neteci_thread, 
@@ -369,7 +396,6 @@ void ecasound_launch_neteci(ECASOUND_RUN_STATE* state)
   if (res != 0) {
     cerr << "ecasound: Warning! Unable to create a thread for control over socket connection (NetECI)." << endl;
     delete state->neteci_thread;  state->neteci_thread = 0;
-    delete state->lock;  state->lock = 0;
     delete state->eciserver; state->eciserver = 0;
   }
 
@@ -409,7 +435,7 @@ static void ecasound_check_for_quit(ECASOUND_RUN_STATE* state, const string& cmd
 {
   if (cmd == "quit" || cmd == "q") {
     state->console->print("---\necasound: Exiting...");
-    state->exit_request = 1;
+    state->exit_request();
     ECA_LOGGER::instance().flush();
   }
 }
@@ -424,10 +450,10 @@ void ecasound_main_loop_interactive(ECASOUND_RUN_STATE* state)
 
   ECA_CONTROL_MAIN* ctrl = state->control;
 
-  while(state->exit_request == 0) {
+  while(state->exit_requested() != true) {
     state->console->read_command("ecasound ('h' for help)> ");
     const string& cmd = state->console->last_command();
-    if (cmd.size() > 0 && state->exit_request == 0) {
+    if (cmd.size() > 0 && state->exit_requested() != true) {
       
       struct eci_return_value retval;
       ctrl->command(cmd, &retval);
@@ -462,7 +488,7 @@ void ecasound_main_loop_batch(ECASOUND_RUN_STATE* state)
      *            so this thread can use 'ctrl' exclusively */
     
     if (ctrl->is_connected() == true) {
-      if (!state->exit_request) {
+      if (state->exit_requested() != true) {
 	int res = ctrl->run(!state->keep_running_mode);
 	if (res < 0) {
 	  state->retval = ECASOUND_RETVAL_RUNTIME_ERROR;
@@ -495,10 +521,10 @@ void ecasound_main_loop_batch(ECASOUND_RUN_STATE* state)
     if (state->keep_running_mode != true &&
 	res < 0) {
       state->retval = ECASOUND_RETVAL_START_ERROR;
-      state->exit_request = 1;
+      state->exit_request();
     }
 
-    while(state->exit_request == 0) {
+    while(state->exit_requested() != true) {
       
       if (state->keep_running_mode != true &&
 	  ctrl->is_finished() == true)
@@ -641,7 +667,7 @@ void ecasound_print_usage(void)
 void ecasound_print_version_banner(void)
 {
   cout << "ecasound v" << ecasound_library_version << endl;
-  cout << "Copyright (C) 1997-2010 Kai Vehmanen and others." << endl;
+  cout << "Copyright (C) 1997-2011 Kai Vehmanen and others." << endl;
   cout << "Ecasound comes with ABSOLUTELY NO WARRANTY." << endl;
   cout << "You may redistribute copies of ecasound under the terms of the GNU" << endl;
   cout << "General Public License. For more information about these matters, see" << endl; 
@@ -868,6 +894,12 @@ void* ecasound_watchdog_thread(void* arg)
 
   /* step: announce we are alive */
   // cerr << "Watchdog-thread created, pid=" << getpid() << "." << endl;
+  state->lock();
+  state->wd_alive = true;
+  pthread_cond_broadcast(&state->cond_rep);
+  state->unlock();
+
+  TRACE_EXIT(cerr << endl << "(ecasound-watchdog) startup sync done, waiting for signals" << endl);
 
   /* step: block until a signal is received */
   ecasound_wd_wait_for_signals(state);
@@ -878,10 +910,14 @@ void* ecasound_watchdog_thread(void* arg)
   glovar_wd_signals_blocked = 0;
 
   /* step: signal the mainloop that process should terminate */
-  state->exit_request = 1;
+  state->exit_request();
 
   /* step: in case mainloop is blocked running a batch job, we signal
-   *       the engine thread directly and force it to terminate */
+   *       the engine thread directly and force it to terminate.
+   *       This operation is thread-safe as main thread will not
+   *       delete state until watchdog has terminated, and
+   *       quit_async() is thread safe by design.
+   */
   if (state->interactive_mode != true &&
       state->control)
     state->control->quit_async();
