@@ -45,7 +45,7 @@ under the LGPL.
       http://comments.gmane.org/gmane.comp.audio.jackit/20499
 
 * Bugfixes to loop objects, jack_multi, false DBC warnings, seek 
-  support for -klkg.
+  support for -klkg, ecasound-ruby hangs.
     - http://sourceforge.net/tracker/?func=detail&aid=2013827&group_id=4605&atid=104605
 
 * Signal handling has been simplified for not-so-POSIX platforms. For
@@ -88,6 +88,8 @@ v2.8.NEXT
       runtime DBC warnings
   * Dan Muresan, Sergei Steshenko (1)
       problems of asymmetry in int-float conversions
+  * Alessandro Ghedini (1)
+      signal handling bug caused problems to ecasound-ruby apps
   * foo (1)
       TBD
  

@@ -323,8 +323,11 @@ int main(int argc, char *argv[])
   if (state.watchdog_thread)
     pthread_kill(*state.watchdog_thread, SIGHUP);
 
-  /* step: Unblock signals for the main thread as well. At this
-   *       point the engine threads have been already terminated,
+  TRACE_EXIT(cerr << endl << "ecasound: SIGHUP sent, unblock..." << endl);
+
+  /* step: Unblock signals for the main thread as well (but not
+   *       SIGHUP -> this is very important).
+   *       At this point the engine threads have been already terminated,
    *       so we don't have to anymore worry about which thread
    *       gets the signals. */
   ecasound_signal_unblock();
@@ -772,9 +775,12 @@ void ecasound_signal_setup(ECASOUND_RUN_STATE* state)
   sigemptyset(signalset);
   sigaddset(signalset, SIGTERM);
   sigaddset(signalset, SIGINT);
-  sigaddset(signalset, SIGHUP);
   sigaddset(signalset, SIGPIPE);
   sigaddset(signalset, SIGQUIT);
+
+  /* note: SIGHUP is special and it must remain blocked at
+   *       all times if signal watchdog thread is run */
+  sigaddset(signalset, SIGHUP);
 
   /* create a dummy signal handler */
   struct sigaction blockaction;
@@ -825,7 +831,7 @@ void ecasound_signal_setup(ECASOUND_RUN_STATE* state)
 }
 
 /**
- * Unblocks SIGTERM, SIGINT, SIGHUP, SIGPIPE and SIGQUIT signals for 
+ * Unblocks SIGTERM, SIGINT, SIGPIPE and SIGQUIT signals for
  * the calling thread, or in case pthread_sigmask() is not supported,
  * for the whole process.
  */
@@ -836,7 +842,6 @@ static void ecasound_signal_unblock(void)
   sigemptyset(&sigs);
   sigaddset(&sigs, SIGTERM);
   sigaddset(&sigs, SIGINT);
-  sigaddset(&sigs, SIGHUP);
   sigaddset(&sigs, SIGPIPE);
   sigaddset(&sigs, SIGQUIT);
   sigprocmask(SIG_UNBLOCK, &sigs, NULL);

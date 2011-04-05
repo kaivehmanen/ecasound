@@ -47,6 +47,8 @@ xxyy2011 (v2.8.?) -** stable release **-
 	 - fixed: bug in int-float conversions
 	 - fixed: some false DBC warnings removed
 	 - fixed: bug in setting jack_multi channel count
+	 - fixed: bug in signal handling caused rubyecasound scripts
+ 	   to fail (e.g. ecasound's own stresstest.rb)
 01012011 meta: notes on provided change information in this file
 	 - the release entries will be shorter from now on, only
 	   listing the affected features (e.g. which objects), 
