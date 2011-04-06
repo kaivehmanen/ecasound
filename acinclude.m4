@@ -1,13 +1,12 @@
 dnl ---
 dnl acinclude.m4 for ecasound
-dnl last modified: 20050816-13
 dnl ---
 
 ## ------------------------------------------------------------------------
 ## Check for JACK support
 ##
 ## defines: ECA_AM_COMPILE_JACK, ECA_S_JACK_LIBS, ECA_S_JACK_INCLUDES,
-##          ECA_COMPILE_JACK, ECA_JACK_TRANSPORT_API
+##          ECA_COMPILE_JACK, ECA_JACK_TRANSPORT_API, ECA_JACK_FEATSET
 ## ------------------------------------------------------------------------
 
 AC_DEFUN([AC_CHECK_JACK],
@@ -60,7 +59,6 @@ old_ldflags=$LDFLAGS
 old_INCLUDES=$INCLUDES
 CPPFLAGS="$CPPFLAGS $ECA_S_JACK_INCLUDES"
 LDFLAGS="$LDFLAGS $ECA_S_JACK_LIBS"
-INCLUDES="--host=a.out-i386-linux"
 
 AC_TRY_LINK(
 [ #include <jack/transport.h> ],
@@ -75,18 +73,21 @@ AC_TRY_LINK(
 	return 0;
 ],
 [ ECA_JACK_TRANSPORT_API="3" ],
-[ ECA_JACK_TRANSPORT_API="2" ]
+[ ECA_JACK_TRANSPORT_API="0" ]
 )
 
+# note: check for the new latency API added to JACK 0.120.1
+
 AC_TRY_LINK(
-[ #include <jack/transport.h> ],
+[ #include <jack/jack.h> ],
 [
-	jack_transport_info_t t;
-	t.state = 0;
+	jack_latency_range_t t;
+	t.min = 0;
+	t.max = 0;
 	return 0;
 ],
-[ ECA_JACK_TRANSPORT_API="1" ],
-[ true ]
+[ ECA_JACK_FEATSET="1" ],
+[ ECA_JACK_FEATSET="0" ]
 )
 
 CPPFLAGS="$old_cppflags"
@@ -95,6 +96,8 @@ INCLUDES="$old_INCLUDES"
 
 echo "Using JACK transport API version:" ${ECA_JACK_TRANSPORT_API}
 AC_DEFINE_UNQUOTED([ECA_JACK_TRANSPORT_API], ${ECA_JACK_TRANSPORT_API}, [version of JACK transport API to use])
+echo "Using JACK feature set (ecasound specific):" ${ECA_JACK_FEATSET}
+AC_DEFINE_UNQUOTED([ECA_JACK_FEATSET], ${ECA_JACK_FEATSET}, [ecasound specific versioning of JACK interface features ])
 
 AC_SUBST(ECA_S_JACK_LIBS)
 AC_SUBST(ECA_S_JACK_INCLUDES)

@@ -159,7 +159,8 @@ public:
 private:
 
   static void get_total_port_latency(jack_client_t* client, 
-				     eca_jack_port_data_t* ports);
+				     eca_jack_port_data_t* ports,
+				     int mode);
 
   void open_server_connection(void);
   void close_server_connection(void);

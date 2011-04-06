@@ -41,6 +41,7 @@
 #include <kvu_procedure_timer.h>
 #include <kvu_threads.h>
 
+#include "audioio.h"
 #include "eca-engine.h"
 #include "eca-chainsetup.h"
 #include "eca-logger.h"
@@ -1753,13 +1754,30 @@ void AUDIO_IO_JACK_MANAGER::close_server_connection(void)
  *
  * context: E-level-5
  */
-void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, eca_jack_port_data_t* ports)
+void AUDIO_IO_JACK_MANAGER::get_total_port_latency(jack_client_t* client, eca_jack_port_data_t* port, int iomode)
 {
-  ports->total_latency = jack_port_get_total_latency(client, ports->jackport);
+  jack_nframes_t latency = 0;
+#if ECA_JACK_FEATSET >= 1
+  jack_latency_range_t range;
+  jack_port_get_latency_range(port->jackport,
+			      iomode == AUDIO_IO::io_read ? JackCaptureLatency : JackPlaybackLatency,
+			      &range);
+  if (range.min != range.max)
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		"jack_port_get_latency_range mix=" +
+		kvu_numtostr(range.min) + ", max=" +
+		kvu_numtostr(range.max));
+  latency = range.min;
+#else
+  latency = jack_port_get_total_latency(client, port->jackport);
+#endif
+
+  port->total_latency = latency;
+
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
 	      "Total latency for port '" +
-	      string(jack_port_name(ports->jackport)) +
-	      "' is " + kvu_numtostr(ports->total_latency) + ".");
+	      string(jack_port_name(port->jackport)) +
+	      "' is " + kvu_numtostr(port->total_latency) + ".");
 }
 
 /**
@@ -1798,7 +1816,7 @@ void AUDIO_IO_JACK_MANAGER::set_node_connection(eca_jack_node_t* node, bool conn
 			*fromport + " -> " + *toport + ".");
 	  }
 	  else {
-	    AUDIO_IO_JACK_MANAGER::get_total_port_latency(client_repp, *p);
+	    AUDIO_IO_JACK_MANAGER::get_total_port_latency(client_repp, *p, node->aobj->io_mode());
 	  }
 	}
 	else {
