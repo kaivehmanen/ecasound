@@ -389,6 +389,7 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
 	eca_jack_process_engine_iteration(nframes, current);
       }
       else {
+	DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: not running, mute" << endl);
 	eca_jack_process_mute(nframes, current);
       }
     }
