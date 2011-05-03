@@ -1,3 +1,8 @@
+2011-05-02  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+        * audioio-device.h (stop): add drain parameter
+        * library interface version to 23:0:0
+
 2009-10-17  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 22:0:0 frozen (2.7.0 release)

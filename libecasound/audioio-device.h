@@ -150,6 +150,9 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    * I/O is not allowed after this call. This should be used when 
    * audio object is not going to be used for a while.
    *
+   * @param drain if true, block until all samples already written 
+   *              are played out (ignored in read mode)
+   *
    * require:
    *  is_running() == true
    * 
@@ -159,7 +162,7 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
    *  readable() == false
    *  writable() == false
    */
-  virtual void stop(void) { is_running_rep = false; is_prepared_rep = false; }
+  virtual void stop(bool drain = false) { is_running_rep = false; is_prepared_rep = false; }
 
   /*@}*/
 
