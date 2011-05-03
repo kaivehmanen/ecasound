@@ -55,7 +55,7 @@ class AUDIO_IO_ALSA_PCM : public AUDIO_IO_DEVICE {
 
   virtual void prepare(void);
   virtual void start(void);
-  virtual void stop(void);
+  virtual void stop(bool drain = false);
 
   virtual long int delay(void) const;
   virtual long int latency(void) const { return(buffersize()); }

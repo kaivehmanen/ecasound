@@ -363,10 +363,16 @@ void AUDIO_IO_ALSA_PCM::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   AUDIO_IO_DEVICE::open();
 }
 
-void AUDIO_IO_ALSA_PCM::stop(void)
+void AUDIO_IO_ALSA_PCM::stop(bool drain)
 {
-  snd_pcm_drop(audio_fd_repp); /* non-blocking */
-  // snd_pcm_drain(audio_fd_repp); /* blocking */
+  if (drain == true) {
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "drain start / " + label());
+    snd_pcm_drain(audio_fd_repp); /* blocking */
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "drain complete / " + label());
+  }
+  else {
+    snd_pcm_drop(audio_fd_repp); /* non-blocking */
+  }
   
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "stop - " + label() + ".");
 
