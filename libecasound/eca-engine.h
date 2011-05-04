@@ -25,7 +25,7 @@ class ECA_ENGINE_DEFAULT_DRIVER : public ECA_ENGINE_DRIVER {
 
   virtual int exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
   virtual void start(void);
-  virtual void stop(void);
+  virtual void stop(bool drain = false);
   virtual void exit(void);
 
  private:
@@ -88,6 +88,7 @@ class ECA_ENGINE {
     ep_prepare = 0,
     ep_start,
     ep_stop,
+    ep_stop_with_drain,
     ep_debug,
     ep_exit,
     // --
@@ -164,7 +165,7 @@ class ECA_ENGINE {
 
   void prepare_operation(void);
   void start_operation(void);
-  void stop_operation(void);
+  void stop_operation(bool drain = false);
 
   void update_cache_chain_connections(void);
   void update_cache_latency_values(void);
@@ -273,7 +274,7 @@ private:
   /*@{*/
 
   void request_start(void);
-  void request_stop(void);
+  void request_stop(bool drain = false);
   void signal_stop(void);
   void signal_exit(void);
   void conditional_start(void);

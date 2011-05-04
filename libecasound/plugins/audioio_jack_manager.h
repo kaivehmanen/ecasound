@@ -126,7 +126,7 @@ public:
 
   virtual int exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup);
   virtual void start(void);
-  virtual void stop(void);
+  virtual void stop(bool drain);
   virtual void exit(void);
 
   /*@}*/

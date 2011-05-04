@@ -1145,7 +1145,7 @@ void AUDIO_IO_JACK_MANAGER::start(void)
  *          does not run at the same time (engine_mod_lock_rep 
  *          taken upon entry).
  */
-void AUDIO_IO_JACK_MANAGER::stop(void)
+void AUDIO_IO_JACK_MANAGER::stop(bool drain)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "driver stop");
 
@@ -1161,7 +1161,7 @@ void AUDIO_IO_JACK_MANAGER::stop(void)
   }
 #endif
 
-  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation(drain);
 }
 
 /**

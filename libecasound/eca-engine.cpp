@@ -95,6 +95,8 @@ static void mix_to_outputs_sum_helper(const SAMPLE_BUFFER *from, SAMPLE_BUFFER *
 
 int ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 {
+  bool drain_at_end = false;
+
   engine_repp = engine;
 
   exit_request_rep = false;
@@ -116,6 +118,7 @@ int ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
       if (engine_repp->status() == ECA_ENGINE::engine_status_finished &&
 	  engine_repp->batch_mode() == true) {
 	ECA_LOG_MSG(ECA_LOGGER::system_objects, "batch finished in exec, exit");
+	drain_at_end = true;
 	break;
       }
 
@@ -132,7 +135,8 @@ int ECA_ENGINE_DEFAULT_DRIVER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     engine_repp->update_engine_state();
   }
 
-  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true)
+    engine_repp->stop_operation(drain_at_end);
 
   return 0;
 }
@@ -143,9 +147,9 @@ void ECA_ENGINE_DEFAULT_DRIVER::start(void)
   engine_repp->start_operation();
 }
 
-void ECA_ENGINE_DEFAULT_DRIVER::stop(void)
+void ECA_ENGINE_DEFAULT_DRIVER::stop(bool drain)
 {
-  if (engine_repp->is_prepared() == true) engine_repp->stop_operation();
+  if (engine_repp->is_prepared() == true) engine_repp->stop_operation(drain);
 }
 
 void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
@@ -519,7 +523,9 @@ void ECA_ENGINE::check_command_queue(void)
       case ep_prepare: { if (is_prepared() != true) prepare_operation(); break; }
       case ep_start: { if (status() != engine_status_running) request_start(); break; }
       case ep_stop: { if (status() == engine_status_running || 
-			  status() == engine_status_finished) request_stop(); break; }
+			  status() == engine_status_finished) request_stop(false); break; }
+      case ep_stop_with_drain: { if (status() == engine_status_running || 
+				     status() == engine_status_finished) request_stop(true); break; }
 	
 	// ---
 	// Edit locks
@@ -610,7 +616,7 @@ void ECA_ENGINE::update_engine_state(void)
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"all inputs finished - stop");
       // FIXME: this is still wrong, command() is not fully rt-safe
       // we are not allowed to call request_stop here
-      command(ECA_ENGINE::ep_stop, 0.0f);
+      command(ECA_ENGINE::ep_stop_with_drain, 0.0f);
     }
 
     state_change_to_finished();
@@ -777,11 +783,14 @@ void ECA_ENGINE::start_operation(void)
  *          must not be run at the same time
  *          as engine_iteration()
  *
+ * @param drain whether to block until all queued data is processed
+ *              by realtime devices before stopping
+ *
  * @pre is_running() == true
  * @post is_running() != true
  * @post is_prepared() != true
  */
-void ECA_ENGINE::stop_operation(void)
+void ECA_ENGINE::stop_operation(bool drain)
 {
   // ---
   DBC_REQUIRE(is_prepared() == true);
@@ -793,7 +802,8 @@ void ECA_ENGINE::stop_operation(void)
 
   /* stop realtime devices */
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
-    if (realtime_objects_rep[adev_sizet]->is_running() == true) realtime_objects_rep[adev_sizet]->stop();
+    if (realtime_objects_rep[adev_sizet]->is_running() == true)
+      realtime_objects_rep[adev_sizet]->stop(drain);
   }
 
   prepared_rep = false;
@@ -911,16 +921,17 @@ void ECA_ENGINE::request_start(void)
  *
  * context: E-level-2
  */
-void ECA_ENGINE::request_stop(void)
+void ECA_ENGINE::request_stop(bool drain)
 { 
   // ---
   DBC_REQUIRE(status() == engine_status_running ||
 	      status() == engine_status_finished);
   // ---
 
-  ECA_LOG_MSG(ECA_LOGGER::user_objects, "Request stop");
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+	      std::string("Request stop") + (drain ? std::string(" (drain)") : std::string()));
 
-  driver_repp->stop();
+  driver_repp->stop(drain);
 }
 
 /**
@@ -986,7 +997,7 @@ void ECA_ENGINE::conditional_stop(void)
     was_running_rep = true;
     // don't call request_stop(), as it would signal that we are 
     // stopping completely (JACK transport stop will be sent  to all)
-    if (is_prepared() == true) stop_operation();
+    if (is_prepared() == true) stop_operation(false);
   }
   else was_running_rep = false;
 }
@@ -1245,7 +1256,7 @@ void ECA_ENGINE::posthandle_control_position(void)
       ECA_LOG_MSG(ECA_LOGGER::system_objects,"posthandle_c_p over_max - stop");
       if (status() == ECA_ENGINE::engine_status_running ||
 	  status() == ECA_ENGINE::engine_status_finished) {
-	command(ECA_ENGINE::ep_stop, 0.0f);
+	command(ECA_ENGINE::ep_stop_with_drain, 0.0f);
       }
       state_change_to_finished();
     }

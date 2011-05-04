@@ -50,8 +50,11 @@ class ECA_ENGINE_DRIVER {
    * Signals that driver should stop operation.
    * Once stopped, driver must not call
    * any non-const ECA_ENGINE functions.
+   *
+   * @param drain whether to block until all queued data is processed
+   *              by realtime devices before stopping
    */
-  virtual void stop(void) = 0;
+  virtual void stop(bool drain = false) = 0;
 
   /**
    * Signals that driver should stop operation 
