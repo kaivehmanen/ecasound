@@ -551,7 +551,7 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
     state->retval = ECASOUND_RETVAL_INIT_FAILURE;
   }
   else {
-   cline.begin();
+    cline.begin();
     while(cline.end() != true) {
 
       if (cline.current() == "-o:stdout" ||
@@ -591,7 +591,7 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 	if (cline.end() != true) {
 	  state->launchcmds = 
 	    new std::vector<std::string>
- 	      (kvu_string_to_vector(cline.current(), ';'));
+	    (kvu_string_to_vector(cline.current(), ';'));
 	}
       }
 
