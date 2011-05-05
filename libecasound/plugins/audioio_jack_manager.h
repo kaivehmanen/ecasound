@@ -71,7 +71,8 @@ public:
     Transport_none,
     Transport_receive,
     Transport_send,
-    Transport_send_receive
+    Transport_send_receive,
+    Transport_invalid
   } Operation_mode_t;
 
  public:
@@ -166,6 +167,11 @@ private:
   void close_server_connection(void);
 
   void initial_seek(void);
+
+  void exec_helper_setup_transport(void);
+  void exec_helper_clean_transport(void);
+  void set_transport_mode(enum Operation_mode mode, bool print_trace);
+  void helper_print_transport_state(const std::string& when) const;
 
   void activate_server_connection(void);
   void deactivate_server_connection(void);

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_jack_manager.cpp: Manager for JACK client objects
-// Copyright (C) 2001-2004,2008,2009 Kai Vehmanen
+// Copyright (C) 2001-2004,2008,2009,2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -704,12 +704,7 @@ AUDIO_IO_JACK_MANAGER::AUDIO_IO_JACK_MANAGER(void)
   pthread_mutex_init(&exit_mutex_rep, NULL);
   pthread_mutex_init(&engine_mod_lock_rep, NULL);
 
-  /* set default transport mode */
-#if ECA_JACK_TRANSPORT_API >= 3
-  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_send_receive;
-#else
-  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
-#endif
+  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_invalid;
 
   shutdown_request_rep = false;
   cb_allocated_frames_rep = 0;
@@ -881,6 +876,38 @@ void AUDIO_IO_JACK_MANAGER::unregister_object(int id)
   // ---
 }
 
+void AUDIO_IO_JACK_MANAGER::set_transport_mode(enum Operation_mode mode, bool print_trace)
+{
+  mode_rep = mode;
+  
+  if (print_trace == false)
+    return;
+
+  switch(mode) 
+    {
+    case Transport_none:
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "JACK transport: send/receive disabled (mode: notransport)");
+      break;
+    case Transport_receive:
+      ECA_LOG_MSG(ECA_LOGGER::info,
+		  "JACK transport: slave, reacting to transport events (mode: recv)");
+      break;
+    case Transport_send:
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "JACK transport: master, sending transport events (mode: send)");
+      break;
+    case Transport_send_receive:
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "JACK transport: both sending and reacting to transport events (mode: sendrecv)"); 
+      break;
+    case Transport_invalid:
+      break;
+    default:
+      ;
+    }
+}
+
 /**
  * context: E-level-0
  */
@@ -902,29 +929,21 @@ void AUDIO_IO_JACK_MANAGER::set_parameter(int param, std::string value)
 #if ECA_JACK_TRANSPORT_API >= 3
 	if (value == "notransport" || 
 	    value == "streaming") {
-	  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
-	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		      "'notransport' mode selected.");
+	  set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_none, true);
 	}
 	else if (value == "send" ||
 		 value == "master") {
-	  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_send;
-	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		      "'send' mode selected.");
+	  set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_send, true);
 	}
 	else if (value == "sendrecv" ||
 		 value == "slave") {
-	  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_send_receive;
-	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		      "'sendrecv' mode selected.");
+	  set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_send_receive, true);
 	}
 	else if (value == "recv") {
-	  mode_rep = AUDIO_IO_JACK_MANAGER::Transport_receive;
-	  ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		      "'recv' mode selected.");
+	  set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_receive, true);
 	}
 #else
-	mode_rep = AUDIO_IO_JACK_MANAGER::Transport_none;
+	set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_none, false);
 	if (value != "notransport")
 	  ECA_LOG_MSG(ECA_LOGGER::info, 
 		      "WARNING: JACK transport support disabled at build time, using 'notransport'.");
@@ -974,13 +993,82 @@ void AUDIO_IO_JACK_MANAGER::initial_seek(void)
 
   jackstate = jack_transport_query(client_repp, &jackpos);
 
-  /* FIXME: is this a good idea...? might confuse some scripts */
   if (jackstate == JackTransportStopped &&
       (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send ||
        mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive)) {
+    ECA_LOG_MSG(ECA_LOGGER::info,
+		"JACK transport: sending out initial locate to " +
+		kvu_numtostr(engine_repp->current_position_in_seconds_exact(), 3) +
+		"sec");
     jack_transport_locate(client_repp, engine_repp->current_position_in_samples());
   }
 #endif
+}
+
+#if ECA_JACK_TRANSPORT_API >= 3
+static std::string priv_jack_transport_state_str(jack_transport_state_t state)
+{
+  switch(state)
+    {
+    case JackTransportStopped: return "STOPPED";
+    case JackTransportRolling: return "ROLLING";
+    case JackTransportLooping: return "LOOPING";
+    case JackTransportStarting: return "STARTING";
+    default:
+      ;
+    }
+  return std::string();
+}
+
+static std::string priv_jack_transport_pos_str(jack_position_t *state)
+{
+  if (state->frame_rate == 0)
+    return std::string();
+
+  return kvu_numtostr(static_cast<float>(state->frame) / state->frame_rate, 3) + "sec";
+}
+#endif
+
+void AUDIO_IO_JACK_MANAGER::helper_print_transport_state(const std::string& when) const
+{
+#if ECA_JACK_TRANSPORT_API >= 3
+  jack_position_t jpos;
+  jack_transport_state_t jstate;
+
+  jstate = jack_transport_query(client_repp, &jpos);
+
+  ECA_LOG_MSG(ECA_LOGGER::info,
+	      "JACK transport: at ecasound " +
+	      when +
+	      " JACK state is " + 
+	      priv_jack_transport_state_str(jstate) +
+	      " (position " +
+	      priv_jack_transport_pos_str(&jpos) +
+	      ")");
+#endif
+}
+
+void AUDIO_IO_JACK_MANAGER::exec_helper_setup_transport(void)
+{
+  if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_invalid) {
+    /* set default transport mode */
+#if ECA_JACK_TRANSPORT_API >= 3
+    set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_send_receive, true);
+#else
+    set_transport_mode(AUDIO_IO_JACK_MANAGER::Transport_none, false);
+#endif
+  }
+
+  if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive ||
+      mode_rep == AUDIO_IO_JACK_MANAGER::Transport_receive)
+    helper_print_transport_state("start");
+}
+
+void AUDIO_IO_JACK_MANAGER::exec_helper_clean_transport(void)
+{
+  if (mode_rep == AUDIO_IO_JACK_MANAGER::Transport_send_receive ||
+      mode_rep == AUDIO_IO_JACK_MANAGER::Transport_receive)
+    helper_print_transport_state("stop");
 }
 
 /**
@@ -994,6 +1082,8 @@ int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
 
   engine_repp = engine;
   engine->init_engine_state();
+
+  exec_helper_setup_transport();
 
   exit_request_rep = false;
   stop_request_rep = 0;
@@ -1078,6 +1168,7 @@ int AUDIO_IO_JACK_MANAGER::exec(ECA_ENGINE* engine, ECA_CHAINSETUP* csetup)
     deactivate_server_connection();
   }
 
+  exec_helper_clean_transport();
   DEBUG_CFLOW_STATEMENT(cerr << "jack_exec: deactivated" << endl);
 
   pthread_mutex_lock(&engine_mod_lock_rep);
