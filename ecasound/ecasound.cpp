@@ -531,6 +531,8 @@ void ecasound_main_loop_batch(ECASOUND_RUN_STATE* state)
       
       /* note: sleep for one second and let the NetECI thread
        *       access the ECA_CONTROL object for a while */
+      /* FIXME: a proper wait mechanism should be implemented
+       *        instead of waking up continuously after sleep */
       kvu_sleep(1, 0);
     }
     
