@@ -504,8 +504,6 @@ void ECA_ENGINE::check_command_queue(void)
       case ep_exit:
 	{
 	  edit_lock_rep = true;
-	  if (status() == engine_status_running || 
-	      status() == engine_status_finished) request_stop();
 	  impl_repp->command_queue_rep.clear();
 	  ECA_LOG_MSG(ECA_LOGGER::system_objects,"ecasound_queue: exit!");
 	  driver_repp->exit();
