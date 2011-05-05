@@ -367,6 +367,8 @@ static int eca_jack_process_callback(jack_nframes_t nframes, void *arg)
 
   if (current->exit_request_rep == 1 || current->shutdown_request_rep == 1) { 
     DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_PROCESS: after shutdown/exit!!!" << endl); 
+    if (current->exit_request_rep)
+      eca_jack_process_mute(nframes, current);
     return 0;
   }
 
