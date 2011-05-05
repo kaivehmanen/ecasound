@@ -927,7 +927,8 @@ void ECA_ENGINE::request_stop(bool drain)
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-	      std::string("Request stop") + (drain ? std::string(" (drain)") : std::string()));
+	      std::string("Request stop (") + 
+	      (drain ? std::string("drain") : std::string("no-drain")) + ")");
 
   driver_repp->stop(drain);
 }
