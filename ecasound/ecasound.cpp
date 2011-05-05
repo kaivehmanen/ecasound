@@ -553,8 +553,12 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
     state->retval = ECASOUND_RETVAL_INIT_FAILURE;
   }
   else {
+    bool jack_defaults_set = false;
     cline.begin();
     while(cline.end() != true) {
+
+      /* libecasound options we also parse:
+       * ---------------------------------- */
 
       if (cline.current() == "-o:stdout" ||
 	  cline.current() == "stdout") {
@@ -569,6 +573,16 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 	/* pass option to libecasound */
 	clineout->push_back(cline.current());
       } 
+
+      else if (cline.current().compare(0, 8, "-G:jack,") == 0) {
+	/* see action at the end of function */
+	jack_defaults_set = true;
+	/* pass option to libecasound */
+	clineout->push_back(cline.current());
+      } 
+
+      /* ecasound frontend specific options:
+       * ----------------------------------- */
 
       else if (cline.current() == "-c") {
 	state->interactive_mode = true;
@@ -657,6 +671,15 @@ void ecasound_parse_command_line(ECASOUND_RUN_STATE* state,
 
       cline.next();
     }
+
+    if (jack_defaults_set != true &&
+	state->interactive_mode != true) {
+      /* having JACK transport support enabled in batchmode can 
+       * be very confusing to users */
+      clineout->push_back("-G:jack,ecasound,notransport");
+    }
+
+
   }
 }
 

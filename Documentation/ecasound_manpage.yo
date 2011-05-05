@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound)
        (1)
-       (18.08.2010)
+       (05.05.2011)
        ()
        (Multimedia software)
 
@@ -463,8 +463,13 @@ If 'operation_mode' is "notransport",  ecasound will ignore
 any transport state changes in the JACK-system; in mode 
 "send" it will send all start, stop and position-change events to 
 other JACK clients; in mode "recv" ecasound will follow JACK start, 
-stop and position-change events; and mode "sendrecv" (the default) 
-which is a combination of the two previous modes.
+stop and position-change events; and mode "sendrecv" which is 
+a combination of the two previous modes.
+
+If not explictly set, in interactive mode (bf('-c') option), the
+default mode is "sendrecv", while in batchmode default is
+"notransport". In both cases the mode can be changed with bf(-G)
+option as described above.
 
 More details about ecasound's JACK support can be found
 from Ecasound User's Guide.
