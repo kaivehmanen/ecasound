@@ -5,9 +5,11 @@
 About the version numbers... "vX.Y[.Z[.R]][+extraT]" :
 ------------------------------------------------------
 
-  X = major version  - incremented after major redesigns
-  Y = minor version  - incremented when new features are added
-  Z = micro version  - incremented if major.minor version is not 
+  X = major version  - incremented after major redesigns and/or major
+      	    	       new features
+  Y = minor version  - incremented when new features are added and/or
+      	    	       changes in core code that impact many yse-cases
+  Z = micro version  - incremented if major.minor version is not
 		       modified (optional)
   R = revision       - urgent fixes to planned releases (optional)
 
