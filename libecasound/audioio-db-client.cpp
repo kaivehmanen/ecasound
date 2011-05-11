@@ -2,7 +2,7 @@
 // audioio-db-client.cpp: Client class for double-buffering providing 
 //                        additional layer of buffering for objects
 //                        derived from AUDIO_IO.
-// Copyright (C) 2000-2005,2009 Kai Vehmanen
+// Copyright (C) 2000-2005,2009,2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -258,7 +258,9 @@ SAMPLE_SPECS::sample_pos_t AUDIO_IO_DB_CLIENT::seek_position(SAMPLE_SPECS::sampl
     restore_db_server_state(was_running);
   }
 
-  return AUDIO_IO_PROXY::seek_position(res);
+  /* note: important that we override the AUDIO_IO_PROXY
+   *       default implementation as it does the wrong thing */
+  return AUDIO_IO::seek_position(res);
 }
 
 /**
