@@ -1,3 +1,7 @@
+2011-05-11  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+        * library interface version 23:0:0 frozen (2.8.0 release)
+
 2011-05-04  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
         * eca-engine.h (Engine_command): added 'ep_stop_with_drain'
