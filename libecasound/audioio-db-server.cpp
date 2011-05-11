@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-db-server.cpp: Audio i/o engine serving db clients.
-// Copyright (C) 2000-2005,2009 Kai Vehmanen
+// Copyright (C) 2000-2005,2009,2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -186,7 +186,7 @@ void AUDIO_IO_DB_SERVER::start(void)
  */
 void AUDIO_IO_DB_SERVER::stop(void)
 { 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "stop");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "stop requested");
   stop_request_rep.set(1);
 }
 
@@ -567,6 +567,7 @@ void AUDIO_IO_DB_SERVER::io_thread(void)
       stop_request_rep.set(0);
       running_rep.set(0);
       full_rep.set(0);
+      ECA_LOG_MSG(ECA_LOGGER::system_objects, "stop complete");
       signal_stop();
     }
     else {
