@@ -318,7 +318,7 @@ void AUDIO_IO_DB_CLIENT::start_io(void)
   /* note: child may have changed its position after 
    *       start_io() is issued (via AUDIO_IO_PROXY::start_io() */
 
-  if (child()->supports_seeking() != true) {
+  if (child()->supports_seeking() == true) {
     bool was_running = pause_db_server_if_running();
 
     set_position_in_samples(child()->position_in_samples());
