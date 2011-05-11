@@ -40,17 +40,22 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-xxyy2011 (v2.8.?) -** stable release **-
+11052011 (v2.8.0) -** stable release **-
 	 - note: NEWS format changed, see 01012011 meta entry below
 	 - changed: do not use deprecated  jack_client_new() 
 	 - changed: simplified signal handling for not-so-POSIX
-	   platforms 
+	            platforms 
 	 - fixed: seeks with -klg did not work
 	 - fixed: bug in int-float conversions
 	 - fixed: some false DBC warnings removed
 	 - fixed: bug in setting jack_multi channel count
 	 - fixed: bug in signal handling caused rubyecasound scripts
- 	   to fail (e.g. ecasound's own stresstest.rb)
+ 	          to fail (e.g. ecasound's own stresstest.rb)
+	 - fixed: at end of playback, properly wait until all buffered
+	          samples have been played out to ALSA devices
+	 - fixed: bug with live seeks and -z:db buffering; caused 
+	   	  problems to e.g. JACK transport slaving and 
+		  live seeks (repositioning without stopping transport)
 01012011 meta: notes on provided change information in this file
 	 - the release entries will be shorter from now on, only
 	   listing the affected features (e.g. which objects), 

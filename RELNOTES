@@ -1,9 +1,10 @@
-subject: Ecasound 2.8.y released
+subject: Ecasound 2.8.0 released
 
 1. Summary of changes in this release
 -------------------------------------
 
-TBD
+Important bugfix has been made to sample conversion routines. Many other
+minor bugs have been also fixed.
 
 2. What is Ecasound?
 --------------------
@@ -28,10 +29,10 @@ under the LGPL.
 
 * The int-float conversion routines have been modified to be symmetric 
   (previously asymmetric). As this impacts all use-cases involving fixed
-  point audio, the minor version was bumped to reflect the change.
+  point audio, the release version was bumped to 2.8 to reflect the change.
   Ecasound now scales with 2^N for both int-to-float and float-to-int.
   For 0dBFS signals created in floating point domain, and normalized
-  to [-1,1] range, the positive values are clipped just before 0dbFS to
+  to [-1,1] range, the positive values are limited just before 0dbFS to
   avoid overflow (positive values exceeding 2^N-1).
 
   Pointers to how other projects handle this issue:
@@ -44,8 +45,9 @@ under the LGPL.
     - Discussion around the topic on JACK devel list:
       http://comments.gmane.org/gmane.comp.audio.jackit/20499
 
-* Bugfixes to loop objects, jack_multi, false DBC warnings, seek 
-  support for -klkg, ecasound-ruby hangs.
+* Bugfixes to loop objects, jack_multi, JACK transport support, false runtime
+  DBC warnings, seek support for -klkg, ecasound-ruby hangs and ALSA output.
+  Following bugtracker items closed:
     - http://sourceforge.net/tracker/?func=detail&aid=2013827&group_id=4605&atid=104605
 
 * Signal handling has been simplified for not-so-POSIX platforms. For
@@ -55,7 +57,11 @@ under the LGPL.
   The old pause() based kludge has been removed from the codebase. For 
   many, if not all, users this has no practical impact.
 
-30b9fbbcfbff9e235ae910bb5746e4f875d381cb
+* JACK transport is now disabled by default in batchmode. In interactive
+  mode ('-c' option), the default is still 'sendrecv'. Ecasound now also 
+  provides better feedback about transport related events. Without graphical 
+  feedback, the interaction between JACK and Ecasound has been a common
+  source of user confusion.
 
 For full list of changes, see git commit history.
  - http://www.eca.cx/ecasound/history.php
@@ -63,7 +69,11 @@ For full list of changes, see git commit history.
 4. Interface and configuration file changes in 2.8 series
 ---------------------------------------------------------
 
-TBD
+Default JACK transport mode is now "notransport" (do not send nor react to
+JACK transport state changes) when running in batchmode. Interactive
+mode (when started with '-c') still defaults to "sendrecv" as before. Note
+that the transport mode can always be explicitly set by passing '-G'
+option (see ecasound(1) man page for details).
 
 5. Contributors to 2.8 series
 -----------------------------
@@ -74,12 +84,13 @@ Patches - Accepted code, documentation and build system changes
 Extracted with 'git-shortlog -s':
 
 v2.8.0:
-TBD
+     1  Alessandro Ghedini
+    39  Kai Vehmanen
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.8.NEXT
+v2.8.0
   * Joel Roth (3)
       wrong sample type displayed for loop objects
       incorrect channel count for jack_multi objects
@@ -90,15 +101,13 @@ v2.8.NEXT
       problems of asymmetry in int-float conversions
   * Alessandro Ghedini (1)
       signal handling bug caused problems to ecasound-ruby apps
-  * foo (1)
-      TBD
+  * Doug F. (1)
+      incomplete playback to ALSA outputs
  
 Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.8.0:
-  * foo (1)
-      TBD
+None.
 
 6. Links and files
 ------------------
@@ -110,8 +119,8 @@ Web site (and mirrors):
 
 Source package:
 	http://eca.cx/ecasound/download.php
-	ecasound-2.x.y.tar.gz, md5sum:
-	TBD
+	ecasound-2.8.0.tar.gz, md5sum:
+	<to-be-set-in-announcement-mail>
 
 List of distributions with maintained Ecasound support:
 	See http://eca.cx/ecasound/download.php
