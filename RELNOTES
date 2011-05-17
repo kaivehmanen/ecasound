@@ -1,10 +1,9 @@
-subject: Ecasound 2.8.0 released
+subject: Ecasound 2.8.0+dev released
 
 1. Summary of changes in this release
 -------------------------------------
 
-Important bugfix has been made to sample conversion routines. Many other
-minor bugs have been also fixed.
+TBD
 
 2. What is Ecasound?
 --------------------
@@ -24,9 +23,13 @@ Limited support for Windows is available through Cygwin. Ecasound is
 licensed under the GPL. The Ecasound Control Interface (ECI) is licensed
 under the LGPL.
 
-3. Changes in 2.8.x series
---------------------------
+3. Changes in 2.8 series
+------------------------
 
+v2.8.0+dev:
+* TBD
+
+v2.8.0:
 * The int-float conversion routines have been modified to be symmetric 
   (previously asymmetric). As this impacts all use-cases involving fixed
   point audio, the release version was bumped to 2.8 to reflect the change.
@@ -69,6 +72,7 @@ For full list of changes, see git commit history.
 4. Interface and configuration file changes in 2.8 series
 ---------------------------------------------------------
 
+2.8.0:
 Default JACK transport mode is now "notransport" (do not send nor react to
 JACK transport state changes) when running in batchmode. Interactive
 mode (when started with '-c') still defaults to "sendrecv" as before. Note
@@ -119,7 +123,7 @@ Web site (and mirrors):
 
 Source package:
 	http://eca.cx/ecasound/download.php
-	ecasound-2.8.0.tar.gz, md5sum:
+	ecasound-2.8.0+dev.tar.gz, md5sum:
 	<to-be-set-in-announcement-mail>
 
 List of distributions with maintained Ecasound support:
