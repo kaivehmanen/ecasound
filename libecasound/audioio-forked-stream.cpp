@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-forked-streams.cpp: Helper class providing routines for
 //                             forking for piped input/output.
-// Copyright (C) 2000-2004,2006,2008 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -79,6 +79,20 @@ static int afs_run_exec(const string& command, const string& filename)
   }
   args[p] = 0;
   return execvp(temp[0].c_str(), const_cast<char**>(args));
+}
+
+static int afs_fd_set_cloexec(int fd)
+{
+  int flags;
+  flags = fcntl(fd, F_GETFD);
+  if (flags >= 0) {
+    flags |= FD_CLOEXEC;
+    if (fcntl(fd, F_SETFD, flags) >= 0)
+      return 0;
+  }
+  ECA_LOG_MSG(ECA_LOGGER::info, "unable to set FD_CLOEXEC: " +
+	      std::string(strerror(errno)));
+  return -1;
 }
 
 AUDIO_IO_FORKED_STREAM::~AUDIO_IO_FORKED_STREAM(void)
@@ -230,6 +244,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
 	pid_of_parent_rep = ::getpid();
 	::close(fpipes[1]);
 	fd_rep = fpipes[0];
+	afs_fd_set_cloexec(fd_rep);
 	if (wait_for_child() == true)
 	  last_fork_rep = true;
 	else
@@ -300,8 +315,10 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
     fd_rep = 0;
     if (wait_for_child() == true)
       fd_rep = ::open(tmpfile_repp.c_str(), O_RDONLY);
-    if (fd_rep > 0)
+    if (fd_rep > 0) {
       last_fork_rep = true;
+      afs_fd_set_cloexec(fd_rep);
+    }
   }
 }
 
@@ -344,6 +361,12 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
       pid_of_parent_rep = ::getpid();
       ::close(fpipes[0]);
       fd_rep = fpipes[1];
+
+      /* make sure in case the parent forks again, the fd_rep
+       * is closed -> otherwise the mechanism to signal end-of-stream
+       * gets broken */
+      afs_fd_set_cloexec(fd_rep);
+
       if (wait_for_child() == true)
 	last_fork_rep = true;
       else
@@ -374,6 +397,8 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
     /* close the pipe between this process and the forked child
      * process, should terminate the forked application -> see
      * waitpid() below */
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"closing pipe handle for: " + object_rep);
     ::close(fd_rep);
     fd_rep = -1;
   }
@@ -400,6 +425,9 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
      *       the same as used for starting the child */
     int flags = 0;
     int status = 0;
+
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"waitpid() for: " + object_rep);
     int res = waitpid(pid_of_child_rep, &status, flags);
 
     if (res == pid_of_child_rep) {
@@ -413,9 +441,9 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
   }
 
   if (pid_of_child_rep > 0) {
-    /* wait didn't work, terminate with SIGTERM to be sure */
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Sending SIGTERM to child process: "
-		+ object_rep);
+    /* unable to use wait(), terminating with a signal */
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, "Child not responding, sending SIGTERM: " +
+		object_rep);
     kill(pid_of_child_rep, SIGTERM);
     pid_of_child_rep = 0;
   }
