@@ -27,7 +27,8 @@ under the LGPL.
 ------------------------
 
 v2.8.0+dev:
-* TBD
+* Bugfix to a bugfix. jack_multi did not work correctly when connecting
+  to only one JACK port (regression in 2.8.0).
 
 v2.8.0:
 * The int-float conversion routines have been modified to be symmetric 
