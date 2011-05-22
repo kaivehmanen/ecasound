@@ -50,6 +50,11 @@
 
 #include <alsa/asoundlib.h>
 
+/* Linux-kernel specific errnos */
+#ifndef ESTRPIPE
+#define ESTRPIPE 86
+#endif
+
 #include <kvu_dbc.h>
 #include <kvu_message_item.h>
 #include <kvu_numtostr.h>
