@@ -1,9 +1,9 @@
-subject: Ecasound 2.8.0+dev released
+subject: Ecasound 2.8.1 released
 
 1. Summary of changes in this release
 -------------------------------------
 
-TBD
+A set of bugfixes including a jack_multi regression in 2.8.0.
 
 2. What is Ecasound?
 --------------------
@@ -26,9 +26,9 @@ under the LGPL.
 3. Changes in 2.8 series
 ------------------------
 
-v2.8.0+dev:
+v2.8.1:
 * Bugfix to a bugfix. jack_multi did not work correctly when connecting
-  to only one JACK port (regression in 2.8.0).
+  to only one JACK port (regression in 2.8.0). Minor other bugfixes.
 
 v2.8.0:
 * The int-float conversion routines have been modified to be symmetric 
@@ -88,6 +88,8 @@ Patches - Accepted code, documentation and build system changes
 
 Extracted with 'git-shortlog -s':
 
+v2.8.1:
+     4  Kai Vehmanen
 v2.8.0:
      1  Alessandro Ghedini
     39  Kai Vehmanen
@@ -124,7 +126,7 @@ Web site (and mirrors):
 
 Source package:
 	http://eca.cx/ecasound/download.php
-	ecasound-2.8.0+dev.tar.gz, md5sum:
+	ecasound-2.8.1.tar.gz, md5sum:
 	<to-be-set-in-announcement-mail>
 
 List of distributions with maintained Ecasound support:

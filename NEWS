@@ -40,6 +40,10 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
+22052011 (v2.8.1) -** stable release **-
+	 - fixed: jack_multi did not work correctly when connecting
+	          to a single port
+         - fixed: bugfix to mp3/ogg/aac output
 11052011 (v2.8.0) -** stable release **-
 	 - note: NEWS format changed, see 01012011 meta entry below
 	 - changed: do not use deprecated  jack_client_new() 
