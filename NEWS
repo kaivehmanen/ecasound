@@ -40,6 +40,8 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
+????2011 (v2.8.2) -** stable release **-
+	 - fixed: resample, commas in filenames not handled correctly
 22052011 (v2.8.1) -** stable release **-
 	 - fixed: jack_multi did not work correctly when connecting
 	          to a single port
