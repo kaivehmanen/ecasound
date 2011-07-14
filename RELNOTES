@@ -1,9 +1,9 @@
-subject: Ecasound 2.8.1 released
+subject: Ecasound 2.8.1+dev released
 
 1. Summary of changes in this release
 -------------------------------------
 
-A set of bugfixes including a jack_multi regression in 2.8.0.
+TBD
 
 2. What is Ecasound?
 --------------------
@@ -97,6 +97,10 @@ v2.8.0:
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+v2.8.2
+  * Svilen Dobrev (1)
+      commas-in-filenames bug with resample
+v2.8.1
 v2.8.0
   * Joel Roth (3)
       wrong sample type displayed for loop objects
