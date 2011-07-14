@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // audioio-proxy.cpp: Generic interface for objects that act as
 //                    proxies for other objects of type AUDIO_IO.
-// Copyright (C) 2002,2005,2008 Kai Vehmanen
+// Copyright (C) 2002,2005,2008,2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -165,8 +165,14 @@ std::string AUDIO_IO_PROXY::child_params_as_string(int first, std::vector<std::s
   int last = params->size();
   string res;
   for (int n = first; n <= last; n++) {
-    /* FIXME: should quote the commas */
-    res += get_parameter(n);
+    std::string v = get_parameter(n);
+
+    /* note: as we are passing a filename plus optional params, we
+     *       need to escape any commans in the filename */
+    if (v.find(",") != string::npos)
+      v = "\"" + v + "\"";
+
+    res += v;
     if (n != last)
       res += ",";
   }
