@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_ladspa.cpp: Wrapper class for LADSPA plugins
-// Copyright (C) 2000-2004 Kai Vehmanen
+// Copyright (C) 2000-2004,2011 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -145,7 +145,7 @@ void EFFECT_LADSPA::parse_parameter_hint_information(int portnum, int paramnum, 
    */
 
   /* parameter name */
-  pd->description = get_parameter_name(paramnum);
+  pd->description = string(plugin_desc->PortNames[portnum]);
 
   /* upper and lower bounds */
   if (LADSPA_IS_HINT_BOUNDED_BELOW(hintdescriptor)) {
