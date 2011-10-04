@@ -22,6 +22,7 @@ class ECA_STATIC_OBJECT_MAPS {
   static void register_audio_io_rt_objects(ECA_OBJECT_MAP* objmap);
   static void register_audio_io_nonrt_objects(ECA_OBJECT_MAP* objmap);
   static void register_chain_operator_objects(ECA_OBJECT_MAP* objmap);
+  static void register_lv2_plugin_objects(ECA_OBJECT_MAP* objmap);
   static void register_ladspa_plugin_objects(ECA_OBJECT_MAP* objmap);
   static void register_ladspa_plugin_id_objects(ECA_OBJECT_MAP* objmap);
   static void register_preset_objects(ECA_PRESET_MAP* objmap);

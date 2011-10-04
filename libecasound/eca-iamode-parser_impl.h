@@ -127,6 +127,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     // --
     ec_ladspa_register,
     ec_preset_register,
+	ec_lv2_register,
     // --
     ec_ctrl_add,
     ec_ctrl_describe,
@@ -157,6 +158,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_map_preset_list,
     ec_map_ladspa_list,
     ec_map_ladspa_id_list,
+	ec_map_lv2_list,
     ec_map_ctrl_list,
     // --
     ec_dump_target,

@@ -52,6 +52,8 @@
 #include "audiofx_mixing.h"
 #include "audiofx_timebased.h"
 #include "audiogate.h"
+#include "audiofx_lv2.h"
+#include "audiofx_lv2_world.h"
 #include "audiofx_ladspa.h"
 
 #include "generic-controller.h"
@@ -131,6 +133,7 @@ using std::vector;
  */
 
 static vector<EFFECT_LADSPA*> eca_create_ladspa_plugins(const string& fname);
+static void eca_import_lv2_plugins(ECA_OBJECT_MAP* objmap);
 static void eca_import_ladspa_plugins(ECA_OBJECT_MAP* objmap, bool reg_with_id);
 
 #ifdef ECA_ENABLE_AUDIOIO_PLUGINS
@@ -369,6 +372,15 @@ void ECA_STATIC_OBJECT_MAPS::register_chain_operator_objects(ECA_OBJECT_MAP* obj
   objmap->register_object("gc", "^gc$", new TIME_CROP_GATE());
   objmap->register_object("ge", "^ge$", new THRESHOLD_GATE());
   objmap->register_object("gm", "^gm$", new MANUAL_GATE());
+#endif
+}
+
+void ECA_STATIC_OBJECT_MAPS::register_lv2_plugin_objects(ECA_OBJECT_MAP* objmap)
+{
+#ifndef ECA_DISABLE_EFFECTS
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "register_lv2_plugin_objects()");
+
+  eca_import_lv2_plugins(objmap);
 #endif
 }
 
@@ -631,4 +643,23 @@ static vector<EFFECT_LADSPA*> eca_create_ladspa_plugins(const string& fname)
 #endif
   
   return plugins;
+}
+
+
+static void eca_import_lv2_plugins(ECA_OBJECT_MAP* objmap)
+{
+#if !defined(ECA_DISABLE_EFFECTS) && defined(ECA_USE_LIBLILV)
+	LilvWorld* world=ECA_LV2_WORLD::World();
+	lilv_world_load_all(world);
+	const LilvPlugins* plugins=lilv_world_get_all_plugins(world);
+	LILV_FOREACH(plugins,i,plugins) {
+		const LilvPlugin* p=lilv_plugins_get(plugins,i);
+		try {
+		EFFECT_LV2* eff=new EFFECT_LV2(p);
+		objmap->register_object(eff->unique(), 
+			"^" + kvu_string_regex_meta_escape(eff->unique()) + "$",
+			eff);
+		} catch (ECA_ERROR&) { }
+    }
+#endif
 }

@@ -337,12 +337,14 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   void cop_register(void);
   void preset_register(void); 
   void ladspa_register(void);
+  void lv2_register(void);
   void ctrl_register(void);
 
   void operator_descriptions_helper(const ECA_OBJECT_MAP& arg, std::string* result);
   void cop_descriptions(void);
   void preset_descriptions(void);
   void ladspa_descriptions(bool use_id);
+  void lv2_descriptions(void);
   void ctrl_descriptions(void);
 
   /*@}*/

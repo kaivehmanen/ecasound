@@ -59,6 +59,7 @@
 #include "generic-controller.h"
 #include "eca-chainop.h"
 #include "audiofx_ladspa.h"
+#include "audiofx_lv2.h"
 #include "preset.h"
 #include "sample-specs.h"
 #include "jack-connections.h"
@@ -771,12 +772,14 @@ void ECA_CONTROL::action(int action_id)
   case ec_cop_register: { cop_register(); break; }
   case ec_preset_register: { preset_register(); break; }
   case ec_ladspa_register: { ladspa_register(); break; }
+  case ec_lv2_register: { lv2_register(); break; }
   case ec_ctrl_register: { ctrl_register(); break; }
 
   case ec_map_cop_list: { cop_descriptions(); break; }
   case ec_map_preset_list: { preset_descriptions(); break; }
   case ec_map_ladspa_list: { ladspa_descriptions(false); break; }
   case ec_map_ladspa_id_list: { ladspa_descriptions(true); break; }
+  case ec_map_lv2_list: { lv2_descriptions(); break; }
   case ec_map_ctrl_list: { ctrl_descriptions(); break; }
 
   // ---
@@ -1341,6 +1344,7 @@ void ECA_CONTROL::preset_register(void)
   set_last_string(result);
 }
 
+
 void ECA_CONTROL::ladspa_register(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::info, "Registered LADSPA plugins:\n");
@@ -1369,6 +1373,36 @@ void ECA_CONTROL::ladspa_register(void)
 #endif
   set_last_string(result);
 }
+
+void ECA_CONTROL::lv2_register(void)
+{
+  ECA_LOG_MSG(ECA_LOGGER::info, "Registered LV2 plugins:\n");
+  string result;
+#if !defined(ECA_DISABLE_EFFECTS) && defined(ECA_USE_LIBLILV)
+  const list<string>& objlist = ECA_OBJECT_FACTORY::lv2_plugin_map().registered_objects();
+  list<string>::const_iterator p = objlist.begin();
+  int count = 1;
+  while(p != objlist.end()) {
+    const EFFECT_LV2* q = dynamic_cast<const EFFECT_LV2*>(ECA_OBJECT_FACTORY::lv2_plugin_map().object(*p));
+    if (q != 0) {
+      string temp = "\n\t-elv2:" + q->unique() + ",";
+      int params = q->number_of_params();
+      for(int n = 0; n < params; n++) {
+	temp += "'" + q->get_parameter_name(n + 1) + "'";
+	if (n + 1 < params) temp += ",";
+      }
+      
+      result += kvu_numtostr(count) + ". " + q->name() + "" + temp;
+      result += "\n";
+
+      ++count;
+    }
+    ++p;
+  }
+#endif
+  set_last_string(result);
+}
+
 
 void ECA_CONTROL::ctrl_register(void)
 {
@@ -1508,6 +1542,17 @@ void ECA_CONTROL::ladspa_descriptions(bool use_id)
   else {
     operator_descriptions_helper(ECA_OBJECT_FACTORY::ladspa_plugin_map(), &result);
   }
+  set_last_string(result);
+}
+
+/**
+ * Prints the description of all LV2 plugins and 
+ * their parameters.
+ */
+void ECA_CONTROL::lv2_descriptions()
+{
+  string result;
+  operator_descriptions_helper(ECA_OBJECT_FACTORY::lv2_plugin_map(), &result);
   set_last_string(result);
 }
 

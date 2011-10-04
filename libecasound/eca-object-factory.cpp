@@ -70,6 +70,7 @@ using std::string;
 ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::audio_io_rt_map_repp = 0;
 ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::audio_io_nonrt_map_repp = 0;
 ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::chain_operator_map_repp = 0;
+ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::lv2_plugin_map_repp = 0;
 ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::ladspa_plugin_map_repp = 0;
 ECA_OBJECT_MAP* ECA_OBJECT_FACTORY::ladspa_plugin_id_map_repp = 0;
 ECA_PRESET_MAP* ECA_OBJECT_FACTORY::preset_map_repp = 0;
@@ -138,6 +139,31 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::chain_operator_map(void)
     }
   }
   return *chain_operator_map_repp;
+}
+
+/**
+ * Returns an object map containing all registered
+ * LADSPA plugin types.
+ * 
+ *
+ * All stored objects are derived from EFFECT_LADSPA.
+ *
+ * @see ladspa_plugin_id_map()
+ */
+ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::lv2_plugin_map(void) 
+{
+  if (lv2_plugin_map_repp == 0) {
+    KVU_GUARD_LOCK guard(&ECA_OBJECT_FACTORY::lock_rep);
+    if (lv2_plugin_map_repp == 0) {
+      lv2_plugin_map_repp = new ECA_OBJECT_MAP();
+      DBC_CHECK(lv2_plugin_map_repp != 0);
+
+      /* note: matching LADSPA unique names must be case sensitive */
+      lv2_plugin_map_repp->toggle_case_sensitive_expressions(true);
+      ECA_STATIC_OBJECT_MAPS::register_lv2_plugin_objects(lv2_plugin_map_repp);
+    }
+  }
+  return *lv2_plugin_map_repp;
 }
 
 /**
@@ -445,6 +471,59 @@ CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_ladspa_plugin (const string& argu)
   }
   return 0;
 }
+
+
+/**
+ * Creates a new LV2 plugin.
+ *
+ * @param arg a formatted string describing an LV2 object, see ecasound 
+ *            manuals for detailed info
+ * @return the created object or 0 if an invalid format string was given 
+ *         as the argument
+ *
+ * @pre argu.size() > 0
+ * @pre argu[0] == '-'
+ */
+CHAIN_OPERATOR* ECA_OBJECT_FACTORY::create_lv2_plugin (const string& argu)
+{
+  // --------
+  DBC_REQUIRE(argu.size() > 0);
+  DBC_REQUIRE(argu[0] == '-');
+  // --------
+
+  MESSAGE_ITEM otemp;
+  otemp.setprecision(3);
+  const CHAIN_OPERATOR* cop = 0;
+  string prefix = kvu_get_argument_prefix(argu);
+  if (prefix == "elv2") {
+    string unique = kvu_get_argument_number(1, argu);
+	cop = dynamic_cast<const CHAIN_OPERATOR*>(ECA_OBJECT_FACTORY::lv2_plugin_map().object(unique));
+    CHAIN_OPERATOR* new_cop = 0;
+    if (cop != 0) {
+      new_cop = dynamic_cast<CHAIN_OPERATOR*>(cop->new_expr());
+
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
+		  "Creating LV2-plugin \"" + new_cop->name() + "\"");
+
+      otemp << "Setting parameters: ";
+      for(int n = 0; n < new_cop->number_of_params(); n++) {
+	new_cop->set_parameter(n + 1, atof(kvu_get_argument_number(n + 2, argu).c_str()));
+	otemp << new_cop->get_parameter_name(n + 1) << " = ";
+	otemp << new_cop->get_parameter(n + 1);
+	if (n + 1 < new_cop->number_of_params()) otemp << ", ";
+      }
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, otemp.to_string());
+    }
+    else {
+      ECA_LOG_MSG(ECA_LOGGER::info, 
+		  "ERROR: Unable to find LV2 plugin \"" + unique + "\"");
+
+    }
+    return new_cop;
+  }
+  return 0;
+}
+
 
 /**
  * VST not currently actively supported due to licensing

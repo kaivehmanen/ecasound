@@ -429,6 +429,7 @@ void PRESET::parse_operator_option(const string& arg)
   cop = 0;
   cop = ECA_OBJECT_FACTORY::create_chain_operator(ps);
   if (cop == 0) cop = ECA_OBJECT_FACTORY::create_ladspa_plugin(ps);
+  if(cop == 0) cop=ECA_OBJECT_FACTORY::create_lv2_plugin(ps);
   if (cop != 0) {
     chains.back()->add_chain_operator(cop);
     chains.back()->selected_chain_operator_as_target();

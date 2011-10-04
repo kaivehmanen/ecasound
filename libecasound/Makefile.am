@@ -74,6 +74,8 @@ ecasound_audiofx_include =  \
 			audiogate.h \
 			audiofx_mixing.h \
 			audiofx_ladspa.h \
+			audiofx_lv2.h \
+			audiofx_lv2_world.h \
 			audio-stamp.h
 
 ecasound_preset_include = \
@@ -240,6 +242,8 @@ ecasound_audiofx_src =  audiofx.cpp \
 			audiogate.cpp \
 			audiofx_mixing.cpp \
 			audiofx_ladspa.cpp \
+			audiofx_lv2.cpp \
+			audiofx_lv2_world.cpp \
 			audio-stamp.cpp
 
 ecasound_preset_src =  	global-preset.cpp \

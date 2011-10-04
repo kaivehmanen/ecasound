@@ -329,6 +329,9 @@ static int eci_test_7(void)
   eci_command_r(handle, "map-ladspa-list");
   if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(1, "error in parsing map-ladspa-list"); }
 
+  eci_command_r(handle, "map-lv2-list");
+  if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(1, "error in parsing map-lv2-list"); }
+
   eci_command_r(handle, "int-cmd-list");
   if (eci_error_r(handle) != 0) { ECA_TEST_FAIL(2, "error in parsing int-cmd-list"); }
 

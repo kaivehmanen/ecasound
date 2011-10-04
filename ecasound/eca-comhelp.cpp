@@ -101,6 +101,7 @@ static const char* ecasound_parameter_help_rep =
 "     -ei:change-%             pitch shifter\n"
 "     -el:name,par1,...,parN   LADSPA-plugin 'name'\n"
 "     -eli:id,par1,...,parnN   LADSPA-plugin with numeric 'id'\n"
+"     -elv2:uri,par1,...,parN LV2-plugin 'uri'\n"
 "     -enm:threshold-level-%,pre-hold-time-msec,attack-time-msec,post-hold-time-msec,release-time-msec ...\n"
 "                              noise gate\n"
 "     -erc:from-channel,to-channel ...\n"

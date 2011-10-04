@@ -203,6 +203,11 @@ void ECA_OBJECT_FACTORY_TEST::do_run(void)
       ladspa_id_map.registered_objects().size()) {
       ECA_TEST_FAILURE("LADSPA plugin name and id maps have different number of plugins!");
   }
+  
+  ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - LV2-map");
+
+  ECA_OBJECT_MAP& lv2_map = ECA_OBJECT_FACTORY::lv2_plugin_map();
+  test_map<EFFECT_LADSPA>(lv2_map);
 
   ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - preset-map");
 

@@ -986,6 +986,7 @@ void ECA_CHAINSETUP_PARSER::interpret_chain_operator (const string& argu)
 
   CHAIN_OPERATOR* t = ECA_OBJECT_FACTORY::create_chain_operator(argu);
   if (t == 0) t = ECA_OBJECT_FACTORY::create_ladspa_plugin(argu);
+  if (t == 0) t=ECA_OBJECT_FACTORY::create_lv2_plugin(argu);
   if (t != 0) {
     if (csetup_repp->selected_chainids.size() == 1) {
       csetup_repp->add_chain_operator(t);

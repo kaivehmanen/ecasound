@@ -48,6 +48,7 @@ class ECA_OBJECT_FACTORY {
   static ECA_OBJECT_MAP& audio_io_rt_map(void);
   static ECA_OBJECT_MAP& audio_io_nonrt_map(void);
   static ECA_OBJECT_MAP& chain_operator_map(void);
+  static ECA_OBJECT_MAP& lv2_plugin_map(void);
   static ECA_OBJECT_MAP& ladspa_plugin_map(void);
   static ECA_OBJECT_MAP& ladspa_plugin_id_map(void);
   static ECA_PRESET_MAP& preset_map(void);
@@ -65,6 +66,7 @@ class ECA_OBJECT_FACTORY {
   static AUDIO_IO* create_loop_input(const std::string& argu, std::map<std::string,LOOP_DEVICE*>* loop_map);
   static CHAIN_OPERATOR* create_chain_operator (const std::string& arg);
   static CHAIN_OPERATOR* create_ladspa_plugin (const std::string& arg);
+  static CHAIN_OPERATOR* create_lv2_plugin (const std::string& arg);
   static GENERIC_CONTROLLER* create_controller (const std::string& arg);
 
   /*@}*/
@@ -93,6 +95,7 @@ class ECA_OBJECT_FACTORY {
   static ECA_OBJECT_MAP* audio_io_rt_map_repp;
   static ECA_OBJECT_MAP* audio_io_nonrt_map_repp;
   static ECA_OBJECT_MAP* chain_operator_map_repp;
+  static ECA_OBJECT_MAP* lv2_plugin_map_repp;
   static ECA_OBJECT_MAP* ladspa_plugin_map_repp;
   static ECA_OBJECT_MAP* ladspa_plugin_id_map_repp;
   static ECA_PRESET_MAP* preset_map_repp;
