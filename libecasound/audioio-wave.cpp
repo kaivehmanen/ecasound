@@ -295,7 +295,7 @@ void WAVEFILE::write_riff_header (void) throw(AUDIO_IO::SETUP_ERROR&)
   else 
 #endif
     if (fio_repp->get_file_length() > static_cast<off_t>(sizeof(riff_header_rep)))
-      riff_header_rep.size = little_endian_uint32(fio_repp->get_file_length() - sizeof(riff_header_rep));
+      riff_header_rep.size = little_endian_uint32(fio_repp->get_file_length() - 8);
   else
     riff_header_rep.size = little_endian_uint32(0);
 
