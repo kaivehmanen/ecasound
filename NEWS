@@ -40,8 +40,13 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-????2011 (v2.8.2) -** stable release **-
+????2012 (v2.8.2) -** stable release **-
+	 - added: LV2 support using liblilv [jeremysalwen]
 	 - fixed: resample, commas in filenames not handled correctly
+	 - fixed: bug in map-ladspa-list output, param names not
+	   	  printed out correctly
+         - fixed: bug in RIFF header generation, incorrect chunk
+	   	  size
 22052011 (v2.8.1) -** stable release **-
 	 - fixed: jack_multi did not work correctly when connecting
 	          to a single port

@@ -88,6 +88,8 @@ Patches - Accepted code, documentation and build system changes
 
 Extracted with 'git-shortlog -s':
 
+v2.8.2:
+     TBD
 v2.8.1:
      4  Kai Vehmanen
 v2.8.0:
@@ -100,6 +102,9 @@ Bug Hunting - Reports that led to bugfixes (items closed)
 v2.8.2
   * Svilen Dobrev (1)
       commas-in-filenames bug with resample
+  * Jeremy Salwen (1)
+      bug in map-ladspa-list output, param names not
+      printed out correctly
 v2.8.1
 v2.8.0
   * Joel Roth (3)
