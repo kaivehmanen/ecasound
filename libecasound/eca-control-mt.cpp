@@ -107,6 +107,12 @@ bool ECA_CONTROL_MT::is_running(void) const
   return ec_repp->is_running();
 }
 
+bool ECA_CONTROL_MT::is_started(void) const
+{
+  /* see note for is_running() */
+  return ec_repp->is_started();
+}
+
 bool ECA_CONTROL_MT::is_connected(void) const
 {
   /* see note for is_running() */

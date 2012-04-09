@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2009 Kai Vehmanen
+// Copyright (C) 1999-2009,2012 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -186,6 +186,7 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
 ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup) 
   : prepared_rep(false),
     running_rep(false),
+    started_rep(false),
     edit_lock_rep(false),
     finished_rep(false),
     outputs_finished_rep(0),
@@ -796,8 +797,6 @@ void ECA_ENGINE::stop_operation(bool drain)
 
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "stopping engine operation!");
 
-  running_rep = false;
-
   /* stop realtime devices */
   for (unsigned int adev_sizet = 0; adev_sizet != realtime_objects_rep.size(); adev_sizet++) {
     if (realtime_objects_rep[adev_sizet]->is_running() == true)
@@ -825,6 +824,9 @@ void ECA_ENGINE::stop_operation(bool drain)
 
   /* release chainsetup lock */
   csetup_repp->toggle_locked_state(false);
+
+  running_rep = false;
+  started_rep = false;
 
   /* signals wait_for_stop() that engine operation has stopped */
   signal_stop();
@@ -902,6 +904,7 @@ void ECA_ENGINE::request_start(void)
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Request start");
+  started_rep = true;
 
   // --
   // start the driver

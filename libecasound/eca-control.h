@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.h: ECA_CONTROL class
-// Copyright (C) 2009 Kai Vehmanen
+// Copyright (C) 2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -73,6 +73,7 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   /** @name ECA_CONTROL_MAIN subset */
 
   virtual bool is_running(void) const;
+  virtual bool is_started(void) const;
   virtual bool is_connected(void) const;
   virtual bool is_selected(void) const;
   virtual bool is_finished(void) const;

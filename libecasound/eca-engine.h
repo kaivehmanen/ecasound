@@ -172,6 +172,7 @@ class ECA_ENGINE {
 
   bool is_prepared(void) const;
   bool is_running(void) const;
+  bool is_started(void) const { return started_rep; }
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
   bool is_locked_for_editing(void) const { return(edit_lock_rep); }
 
@@ -202,6 +203,7 @@ private:
 
   bool prepared_rep;
   bool running_rep;
+  bool started_rep;
   bool was_running_rep;
   bool driver_local;
   bool edit_lock_rep;

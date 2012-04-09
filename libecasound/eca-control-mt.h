@@ -74,6 +74,7 @@ public:
   virtual void quit_async(void);
 
   virtual bool is_running(void) const;
+  virtual bool is_started(void) const;
   virtual bool is_connected(void) const;
   virtual bool is_selected(void) const;
   virtual bool is_finished(void) const;

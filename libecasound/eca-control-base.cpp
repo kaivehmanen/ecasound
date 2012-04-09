@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-control-base.cpp: Base class providing basic functionality
 //                       for controlling the ecasound library
-// Copyright (C) 1999-2004,2006,2008,2009 Kai Vehmanen
+// Copyright (C) 1999-2004,2006,2008,2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -244,14 +244,14 @@ int ECA_CONTROL::run(bool batchmode)
  * @see stop_on_condition()
  *
  * @pre is_engine_created() == true
- * @pre is_running() == true
+ * @pre is_started() == true
  * @post is_running() == false
  */
 void ECA_CONTROL::stop(void)
 {
   // --------
   DBC_REQUIRE(is_engine_created() == true);
-  DBC_REQUIRE(is_running() == true);
+  DBC_REQUIRE(is_started() == true);
   // --------
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing stopped");
@@ -459,6 +459,13 @@ bool ECA_CONTROL::is_selected(void) const { return selected_chainsetup_repp != 0
  * Returns true if processing engine is running.
  */
 bool ECA_CONTROL::is_running(void) const { return (is_engine_created() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
+
+/**
+ * Returns true if processing engine is running, or 
+ * has been requested to start running (which may still
+ * be pending).
+ */
+bool ECA_CONTROL::is_started(void) const { return (is_engine_created() == true && engine_repp->is_started() == true); } 
 
 /**
  * Returns true if engine has finished processing. Engine state is 

@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004,2006,2008,2009 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2009,2012 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1835,7 +1835,7 @@ bool ECA_CONTROL::cond_stop_for_editing(void)
 {
   bool was_running = false;
 
-  if (selected_chainsetup() == connected_chainsetup() && is_running() == true) {
+  if (selected_chainsetup() == connected_chainsetup() && is_started() == true) {
     engine_repp->command(ECA_ENGINE::ep_edit_lock, 0.0);
     was_running = true;
     stop_on_condition();
