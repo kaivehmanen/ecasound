@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (11.10.2009)
+       (12.04.2012)
        ()
        (Multimedia software)
 
@@ -67,6 +67,10 @@ startup are encountered. em([e])
 
 dit(stop, s)
 Stop processing. em([-])
+
+dit(stop-sync, s)
+Stop processing with a blocking call (do not return until engine has 
+actually stopped). em([-])
 
 dit(run)
 Like 'start' but blocks until processing is finished. Error string

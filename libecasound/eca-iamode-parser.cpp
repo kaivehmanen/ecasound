@@ -102,6 +102,7 @@ void ECA_IAMODE_PARSER::register_commands_misc(void)
   (*cmd_map_repp)["t"] = ec_start;
   (*cmd_map_repp)["stop"] = ec_stop;
   (*cmd_map_repp)["s"] = ec_stop;
+  (*cmd_map_repp)["stop-sync"] = ec_stop_sync;
   (*cmd_map_repp)["run"] = ec_run;
 
   (*cmd_map_repp)["debug"] = ec_debug;

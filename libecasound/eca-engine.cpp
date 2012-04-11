@@ -370,11 +370,22 @@ void ECA_ENGINE::command(complex_command_t ccmd)
  */
 void ECA_ENGINE::wait_for_stop(int timeout)
 {
-  int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_stop_mutex_repp, 
-				   &impl_repp->ecasound_stop_cond_repp, 
-				   timeout);
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-	      kvu_pthread_timed_wait_result(ret, "wait_for_stop"));
+  bool already_stopped = false;
+  pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
+  if (running_rep != true && started_rep != true)
+    already_stopped = true;
+  pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
+  if (already_stopped != true) {
+    int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_stop_mutex_repp, 
+				     &impl_repp->ecasound_stop_cond_repp, 
+				     timeout);
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		kvu_pthread_timed_wait_result(ret, "wait_for_stop"));
+  }
+  else {
+    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+		"already stopped, skipping wait");
+  }
 }
 
 /**

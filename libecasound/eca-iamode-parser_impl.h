@@ -12,6 +12,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_exit,
     ec_start,
     ec_stop,
+    ec_stop_sync,
     ec_run,
     ec_debug,
     ec_resource_file,

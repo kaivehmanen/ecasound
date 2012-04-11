@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control.cpp: Class for controlling the whole ecasound library
-// Copyright (C) 1999-2005,2008,2009 Kai Vehmanen
+// Copyright (C) 1999-2005,2008,2009,2012 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 // Copyright (C) 2009 Adam Linson
 //
@@ -437,7 +437,8 @@ void ECA_CONTROL::action(int action_id)
       // ECA_LOG_MSG(ECA_LOGGER::info, "Can't perform requested action; no chainsetup connected.");
       break; 
     }
-  case ec_stop: { if (is_running() == true) stop(); break; }
+  case ec_stop: { if (is_started() == true) stop(); break; }
+  case ec_stop_sync: { if (is_started() == true) stop_on_condition(); break; }
   case ec_run: 
     { 
       int result = run(); 

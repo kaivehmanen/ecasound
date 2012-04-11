@@ -277,7 +277,6 @@ void ECA_CONTROL::stop_on_condition(void)
   DBC_REQUIRE(is_engine_created() == true);
   // --------
 
-  if (engine_repp->status() != ECA_ENGINE::engine_status_running) return;
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing stopped (cond)");
   engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "Received stop-cond");
