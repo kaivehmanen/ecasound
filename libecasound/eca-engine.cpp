@@ -546,6 +546,7 @@ void ECA_ENGINE::check_command_queue(void)
 	// ---
 	// Section/chain (en/dis)abling commands.
 	// ---
+	// FIXME: implement as edit objects ->with ep_exec_edit
       case ep_c_select: { csetup_repp->selected_chain_index_rep = static_cast<size_t>(item.m.legacy.value); break; }
       case ep_c_muting: { chain_muting(); break; }
       case ep_c_bypass: { chain_processing(); break; }
