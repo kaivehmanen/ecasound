@@ -437,8 +437,8 @@ void ECA_CONTROL::action(int action_id)
       // ECA_LOG_MSG(ECA_LOGGER::info, "Can't perform requested action; no chainsetup connected.");
       break; 
     }
-  case ec_stop: { if (is_started() == true) stop(); break; }
-  case ec_stop_sync: { if (is_started() == true) stop_on_condition(); break; }
+  case ec_stop: { if (is_engine_created()) stop(); break; }
+  case ec_stop_sync: { if (is_engine_created()) stop_on_condition(); break; }
   case ec_run: 
     { 
       int result = run(); 

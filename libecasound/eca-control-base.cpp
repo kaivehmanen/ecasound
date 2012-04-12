@@ -244,14 +244,12 @@ int ECA_CONTROL::run(bool batchmode)
  * @see stop_on_condition()
  *
  * @pre is_engine_created() == true
- * @pre is_started() == true
  * @post is_running() == false
  */
 void ECA_CONTROL::stop(void)
 {
   // --------
   DBC_REQUIRE(is_engine_created() == true);
-  DBC_REQUIRE(is_started() == true);
   // --------
 
   ECA_LOG_MSG(ECA_LOGGER::subsystems, "Controller/Processing stopped");
