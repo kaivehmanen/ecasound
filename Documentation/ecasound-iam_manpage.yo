@@ -30,10 +30,11 @@ marked with [-]. Additionally, return type [e] marks an error condition.
 When an interactive mode command results in an error, an error string 
 explaining the condition is returned.
 
-manpagesection(Real-time commands)
+manpagesection(Limitations related to real-time control and modifications)
 It's not possible to use all interactive mode commands to modify and 
-control objects that belong to a connected chainsetup. Commands that 
-do NOT support this are: 
+control objects that belong to a connected chainsetup. Ecasound will automatically
+disconnect (and later try to reconnect) the chainsetup in case these commands
+are received while connected. Commands that have this limitation are:
 
 quote(
    cs-remove, cs-set-length, cs-set-length-samples, cs-toggle-loop, 
@@ -45,12 +46,38 @@ quote(
    ao-set-position,  ao-set-position-samples.
 )
 
-If one of these commands is issued when a chainsetup is connected,
-ecasound will first stop and disconnect the chainsetup, process
-the command, and the reconnect.
+The following commands may be used on with a connected chainsetup,
+but they require pausing the engine temporarily (if running) and this 
+can cause audible gaps to playback and recording. In practise
+this means it is currently not possible to add or remove chain
+operators in a gapless/seamless fashion. The affected commands:
 
-In addition, most non-modifying (const) commands work with 
-connected setups.
+quote(
+   cop-add, cop-remove,
+   ctrl-add, ctrl-remove
+)
+
+The following commands can be used on a connected chainsetup
+and when the engine is running (not a complete list but at 
+least these commands are supported):
+
+quote(
+   cop-set, copp-set, ctrlp-set,
+   c-bypass, c-muting, 
+   setpos, cs-set-position,
+   *-describe
+   *-deselect,
+   *-get,
+   *-list,
+   *-register
+   *-select,
+   *-selected,
+   *-status,
+   dump-*,
+   int-*,
+   jack-*,
+   map-*
+)
 
 manpagesection(GENERAL)
 startdit()
