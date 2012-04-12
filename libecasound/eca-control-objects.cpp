@@ -2237,14 +2237,13 @@ void ECA_CONTROL::select_controller(int controller_id)
   DBC_REQUIRE(controller_id > 0);
   // --------
 
-  bool was_running = cond_stop_for_editing();
-
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
-    selected_chainsetup_repp->chains[p]->select_controller(controller_id);
+    CHAIN *ch = selected_chainsetup_repp->chains[p];
+    if (controller_id < ch->number_of_controllers() + 1) {
+      selected_chainsetup_repp->chains[p]->select_controller(controller_id);
+    }
   }
-  
-  cond_start_after_editing(was_running);
 }
 
 /**
