@@ -121,12 +121,14 @@ class CHAIN : public ECA_AUDIO_POSITION {
   void add_controller(GENERIC_CONTROLLER* gcontroller);
   void remove_chain_operator(int op_index);
 
+  void bypass_operator(int op_index, int bypassed);
+
   void set_parameter(int op_index, int param_index, CHAIN_OPERATOR::parameter_t value);
 
   int number_of_chain_operators(void) const { return chainops_rep.size(); }
   int number_of_chain_operator_parameters(int index) const;
 
-  const CHAIN_OPERATOR* get_chain_operator(int index) const { return chainops_rep[index]; }
+  const CHAIN_OPERATOR* get_chain_operator(int index) const { return chainops_rep[index].cop; }
   const GENERIC_CONTROLLER* get_controller(int index) const { return gcontrollers_rep[index]; }
 
   int number_of_controllers(void) const { return gcontrollers_rep.size(); }
@@ -203,6 +205,12 @@ class CHAIN : public ECA_AUDIO_POSITION {
 
  private:
 
+  class COP_CONTAINER {
+  public:
+    CHAIN_OPERATOR* cop;
+    bool bypassed;
+  };
+
   bool initialized_rep;
   std::string chainname_rep;
   bool muted_rep;
@@ -210,7 +218,7 @@ class CHAIN : public ECA_AUDIO_POSITION {
   int in_channels_rep;
   int out_channels_rep;
 
-  std::vector<CHAIN_OPERATOR*> chainops_rep;
+  std::vector<struct COP_CONTAINER> chainops_rep;
   std::vector<GENERIC_CONTROLLER*> gcontrollers_rep;
 
   GENERIC_CONTROLLER* selected_controller_repp;
