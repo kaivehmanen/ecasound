@@ -1,3 +1,12 @@
+2012-04-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+=============================================================
+NOTE: as ecasound has full git/VCS history, tracking of 
+      added/removed functions will be stopped in this file
+      and in the future it is only recorded when the library
+      API has changed (details will be in git)
+=============================================================
+	
 2012-04-09  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* eca-engine.h (ECA_ENGINE): added is_started()
