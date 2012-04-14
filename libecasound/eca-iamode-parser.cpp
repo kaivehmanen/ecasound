@@ -269,6 +269,7 @@ void ECA_IAMODE_PARSER::register_commands_ao(void)
 void ECA_IAMODE_PARSER::register_commands_cop(void)
 {
   (*cmd_map_repp)["cop-add"] = ec_cop_add;
+  (*cmd_map_repp)["cop-bypass"] = ec_cop_bypass;
   (*cmd_map_repp)["cop-describe"] = ec_cop_describe;
   (*cmd_map_repp)["cop-remove"] = ec_cop_remove;
   (*cmd_map_repp)["cop-list"] = ec_cop_list;

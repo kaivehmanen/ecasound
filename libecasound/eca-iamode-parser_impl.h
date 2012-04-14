@@ -111,6 +111,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_ao_wave_edit,
     // --
     ec_cop_add,
+    ec_cop_bypass,
     ec_cop_describe,
     ec_cop_remove,
     ec_cop_list,

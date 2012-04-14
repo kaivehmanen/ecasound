@@ -2140,6 +2140,61 @@ void ECA_CONTROL::set_chain_operator_parameter(CHAIN_OPERATOR::parameter_t value
 }
 
 /**
+ * Parsers input parameter to bypass/mute/etc toggles.
+ * 
+ * if (str == "on") return 1
+ * if (str == "off") return 0
+ * if (str == "toggle") return -1
+ * return -1
+ */
+static int priv_onofftoggle_to_int(const string& str)
+{
+  if (str == "on") return 1;
+  if (str == "off") return 0;
+  return -1;
+}
+
+/**
+ * Modify chain operator bypass state
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_chain_operator() != 0
+ */
+void ECA_CONTROL::bypass_chain_operator(const string& arg)
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(get_chain_operator() != 0);
+  // --------
+
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_cop_bypass;
+  edit.cs_ptr = selected_chainsetup_repp;
+
+  int bypass_arg = priv_onofftoggle_to_int(arg);
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    /* note: unlike all other functions, first_selected_chain()
+     *       returns 0..N */
+    CHAIN *chain = selected_chainsetup_repp->chains[p];
+    edit.m.cop_bypass.chain = p + 1;
+    edit.m.cop_bypass.op = chain->selected_chain_operator();
+    edit.m.cop_bypass.bypass = bypass_arg;
+
+    execute_edit_on_selected(edit);
+
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "Set bypass of chain "
+		+ kvu_numtostr(p) + " op "
+		+ kvu_numtostr(edit.m.cop_bypass.op) + " to "
+		+ kvu_numtostr(bypass_arg));
+  }
+}
+
+/**
  * Returns the selected chain operator parameter value
  *
  * require:

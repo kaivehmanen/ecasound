@@ -673,6 +673,7 @@ void ECA_CONTROL::action(int action_id)
     // Chain operators
     // ---
   case ec_cop_add: { add_chain_operator(first_action_argument_as_string()); break; }
+  case ec_cop_bypass: { bypass_chain_operator(first_action_argument_as_string()); break; }
   case ec_cop_describe: 
     { 
       const CHAIN_OPERATOR *t = get_chain_operator();
@@ -1122,7 +1123,11 @@ string ECA_CONTROL::chain_operator_status(void) const
     msg << "Chain \"" << (*chain_citer)->name() << "\":\n";
     for(int p = 0; p < (*chain_citer)->number_of_chain_operators(); p++) {
       const CHAIN_OPERATOR* cop = (*chain_citer)->get_chain_operator(p);
-      msg << "\t" << p + 1 << ". " <<	cop->name();
+      msg << "\t";
+      msg << p + 1 << ". ";
+      msg << cop->name();
+      if ((*chain_citer)->is_operator_bypassed(p + 1)) 
+	msg << " (BYPASSED)";
       for(int n = 0; n < cop->number_of_params(); n++) {
 	if (n == 0) msg << ": ";
 	msg << "[" << n + 1 << "] ";

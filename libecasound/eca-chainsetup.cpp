@@ -2014,6 +2014,19 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
 			  edit.m.cop_set_param.value);
 	break;
       }
+    case edit_cop_bypass:
+      {
+	if (edit.m.cop_bypass.chain < 1 ||
+	    edit.m.cop_bypass.chain > static_cast<int>(chains.size())) {
+	  retval = false;
+	  break;
+	}
+	CHAIN *ch = chains[edit.m.cop_bypass.chain - 1];
+	ch->bypass_operator(edit.m.cop_bypass.op, 
+			    edit.m.cop_bypass.bypass);
+	break;
+      }
+
     case edit_ctrl_set_param:
       {
 	if (edit.m.ctrl_set_param.chain < 1 ||

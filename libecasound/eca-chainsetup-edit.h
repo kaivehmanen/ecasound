@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup-edit.h: Chainsetup edit object
-// Copyright (C) 2009 Kai Vehmanen
+// Copyright (C) 2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -32,6 +32,7 @@ namespace ECA {
     edit_c_bypass = 0,
     edit_c_muting,
     edit_cop_set_param,
+    edit_cop_bypass,
     edit_ctrl_set_param,
   };
 
@@ -60,6 +61,12 @@ namespace ECA {
 	int param;     /**< @see CHAIN::set_parameter() */
 	double value;  /**< @see CHAIN::set_parameter() */
       } cop_set_param;
+
+      struct {
+	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
+	int op;        /**< @see CHAIN::bypass_operator() */
+	int bypass;    /**< @see CHAIN::bypass_operator() */
+      } cop_bypass;
       
       struct {
 	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
