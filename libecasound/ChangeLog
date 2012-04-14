@@ -1,3 +1,8 @@
+2012-04-14  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* modifications to classes, ABI change
+	* library interface version to 24:0:0
+
 2012-04-13  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 =============================================================
