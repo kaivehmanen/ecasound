@@ -45,6 +45,7 @@ Howto for reading the entries (2.7.2 and older):
 	 - added: 'stop-sync' command to interactive mode, a syncronous
 	    	  stop call that blocks until engine has halted
          - added: 'cop-bypass' and 'cop-is-bypassed' commands added
+	 - added: 'c-is-muted' and 'c-is-bypassed' commands
 	 - changed: new params to 'c-mute' and 'c-bypass'
 	 - fixed: resample, commas in filenames not handled correctly
 	 - fixed: bug in map-ladspa-list output, param names not

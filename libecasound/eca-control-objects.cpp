@@ -2220,6 +2220,40 @@ bool ECA_CONTROL::chain_operator_is_bypassed(void) const
 }
 
 /**
+ * Returns true if selected chain is bypassed
+ */
+bool ECA_CONTROL::chain_is_bypassed(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  // --------
+
+  CHAIN* c = get_chain_priv();
+  if (c != 0) {
+    return c->is_bypassed();
+  }
+  return false;
+}
+
+/**
+ * Returns true if selected chain is bypassed
+ */
+bool ECA_CONTROL::chain_is_muted(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  // --------
+
+  CHAIN* c = get_chain_priv();
+  if (c != 0) {
+    return c->is_muted();
+  }
+  return false;
+}
+
+/**
  * Returns the selected chain operator parameter value
  *
  * require:

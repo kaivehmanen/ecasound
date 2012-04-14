@@ -191,6 +191,8 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   const std::vector<std::string>& selected_chains(void) const;
   std::vector<std::string> chain_names(void) const;
   const CHAIN* get_chain(void) const;
+  bool chain_is_bypassed(void) const;
+  bool chain_is_muted(void) const;
 
   void clear_chains(void);
   void rename_chain(const std::string& name);

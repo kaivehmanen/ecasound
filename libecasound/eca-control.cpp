@@ -571,6 +571,8 @@ void ECA_CONTROL::action(int action_id)
       set_last_string(chain_status()); 
       break; 
     }
+  case ec_c_is_bypassed: { set_last_integer(chain_is_bypassed()); break; }
+  case ec_c_is_muted: { set_last_integer(chain_is_muted()); break; }
 
     // ---
     // Actions common to audio inputs and outputs
@@ -1093,7 +1095,7 @@ string ECA_CONTROL::chain_status(void) const
   for(chain_citer = selected_chainsetup_repp->chains.begin(); chain_citer != selected_chainsetup_repp->chains.end();) {
     mitem << "Chain \"" << (*chain_citer)->name() << "\" ";
     if ((*chain_citer)->is_muted()) mitem << "[muted] ";
-    if ((*chain_citer)->is_processing() == false) mitem << "[bypassed] ";
+    if ((*chain_citer)->is_bypassed()) mitem << "[bypassed] ";
     if (find(schains.begin(), schains.end(), (*chain_citer)->name()) != schains.end()) mitem << "[selected] ";
     for(int n = 0; n < (*chain_citer)->number_of_chain_operators(); n++) {
       mitem << "\"" << (*chain_citer)->get_chain_operator(n)->name() << "\"";

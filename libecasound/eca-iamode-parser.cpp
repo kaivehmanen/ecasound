@@ -205,6 +205,8 @@ void ECA_IAMODE_PARSER::register_commands_c(void)
   (*cmd_map_repp)["c-mute"] = ec_c_muting;
   (*cmd_map_repp)["c-bypass"] = ec_c_bypass;
   (*cmd_map_repp)["c-status"] = ec_c_status;
+  (*cmd_map_repp)["c-is-muted"] = ec_c_is_muted;
+  (*cmd_map_repp)["c-is-bypassed"] = ec_c_is_bypassed;
 }
 
 void ECA_IAMODE_PARSER::register_commands_aio(void)

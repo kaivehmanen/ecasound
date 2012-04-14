@@ -375,6 +375,14 @@ bypassed independetly of their cop-bypass state. em([-])
 dit(c-status, cs)
 Print status info about all chains. em([s])
 
+dit(c-is-bypassed)
+Returns true if selected chain is currently bypassed (none of
+the chain operators are run). See 'c-bypass'. em([i])
+
+dit(c-is-mute)
+Returns true if selected chain is currently muted (outputs 
+silence as its output). See 'c-mute'. em([i])
+
 enddit()
 
 manpagesection(AUDIO INPUT/OUTPUT OBJECTS)

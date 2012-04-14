@@ -68,10 +68,10 @@ class CHAIN : public ECA_AUDIO_POSITION {
   bool is_operator_bypassed(int op_index) const;
 
   /**
-   * Is processing enabled and not bypassed? If disabled, all chain
+   * Is processing enabled and bypassed? If bypassed, all chain
    * operators will be skipped during processing. 
    */
-  bool is_processing(void) const { return !bypass_rep; }
+  bool is_bypassed(void) const { return bypass_rep; }
 
   void set_mute(int muted);
   void set_bypass(int state);

@@ -65,6 +65,8 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_c_muting,
     ec_c_bypass,
     ec_c_status,
+    ec_c_is_bypassed,
+    ec_c_is_muted,
     // --
     ec_aio_register,
     ec_aio_status,
