@@ -40,10 +40,12 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-????2012 (v2.8.2) -** stable release **-
+????2012 (v2.9?) -** stable release **-
 	 - added: LV2 support using liblilv [jeremysalwen]
 	 - added: 'stop-sync' command to interactive mode, a syncronous
 	    	  stop call that blocks until engine has halted
+         - added: 'cop-bypass' and 'cop-is-bypassed' commands added
+	 - changed: new params to 'c-mute' and 'c-bypass'
 	 - fixed: resample, commas in filenames not handled correctly
 	 - fixed: bug in map-ladspa-list output, param names not
 	   	  printed out correctly
