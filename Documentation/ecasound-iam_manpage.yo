@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (12.04.2012)
+       (14.04.2012)
        ()
        (Multimedia software)
 
@@ -471,6 +471,13 @@ this commmand can also be used to add effect presets and various
 plugins. Note; it is not possible to add operators to multiple
 chains at once. In other words only one chain should be selected
 when issuing 'cop-add'.  See ecasound (1) man page for more info. em([-])
+
+dit(cop-bypass <on|off|toggle>)
+Set the bypass state of the currently selected chain operator.
+The command takes a single parameter: "on" -> operator is bypassed, 
+"off" -> no bypass, and "toggle" -> change the bypass state.
+If parameter is omitted, "toggle" is assumed (bypass is either
+enabled or disabled, depending on previous state).
 
 dit(cop-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string
