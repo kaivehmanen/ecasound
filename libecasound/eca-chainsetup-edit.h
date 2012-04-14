@@ -36,6 +36,18 @@ namespace ECA {
     edit_ctrl_set_param,
   };
 
+  /*
+   * Chainsetup edit objects are defined for all operations 
+   * that can be performed either from the real-time engine
+   * (if modifying chainsetup that is currently run), or
+   * from the non-real-time control thread (modifying 
+   * selected but not running chainsetup).
+   *
+   * Using edit objects avoids duplicated code to describe
+   * and parse the needed actions in both ECA_ENGINE and 
+   * ECA_CONTROL.
+   */
+
   struct chainsetup_edit {
 
     Chainsetup_edit_type type;
@@ -47,12 +59,12 @@ namespace ECA {
     union {
       struct {
 	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
-	bool enabled;
+	int val;
       } c_bypass;
 
       struct {
 	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
-	bool enabled;
+	int val;
       } c_muting;
 
       struct {

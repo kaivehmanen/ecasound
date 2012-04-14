@@ -544,14 +544,6 @@ void ECA_ENGINE::check_command_queue(void)
       case ep_edit_unlock: { edit_lock_rep = false; break; }
 	
 	// ---
-	// Section/chain (en/dis)abling commands.
-	// ---
-	// FIXME: implement as edit objects ->with ep_exec_edit
-      case ep_c_select: { csetup_repp->selected_chain_index_rep = static_cast<size_t>(item.m.legacy.value); break; }
-      case ep_c_muting: { chain_muting(); break; }
-      case ep_c_bypass: { chain_processing(); break; }
-
-	// ---
 	// Global position
 	// ---
       case ep_rewind: { change_position(- item.m.legacy.value); break; }
@@ -1765,32 +1757,6 @@ void ECA_ENGINE::mix_to_outputs(bool skip_realtime_target_outputs)
       }
     }
   } 
-}
-
-/**********************************************************************
- * Engine implementation - Private functions for toggling features
- **********************************************************************/
-
-/**
- * context: E-level-2
- */
-void ECA_ENGINE::chain_muting(void)
-{
-  if ((*chains_repp)[csetup_repp->selected_chain_index_rep]->is_muted()) 
-    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_muting(false);
-  else
-    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_muting(true);
-}
-
-/**
- * context: E-level-2
- */
-void ECA_ENGINE::chain_processing(void)
-{
-  if ((*chains_repp)[csetup_repp->selected_chain_index_rep]->is_processing()) 
-    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_processing(false);
-  else
-    (*chains_repp)[csetup_repp->selected_chain_index_rep]->toggle_processing(true);
 }
 
 /**********************************************************************

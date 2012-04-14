@@ -64,7 +64,7 @@ CHAIN::CHAIN (void)
 {
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "constructor: CHAIN");
   muted_rep = false;
-  sfx_rep = true;
+  bypass_rep = false;
   initialized_rep = false;
   input_id_rep = output_id_rep = -1;
 
@@ -389,7 +389,6 @@ bool CHAIN::is_valid_op_index(int op_index) const
  *
  * @param op_index operator index (1...N), or -1 to use the selected op
  * @param bypassed 1=bypass, 0=nobypass, -1=toggle (change state)
- * @param value new value
  */
 void CHAIN::bypass_operator(int op_index, int bypassed)
 {
@@ -404,6 +403,36 @@ void CHAIN::bypass_operator(int op_index, int bypassed)
 	(bypassed > 0 ? true : false);
     }
   }
+}
+
+/**
+ * Sets muting state for the chain
+ *
+ * @param bypassed 1=mute, 0=unmute, -1=toggle (change state)
+ */
+void CHAIN::set_mute(int state)
+{
+  if (state < 0)
+    muted_rep = !muted_rep;
+  else if (state > 0)
+    muted_rep = true;
+  else
+    muted_rep = false;
+}
+
+/**
+ * Sets muting state for the chain
+ *
+ * @param state 1=bypass, 0=nobypass, -1=toggle (change state)
+ */
+void CHAIN::set_bypass(int state)
+{
+  if (state < 0)
+    bypass_rep = !bypass_rep;
+  else if (state > 0)
+    bypass_rep = true;
+  else
+    bypass_rep = false;
 }
 
 bool CHAIN::is_operator_bypassed(int op_index) const
@@ -781,7 +810,7 @@ void CHAIN::process(void)
   /* step: run processing components */
   if (muted_rep != true) {
     /* note: if muted, don't bother running the chainops */
-    if (sfx_rep == true) {
+    if (bypass_rep != true) {
       /* note: processing enabled (no bypass) */
       for(int p = 0; p != static_cast<int>(chainops_rep.size()); p++) {
 

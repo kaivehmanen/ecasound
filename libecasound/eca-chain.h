@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2009 Kai Vehmanen
+// Copyright (C) 1999-2009,2012 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -71,10 +71,10 @@ class CHAIN : public ECA_AUDIO_POSITION {
    * Is processing enabled and not bypassed? If disabled, all chain
    * operators will be skipped during processing. 
    */
-  bool is_processing(void) const { return sfx_rep; }
+  bool is_processing(void) const { return !bypass_rep; }
 
-  void toggle_muting(bool v) { muted_rep = v; }
-  void toggle_processing(bool v) { sfx_rep = v; }
+  void set_mute(int muted);
+  void set_bypass(int state);
 
   std::string name(void) const { return chainname_rep; }
   void name(const std::string& c) { chainname_rep = c; }
@@ -222,7 +222,7 @@ class CHAIN : public ECA_AUDIO_POSITION {
   bool initialized_rep;
   std::string chainname_rep;
   bool muted_rep;
-  bool sfx_rep;
+  bool bypass_rep;
   int in_channels_rep;
   int out_channels_rep;
 

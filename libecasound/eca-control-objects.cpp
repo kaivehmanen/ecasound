@@ -1126,72 +1126,6 @@ void ECA_CONTROL::rename_chain(const string& name)
   selected_chainsetup_repp->rename_chain(name);     
 }
 
-void ECA_CONTROL::send_chain_commands_to_engine(int command, double value)
-{
-  // --------
-  DBC_CHECK(is_engine_running() == true);
-  // --------
-  if (is_engine_running() != true) return; 
-
-  const std::vector<string>& schains = selected_chainsetup_repp->selected_chains();
-
-  std::vector<string>::const_iterator o = schains.begin();
-  while(o != schains.end()) {
-    for(std::vector<CHAIN*>::size_type p = 0; 
-	p != selected_chainsetup_repp->chains.size();
-	p++) {
-      if (selected_chainsetup_repp->chains[p]->name() == *o) {
-	engine_repp->command(ECA_ENGINE::ep_c_select, p);
-	engine_repp->command(static_cast<ECA_ENGINE::Engine_command_t>(command), value);
-	break;
-      }
-    }
-    ++o;
-  }
-}
-
-/**
- * Toggles whether chain is muted or not
- *
- * require:
- *  is_selected() == true
- *  selected_chains().size() > 0
- */
-void ECA_CONTROL::toggle_chain_muting(void)
-{
-  // --------
-  DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(selected_chains().size() > 0);
-  // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_muting, 0.0);
-  } 
-  else {
-    selected_chainsetup_repp->toggle_chain_muting();
-  }
-}
-
-/**
- * Toggles whether chain operators are enabled or disabled
- *
- * require:
- *  is_selected() == true && is_connected() == true
- *  selected_chains().size() > 0
- */
-void ECA_CONTROL::toggle_chain_bypass(void)
-{
-  // --------
-  DBC_REQUIRE(is_selected() == true);
-  DBC_REQUIRE(selected_chains().size() > 0);
-  // --------
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
-    send_chain_commands_to_engine(ECA_ENGINE::ep_c_bypass, 0.0);
-  }
-  else {
-    selected_chainsetup_repp->toggle_chain_bypass();
-  }
-}
-
 void ECA_CONTROL::audio_input_as_selected(void)
 {
   /* note, here we check that the pointer is still a valid one */
@@ -2163,6 +2097,62 @@ static int priv_onofftoggle_to_int(const string& str)
   if (str == "on") return 1;
   if (str == "off") return 0;
   return -1;
+}
+
+/**
+ * Toggles whether chain is muted or not
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() > 0
+ */
+void ECA_CONTROL::set_chain_muting(const string &arg)
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() > 0);
+  // --------
+
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_c_muting;
+  edit.cs_ptr = selected_chainsetup_repp;
+
+  int state_arg = priv_onofftoggle_to_int(arg);
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    edit.m.c_muting.chain = p + 1;
+    edit.m.c_muting.val = state_arg;
+    execute_edit_on_selected(edit);
+  }
+}
+
+/**
+ * Toggles whether chain operators are enabled or disabled
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() > 0
+ */
+void ECA_CONTROL::set_chain_bypass(const string& arg)
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() > 0);
+  // --------
+
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_c_bypass;
+  edit.cs_ptr = selected_chainsetup_repp;
+
+  int state_arg = priv_onofftoggle_to_int(arg);
+
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    edit.m.c_bypass.chain = p + 1;
+    edit.m.c_bypass.val = state_arg;
+    execute_edit_on_selected(edit);
+  }
 }
 
 /**

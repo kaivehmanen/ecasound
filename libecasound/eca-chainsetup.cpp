@@ -873,10 +873,7 @@ void ECA_CHAINSETUP::toggle_chain_muting(void)
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
-	if ((*q)->is_muted()) 
-	  (*q)->toggle_muting(false);
-	else 
-	  (*q)->toggle_muting(true);
+	(*q)->set_mute(-1);
       }
     }
   }
@@ -896,10 +893,7 @@ void ECA_CHAINSETUP::toggle_chain_bypass(void)
   for(vector<string>::const_iterator a = selected_chainids.begin(); a != selected_chainids.end(); a++) {
     for(vector<CHAIN*>::iterator q = chains.begin(); q != chains.end(); q++) {
       if (*a == (*q)->name()) {
-	if ((*q)->is_processing()) 
-	  (*q)->toggle_processing(false);
-	else 
-	  (*q)->toggle_processing(true);
+	(*q)->set_bypass(-1);
       }
     }
   }
@@ -2001,6 +1995,30 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
 
   switch(edit.type)
     {
+    case edit_c_bypass:
+      {
+	if (edit.m.c_bypass.chain < 1 ||
+	    edit.m.c_bypass.chain > static_cast<int>(chains.size())) {
+	  retval = false;
+	  break;
+	}
+	CHAIN *ch = chains[edit.m.c_bypass.chain - 1];
+	ch->set_bypass(edit.m.c_bypass.val);
+	break;
+      }
+
+    case edit_c_muting:
+      {
+	if (edit.m.c_muting.chain < 1 ||
+	    edit.m.c_muting.chain > static_cast<int>(chains.size())) {
+	  retval = false;
+	  break;
+	}
+	CHAIN *ch = chains[edit.m.c_muting.chain - 1];
+	ch->set_mute(edit.m.c_muting.val);
+	break;
+      }
+
     case edit_cop_set_param:
       {
 	if (edit.m.cop_set_param.chain < 1 ||

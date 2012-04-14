@@ -564,8 +564,8 @@ void ECA_CONTROL::action(int action_id)
       }
       break;
     }
-  case ec_c_muting: { toggle_chain_muting(); break; }
-  case ec_c_bypass: { toggle_chain_bypass(); break; }
+  case ec_c_muting: { set_chain_muting(first_action_argument_as_string()); break; }
+  case ec_c_bypass: { set_chain_bypass(first_action_argument_as_string()); break; }
   case ec_c_status: 
     { 
       set_last_string(chain_status()); 

@@ -194,8 +194,8 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
 
   void clear_chains(void);
   void rename_chain(const std::string& name);
-  void toggle_chain_muting(void);
-  void toggle_chain_bypass(void);
+  void set_chain_muting(const string &arg);
+  void set_chain_bypass(const string &arg);
 
   /*@}*/
 
@@ -397,8 +397,6 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
 
   bool cond_stop_for_editing(void);
   void cond_start_after_editing(bool was_running);
-
-  void send_chain_commands_to_engine(int command, double value);
 
   CHAIN* get_chain_priv(void) const;
 

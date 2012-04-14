@@ -2,7 +2,7 @@ mailto(kvehmanen -at- eca -dot- cx)
 
 manpage(ecasound-iam)
        (1)
-       (14.04.2012)
+       (15.04.2012)
        ()
        (Multimedia software)
 
@@ -342,14 +342,35 @@ dit(c-rename 'new_name')
 Renames the selected chain. When using this command, exactly one chain must
 be selected. em([-])
 
-dit(c-muting, c-mute)
-Toggle chain muting. When chain is muted, all data that goes through
-is muted. em([-])
+dit(c-mute <on|off|toggle>)
+Set the mute state of the currently selected chain. When chain is muted,
+it will only output silence.
 
-dit(c-bypass)
-Toggle chain bypassing. When chain is bypassed, sample data is passed 
-through unprocessed (all chain operators are disabled for the given
-chain). em([-])
+The command takes a single parameter: "on" -> chain is muted, 
+"off" -> not muted, and "toggle" -> change the muting state.
+If parameter is omitted, "toggle" is assumed (muting is either
+enabled or disabled, depending on previous state).
+
+Control of chain and chain operator muting states is independent.
+If "c-mute off" is executed, the states of individual cop-bypass
+commands will take effect. If chain is muted, the chain will
+output silence irrespective of the individual chain operator
+muting state. em([-])
+
+dit(c-bypass <on|off|toggle>)
+Set the bypass state of the currently selected chain. When chain is bypassed,
+sample data is passed through unprocessed (all chain operators are disabled
+for the given chain).
+
+The command takes a single parameter: "on" -> chain is bypassed, 
+"off" -> no bypass, and "toggle" -> change the bypass state.
+If parameter is omitted, "toggle" is assumed (bypass is either
+enabled or disabled, depending on previous state).
+
+Control of chain and chain operator bypass states is independent.
+If chain bypass is disabled, the states of individual cop-bypass
+commands will take effect. If chain is bypassed, all operators are
+bypassed independetly of their cop-bypass state. em([-])
 
 dit(c-status, cs)
 Print status info about all chains. em([s])

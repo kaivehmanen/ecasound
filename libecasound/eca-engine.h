@@ -94,10 +94,6 @@ class ECA_ENGINE {
     // --
     ep_exec_edit,
     // --
-    ep_c_muting,
-    ep_c_bypass,
-    ep_c_select,
-    // --
     ep_rewind,
     ep_forward,
     ep_setpos,
@@ -341,14 +337,6 @@ private:
   void inputs_to_chains(void);
   void process_chains(void);
   void mix_to_outputs(bool skip_realtime_target_outputs);
-
-  /*@}*/
-
-  /** @name Private functions for toggling engine features */
-  /*@{*/
-
-  void chain_muting(void);
-  void chain_processing(void);
 
   /*@}*/
 
