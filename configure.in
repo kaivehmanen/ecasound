@@ -136,7 +136,6 @@ case "$host" in
 	       fi
                ;;
 	*-*-linux-gnu)
-	       eca_platform_python_impl="c"
 	       ;;
 	alpha*-*-linux-*)
 	       AM_CFLAGS="$AM_CFLAGS -mieee"
@@ -560,7 +559,7 @@ AC_ARG_ENABLE(pyecasound,
 	      [
 	      case "$enableval" in
 	        y | yes)
-		  pyecasound_support=c
+		  pyecasound_support=python
 		;;
 
 		n | no | none)
@@ -572,6 +571,10 @@ AC_ARG_ENABLE(pyecasound,
 		;;
 
 		c)
+		  AC_MSG_ERROR([C python implementation is deprecated. Use --enable-python=iwantc if you really need and want to use it. Please raise this on ecasound-list to stop the deprecation process.])
+		;;
+
+		iwantc)
 		  pyecasound_support=c
 		;;
         
@@ -1506,8 +1509,10 @@ fi
 echo "-----------------------------------------------------------------"
 echo "Following directories are used:"
 echo "Directory prefix:       "$ECA_S_PREFIX
-if test x$pyecasound_support != xnone ; then
+if test x$pyecasound_support = xc ; then
 	echo "Python include dir:     "$ECA_S_PYTHON_INCLUDES
+fi
+if test x$pyecasound_support != xnone ; then
 	echo "Python module dir:      "$ECA_S_PYTHON_MODULES
 fi
 if test x$rubyecasound_support != xnone ; then
