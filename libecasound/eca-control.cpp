@@ -682,6 +682,7 @@ void ECA_CONTROL::action(int action_id)
     }
   case ec_cop_remove: { remove_chain_operator(); break; }
   case ec_cop_list: { set_last_string_list(chain_operator_names()); break; }
+  case ec_cop_is_bypassed: { set_last_integer(chain_operator_is_bypassed()); break; }
   case ec_cop_select: { select_chain_operator(first_action_argument_as_int()); break; }
   case ec_cop_selected: { set_last_integer(selected_chain_operator()); break; }
   case ec_cop_set: 

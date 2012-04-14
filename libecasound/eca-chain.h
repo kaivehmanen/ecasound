@@ -62,8 +62,14 @@ class CHAIN : public ECA_AUDIO_POSITION {
   bool is_muted(void) const { return muted_rep; }
 
   /**
-   * Is processing enabled? If disabled, all chain operators
-   * will be skipped during processing. 
+   * Is chain muted? If muted, audio buffers are zeroed during
+   * processing.
+   */ 
+  bool is_operator_bypassed(int op_index) const;
+
+  /**
+   * Is processing enabled and not bypassed? If disabled, all chain
+   * operators will be skipped during processing. 
    */
   bool is_processing(void) const { return sfx_rep; }
 
@@ -204,6 +210,8 @@ class CHAIN : public ECA_AUDIO_POSITION {
   // -------------------------------------------------------------------
 
  private:
+
+  bool is_valid_op_index(int op_index) const;
 
   class COP_CONTAINER {
   public:

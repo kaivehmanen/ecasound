@@ -1063,6 +1063,15 @@ const CHAIN* ECA_CONTROL::get_chain(void) const
   DBC_REQUIRE(is_selected() == true);
   DBC_REQUIRE(selected_chains().size() == 1);
   // --------
+  return get_chain_priv();
+
+}
+
+/**
+ * Gets a pointer to selected chain, or 0 if no chain is selected.
+ */
+CHAIN* ECA_CONTROL::get_chain_priv(void) const
+{
   const std::vector<string>& schains = selected_chainsetup_repp->selected_chains();
   std::vector<string>::const_iterator o = schains.begin();
   while(o != schains.end()) {
@@ -1937,9 +1946,11 @@ const CHAIN_OPERATOR* ECA_CONTROL::get_chain_operator(void) const
   DBC_REQUIRE(selected_chains().size() == 1);
   // --------
 
-  unsigned int p = selected_chainsetup_repp->first_selected_chain();
-  if (p < selected_chainsetup_repp->chains.size())
-    return  selected_chainsetup_repp->chains[p]->get_selected_chain_operator();
+  if (is_selected() == true) {
+    unsigned int p = selected_chainsetup_repp->first_selected_chain();
+    if (p < selected_chainsetup_repp->chains.size())
+      return  selected_chainsetup_repp->chains[p]->get_selected_chain_operator();
+  }
 
   return 0;
 }
@@ -1976,7 +1987,7 @@ std::vector<string> ECA_CONTROL::chain_operator_names(void) const
 
 /** 
  * Returns the index of the selected chain operator. If no chain 
- * operator is selected, 0 is returned.
+ * operator is selected, -1 is returned.
  *
  * require:
  *  is_selected() == true
@@ -1993,7 +2004,7 @@ int ECA_CONTROL::selected_chain_operator(void) const
   if (p < selected_chainsetup_repp->chains.size())
     return  selected_chainsetup_repp->chains[p]->selected_chain_operator();
 
-  return(0);
+  return -1;
 }
 
 /**
@@ -2192,6 +2203,30 @@ void ECA_CONTROL::bypass_chain_operator(const string& arg)
 		+ kvu_numtostr(edit.m.cop_bypass.op) + " to "
 		+ kvu_numtostr(bypass_arg));
   }
+}
+
+/**
+ * Returns true if selected chain op is bypasssed
+ *
+ * require:
+ *  is_selected() == true
+ *  selected_chains().size() == 1
+ *  get_chain_operator() != 0
+ */
+bool ECA_CONTROL::chain_operator_is_bypassed(void) const
+{
+  // --------
+  DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chains().size() == 1);
+  DBC_REQUIRE(get_chain_operator() != 0);
+  // --------
+
+  int op_index = selected_chain_operator();
+  CHAIN* c = get_chain_priv();
+  if (c != 0) {
+    return c->is_operator_bypassed(op_index);
+  }
+  return false;
 }
 
 /**

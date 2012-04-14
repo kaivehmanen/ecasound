@@ -248,6 +248,7 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   void add_chain_operator(const std::string& chainop_params);
   void add_chain_operator(CHAIN_OPERATOR* cotmp);
   void bypass_chain_operator(const string& arg);
+  bool chain_operator_is_bypassed(void) const;
   void remove_chain_operator(void);
   void select_chain_operator(int chainop_id);
   void select_chain_operator_parameter(int param);
@@ -398,6 +399,8 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   void cond_start_after_editing(bool was_running);
 
   void send_chain_commands_to_engine(int command, double value);
+
+  CHAIN* get_chain_priv(void) const;
 
   void action(int action_id);
   void check_action_preconditions(int action_id);

@@ -373,6 +373,18 @@ void CHAIN::set_parameter(int op_index, int param_index, CHAIN_OPERATOR::paramet
 }
 
 /**
+ * Returns true if op_index is valid.
+ */
+bool CHAIN::is_valid_op_index(int op_index) const
+{
+  if (op_index > 0 &&
+      op_index <= static_cast<int>(chainops_rep.size()))
+    return true;
+
+  return false;
+}
+
+/**
  * Sets bypass state (selected chain operator)
  *
  * @param op_index operator index (1...N), or -1 to use the selected op
@@ -381,8 +393,7 @@ void CHAIN::set_parameter(int op_index, int param_index, CHAIN_OPERATOR::paramet
  */
 void CHAIN::bypass_operator(int op_index, int bypassed)
 {
-  if (op_index > 0 &&
-      op_index <= static_cast<int>(chainops_rep.size())) {
+  if (is_valid_op_index(op_index)) {
 
     if (bypassed < 0) {
       // just toggle the current value
@@ -393,6 +404,14 @@ void CHAIN::bypass_operator(int op_index, int bypassed)
 	(bypassed > 0 ? true : false);
     }
   }
+}
+
+bool CHAIN::is_operator_bypassed(int op_index) const
+{
+  if (is_valid_op_index(op_index)) {
+    return chainops_rep[op_index - 1].bypassed;
+  }
+  return false;
 }
 
 /**

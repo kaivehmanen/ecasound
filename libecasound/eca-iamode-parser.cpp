@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // eca-iamode-parser.cpp: Class that handles registering and querying 
 //                        interactive mode commands.
-// Copyright (C) 1999-2005,2008 Kai Vehmanen
+// Copyright (C) 1999-2005,2008,2012 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -276,6 +276,7 @@ void ECA_IAMODE_PARSER::register_commands_cop(void)
   (*cmd_map_repp)["cop-select"] = ec_cop_select;
   (*cmd_map_repp)["cop-index-select"] = ec_cop_select;
   (*cmd_map_repp)["cop-iselect"] = ec_cop_select;
+  (*cmd_map_repp)["cop-is-bypassed"] = ec_cop_is_bypassed;
   (*cmd_map_repp)["cop-register"] = ec_cop_register;
   (*cmd_map_repp)["cop-selected"] = ec_cop_selected;
   (*cmd_map_repp)["cop-set"] = ec_cop_set;
@@ -513,6 +514,8 @@ bool ECA_IAMODE_PARSER::action_requires_selected(int id)
   case ec_ao_wave_edit:
 
   case ec_cop_add:
+  case ec_cop_bypass:
+  case ec_cop_is_bypassed:
   case ec_cop_list:
   case ec_cop_select:
   case ec_cop_selected:

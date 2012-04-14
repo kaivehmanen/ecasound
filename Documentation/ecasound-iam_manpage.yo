@@ -477,7 +477,11 @@ Set the bypass state of the currently selected chain operator.
 The command takes a single parameter: "on" -> operator is bypassed, 
 "off" -> no bypass, and "toggle" -> change the bypass state.
 If parameter is omitted, "toggle" is assumed (bypass is either
-enabled or disabled, depending on previous state).
+enabled or disabled, depending on previous state). em([-])
+
+dit(cop-is-bypassed)
+Returns true if selected chain operator is currently bypassed
+(temporarily not part of the processing chain). em([i])
 
 dit(cop-describe)
 Returns a Ecasound Option Syntax (EOS) compliant string

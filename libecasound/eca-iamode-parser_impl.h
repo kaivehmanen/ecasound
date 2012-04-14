@@ -113,6 +113,7 @@ class ECA_IAMODE_PARSER_COMMANDS {
     ec_cop_add,
     ec_cop_bypass,
     ec_cop_describe,
+    ec_cop_is_bypassed,
     ec_cop_remove,
     ec_cop_list,
     ec_cop_select,
