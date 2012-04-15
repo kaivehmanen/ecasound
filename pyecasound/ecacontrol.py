@@ -3,8 +3,6 @@
    Can be used to replace the C implementation 'pyecasound.so'.
 """
 
-# Version: $Id: ecacontrol.py,v 1.8 2003-11-26 19:33:55 kaiv Exp $
-
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
 import re
