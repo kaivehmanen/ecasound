@@ -8,7 +8,7 @@
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
 import re
-from popen2 import Popen3
+import subprocess
 from select import select
 import os
 import signal
@@ -61,12 +61,12 @@ class ECA_CONTROL_INTERFACE:
 	return val	    
 
     def _readline(I):
-        return string.strip(I.eca.fromchild.readline())
+        return string.strip(I.eca.stdout.readline())
 	
     def _read_eca(I):
 	buffer=''
-	while select([I.eca.fromchild.fileno()],[],[I.eca.fromchild.fileno()],0.01)[0]:
-           buffer=buffer+I.eca.fromchild.read(1)
+	while select([I.eca.stdout.fileno()],[],[I.eca.stdout.fileno()],0.01)[0]:
+           buffer=buffer+I.eca.stdout.read(1)
 	return buffer
     
     def _parse_response(I):
@@ -140,7 +140,9 @@ class ECA_CONTROL_INTERFACE:
         if ecasound_binary == '':
             ecasound_binary = 'ecasound'
 
-        _ecasound.append(Popen3(ecasound_binary + ' -c -d:256 2>/dev/null', 0, 0))
+        p = subprocess.Popen(ecasound_binary + ' -c -d:256 2>/dev/null',
+                             shell=True, bufsize=0, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+        _ecasound.append(p)
 	
 	I.eca=_ecasound[-1]
 	
@@ -171,7 +173,7 @@ class ECA_CONTROL_INTERFACE:
     def cleanup(I):
 	"""Free all reserved resources"""
 	
-	I.eca.tochild.write('quit\n')
+	I.eca.stdin.write('quit\n')
 
 	os.kill(I.eca.pid, signal.SIGTERM)
 		
@@ -193,7 +195,7 @@ class ECA_CONTROL_INTERFACE:
 	cmd=string.strip(cmd)
 	if cmd:
 	    I._cmd=cmd
-	    I.eca.tochild.write(cmd+'\n')
+	    I.eca.stdin.write(cmd+'\n')
 	    return I._parse_response()
 	
     def command_float_arg(I,cmd,f=None):
@@ -206,9 +208,9 @@ class ECA_CONTROL_INTERFACE:
 	if cmd:
 	    I._cmd=cmd
 	    if f:
-	    	I.eca.tochild.write('%s %f\n' % (cmd,f))
+	    	I.eca.stdin.write('%s %f\n' % (cmd,f))
 	    else:
-	    	I.eca.tochild.write(cmd+'\n')
+	    	I.eca.stdin.write(cmd+'\n')
 	    return I._parse_response()
 	    
     def error(I):
