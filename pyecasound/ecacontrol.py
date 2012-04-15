@@ -5,6 +5,11 @@
 
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
+import sys
+if sys.hexversion < 0x02040000:
+    print >>sys.stderr, "ERROR: Python 2.4 or newer is required by ecacontrol.py"
+    sys.exit(-1)
+
 import re
 import subprocess
 from select import select
