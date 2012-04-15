@@ -768,6 +768,7 @@ void ECA_ENGINE::start_operation(void)
 
   start_realtime_objects();
   running_rep = true;
+  started_rep = true;
 
   // ---
   DBC_ENSURE(is_running() == true);
@@ -908,6 +909,8 @@ void ECA_ENGINE::request_start(void)
   // ---
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Request start");
+
+  // mute be set as early possible
   started_rep = true;
 
   // --
