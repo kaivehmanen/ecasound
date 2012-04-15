@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-jack.cpp: Interface to JACK audio framework
-// Copyright (C) 2001-2003,2008,2009,2011 Kai Vehmanen
+// Copyright (C) 2001-2003,2008,2009,2011,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -300,7 +300,7 @@ std::string AUDIO_IO_JACK::parameter_names(void) const
   }
 
   /* jack */
-  return "jack";
+  return "jack,client,portprefix";
 }
 
 void AUDIO_IO_JACK::set_parameter(int param, std::string value)
