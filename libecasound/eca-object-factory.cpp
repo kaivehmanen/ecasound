@@ -48,6 +48,7 @@
 #include "audioio-loop.h"
 #include "midiio.h"
 #include "audiofx_ladspa.h"
+#include "audiofx_lv2.h"
 #include "generic-controller.h"
 #include "eca-static-object-maps.h"
 #include "eca-object-map.h"
@@ -750,10 +751,26 @@ string ECA_OBJECT_FACTORY::chain_operator_to_eos(const CHAIN_OPERATOR* chainop)
   MESSAGE_ITEM t;
   
   // >--
-  // special handling for LADPSA-plugins
+  // special handling for LADSPA-plugins
 #ifndef ECA_DISABLE_EFFECTS
+
   const EFFECT_LADSPA* ladspa = dynamic_cast<const EFFECT_LADSPA*>(chainop);
-  if (ladspa != 0) {
+  const CHAIN_OPERATOR *lv2_cop = 0;
+  string lv2_arg;
+
+#ifdef ECA_USE_LIBLILV
+  const EFFECT_LV2* lv2 = dynamic_cast<const EFFECT_LV2*>(chainop);
+  if (lv2 != 0) {
+    lv2_cop = static_cast<const EFFECT_LV2*>(lv2);
+    lv2_arg = lv2->unique();
+  }
+#endif
+
+  if (lv2_cop != 0) {
+    t << "-elv2:" << lv2_arg;
+    if (chainop->number_of_params() > 0) t << ",";
+  }
+  else if (ladspa != 0) {
     t << "-eli:" << ladspa->unique_number();
     if (chainop->number_of_params() > 0) t << ",";
   }
