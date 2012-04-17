@@ -117,7 +117,7 @@ Optional when compiling Ecasound:
     - libaudiofile (SGI audio file  library) runtime, and/or
     - libsndfile 
 - for higher quality resampling: libsamplerate
-- for pyecasound, the Python devel package
+- for pyecasound, the Python 2.4+ runtime
 - for curses support, the ncurses devel package
 - for LADSPA support, the LADSPA SDK package
 - for ALSA support, the ALSA devel package

@@ -41,17 +41,20 @@ Howto for reading the entries (2.7.2 and older):
 ***********************************************************************
 
 ????2012 (v2.9?) -** stable release **-
-	 - added: LV2 support using liblilv [jeremysalwen]
+	 - added: LV2 support using liblilv [jeremysalwen];
+	          sffeat:2541460
 	 - added: 'stop-sync' command to interactive mode, a syncronous
-	    	  stop call that blocks until engine has halted
+	          stop call that blocks until engine has halted
          - added: 'cop-bypass' and 'cop-is-bypassed' commands added
 	 - added: 'c-is-muted' and 'c-is-bypassed' commands
 	 - changed: new params to 'c-mute' and 'c-bypass'
+     - changed: pyeca - now requires python 2.4 or newer
 	 - fixed: resample, commas in filenames not handled correctly
 	 - fixed: bug in map-ladspa-list output, param names not
 	   	  printed out correctly
          - fixed: bug in RIFF header generation, incorrect chunk
 	   	  size
+         - fixed: bug in saving jack input/output params
 22052011 (v2.8.1) -** stable release **-
 	 - fixed: jack_multi did not work correctly when connecting
 	          to a single port
