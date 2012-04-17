@@ -330,7 +330,7 @@ std::string EFFECT_VOLUME_PEAK::parameter_names(void) const
   string params;
   for(int n = 0; n < channels(); n++) {
     params += "peak-amplitude-ch" + kvu_numtostr(n + 1);
-    if (n != channels()) params += ",";
+    if (n + 1 < channels()) params += ",";
   }
   return params;
 }
