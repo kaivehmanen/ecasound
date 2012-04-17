@@ -52,9 +52,15 @@ int kvu_pthread_mutex_spinlock (pthread_mutex_t *mp, long int spinlimit)
 /**
  * Waits for condition to occur.
  *
+ * Note: this model of condition waiting is inherently racy and
+ *       must be only used in specific cases (not a general solution).
+ *       The main problem is that the condition is not checked with
+ *       mutex held before going into pthread_cond_timedwait(), so a
+ *       condition change may be missed.
+ *
  * @return 0 on success, 
  *         -ETIMEDOUT if timeout occured, 
- *	   other nonzero value on other errors
+ *         other nonzero value on other errors
  */
 int kvu_pthread_timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long int seconds)
 {
@@ -64,6 +70,9 @@ int kvu_pthread_timed_wait(pthread_mutex_t* mutex, pthread_cond_t* cond, long in
    sleepcount.tv_sec = now.tv_sec + seconds;
    sleepcount.tv_nsec = now.tv_usec * 1000;
    int ret = 0;
+
+   /* note: timing race possible here, if condition has already been
+    *       signaled at this point, thus the sleepcount is mandatory */
     
    pthread_mutex_lock(mutex);
    ret = pthread_cond_timedwait(cond, 
