@@ -80,7 +80,6 @@ public:
   virtual void quit_async(void) = 0;
 
   virtual bool is_running(void) const = 0;
-  virtual bool is_started(void) const = 0;
   virtual bool is_connected(void) const = 0;
   virtual bool is_selected(void) const = 0;
   virtual bool is_finished(void) const = 0;

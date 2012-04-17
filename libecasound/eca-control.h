@@ -73,7 +73,6 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   /** @name ECA_CONTROL_MAIN subset */
 
   virtual bool is_running(void) const;
-  virtual bool is_started(void) const;
   virtual bool is_connected(void) const;
   virtual bool is_selected(void) const;
   virtual bool is_finished(void) const;

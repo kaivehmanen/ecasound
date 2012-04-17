@@ -138,6 +138,7 @@ class ECA_ENGINE {
   void command(complex_command_t ccmd);
   void wait_for_stop(int timeout);
   void wait_for_exit(int timeout);
+  void wait_for_editlock(void);
 
   /*@}*/
 
@@ -168,7 +169,6 @@ class ECA_ENGINE {
 
   bool is_prepared(void) const;
   bool is_running(void) const;
-  bool is_started(void) const { return started_rep; }
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
   bool is_locked_for_editing(void) const { return(edit_lock_rep); }
 
@@ -275,6 +275,7 @@ private:
   void request_stop(bool drain = false);
   void signal_stop(void);
   void signal_exit(void);
+  void signal_editlock(void);
   void conditional_start(void);
   void conditional_stop(void);
 

@@ -30,6 +30,8 @@ class ECA_ENGINE_impl {
 
   MESSAGE_QUEUE_RT_C<ECA_ENGINE::complex_command_t> command_queue_rep;
 
+  pthread_cond_t editlock_cond_repp;
+  pthread_mutex_t editlock_mutex_repp;
   pthread_cond_t ecasound_stop_cond_repp;
   pthread_mutex_t ecasound_stop_mutex_repp;
   pthread_cond_t ecasound_exit_cond_repp;

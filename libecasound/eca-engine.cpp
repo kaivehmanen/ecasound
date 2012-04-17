@@ -186,7 +186,6 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
 ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup) 
   : prepared_rep(false),
     running_rep(false),
-    started_rep(false),
     edit_lock_rep(false),
     finished_rep(false),
     outputs_finished_rep(0),
@@ -370,22 +369,21 @@ void ECA_ENGINE::command(complex_command_t ccmd)
  */
 void ECA_ENGINE::wait_for_stop(int timeout)
 {
-  bool already_stopped = false;
+  struct timespec timeoutspec;
+
+  // FIXME: start to use MONOTONIC, needs pthread_condattr_setclock
+  int ret = kvu_pthread_cond_timeout(timeout, &timeoutspec, false);
+  DBC_CHECK(ret == 0);
+
   pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
-  if (running_rep != true && started_rep != true)
-    already_stopped = true;
-  pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
-  if (already_stopped != true) {
-    int ret = kvu_pthread_timed_wait(&impl_repp->ecasound_stop_mutex_repp, 
-                                     &impl_repp->ecasound_stop_cond_repp, 
-                                     timeout);
+  while(running_rep == true) {
+    ret = pthread_cond_timedwait(&impl_repp->ecasound_stop_cond_repp, 
+                                 &impl_repp->ecasound_stop_mutex_repp,
+                                 &timeoutspec);
     ECA_LOG_MSG(ECA_LOGGER::system_objects, 
                 kvu_pthread_timed_wait_result(ret, "wait_for_stop"));
   }
-  else {
-    ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-                "already stopped, skipping wait");
-  }
+  pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
 }
 
 /**
@@ -405,6 +403,32 @@ void ECA_ENGINE::wait_for_exit(int timeout)
                                    timeout);
   ECA_LOG_MSG(ECA_LOGGER::info, 
               kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_exit"));
+}
+
+/**
+ * Wait for the editlock signal. Function blocks until 
+ * engine has received and processed the 'ep_edit_lock' 
+ * command, or until 'timeout' seconds has elapsed.
+ * 
+ * context: C-level-0
+ *
+ * @see signal_exit()
+ */
+void ECA_ENGINE::wait_for_editlock(void)
+{
+  int ret = -1;
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "wait_for_editlock");
+
+  pthread_mutex_lock(&impl_repp->editlock_mutex_repp);
+  while(edit_lock_rep != true) {
+    ret = pthread_cond_wait(&impl_repp->editlock_cond_repp, 
+                            &impl_repp->editlock_mutex_repp);
+  }
+  pthread_mutex_unlock(&impl_repp->editlock_mutex_repp);
+
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
+              "wait_for_editlock complete, ret " 
+              + kvu_numtostr(ret));
 }
 
 /**********************************************************************
@@ -515,7 +539,11 @@ void ECA_ENGINE::check_command_queue(void)
         // ---            
       case ep_exit:
         {
-          edit_lock_rep = true;
+          // FIXME?
+          signal_editlock();
+
+          // FIXME: is clear the right thing or should remaining cmds
+          //        be still processed? OTOH, client app should know...
           impl_repp->command_queue_rep.clear();
           ECA_LOG_MSG(ECA_LOGGER::system_objects,"ecasound_queue: exit!");
           driver_repp->exit();
@@ -541,7 +569,7 @@ void ECA_ENGINE::check_command_queue(void)
         // ---
         // Edit locks
         // ---            
-      case ep_edit_lock: { edit_lock_rep = true; break; }
+      case ep_edit_lock: { signal_editlock(); break; }
       case ep_edit_unlock: { edit_lock_rep = false; break; }
 
         // ---
@@ -769,7 +797,6 @@ void ECA_ENGINE::start_operation(void)
 
   start_realtime_objects();
   running_rep = true;
-  started_rep = true;
 
   // ---
   DBC_ENSURE(is_running() == true);
@@ -830,9 +857,6 @@ void ECA_ENGINE::stop_operation(bool drain)
 
   /* release chainsetup lock */
   csetup_repp->toggle_locked_state(false);
-
-  running_rep = false;
-  started_rep = false;
 
   /* signals wait_for_stop() that engine operation has stopped */
   signal_stop();
@@ -911,9 +935,6 @@ void ECA_ENGINE::request_start(void)
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "Request start");
 
-  // mute be set as early possible
-  started_rep = true;
-
   // --
   // start the driver
   driver_repp->start();
@@ -956,6 +977,7 @@ void ECA_ENGINE::signal_stop(void)
 {
   pthread_mutex_lock(&impl_repp->ecasound_stop_mutex_repp);
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling stop");
+  running_rep = false;
   pthread_cond_broadcast(&impl_repp->ecasound_stop_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_stop_mutex_repp);
 }
@@ -974,6 +996,23 @@ void ECA_ENGINE::signal_exit(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling exit");
   pthread_cond_broadcast(&impl_repp->ecasound_exit_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_exit_mutex_repp);
+}
+
+/**
+ * Sends a signal indicating that the edit lock has been
+ * taken.
+ *
+ * context: E-level-1/4 
+ *
+ * @see wait_for_editlock()
+ */
+void ECA_ENGINE::signal_editlock(void)
+{
+  pthread_mutex_lock(&impl_repp->editlock_mutex_repp);
+  edit_lock_rep = true;
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling editlock");
+  pthread_cond_broadcast(&impl_repp->editlock_cond_repp);
+  pthread_mutex_unlock(&impl_repp->editlock_mutex_repp);
 }
 
 /**
@@ -1286,6 +1325,8 @@ void ECA_ENGINE::init_variables(void)
   batchmode_enabled_rep = false;
   driver_local = false;
 
+  pthread_cond_init(&impl_repp->editlock_cond_repp, NULL);
+  pthread_mutex_init(&impl_repp->editlock_mutex_repp, NULL);
   pthread_cond_init(&impl_repp->ecasound_stop_cond_repp, NULL);
   pthread_mutex_init(&impl_repp->ecasound_stop_mutex_repp, NULL);
   pthread_cond_init(&impl_repp->ecasound_exit_cond_repp, NULL);

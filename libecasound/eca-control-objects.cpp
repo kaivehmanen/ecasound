@@ -1778,10 +1778,18 @@ bool ECA_CONTROL::cond_stop_for_editing(void)
 {
   bool was_running = false;
 
-  if (selected_chainsetup() == connected_chainsetup() && is_started() == true) {
+  if (selected_chainsetup() == connected_chainsetup() && 
+      is_engine_running() == true) {
+
+    engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
     engine_repp->command(ECA_ENGINE::ep_edit_lock, 0.0);
+
     was_running = true;
-    stop_on_condition();
+
+    // block until engine has processed above ep_edit_lock and 
+    // we know the engine is stopped (and no new start is queued)
+    engine_repp->wait_for_editlock();
+    engine_repp->wait_for_stop(5);
   }
 
   return was_running;

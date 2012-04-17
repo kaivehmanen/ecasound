@@ -458,13 +458,6 @@ bool ECA_CONTROL::is_selected(void) const { return selected_chainsetup_repp != 0
 bool ECA_CONTROL::is_running(void) const { return (is_engine_created() == true && engine_repp->status() == ECA_ENGINE::engine_status_running); } 
 
 /**
- * Returns true if processing engine is running, or 
- * has been requested to start running (which may still
- * be pending).
- */
-bool ECA_CONTROL::is_started(void) const { return (is_engine_created() == true && engine_repp->is_started() == true); } 
-
-/**
  * Returns true if engine has finished processing. Engine state is 
  * either "finished" or "error".
  */
