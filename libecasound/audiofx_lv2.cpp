@@ -278,11 +278,13 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
 		lilv_instance_deactivate(plugins_rep[n]);
       lilv_instance_free(plugins_rep[n]);
     }
+    plugins_rep.clear();
   }
+  DBC_CHECK(plugins_rep.size() == 0);
 
   if (in_audio_ports > 1 ||
       out_audio_ports > 1) {
-	//Just insert into the first location
+    //Just insert into the first location
     plugins_rep.push_back(Lilv::Instance(plugin_desc,samples_per_second()));
     int inport = 0;
     int outport = 0;
