@@ -755,7 +755,7 @@ void ECA_ENGINE::prepare_operation(void)
     if (kvu_set_thread_scheduling(SCHED_FIFO, csetup_repp->get_sched_priority()) != 0)
       ECA_LOG_MSG(ECA_LOGGER::system_objects, "Unable to change scheduling policy!");
     else
-      ECA_LOG_MSG(ECA_LOGGER::info, 
+      ECA_LOG_MSG(ECA_LOGGER::user_objects, 
                   std::string("Using realtime-scheduling (SCHED_FIFO:")
                   + kvu_numtostr(csetup_repp->get_sched_priority()) + ").");
   }
