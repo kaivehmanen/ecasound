@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // kvu_threads.cpp: Various pthread related helper functions.
-// Copyright (C) 2002,2004 Kai Vehmanen
+// Copyright (C) 2002,2004,2012 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
+#include <time.h>     /* clock_gettime() */
 #include <sys/time.h> /* gettimeofday() */
 #include <errno.h> /* ETIMEDOUT */
 
@@ -86,4 +87,35 @@ string kvu_pthread_timed_wait_result(int result, const string& prefix)
       return(prefix + " failed");
   }
   return(prefix + " ok");
+}
+
+/**
+ * Fills absolute timeout struct out for pthread_cond_timedwait() that
+ * results in 'seconds' of relative timeout.
+ *
+ * @arg seconds timeout in seconds (must be positive)
+ * @out out pointer to output timeout struct
+ * @out mononic true if CLOCK_MONOTONIC should be used (condition
+ *      attribute set to MONOTONIC using pthread_condattr_setclock(MONOTONIC);
+ *      otherwise using CLOCK_REALTIME (system time)
+ */
+int kvu_pthread_cond_timeout(int seconds, struct timespec *out, bool monotonic = false)
+{
+  // FIXME: needs to be implemented using MONOTONIC clock_gettime() 
+  //        and setting  on the clock
+  int res = 0;
+  if (monotonic) {
+#if defined CLOCK_MONOTONIC
+    res = clock_gettime(CLOCK_MONOTONIC, out);
+    out->tv_sec += seconds;
+#else
+    res = -1;
+#endif
+  }
+  else {
+    res = clock_gettime(CLOCK_REALTIME, out);
+    out->tv_sec += seconds;
+  }
+
+  return res;
 }

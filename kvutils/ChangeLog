@@ -1,3 +1,8 @@
+2012-04-17  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_threads.cpp (kvu_pthread_cond_timeout): Added.
+	* library interface version to 9:0:6
+
 2009-10-17  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 9:0:5 frozen (2.7.0 release)
