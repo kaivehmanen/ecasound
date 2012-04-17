@@ -571,7 +571,7 @@ AC_ARG_ENABLE(pyecasound,
 		;;
 
 		c)
-		  AC_MSG_ERROR([C python implementation is deprecated. Use --enable-python=iwantc if you really need and want to use it. Please raise this on ecasound-list to stop the deprecation process.])
+		  AC_MSG_ERROR([C python implementation is deprecated. Use --enable-pyecasound=iwantc if you really need and want to use it. Please raise this on ecasound-list to stop the deprecation process.])
 		;;
 
 		iwantc)
