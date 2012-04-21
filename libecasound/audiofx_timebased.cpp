@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_timebased.cpp: Routines for time-based effects.
-// Copyright (C) 1999-2005 Kai Vehmanen
+// Copyright (C) 1999-2005,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 2
@@ -32,6 +32,15 @@
 #include "sample-ops_impl.h"
 #include "audiofx_timebased.h"
 
+static void priv_check_for_zerodelay(long int *dtime, OPERATOR::parameter_t *dtime_msec, long int srate)
+{
+  if (*dtime == 0) {
+    *dtime = 1;
+    *dtime_msec = 1 / (CHAIN_OPERATOR::parameter_t)srate * 1000.0;
+    ECA_LOG_MSG(ECA_LOGGER::info,
+                "WARNING: delay of 0 samples not supported, delay set to 1 sample");
+  }
+}
 
 EFFECT_DELAY::EFFECT_DELAY (CHAIN_OPERATOR::parameter_t delay_time, int surround_mode, 
 			    int num_of_delays, CHAIN_OPERATOR::parameter_t mix_percent,
@@ -136,12 +145,13 @@ void EFFECT_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
     {
       dtime_msec = value;
       dtime = dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000;
+      priv_check_for_zerodelay(&dtime, &dtime_msec, samples_per_second());
       std::vector<std::vector<SINGLE_BUFFER> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
 	std::vector<SINGLE_BUFFER>::iterator q = p->begin();
 	while(q != p->end()) {
-	  if (q->size() > dtime) {
-	    q->resize(static_cast<unsigned int>(dtime));
+	  if (q->size() > static_cast<size_t>(dtime)) {
+	    q->resize(static_cast<size_t>(dtime));
 	    laskuri = dtime;
 	  }
 	  ++q;
@@ -214,7 +224,7 @@ void EFFECT_DELAY::process(void)
       feedfact *= feedback;
 
       if (laskuri >= dtime * (nm2 + 1)) {
- 
+
 	switch ((int)surround) {
 	case 0: 
 	  {
@@ -350,6 +360,7 @@ void EFFECT_MULTITAP_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter_t
     {
       dtime_msec = value;
       dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000);
+      priv_check_for_zerodelay(&dtime, &dtime_msec, samples_per_second());
       DBC_CHECK(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {
 	if ((dtime * dnum) > static_cast<int>(buffer[n].size())) {
@@ -466,10 +477,11 @@ void EFFECT_FAKE_STEREO::set_parameter(int param, CHAIN_OPERATOR::parameter_t va
   case 1:
     dtime_msec = value;
     dtime = dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000;
+    priv_check_for_zerodelay(&dtime, &dtime_msec, samples_per_second());
     std::vector<std::deque<SAMPLE_SPECS::sample_t> >::iterator p = buffer.begin();
     while(p != buffer.end()) {
-      if (p->size() > dtime) {
-	p->resize(static_cast<unsigned int>(dtime));
+      if (p->size() > static_cast<size_t>(dtime)) {
+	p->resize(static_cast<size_t>(dtime));
       }
       ++p;
     }
@@ -495,7 +507,7 @@ void EFFECT_FAKE_STEREO::process(void)
   while(!l.end() && !r.end()) {
     SAMPLE_SPECS::sample_t temp_left = 0;
     SAMPLE_SPECS::sample_t temp_right = 0;
-    if (buffer[SAMPLE_SPECS::ch_left].size() >= dtime && dtime > 0) {
+    if (buffer[SAMPLE_SPECS::ch_left].size() >= static_cast<size_t>(dtime)) {
       temp_left = buffer[SAMPLE_SPECS::ch_left].front();
       temp_right = buffer[SAMPLE_SPECS::ch_right].front();
 
@@ -591,12 +603,13 @@ void EFFECT_REVERB::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
     {
       dtime_msec = value;
       dtime = dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000;
+      priv_check_for_zerodelay(&dtime, &dtime_msec, samples_per_second());
       std::vector<std::deque<SAMPLE_SPECS::sample_t> >::iterator p = buffer.begin();
       while(p != buffer.end()) {
-	if (p->size() > dtime) {
-	  p->resize(static_cast<unsigned int>(dtime));
-	}
-	++p;
+        if (p->size() > static_cast<size_t>(dtime)) {
+          p->resize(static_cast<size_t>(dtime));
+        }
+        ++p;
       }
       break;
     }
@@ -630,7 +643,7 @@ void EFFECT_REVERB::process(void)
   while(!l.end() && !r.end()) {
     SAMPLE_SPECS::sample_t temp_left = 0.0;
     SAMPLE_SPECS::sample_t temp_right = 0.0;
-    if (buffer[SAMPLE_SPECS::ch_left].size() >= dtime) {
+    if (buffer[SAMPLE_SPECS::ch_left].size() >= static_cast<size_t>(dtime)) {
       temp_left = buffer[SAMPLE_SPECS::ch_left].front();
       temp_right = buffer[SAMPLE_SPECS::ch_right].front();
       
@@ -748,9 +761,7 @@ void EFFECT_MODULATING_DELAY::set_parameter(int param, CHAIN_OPERATOR::parameter
     {
       dtime_msec = value;
       dtime = static_cast<long int>(dtime_msec * (CHAIN_OPERATOR::parameter_t)samples_per_second() / 1000);
-      if (dtime < 1) { 
-	dtime = 1;
-      }
+      priv_check_for_zerodelay(&dtime, &dtime_msec, samples_per_second());
       DBC_CHECK(buffer.size() == delay_index.size());
       DBC_CHECK(buffer.size() == filled.size());
       for(int n = 0; n < static_cast<int>(buffer.size()); n++) {

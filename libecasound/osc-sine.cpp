@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-sine.cpp: Sine oscillator
-// Copyright (C) 1999,2001,2008 Kai Vehmanen
+// Copyright (C) 1999,2001,2008,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -32,6 +32,9 @@
 CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::value(double pos_secs)
 {
   parameter_t retval, phase;
+
+  if (period_len_rep == 0)
+    return 1.0;
 
   phase = 2.0 * M_PI * (pos_secs / period_len_rep);
   retval = sin(phase + phase_offset());
@@ -67,7 +70,7 @@ void SINE_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t v)
   case 1: 
     frequency(v);
     /* note: cache length of one period in seconds */
-    if (v > 0)
+    if (frequency() > 0)
       period_len_rep = 1.0 / frequency();
     else
       period_len_rep = 0;

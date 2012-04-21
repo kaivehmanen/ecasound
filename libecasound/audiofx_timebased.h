@@ -32,7 +32,7 @@ class EFFECT_DELAY : public EFFECT_TIME_BASED {
 
   parameter_t surround;
   parameter_t dnum;
-  parameter_t dtime;
+  long int dtime;
   parameter_t dtime_msec;
   parameter_t mix;
   parameter_t feedback;
@@ -104,7 +104,7 @@ class EFFECT_FAKE_STEREO : public EFFECT_TIME_BASED {
 
   std::vector<std::deque<SAMPLE_SPECS::sample_t> > buffer;
   SAMPLE_ITERATOR_CHANNEL l,r;
-  parameter_t dtime;
+  long int dtime;
   parameter_t dtime_msec;
 
  public:
@@ -137,7 +137,7 @@ class EFFECT_REVERB : public EFFECT_TIME_BASED {
 
   parameter_t surround;
   parameter_t feedback;
-  parameter_t dtime;
+  long int dtime;
   parameter_t dtime_msec;
 
  public:
