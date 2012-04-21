@@ -90,5 +90,5 @@ CONTROLLER_SOURCE::parameter_t SINE_OSCILLATOR::get_parameter(int param) const
   case 2: 
     return phase_offset() / M_PI;
   }
-  return(0.0);
+  return 0.0;
 }
