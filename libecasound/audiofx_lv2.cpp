@@ -328,7 +328,7 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, 
 		"Instantiated " +
 		kvu_numtostr(plugins_rep.size()) + 
-		" LADSPA plugin(s), each with " + 
+		" LV2 plugin(s), each with " + 
 		kvu_numtostr(in_audio_ports) + 
 		" audio input port(s) and " +
 		kvu_numtostr(out_audio_ports) +
