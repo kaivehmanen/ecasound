@@ -948,6 +948,23 @@ LADSPA plugins.
 
 enddit()
 
+em(LV2 PLUGINS)
+startdit()
+dit(-elv2:plugin-id-uri,param-1,...,param-N)
+Ecasound also supports LV2 audio plugins. LV2 plugins are 
+identified by a globally unique, case-sensitive identifier.
+
+If plugin has more than one audio input and/or output port, 
+only one plugin is instance is created, and the chain channels
+are fed to the same plugin instance. If plugin has at most one
+input and at most one output audio port, a separate plugin instance
+is created for each channel of the ecasound chain (e.g. for a stereo
+audio channel, two LV2 plugins of same type are created, with
+one per channel).
+
+LV2 is a plugin standard for audio systems. 
+enddit()
+
 em(GATE SETUP)
 
 startdit()
