@@ -73,7 +73,9 @@ have a note about the minimum required version.
 <li><a href="#audio_ops">Manipulating objects - looping, reversing, ...</a></li>
 <li><a href="#multichannel">Multichannel Processing</a></li>
 <li><a href="#srouting">Signal Routing through External Devices</a></li>
-<li><a href="#presets">Presets and LADSPA Effect Plugins</a></li>
+<li><a href="#ladspa">LADSPA Effect Plugins</a></li>
+<li><a href="#lv2">LV2 Effect Plugins</a></li>
+<li><a href="#presets">Effect Presets</a></li>
 <li><a href="#midi-io">More with MIDI</a></li>
 <li><a href="#tonegeneration">Tone generation</a></li>
 <li><a href="#piping">Piping data from other processes</a></li>
@@ -644,13 +646,13 @@ for instance).
 
 <blockquote>
 <pre class="codepre">1. ecasound -c -f:16,2,44100 \
-	      -a:1 -i source-track.wav -o alsa \
-  	      -a:2 -i alsa -o processed-track.wav</pre>
+          -a:1 -i source-track.wav -o alsa \
+          -a:2 -i alsa -o processed-track.wav</pre>
 </blockquote>
 
 <!-- ###  new section ### -->
 <p class="examplecat">
-<a name="presets"><b>Presets and LADSPA Effect Plugins</b></a></p>
+<a name="ladspa"><b>LADSPA Effect Plugins</b></a></p>
 
 <p>
 The following produces a 440Hz sine tone (e.g. for tuning purposes) and
@@ -664,27 +666,88 @@ needs to have the LADSPA SDK needs installed (see
 </blockquote>
 
 <p>
-The next example produces a metrome signal with tempo of 120BPM:
+The next example produces a metrome signal with tempo of 120BPM, using
+a LADSPA plugin to create the sine tone (-el), ecasound pulse gate (-eemb)
+to create the pulse and finally a low-pass filter (-efl) to filter 
+the resulting output.
 </p>
 
 <blockquote>
 <pre class="codepre">2. ecasound -i:null -o:alsa -el:sine_fcac,880,1 -eemb:120,10 -efl:2000</pre>
 </blockquote>
 
+<!-- ###  new section ### -->
+<p class="examplecat">
+<a name="lv2"><b>LV2 Effect Plugins</b></a></p>
+
 <p>
-As the syntax might look a bit difficult for everyday use, the above is provided
-also as an effect preset:
+LV2 is a plugin standard for audio systems, designed as a successor for LADSPA.
+See <a href="http://lv2plug.in/">lv2plug.in</a> website for more information, and
+links to available LV2 plugins, documentation and other resources.
 </p>
 
+In the first example, a +6dB gain is applied using LV2 example 'eq-amp' plugin.
+LV2 plugins are identified with URIs, so the first parameter to '-elv2' is
+the plugin URI (e.g. <em>http://lv2plug.in/plugins/eg-amp</em>).
+
 <blockquote>
-<pre class="codepre">3. ecasound -i:null -o:alsa -pn:metronome,120</pre>
+<pre class="codepre">1. ecasound -i foobar.wav -o alsa -elv2:http://lv2plug.in/plugins/eg-amp,6</pre>
 </blockquote>
 
 <p>
-To look at the definition of 'metronome', see the file 'effect_presets' that
-comes with ecasound distribution (contains the the predefined effect presets). 
-By default, location of this file is '/usr/share/ecasound/effect_presets'.
+The next example shows how to use the <em>analogueOsc</em> plugin from 
+<a href="http://plugin.org.uk/">swh-plugins</a> package, to create
+a 400Hz square tone and play it to default ALSA audio output:
 </p>
+
+<blockquote>
+<pre class="codepre">2. ecasound -i:null -o:alsa -elv2:http://plugin.org.uk/swh-plugins/analogueOsc,3,400,0.4,0.05</pre>
+</blockquote>
+
+LV2 (like LADSPA) plugins can be controlled just like other Ecasound
+plugins. E.g. making a 10sec 20-2000Hz sweep of the square tone from
+previous example:
+
+<blockquote>
+<pre class="codepre">3. ecasound -i:null -o:alsa -elv2:http://plugin.org.uk/swh-plugins/analogueOsc,3,20,0.4,0.05 -kl:2,20,2000,10</pre>
+</blockquote>
+
+<p>
+Version note: For LV2 support, you need ecasound 2.9.0 or newer.
+</p>
+
+<!-- ###  new section ### -->
+<p class="examplecat">
+<a name="presets"><b>Effect Presets</b></a></p>
+
+<p>
+In the above example for LADSPA, the sequence <code>-el:sine_fcac,880,1 -eemb:120,10 -efl:2000</code>
+was used to create a metronome signal. Combinations of effects like this can
+be stored for later use as Ecasound presets:
+</p>
+
+<blockquote>
+<pre class="codepre">1. ecasound -i:null -o:alsa -pn:metronome,120</pre>
+</blockquote>
+
+This is defined in @prefix@/share/ecasound/effect_presets as:
+<blockquote>
+<pre class="codepre">
+# the metronome example, taking a single parameter (tempo)
+metronome = -el:sine_fcac,880,1 -eemb:%1,10 -efl:2000 \
+	-ppn:bpm -ppd:100 -pd:Sineosc_metronome
+</pre>
+</blockquote>
+
+<p>
+Passing parameters is supported (<em>%1</em> is the first
+preset parameter, <em>%2</em> the second, and so forth). In the above
+example, <em>%1</em> is set to <em>120</em> and this may be 
+modified during runtime (interactively, with oscillators, via MIDI,
+OSC, or any other method available for controlling parameters).
+</p>
+
+<p>A sample 'effect_presets' file is distributed with Ecasound.</p>
 
 <!-- ###  new section ### -->
 <p class="examplecat">
