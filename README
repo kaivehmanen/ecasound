@@ -120,6 +120,7 @@ Optional when compiling Ecasound:
 - for pyecasound, the Python 2.4+ runtime
 - for curses support, the ncurses devel package
 - for LADSPA support, the LADSPA SDK package
+- for LV2 support, liblilv devel package newer than 0.5.0
 - for ALSA support, the ALSA devel package
 - for JACK support, the JACK devel package
 - for aRts support, the aRts C-API devel package
@@ -306,7 +307,7 @@ and to users who have given feedback, ideas and helped with testing!
  Licensing/distribution policy
 -----------------------------------------------------------------------
 
-Copyright (C) 1997-2011 Kai Vehmanen and others (see the file
+Copyright (C) 1997-2012 Kai Vehmanen and others (see the file
 'AUTHORS' for full list of copyright holders).
 
 Ecasound is freely distributable according to the terms of the 
