@@ -917,17 +917,32 @@ em(LADSPA-PLUGINS)
 startdit()
 dit(-el:plugin_unique_name,param-1,...,param-N)
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's Simple
-Plugin API). Plugins are located in shared library (.so) files in 
-/usr/local/share/ladspa (configured in ecasoundrc man page). One shared
-library file can contain multiple plugin objects, but every plugin 
-has a unique plugin name. This name is used for selecting plugins. 
+Plugin API). Parameters 1..N are set as values of the plugin's control 
+ports.
+
+If plugin has more than one audio input and/or output port, 
+only one plugin is instance is created, and the chain channels
+are fed to the same plugin instance. If plugin has at most one
+input and at most one output audio port, a separate plugin instance
+is created for each channel of the ecasound chain (e.g. for a stereo
+audio channel, two LADSPA plugins of same type are created, with
+one per channel).
+
+Plugins are located in shared library (.so) files. Ecasound looks
+for plugins in @prefix@/lib/ladspa (e.g. "/usr/local/lib/ladspa"), 
+directories listed in environment variable em(LADSPA_PATH). Plugin
+search path can be configured also via em(ecasoundrc), see 
+ecasoundrc(5) man page. One shared library file can contain multiple 
+plugin objects, but every plugin has a unique plugin name. This name is
+used for selecting plugins.
+
 See url(LAD mailing list web site)(http://www.linuxdj.com/audio/lad) for
 more info about LADSPA. Other useful sites are url(LADSPA home
 page)(http://www.ladspa.org) and url(LADSPA
 documentation)(http://www.ffem.org/gdam/ladspa-doc/ladspa.html).
 
 dit(-eli:plugin_unique_number,param-1,...,param-N)
-Same as above expect plugin's unique id-number is used. It
+Same as above (em(-el)) expect plugin's unique id-number is used. It
 is guaranteed that these id-numbers are unique among all 
 LADSPA plugins.
 
