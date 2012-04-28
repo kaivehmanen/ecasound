@@ -2,6 +2,9 @@
 // osc-gen.cpp: Generic oscillator
 // Copyright (C) 1999-2002,2008,2012 Kai Vehmanen
 //
+// Attributes:
+//     eca-style-version: 3
+//
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
@@ -167,7 +170,7 @@ void GENERIC_OSCILLATOR::set_param_count(int params)
 
 std::string GENERIC_OSCILLATOR::parameter_names(void) const
 {
-  return(param_names_rep);
+  return param_names_rep;
 }
 
 void GENERIC_OSCILLATOR::prepare_envelope(void)
@@ -242,27 +245,27 @@ CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::get_parameter(int param) cons
 { 
   switch (param) {
   case 1: 
-    return(frequency());
+    return frequency();
 
   case 2:
-    return(static_cast<parameter_t>(mode_rep));
+    return static_cast<parameter_t>(mode_rep);
 
   case 3:
-    return(static_cast<parameter_t>((number_of_params() - 5) / 2));
+    return static_cast<parameter_t>((number_of_params() - 5) / 2);
 
   case 4:
-    return(static_cast<parameter_t>(first_value_rep));
+    return static_cast<parameter_t>(first_value_rep);
 
   case 5:
-    return(static_cast<parameter_t>(last_value_rep));
+    return static_cast<parameter_t>(last_value_rep);
 
   default:
     int pointnum = param - 5;
     if (pointnum > 0) {
       if (pointnum <= static_cast<int>(params_rep.size())) {
-        return(static_cast<parameter_t>(params_rep[pointnum - 1]));
+        return static_cast<parameter_t>(params_rep[pointnum - 1]);
       }
     }
   }
-  return(0.0);
+  return 0.0;
 }

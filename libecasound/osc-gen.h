@@ -24,7 +24,7 @@ class GENERIC_OSCILLATOR : public OSCILLATOR {
   virtual void set_parameter(int param, parameter_t value);
   virtual parameter_t get_parameter(int param) const;
 
-  std::string name(void) const { return("Generic oscillator"); }
+  std::string name(void) const { return "Generic oscillator"; }
 
   GENERIC_OSCILLATOR* clone(void) const { return new GENERIC_OSCILLATOR(*this); }
   GENERIC_OSCILLATOR* new_expr(void) const { return new GENERIC_OSCILLATOR(*this); }
