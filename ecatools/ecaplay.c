@@ -208,9 +208,10 @@ static void initialize_check_output(eci_handle_t* eci)
   else {
     static int once = 1;
     if (once) {
+      char *tmpstr;
       eci_command_r(eci, "ao-iselect 1");
       eci_command_r(eci, "ao-describe");
-      char *tmpstr = (char*)eci_last_string_r(eci);
+      tmpstr = (char*)eci_last_string_r(eci);
       /* skip the "-x:" prefix where x is one of [io] */
       while(*tmpstr && *tmpstr++ != ':') 
 	;

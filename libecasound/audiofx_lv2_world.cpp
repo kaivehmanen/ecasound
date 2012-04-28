@@ -67,7 +67,7 @@ ECA_LV2_WORLD::~ECA_LV2_WORLD()
 		return i.VARIABLENAME; \
 	}
 
-DECLARE_ACESSOR(LilvWorld, World, lilvworld, lilv_world_new());
+DECLARE_ACESSOR(LilvWorld, World, lilvworld, lilv_world_new())
 DECLARE_ACESSOR(LilvNode, AudioClassNode,audioclassnode,lilv_new_uri(World(),LILV_URI_AUDIO_PORT))
 DECLARE_ACESSOR(LilvNode, ControlClassNode,controlclassnode,lilv_new_uri(World(),LILV_URI_CONTROL_PORT))
 DECLARE_ACESSOR(LilvNode, InputClassNode,inputclassnode,lilv_new_uri(World(),LILV_URI_INPUT_PORT))

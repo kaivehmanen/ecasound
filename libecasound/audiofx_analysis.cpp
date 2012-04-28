@@ -144,7 +144,6 @@ string EFFECT_VOLUME_BUCKETS::status(void) const
   }
 
   for(unsigned int j = neg_samples_db.size(); j > 0; j--) {
-    DBC_CHECK(j >= 0);
     status_str += std::string("\nNeg ")
       + priv_align_right(bucket_table[j-1].name, 4, ' ')
       + "dB: ";

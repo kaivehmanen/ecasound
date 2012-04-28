@@ -73,7 +73,7 @@
  * Options
  */
 
-// #define ECI_ENABLE_DEBUG
+/* #define ECI_ENABLE_DEBUG */
 
 /* --------------------------------------------------------------------- 
  * Definitions and constants
@@ -828,6 +828,7 @@ static void eci_string_free(eci_string *str)
   str->slen = 0;
 }
 
+#ifdef DOCUMENTATION_ONLY
 /**
  * Returns the string length.
  */
@@ -836,6 +837,7 @@ static int eci_string_len(eci_string *str)
   DBC_CHECK(str);
   return str->slen;
 }
+#endif
 
 /**
  * Adds 'len' octets from buffer 'src' to the string
