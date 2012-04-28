@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen.cpp: Generic oscillator
-// Copyright (C) 1999-2002,2008 Kai Vehmanen
+// Copyright (C) 1999-2002,2008,2012 Kai Vehmanen
 //
 // This program is fre software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 // ------------------------------------------------------------------------
 
-#include <iostream>
 #include <vector>
 #include <string>
 
+#include <kvu_dbc.h>
 #include <kvu_numtostr.h>
 
 #include "eca-object-factory.h"
@@ -28,103 +28,136 @@
 #include "oscillator.h"
 #include "eca-logger.h"
 
+/* For hunting bugs in envelope code */
+//#define DEBUG_ENVELOPE_POINTS 
+
+#ifdef DEBUG_ENVELOPE_POINTS
+#define _DEBUG_ENVELOPE(x) do { x; } while(0)
+#include <iostream>
+#else
+#define _DEBUG_ENVELOPE(x)
+#endif
+
+#include <kvu_procedure_timer.h>
+
+size_t GENERIC_OSCILLATOR::current_stage(double pos)
+{
+  size_t start, n;
+
+  static PROCEDURE_TIMER pt1;
+  struct timespec t1, t2;
+  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t1);
+  // note: like 'std::fmod(pos, loop_length_rep)' but faster
+  double loop_pos = pos - static_cast<int>(pos / loop_length_rep) * loop_length_rep;
+  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t2);
+
+  pt1.start(&t1);
+  pt1.stop(&t2);
+    
+  if (pt1.event_count() % 50 == 0)
+    std::cout << pt1.to_string();
+
+  // note: optimize for the case where position changes
+  //       linearly
+  start = last_stage_rep;
+
+  for(n = start;;) {
+
+    double pos_scaled = loop_pos / loop_length_rep;
+    double p1 = envtable_rep[n].pos;
+    double p2 = envtable_rep[n + 1].pos;
+
+    _DEBUG_ENVELOPE(std::cout << 
+                    "looking for stage " + kvu_numtostr(n) +
+                    ", stages " + kvu_numtostr(envtable_rep.size()) +
+                    ", pos " + kvu_numtostr(pos) +
+                    ", looppos " + kvu_numtostr(loop_pos) +
+                    ", scaled " + kvu_numtostr(pos_scaled) +
+                    ", p1 " + kvu_numtostr(p1) +
+                    ", p2 " + kvu_numtostr(p2) << "\n");
+
+    if (pos_scaled >= p1 && pos_scaled < p2) {
+      _DEBUG_ENVELOPE(std::cout << 
+                      "found stage " + kvu_numtostr(n) << "\n");
+      last_pos_scaled_rep = pos_scaled;
+      break;
+    }
+
+    n++;
+    if (n + 1 == envtable_rep.size())
+      n = 0;
+
+    if (n == start) {
+      static bool once = true;
+      if (once) {
+        ECA_LOG_MSG(ECA_LOGGER::info,
+                    "ERROR: invalid envelop");
+        once = false;
+      }
+      break;
+    }
+  }
+
+  _DEBUG_ENVELOPE(if (last_stage_rep != n) { \
+      std::cout << "stage change from " \
+                << kvu_numtostr(last_stage_rep)  \
+                <<" to " << kvu_numtostr(n) << "\n"; } );
+  
+  last_stage_rep = n;
+  
+  return n;
+}
+
 CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(double pos)
 {
-  if (mode_rep == 0)
-    update_current_static();
-  else
-    update_current_linear();
+  size_t stage = current_stage(pos);
+  double retval = 0.0f;
 
-  /* FIXME: not really seeking-safe */
-  loop_pos_rep += pos - last_global_pos_rep;
-  last_global_pos_rep = pos;
+  /* case: hold/step */
+  if (mode_rep == 0) {
+    retval = envtable_rep[stage].val;
+    _DEBUG_ENVELOPE(std::cout
+                    << "hold value " << retval
+                    << ", stage " << stage << "\n");
 
-  if (loop_pos_rep > loop_length_rep) {
-    loop_pos_rep = 0.0f;
-    pindex_rep = 0;
-    eindex_rep = 0;
-    if (epairs_rep > 0)
-      next_pos_rep = ienvelope_rep[0];
-    else
-      next_pos_rep = 1.0;
-    
-    last_pos_rep = 0;
   }
-
-  if ((loop_pos_rep / loop_length_rep) >= next_pos_rep) {
-    ++pindex_rep;
-    eindex_rep += 2;
-    last_pos_rep = next_pos_rep;
-    if (eindex_rep + 1 > static_cast<int>(ienvelope_rep.size())) {
-      next_pos_rep = 1.0;
-    }
-    else {
-      next_pos_rep = ienvelope_rep[eindex_rep];
-    }
-  }
-
-  return(current_value_rep);
-}
-
-void GENERIC_OSCILLATOR::update_current_static(void)
-{
-  if (pindex_rep == 0) {
-    current_value_rep = start_value_rep;
-  }
+  /* case: linear interpolation */
   else {
-    if (eindex_rep - 1 > static_cast<int>(ienvelope_rep.size()))
-      current_value_rep = end_value_rep;
-    else
-      current_value_rep = ienvelope_rep[eindex_rep - 1];
-  }
-}
-
-void GENERIC_OSCILLATOR::update_current_linear(void)
-{
-  if (pindex_rep == 0) {
-    current_value_rep = start_value_rep;
-  }
-  else {
-    if (eindex_rep - 1 > static_cast<int>(ienvelope_rep.size()))
-      current_value_rep = end_value_rep;
-    else
-      current_value_rep = ienvelope_rep[eindex_rep - 1];
+    // FIXME: calc is wrong, correct
+    double p1 = envtable_rep[stage].pos;
+    double p2 = envtable_rep[stage + 1].pos;
+    double v1 = envtable_rep[stage].val;
+    double v2 = envtable_rep[stage + 1].val;
+    double mult = 1.0 - ((p2 - last_pos_scaled_rep) / (p2 - p1));
+    retval = v1 + (mult * (v2 - v1));
+    _DEBUG_ENVELOPE(std::cout
+                    << "linear value " << retval
+                    << ", stage " << stage 
+                    << ", v1 " << v1 << ", v2 " << v2 << ", scaledpos " << last_pos_scaled_rep
+                    << "\n");
   }
 
-  double next_value = end_value_rep;
-  if (epairs_rep != 0 &&
-      eindex_rep + 1 < static_cast<int>(ienvelope_rep.size())) {
-    next_value = ienvelope_rep[eindex_rep + 1];
-  }
-  current_value_rep += (next_value - current_value_rep) * (((loop_pos_rep / loop_length_rep) - last_pos_rep) / (next_pos_rep - last_pos_rep));
+  return retval;
 }
 
 GENERIC_OSCILLATOR::GENERIC_OSCILLATOR(double freq, int mode)
   : OSCILLATOR(freq, 0.0)
 {
-  start_value_rep = end_value_rep = 0.0f;
-  loop_length_rep = 0.0f;
-  loop_pos_rep = 0.0f;
-  next_pos_rep = 0.0f;
-  last_pos_rep = 0.0f;
-  last_global_pos_rep = 0.0f;
-  epairs_rep = 0;
-  eindex_rep = 0;
-  pindex_rep = 0;
-  current_value_rep = 0.0f;
+  last_stage_rep = 0;
+
   set_param_count(0);
 
   set_parameter(1, get_parameter(1));
   set_parameter(2, mode);
-
-  // std::cerr << "(osc-gen) construct; params " << parameter_names() << ".\n";
 }
 
 void GENERIC_OSCILLATOR::init(void)
 {
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
-	      "Generic oscillator init with params: "
-	      + ECA_OBJECT_FACTORY::operator_parameters_to_eos(this));
+              "Generic oscillator init with params: "
+              + ECA_OBJECT_FACTORY::operator_parameters_to_eos(this));
+  if (envtable_rep.size() < 2)
+    envtable_rep.resize(2);
 }
 
 GENERIC_OSCILLATOR::~GENERIC_OSCILLATOR (void)
@@ -152,18 +185,36 @@ std::string GENERIC_OSCILLATOR::parameter_names(void) const
 
 void GENERIC_OSCILLATOR::prepare_envelope(void)
 {
-  if (ienvelope_rep.size() % 2 == 1)
-    ienvelope_rep.resize(ienvelope_rep.size() + 1);
-  epairs_rep = (ienvelope_rep.size() / 2);
-  if (epairs_rep > 0) 
-    next_pos_rep = ienvelope_rep[0];
-  else
-    next_pos_rep = 1.0;
-}
+  // FIXME: new
+  // - sanity check the position order (or allow reorder)
+  // - use pair<> objects perhaps (replace intrapoints_rep)?
+  size_t len = 2 + (params_rep.size() + 1) / 2;
+  envtable_rep.resize(len);
 
+  envtable_rep[0].pos = 0.0;
+  envtable_rep[0].val = first_value_rep;
+  size_t n = 0;
+  size_t p1_offset = 1;
+  size_t p_end_offset = params_rep.size() / 2 + p1_offset;
+  for(; n < params_rep.size(); n++) {
+    envtable_rep[n / 2 + p1_offset].pos = params_rep[n];
+    if (++n == params_rep.size())
+      break;
+    envtable_rep[n / 2 + p1_offset].val = params_rep[n];
+  } 
+  DBC_CHECK(p_end_offset < envtable_rep.size());
+  envtable_rep[p_end_offset].pos = 1.0;
+  envtable_rep[p_end_offset].val = last_value_rep;
+
+}
 
 void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t value)
 {
+  ECA_LOG_MSG(ECA_LOGGER::user_objects,
+              "setting param " + kvu_numtostr(param) 
+              + " (" + get_parameter_name(param) + ")"
+              + " => " + kvu_numtostr(value));
+
   switch (param) {
   case 1: 
     frequency(value);
@@ -179,27 +230,25 @@ void GENERIC_OSCILLATOR::set_parameter(int param, CONTROLLER_SOURCE::parameter_t
     break;
 
   case 4:
-    start_value_rep = value;
-    current_value_rep = value;
+    first_value_rep = value;
     break;
 
   case 5:
-    end_value_rep = value;
+    last_value_rep = value;
     break;
 
   default: {
       int pointnum = param - 5;
       if (pointnum > 0) {
-	if (pointnum > static_cast<int>(ienvelope_rep.size()))
-	  ienvelope_rep.resize(pointnum);
-	
-	ienvelope_rep[pointnum - 1] = value;
+
+        if (pointnum > static_cast<int>(params_rep.size()))
+          params_rep.resize(pointnum);
+        
+        params_rep[pointnum - 1] = value;
       }
 
       prepare_envelope();
 
-      // std::cerr << "Added point " << pointnum << ", envelope size " << ienvelope_rep.size() << "." << std::endl;
-     
       break;
     }
   }
@@ -218,16 +267,16 @@ CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::get_parameter(int param) cons
     return(static_cast<parameter_t>((number_of_params() - 5) / 2));
 
   case 4:
-    return(static_cast<parameter_t>(start_value_rep));
+    return(static_cast<parameter_t>(first_value_rep));
 
   case 5:
-    return(static_cast<parameter_t>(end_value_rep));
+    return(static_cast<parameter_t>(last_value_rep));
 
   default:
     int pointnum = param - 5;
     if (pointnum > 0) {
-      if (pointnum <= static_cast<int>(ienvelope_rep.size())) {
-	return(static_cast<parameter_t>(ienvelope_rep[pointnum - 1]));
+      if (pointnum <= static_cast<int>(params_rep.size())) {
+        return(static_cast<parameter_t>(params_rep[pointnum - 1]));
       }
     }
   }

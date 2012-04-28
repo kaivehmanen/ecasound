@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // osc-gen-file.cpp: Generic oscillator using envelope presets
-// Copyright (C) 1999-2002,2004,2007 Kai Vehmanen
+// Copyright (C) 1999-2002,2004,2007,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -74,13 +74,28 @@ void GENERIC_OSCILLATOR_FILE::get_oscillator_preset(int preset)
 void GENERIC_OSCILLATOR_FILE::parse_envelope(const std::string& str)
 {
   std::vector<std::string> tokens = kvu_string_to_words(str);
+  size_t dynparams_offset = 2;
+
+  // number of points
+  if (tokens.size() > 2) {
+    GENERIC_OSCILLATOR::set_parameter(3,
+      (tokens.size() - dynparams_offset) / 2);
+  }
+  else {
+    GENERIC_OSCILLATOR::set_parameter(3, 0);
+  }
+
   if (tokens.size() > 0) {
-    set_start_value(atof(tokens[0].c_str()));
+    // start value
+    GENERIC_OSCILLATOR::set_parameter(4, atof(tokens[0].c_str()));
     if (tokens.size() > 1) {
-      set_end_value(atof(tokens[1].c_str()));
-      ienvelope_rep.resize(tokens.size() - 2);
-      for(unsigned int n = 2; n < tokens.size(); n++) {
-	ienvelope_rep[n - 2] = atof(tokens[n].c_str());
+      // start value
+      GENERIC_OSCILLATOR::set_parameter(5, atof(tokens[1].c_str()));
+
+      // set individual points
+      for(unsigned int n = dynparams_offset; n < tokens.size(); n++) {
+        GENERIC_OSCILLATOR::set_parameter(6 + n - dynparams_offset,
+                                          atof(tokens[n].c_str()));
       }
     }
   }
