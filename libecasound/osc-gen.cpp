@@ -38,25 +38,13 @@
 #define _DEBUG_ENVELOPE(x)
 #endif
 
-#include <kvu_procedure_timer.h>
-
 size_t GENERIC_OSCILLATOR::current_stage(double pos)
 {
   size_t start, n;
 
-  static PROCEDURE_TIMER pt1;
-  struct timespec t1, t2;
-  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t1);
   // note: like 'std::fmod(pos, loop_length_rep)' but faster
   double loop_pos = pos - static_cast<int>(pos / loop_length_rep) * loop_length_rep;
-  clock_gettime(CLOCK_THREAD_CPUTIME_ID, &t2);
-
-  pt1.start(&t1);
-  pt1.stop(&t2);
     
-  if (pt1.event_count() % 50 == 0)
-    std::cout << pt1.to_string();
-
   // note: optimize for the case where position changes
   //       linearly
   start = last_stage_rep;
@@ -123,7 +111,6 @@ CONTROLLER_SOURCE::parameter_t GENERIC_OSCILLATOR::value(double pos)
   }
   /* case: linear interpolation */
   else {
-    // FIXME: calc is wrong, correct
     double p1 = envtable_rep[stage].pos;
     double p2 = envtable_rep[stage + 1].pos;
     double v1 = envtable_rep[stage].val;
@@ -185,9 +172,6 @@ std::string GENERIC_OSCILLATOR::parameter_names(void) const
 
 void GENERIC_OSCILLATOR::prepare_envelope(void)
 {
-  // FIXME: new
-  // - sanity check the position order (or allow reorder)
-  // - use pair<> objects perhaps (replace intrapoints_rep)?
   size_t len = 2 + (params_rep.size() + 1) / 2;
   envtable_rep.resize(len);
 
