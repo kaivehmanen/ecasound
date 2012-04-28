@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-osc.cpp: Class implementing the Ecasound OSC interface
-// Copyright (C) 2009 Kai Vehmanen
+// Copyright (C) 2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -64,8 +64,6 @@ static void cb_lo_err_handler(int num, const char *msg, const char *where)
 
 int cb_lo_method_handler(const char *path, const char *types, lo_arg **argv, int argc, lo_message msg, void *user_data)
 {
-  int retval;
-
   ECA_OSC_INTERFACE* self = 
     reinterpret_cast<ECA_OSC_INTERFACE*>(user_data);
 
@@ -75,7 +73,7 @@ int cb_lo_method_handler(const char *path, const char *types, lo_arg **argv, int
 	       path, types, argc, user_data);
 #endif
 
-  retval = self->handle_osc_message(path, types, argv, argc);
+  int retval = self->handle_osc_message(path, types, argv, argc);
 
 #ifdef VERBOSE_FOR_DEBUGGING
   for(int n = 0; n < argc; n++) {
@@ -103,7 +101,7 @@ int cb_lo_method_handler(const char *path, const char *types, lo_arg **argv, int
      are sent with oscsend from 0.26) */
   // lo_message_pp(msg);
 
-  return 0;
+  return retval;
 }
 
 /**
@@ -326,7 +324,7 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 
 int ECA_OSC_INTERFACE::handle_osc_message(const char *path, const char *types, lo_arg **argv, int argc)
 {
-  int retval = 0;
+  int retval = -1;
   
   DBC_CHECK(path[0] == '/');
   string left_s = priv_path_pop_front(string(path));
