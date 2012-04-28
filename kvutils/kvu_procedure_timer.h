@@ -21,7 +21,9 @@ class PROCEDURE_TIMER {
   void set_lower_bound_seconds(double secs);
   
   void start(void);
+  void start(const struct timespec *t) { start_rep = *t; }
   void stop(void);
+  void stop(const struct timespec *t) { now_rep = *t; stop_helper(); }
   void reset(void);
 
   long int events_over_upper_bound(void) const;
@@ -31,8 +33,8 @@ class PROCEDURE_TIMER {
   double min_duration_seconds(void) const;
   double average_duration_seconds(void) const;
   double last_duration_seconds(void) const;
-  const struct timeval* min_duration(void) const;
-  const struct timeval* max_duration(void) const;
+  const struct timespec* min_duration(void) const;
+  const struct timespec* max_duration(void) const;
   std::string to_string(void) const;
 
   PROCEDURE_TIMER(int id = 0);
@@ -43,16 +45,18 @@ class PROCEDURE_TIMER {
   PROCEDURE_TIMER(const PROCEDURE_TIMER& x) { }
   PROCEDURE_TIMER& operator=(const PROCEDURE_TIMER& x) { return *this; }
 
-  bool less_than(const struct timeval *i, const struct timeval *ii) const;
-  void subtract(struct timeval *i, const struct timeval *ii) const;
+  void stop_helper(void);
+  bool less_than(const struct timespec *i, const struct timespec *ii) const;
+  void subtract(struct timespec *i, const struct timespec *ii) const;
   double to_seconds(const struct timeval *i) const;
+  double to_seconds(const struct timespec *i) const;
 
-  struct timeval start_rep;
-  struct timeval now_rep;
-  struct timeval min_event_rep;
-  struct timeval max_event_rep;
-  struct timeval lower_bound_rep;
-  struct timeval upper_bound_rep;
+  struct timespec start_rep;
+  struct timespec now_rep;
+  struct timespec min_event_rep;
+  struct timespec max_event_rep;
+  struct timespec lower_bound_rep;
+  struct timespec upper_bound_rep;
 
   double event_time_total_rep;
   double last_duration_rep;

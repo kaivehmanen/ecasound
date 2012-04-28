@@ -1,7 +1,7 @@
 // ------------------------------------------------------------------------
 // kvu_procedure_timer.cpp: Procedure timer. Meant for timing and gathering 
 //                          statistics of repeating events.
-// Copyright (C) 2000,2004 Kai Vehmanen
+// Copyright (C) 2000,2004,2012 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,26 +34,28 @@ PROCEDURE_TIMER::~PROCEDURE_TIMER(void) {
 
 }
 
-bool PROCEDURE_TIMER::less_than(const struct timeval *i, 
-				const struct timeval *ii) const {
+bool PROCEDURE_TIMER::less_than(const struct timespec *i, 
+                                const struct timespec *ii) const
+{
   bool result = false;
   if (i->tv_sec < ii->tv_sec)
     result = true;
 
   if (i->tv_sec == ii->tv_sec) {
     result = false;
-    if (i->tv_usec < ii->tv_usec)
+    if (i->tv_nsec < ii->tv_nsec)
       result = true;
   }
 
   return result;
 }
 
-void PROCEDURE_TIMER::subtract(struct timeval *i, 
-			       const struct timeval *ii) const {
-  i->tv_usec -= ii->tv_usec;
-  if (i->tv_usec < 0) {
-    i->tv_usec += 1000000;
+void PROCEDURE_TIMER::subtract(struct timespec *i, 
+                               const struct timespec *ii) const
+{
+  i->tv_nsec -= ii->tv_nsec;
+  if (i->tv_nsec < 0) {
+    i->tv_nsec += 1000000000;
     i->tv_sec -= 1;
   }
   i->tv_sec -= ii->tv_sec;
@@ -63,8 +65,13 @@ double PROCEDURE_TIMER::to_seconds(const struct timeval *i) const {
   return(i->tv_sec + static_cast<double>(i->tv_usec) / 1000000.0);
 }
 
+double PROCEDURE_TIMER::to_seconds(const struct timespec *i) const {
+  return(i->tv_sec + static_cast<double>(i->tv_nsec) / 1000000000.0);
+}
+
 void PROCEDURE_TIMER::set_upper_bound(const struct timeval *p) {
-  memcpy(&upper_bound_rep, p, sizeof(struct timeval));
+  upper_bound_rep.tv_sec = p->tv_sec;
+  upper_bound_rep.tv_nsec = p->tv_usec * 1000;
 }
 
 void PROCEDURE_TIMER::set_upper_bound_seconds(double secs) {
@@ -75,7 +82,8 @@ void PROCEDURE_TIMER::set_upper_bound_seconds(double secs) {
 }
 
 void PROCEDURE_TIMER::set_lower_bound(const struct timeval *p) {
-  memcpy(&lower_bound_rep, p, sizeof(struct timeval));
+  lower_bound_rep.tv_sec = p->tv_sec;
+  lower_bound_rep.tv_nsec = p->tv_usec * 1000;
 }
 
 void PROCEDURE_TIMER::set_lower_bound_seconds(double secs) {
@@ -85,15 +93,45 @@ void PROCEDURE_TIMER::set_lower_bound_seconds(double secs) {
   set_lower_bound(&buf);
 }
 
-void PROCEDURE_TIMER::start(void) {
-  gettimeofday(&start_rep, 0);
+static void priv_gettime(struct timespec *dst) 
+{
+#if HAVE_CLOCK_GETTIME
+#if defined CLOCK_MONOTONIC
+  clock_gettime(CLOCK_MONOTONIC, dst);
+#else
+  clock_gettime(CLOCK_REALTIME, dst);
+#endif
+#else
+  struct timeval tmp;
+  gettimeofday(&tmp, 0);
+  dst->tv_sec = tmp.tv_sec;
+  dst->tv_nsec = tmp.tv_usec * 1000;
+#endif
 }
 
-void PROCEDURE_TIMER::stop(void) {
-  gettimeofday(&now_rep, 0);
+void PROCEDURE_TIMER::start(void)
+{
+  priv_gettime(&start_rep);
+}
+
+void PROCEDURE_TIMER::stop(void)
+{
+  priv_gettime(&now_rep);
+  stop_helper();
+}
+
+/**
+ * Do heavy operations in a non-inlined helper
+ * functions for stop().
+ *
+ * This is especially useful for the inlined stop()
+ * variant.
+ */
+void PROCEDURE_TIMER::stop_helper(void)
+{
   subtract(&now_rep, &start_rep);
   last_duration_rep = to_seconds(&now_rep);
-//    cerr << idstr_rep << ": " << kvu_numtostr(length, 16) << " secs." << endl;
+  //  cerr << idstr_rep << ": " << kvu_numtostr(length, 16) << " secs." << endl;
   events_rep++;
   event_time_total_rep += last_duration_rep;
   if (events_rep == 1) 
@@ -129,9 +167,16 @@ double PROCEDURE_TIMER::max_duration_seconds(void) const { return(to_seconds(&ma
 double PROCEDURE_TIMER::min_duration_seconds(void) const { return(to_seconds(&min_event_rep)); }
 double PROCEDURE_TIMER::average_duration_seconds(void) const { return(event_time_total_rep / event_count()); }
 double PROCEDURE_TIMER::last_duration_seconds(void) const { return(last_duration_rep); }
-const struct timeval* PROCEDURE_TIMER::min_duration(void) const { return(&max_event_rep); }
-const struct timeval* PROCEDURE_TIMER::max_duration(void) const { return(&min_event_rep); }
-std::string PROCEDURE_TIMER::to_string(void) const { 
+const struct timespec* PROCEDURE_TIMER::min_duration(void) const { return(&max_event_rep); }
+const struct timespec* PROCEDURE_TIMER::max_duration(void) const { return(&min_event_rep); }
+
+static std::string priv_s2us(double sec)
+{
+  return kvu_numtostr(sec * 1000000.0, 6);
+}
+
+std::string PROCEDURE_TIMER::to_string(void) const
+{ 
   std::string res;
 
   res = idstr_rep + ":\n";
@@ -140,10 +185,10 @@ std::string PROCEDURE_TIMER::to_string(void) const {
   res += " (" + kvu_numtostr(to_seconds(&upper_bound_rep), 8) + "sec)\n";
   res += "Events under bound: "  + kvu_numtostr(events_under_lower_bound());
   res += " (" + kvu_numtostr(to_seconds(&lower_bound_rep), 8) + "sec)\n";
-  res += "Min duration in seconds: " + kvu_numtostr(min_duration_seconds(), 16) + "\n";
-  res += "Max duration in seconds: " + kvu_numtostr(max_duration_seconds(), 16) + "\n";
-  res += "Average duration in seconds: " + kvu_numtostr(average_duration_seconds(), 16) + "\n";
-  res += "Duration of last event: " + kvu_numtostr(last_duration_rep, 16) + "\n";
+  res += "Min duration, us: " + priv_s2us(min_duration_seconds()) + "\n";
+  res += "Max duration, us: " + priv_s2us(max_duration_seconds()) + "\n";
+  res += "Average duration, us: " + priv_s2us(average_duration_seconds()) + "\n";
+  res += "Duration of last event, us: " + priv_s2us(last_duration_rep) + "\n";
 
   return(res); 
 }
