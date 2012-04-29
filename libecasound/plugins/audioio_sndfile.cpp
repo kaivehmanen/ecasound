@@ -98,9 +98,9 @@ void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::S
     case SF_FORMAT_PCM_32: { format = "s32"; break; }
     default: 
       {
-	/* SF_FORMAT_FLOAT */ 
-	format = "f32"; 
-	break; 
+        /* SF_FORMAT_FLOAT */ 
+        format = "f32"; 
+        break; 
       }
     }
   
@@ -119,8 +119,8 @@ void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::S
     set_length_in_samples(sfinfo->frames);
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      string("file length (frames): ") +
-	      kvu_numtostr(sfinfo->frames));
+              string("file length (frames): ") +
+              kvu_numtostr(sfinfo->frames));
 
 }
 
@@ -162,8 +162,8 @@ int SNDFILE_INTERFACE::find_file_format(const std::string& fname)
   }
 
   ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-	      string("Searching for fileformat matching extension '") +
-	      fext + "'.");
+              string("Searching for fileformat matching extension '") +
+              fext + "'.");
 
   sf_command (0, SFC_GET_FORMAT_MAJOR_COUNT, &count, sizeof (int));
   
@@ -173,16 +173,16 @@ int SNDFILE_INTERFACE::find_file_format(const std::string& fname)
     if (fext == string(format_info.extension)) {
       file_format = format_info.format;
       ECA_LOG_MSG(ECA_LOGGER::user_objects, 
-		  string("Found matching file format: ") +
-		  format_info.name + " (ext=." + fext + ")");
+                  string("Found matching file format: ") +
+                  format_info.name + " (ext=." + fext + ")");
       break;
     }
   } 
 
   if (file_format < 0) {
     ECA_LOG_MSG(ECA_LOGGER::info,
-		string("Warning! Unknown audio format extension '")
-		+ fext + "', using WAV format instead.");
+                string("Warning! Unknown audio format extension '")
+                + fext + "', using WAV format instead.");
     file_format = SF_FORMAT_WAV;
   }
 
@@ -207,17 +207,17 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   // need to treat raw specially for read-only opening
   bool is_raw = false;
   if (strstr(mod_filename.c_str(),".raw") != 0) {
-	  is_raw = true;
+    is_raw = true;
   }
   
   if (io_mode() == io_read && !is_raw) {
     ECA_LOG_MSG(ECA_LOGGER::info,
-		"Using libsndfile to open file \"" + real_filename + "\" for reading.");
+                "Using libsndfile to open file \"" + real_filename + "\" for reading.");
 
     snd_repp = sf_open(real_filename.c_str(), SFM_READ, &sfinfo);
     if (snd_repp == NULL) {
       throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			+ "\" for reading."));
+                        + "\" for reading."));
     }
     else {
       open_parse_info(&sfinfo);
@@ -268,24 +268,24 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
   
     if (io_mode() == io_write) {
       ECA_LOG_MSG(ECA_LOGGER::info, "Using libsndfile to open file \"" +
-		  real_filename + "\" for writing.");
+                  real_filename + "\" for writing.");
 
       /* open the file */
       snd_repp = sf_open(real_filename.c_str(), SFM_WRITE, &sfinfo);
       if (snd_repp == NULL) {
-	throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			  + "\" for writing."));
+        throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
+                          + "\" for writing."));
       }
     }
     else if (io_mode() == io_read) {
       ECA_LOG_MSG(ECA_LOGGER::info, "Using libsndfile to open file \"" +
-		real_filename + "\" for reading.");
+                  real_filename + "\" for reading.");
 
 
       snd_repp = sf_open(real_filename.c_str(), SFM_READ, &sfinfo);
       if (snd_repp == NULL) {
         throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			+ "\" for reading."));
+                          + "\" for reading."));
       }
       else {
         open_parse_info(&sfinfo);
@@ -293,27 +293,27 @@ void SNDFILE_INTERFACE::open(void) throw(AUDIO_IO::SETUP_ERROR&)
     }
     else {
       ECA_LOG_MSG(ECA_LOGGER::info, "Using libsndfile to open file \"" +
-		  real_filename + "\" for read/write.");
+                  real_filename + "\" for read/write.");
 
       DBC_CHECK(sf_format_check(&sfinfo));
 
       /* io_readwrite */
       snd_repp = sf_open(real_filename.c_str(), SFM_RDWR, &sfinfo);
       if (snd_repp == NULL) {
-	/* if open fails, try with SFM_WRITE (formats like flac are not 
-	 * supported in RDWR mode */
-	snd_repp = sf_open(real_filename.c_str(), SFM_WRITE, &sfinfo);
-	if (snd_repp == NULL) {
-	  throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
-			    + "\" for updating (read/write)."));
-	}
-	else {
-	  set_io_mode(io_write);
-	  open_parse_info(&sfinfo);
-	}
+        /* if open fails, try with SFM_WRITE (formats like flac are not 
+         * supported in RDWR mode */
+        snd_repp = sf_open(real_filename.c_str(), SFM_WRITE, &sfinfo);
+        if (snd_repp == NULL) {
+          throw(SETUP_ERROR(SETUP_ERROR::io_mode, "AUDIOIO-SNDFILE: Can't open file \"" + real_filename
+                            + "\" for updating (read/write)."));
+        }
+        else {
+          set_io_mode(io_write);
+          open_parse_info(&sfinfo);
+        }
       }
       else {
-	open_parse_info(&sfinfo);
+        open_parse_info(&sfinfo);
       }
     }
   }
@@ -349,7 +349,7 @@ bool SNDFILE_INTERFACE::finished(void) const
 }
 
 long int SNDFILE_INTERFACE::read_samples(void* target_buffer, 
-					 long int samples)
+                                         long int samples)
 {
   // samples_read = sf_read_raw(snd_repp, target_buffer, frame_size() * samples);
   // samples_read /= frame_size();
@@ -359,7 +359,7 @@ long int SNDFILE_INTERFACE::read_samples(void* target_buffer,
 }
 
 void SNDFILE_INTERFACE::write_samples(void* target_buffer, 
-				      long int samples)
+                                      long int samples)
 {
   //sf_write_raw(snd_repp, target_buffer, frame_size() * samples);
   sf_writef_float(snd_repp, (float*)target_buffer, samples);
@@ -380,9 +380,9 @@ void SNDFILE_INTERFACE::read_buffer(SAMPLE_BUFFER* sbuf)
   reserve_buffer_space((sizeof(float) * channels()) * buffersize());
 
   sbuf->import_interleaved(get_iobuf(),
-			   read_samples(get_iobuf(), buffersize()),
-			   audioio_sndfile_sfmt,
-			   channels());
+                           read_samples(get_iobuf(), buffersize()),
+                           audioio_sndfile_sfmt,
+                           channels());
   change_position_in_samples(sbuf->length_in_samples());
 }
 
@@ -403,8 +403,8 @@ void SNDFILE_INTERFACE::write_buffer(SAMPLE_BUFFER* sbuf)
   set_buffersize(sbuf->length_in_samples());
 
   sbuf->export_interleaved(get_iobuf(),
-			   audioio_sndfile_sfmt,
-			   channels());
+                           audioio_sndfile_sfmt,
+                           channels());
   write_samples(get_iobuf(), sbuf->length_in_samples());
   change_position_in_samples(sbuf->length_in_samples());
   extend_position();
@@ -443,7 +443,7 @@ SAMPLE_SPECS::sample_pos_t SNDFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample
 }
 
 void SNDFILE_INTERFACE::set_parameter(int param, 
-				      string value)
+                                      string value)
 {
   switch (param) {
   case 1: 
