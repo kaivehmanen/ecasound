@@ -32,8 +32,8 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   /** @name Reimplemented functions from ECA_OBJECT */
   /*@{*/
 
-  virtual string name(void) const { return("Libsndfile object"); }
-  virtual string description(void) const { return("Libsndfile object. Supports all commona audio formats."); }
+  virtual string name(void) const { return "Libsndfile object"; }
+  virtual string description(void) const { return "Libsndfile object. Supports all commona audio formats."; }
 
   /*@}*/
 
@@ -74,10 +74,10 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   /** @name Functions reimplemented from AUDIO_IO */
   /*@{*/
 
-  virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
+  virtual int supported_io_modes(void) const { return io_read | io_write | io_readwrite; }
   virtual bool supports_seeking(void) const { return seek_supported_rep; }
-  virtual string parameter_names(void) const { return("filename,opt_filename,format"); }
-  virtual bool locked_audio_format(void) const { return(true); }
+  virtual string parameter_names(void) const { return "filename,opt_filename,format"; }
+  virtual bool locked_audio_format(void) const { return true; }
   
   virtual void open(void) throw(AUDIO_IO::SETUP_ERROR&);
   virtual void close(void);
