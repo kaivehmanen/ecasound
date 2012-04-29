@@ -75,6 +75,7 @@ class SNDFILE_INTERFACE : public AUDIO_IO_BUFFERED {
   /*@{*/
 
   virtual int supported_io_modes(void) const { return(io_read | io_write | io_readwrite); }
+  virtual bool supports_seeking(void) const { return seek_supported_rep; }
   virtual string parameter_names(void) const { return("filename,opt_filename,format"); }
   virtual bool locked_audio_format(void) const { return(true); }
   
@@ -100,6 +101,7 @@ private:
   long samples_read;
   bool finished_rep;
   bool closing_rep;
+  bool seek_supported_rep;
 
   void open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::SETUP_ERROR&);
   int find_file_format(const std::string& filename);

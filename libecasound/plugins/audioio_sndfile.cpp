@@ -58,6 +58,7 @@ SNDFILE_INTERFACE::SNDFILE_INTERFACE (const string& name)
   finished_rep = false;
   snd_repp = 0;
   closing_rep = false;
+  seek_supported_rep = true;
   set_label(name);
 }
 
@@ -85,6 +86,11 @@ void SNDFILE_INTERFACE::open_parse_info(const SF_INFO* sfinfo) throw(AUDIO_IO::S
   ECA_LOG_MSG(ECA_LOGGER::user_objects, "audio file format: " + kvu_numtostr(sfinfo->format & SF_FORMAT_SUBMASK)); 
 
   string format;
+
+  if (sfinfo->seekable)
+    seek_supported_rep = true;
+  else
+    seek_supported_rep = false;
 
   set_samples_per_second(static_cast<long int>(sfinfo->samplerate));
   set_channels(sfinfo->channels);
@@ -412,8 +418,6 @@ void SNDFILE_INTERFACE::write_buffer(SAMPLE_BUFFER* sbuf)
 
 SAMPLE_SPECS::sample_pos_t SNDFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample_pos_t pos)
 {
-  // FIXME: check if format supports seeking
-
   finished_rep = false;
 
   sf_count_t res =
