@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003-2004,2006-2007,2009 Kai Vehmanen
+// Copyright (C) 2003-2004,2006-2007,2009,2012 Kai Vehmanen
 // Copyright (C) 2004 Jesse Chappell
 //
 // Attributes:
@@ -419,21 +419,24 @@ SAMPLE_SPECS::sample_pos_t SNDFILE_INTERFACE::seek_position(SAMPLE_SPECS::sample
   sf_count_t res =
     sf_seek(snd_repp, pos, SEEK_SET);
 
-  if (res != pos) {
+  if (res != pos &&
+      length_set() == true &&
+      io_mode() == io_read && 
+      pos >= length_in_samples()) {
+    pos = sf_seek(snd_repp, 0, SEEK_END);
+  }
+  else if (res != pos) {
     ECA_LOG_MSG(ECA_LOGGER::info, 
-		"invalid seek for file " +
-		opt_filename_rep + 
-		", req was to " +
-		kvu_numtostr(pos) + 
-		", result was " +
-		kvu_numtostr(res));
+                "invalid seek for file " + opt_filename_rep + 
+                ", req was to " + kvu_numtostr(pos) + 
+                ", result was " + kvu_numtostr(res));
     if (res < 0) {
       res = sf_seek(snd_repp, 0, SEEK_CUR);
       DBC_CHECK(res >= 0);
       if (res >= 0)
-	pos = res;
+        pos = res;
       else
-	pos = position_in_samples();
+        pos = position_in_samples();
     }
   }
   return pos;
