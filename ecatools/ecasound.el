@@ -2432,7 +2432,7 @@ This is done using the ecasound-cop widget."
 	 (save-buffer))
     (ecasound "*Ecasound-ewf Player*")))
 
-(add-to-list 'auto-mode-alist (cons "\\.ewf$" 'ecasound-ewf-mode))
+(add-to-list 'auto-mode-alist (cons "\\.ewf\\'" 'ecasound-ewf-mode))
 
 ;; Local variables:
 ;; mode: outline-minor
