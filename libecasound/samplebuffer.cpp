@@ -790,7 +790,9 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	a[1] = ibuffer[(*iptr)++];
 	a[0] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = eca_sample_convert_s16_to_float(*(int16_t*)a);
+      int16_t tmp;
+      memcpy(&tmp, a, sizeof(tmp));
+      obuffer[optr] = eca_sample_convert_s16_to_float(tmp);
     }
     break;
 
@@ -804,7 +806,9 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	a[1] = ibuffer[(*iptr)++];
 	a[0] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = eca_sample_convert_s16_to_float(*(int16_t*)a);
+      int16_t tmp;
+      memcpy(&tmp, a, sizeof(tmp));
+      obuffer[optr] = eca_sample_convert_s16_to_float(tmp);
     }
     break;
 
@@ -822,7 +826,9 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[1] = ibuffer[(*iptr)++];
 	b[0] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = eca_sample_convert_s32_to_float((*(int32_t*)b));
+      int32_t tmp;
+      memcpy(&tmp, b, sizeof(tmp));
+      obuffer[optr] = eca_sample_convert_s32_to_float(tmp);
     }
     break;
 
@@ -840,7 +846,9 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[2] = ibuffer[(*iptr)++];
 	b[3] = 0; /* LSB */
       }
-      obuffer[optr] = eca_sample_convert_s32_to_float((*(int32_t*)b));
+      int32_t tmp;
+      memcpy(&tmp, b, sizeof(tmp));
+      obuffer[optr] = eca_sample_convert_s32_to_float(tmp);
     }
     break;
 
@@ -858,7 +866,9 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[1] = ibuffer[(*iptr)++];
 	b[0] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = eca_sample_convert_s32_to_float(*(int32_t*)b);
+      int32_t tmp;
+      memcpy(&tmp, b, sizeof(tmp));
+      obuffer[optr] = eca_sample_convert_s32_to_float(tmp);
     }
     break;
 
@@ -876,7 +886,9 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[2] = ibuffer[(*iptr)++];
 	b[3] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = eca_sample_convert_s32_to_float(*(int32_t*)b);
+      int32_t tmp;
+      memcpy(&tmp, b, sizeof(tmp));
+      obuffer[optr] = eca_sample_convert_s32_to_float(tmp);
     }
     break;
 
@@ -894,7 +906,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[1] = ibuffer[(*iptr)++];
 	b[0] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = (sample_t)(*(float*)b);
+      memcpy(&obuffer[optr], b, sizeof(obuffer[optr]));
     }
     break;
 
@@ -912,7 +924,7 @@ void SAMPLE_BUFFER::import_helper(const unsigned char *ibuffer,
 	b[2] = ibuffer[(*iptr)++];
 	b[3] = ibuffer[(*iptr)++];
       }
-      obuffer[optr] = (sample_t)(*(float*)b);
+      memcpy(&obuffer[optr], b, sizeof(obuffer[optr]));
     }
     break;
 
