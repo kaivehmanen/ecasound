@@ -60,6 +60,8 @@ Howto for reading the entries (2.7.2 and older):
          - fixed: bug in saving jack input/output params
          - fixed: seeks with -kf did not work, sfbug:2013828
          - fixed: seeks with -kog did not work, sfbug:2013824
+         - fixed: sndfile, seeking beyond end-of-file for inputs
+         - fixed: regression with stop+start and -z:db
 22052011 (v2.8.1) -** stable release **-
 	 - fixed: jack_multi did not work correctly when connecting
 	          to a single port
