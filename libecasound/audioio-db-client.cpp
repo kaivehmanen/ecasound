@@ -2,7 +2,7 @@
 // audioio-db-client.cpp: Client class for double-buffering providing 
 //                        additional layer of buffering for objects
 //                        derived from AUDIO_IO.
-// Copyright (C) 2000-2005,2009,2011 Kai Vehmanen
+// Copyright (C) 2000-2005,2009,2011,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -315,12 +315,17 @@ void AUDIO_IO_DB_CLIENT::start_io(void)
 {
   AUDIO_IO_PROXY::start_io();
 
-  /* note: child may have changed its position after 
-   *       start_io() is issued (via AUDIO_IO_PROXY::start_io() */
-
-  if (child()->supports_seeking() != true) {
+  /* note: In case child object does not support seeking, and
+   *       position is not zero, it is undefined what the child
+   *       object position will be after start_io(). Try to 
+   *       handle this case gracefully.
+   */
+  if (child()->supports_seeking() != true &&
+      position_in_samples() != 0) {
     bool was_running = pause_db_server_if_running();
 
+    // note: this is not fully accurate, but the best 
+    //       information we have available at this point
     set_position_in_samples(child()->position_in_samples());
 
     /* as position might have changed, flush the buffers */
