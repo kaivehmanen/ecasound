@@ -1,9 +1,9 @@
 // ------------------------------------------------------------------------
 // audiofx_filter.cpp: Routines for filter effects.
-// Copyright (C) 1999,2004 Kai Vehmanen
+// Copyright (C) 1999,2004,2012 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 2
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,12 @@
 #include "eca-logger.h"
 #include "audiofx_filter.h"
 
+static void priv_resize_buffer(std::vector<SAMPLE_SPECS::sample_t> *buffer, int count)
+{
+  buffer->resize(count);
+  for(int i = 0; i < count; i++)
+    (*buffer)[i] = 0.0;
+}
 
 EFFECT_FILTER::~EFFECT_FILTER(void)
 {
@@ -123,8 +129,17 @@ void EFFECT_BW_FILTER::init(SAMPLE_BUFFER *insample)
 
   set_channels(insample->number_of_channels());
 
-  sin.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (2));
-  sout.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (2));
+  const size_t buflen = 2;
+
+  sin.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (buflen));
+  sout.resize(insample->number_of_channels(), std::vector<SAMPLE_SPECS::sample_t> (buflen));
+
+  for(int i = 0; i < insample->number_of_channels(); i++) {
+    for(size_t j = 0; j < buflen; j++) {
+      sin[i][j] = 0.0f;
+      sout[i][j] = 0.0f;
+    }
+  }
 }
 
 void EFFECT_BW_FILTER::process(void)
@@ -249,7 +264,8 @@ void EFFECT_ALLPASS_FILTER::init(SAMPLE_BUFFER* insample)
   set_channels(insample->number_of_channels());
 
   inbuf.resize(insample->number_of_channels());
-  //  outbuf.resize(insample->number_of_channels());
+  for(size_t i = 0; i < inbuf.size(); i++)
+    inbuf[i].clear();
 }
 
 void EFFECT_ALLPASS_FILTER::process(void)
@@ -329,6 +345,9 @@ void EFFECT_COMB_FILTER::init(SAMPLE_BUFFER* insample)
   set_channels(insample->number_of_channels());
 
   buffer.resize(insample->number_of_channels());
+  for(size_t i = 0; i < buffer.size(); i++)
+    buffer[i].clear();
+
 }
 
 void EFFECT_COMB_FILTER::process(void)
@@ -388,7 +407,10 @@ void EFFECT_INVERSE_COMB_FILTER::init(SAMPLE_BUFFER* insample)
   set_channels(insample->number_of_channels());
 
   buffer.resize(insample->number_of_channels());
-  laskuri.resize(insample->number_of_channels(), parameter_t(0.0));
+  for(size_t i = 0; i < buffer.size(); i++)
+    buffer[i].clear();
+
+  priv_resize_buffer(&laskuri, insample->number_of_channels());
 }
 
 void EFFECT_INVERSE_COMB_FILTER::process(void)
@@ -473,9 +495,9 @@ void EFFECT_LOWPASS_SIMPLE::init(SAMPLE_BUFFER *insample)
 
   set_channels(insample->number_of_channels());
 
-  outhist.resize(insample->number_of_channels());
-  tempin.resize(insample->number_of_channels());
-  temphist.resize(insample->number_of_channels());
+  priv_resize_buffer(&outhist, insample->number_of_channels());
+  priv_resize_buffer(&tempin, insample->number_of_channels());
+  priv_resize_buffer(&temphist, insample->number_of_channels());
 }
 
 void EFFECT_LOWPASS_SIMPLE::process(void)
@@ -545,8 +567,8 @@ void EFFECT_RESONANT_BANDPASS::init(SAMPLE_BUFFER* insample)
 
   set_channels(insample->number_of_channels());
 
-  outhist1.resize(insample->number_of_channels());
-  outhist2.resize(insample->number_of_channels());
+  priv_resize_buffer(&outhist1, insample->number_of_channels());
+  priv_resize_buffer(&outhist2, insample->number_of_channels());
 }
 
 void EFFECT_RESONANT_BANDPASS::process(void)
@@ -707,13 +729,12 @@ void EFFECT_RESONANT_LOWPASS::init(SAMPLE_BUFFER* insample)
 
   set_channels(insample->number_of_channels());
 
-  outhist0.resize(insample->number_of_channels());
-  outhist1.resize(insample->number_of_channels());
-  outhist2.resize(insample->number_of_channels());
-  outhist3.resize(insample->number_of_channels());
-
-  newhist0.resize(insample->number_of_channels());
-  newhist1.resize(insample->number_of_channels());
+  priv_resize_buffer(&outhist0, insample->number_of_channels());
+  priv_resize_buffer(&outhist1, insample->number_of_channels());
+  priv_resize_buffer(&outhist2, insample->number_of_channels());
+  priv_resize_buffer(&outhist3, insample->number_of_channels());
+  priv_resize_buffer(&newhist0, insample->number_of_channels());
+  priv_resize_buffer(&newhist1, insample->number_of_channels());
 }
 
 void EFFECT_RESONANT_LOWPASS::process(void)
@@ -829,8 +850,8 @@ void EFFECT_RESONATOR::init(SAMPLE_BUFFER* insample) {
 
   set_channels(insample->number_of_channels());
 
-  saout0.resize(insample->number_of_channels());
-  saout1.resize(insample->number_of_channels());
+  priv_resize_buffer(&saout0, insample->number_of_channels());
+  priv_resize_buffer(&saout1, insample->number_of_channels());
 }
 
 void EFFECT_RESONATOR::process(void)

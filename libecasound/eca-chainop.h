@@ -33,6 +33,9 @@ class CHAIN_OPERATOR : public OPERATOR {
    * by 'sbuf' are changed, chain operator should
    * be reinitialized with a new call to init().
    *
+   * Init should also reset any state, including any audio
+   * buffers, from previous process() cycles.
+   *
    * @param sbuf pointer to a sample buffer object
    *
    * @see release

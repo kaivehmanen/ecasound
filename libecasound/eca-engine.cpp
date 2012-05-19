@@ -702,6 +702,26 @@ void ECA_ENGINE::engine_iteration(void)
 }
 
 /**
+ * Reinitialize chains
+ *
+ * Flush any existing state from the chain operators (e.g.
+ * old audio data in buffers, changes in configuration, and
+ * so forth).
+ *
+ * @arg force force reinitialization even if chain itself
+ *            reports it is properly initialized
+ */
+void ECA_ENGINE::reinit_chains(bool force)
+{
+  for(size_t i = 0; i != chains_repp->size(); i++) {
+    if (force == true ||
+        (*chains_repp)[i]->is_initialized() != true) {
+      (*chains_repp)[i]->init(0, 0, 0);
+    }
+  }
+}
+
+/**
  * Prepares engine for operation. Prepares all 
  * realtime devices and starts servers.
  * 
@@ -734,9 +754,7 @@ void ECA_ENGINE::prepare_operation(void)
   mixslot_repp->set_rt_lock(true);
 
   /* 2. reinitialize chains if necessary */
-  for(size_t i = 0; i != chains_repp->size(); i++) {
-    if ((*chains_repp)[i]->is_initialized() != true) (*chains_repp)[i]->init(0, 0, 0);
-  }
+  init_chains();
 
   /* 3. start subsystem servers and forked audio objects */
   start_forked_objects();
@@ -1216,6 +1234,9 @@ void ECA_ENGINE::set_position(double seconds)
 {
   conditional_stop();
   csetup_repp->seek_position_in_seconds(seconds);
+  // reinit chains to flush out any stale audio data related
+  // to the old position
+  reinit_chains(true);
   // FIXME: calling init_engine_state() may lead to races
   init_engine_state();
   conditional_start();
@@ -1231,6 +1252,9 @@ void ECA_ENGINE::set_position_samples(SAMPLE_SPECS::sample_pos_t samples)
 {
   conditional_stop();
   csetup_repp->seek_position_in_samples(samples);
+  // reinit chains to flush out any stale audio data related
+  // to the old position
+  reinit_chains(true);
   // FIXME: calling init_engine_state() may lead to races
   init_engine_state();
   conditional_start();

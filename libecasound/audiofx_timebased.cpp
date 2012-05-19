@@ -3,7 +3,7 @@
 // Copyright (C) 1999-2005,2012 Kai Vehmanen
 //
 // Attributes:
-//     eca-style-version: 2
+//     eca-style-version: 3
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -202,6 +202,11 @@ void EFFECT_DELAY::init(SAMPLE_BUFFER* insample)
   set_parameter(1, dtime_msec);
 
   buffer.resize(2, std::vector<SINGLE_BUFFER> (static_cast<unsigned int>(dnum)));
+  for(size_t i = 0; i < buffer.size(); i++) {
+    for(size_t j = 0; j < buffer[i].size(); j++) {
+      buffer[i].clear();
+    }
+  }
 }
 
 void EFFECT_DELAY::process(void)
@@ -407,8 +412,16 @@ void EFFECT_MULTITAP_DELAY::init(SAMPLE_BUFFER* insample)
 
   delay_index.resize(channels(), dtime * dnum - 1);
   filled.resize(channels(), std::vector<bool> (dnum, false));
-  buffer.resize(channels(), std::vector<SAMPLE_SPECS::sample_t> (dtime *
-							       dnum));
+  buffer.resize(channels(),
+                std::vector<SAMPLE_SPECS::sample_t> (dtime *
+                                                     dnum));
+  for(int i = 0; i < channels(); i++) {
+    delay_index[i] = dtime * dnum - 1;
+    for(size_t j = 0; j < filled[i].size(); j++) 
+      filled[i][j] = false;
+    for(size_t j = 0; j < buffer[i].size(); j++)
+      buffer[i][j] = 0.0f;
+  }
 }
 
 void EFFECT_MULTITAP_DELAY::process(void)
@@ -498,6 +511,11 @@ void EFFECT_FAKE_STEREO::init(SAMPLE_BUFFER* insample)
 
   set_parameter(1, dtime_msec);
   buffer.resize(2);
+  for(size_t i = 0; i < buffer.size(); i++) {
+    for(size_t j = 0; j < buffer[i].size(); j++) {
+      buffer[i].clear();
+    }
+  }
 }
 
 void EFFECT_FAKE_STEREO::process(void)
@@ -634,6 +652,11 @@ void EFFECT_REVERB::init(SAMPLE_BUFFER* insample)
   set_parameter(1, dtime_msec);
 
   buffer.resize(2);
+  for(size_t i = 0; i < buffer.size(); i++) {
+    for(size_t j = 0; j < buffer[i].size(); j++) {
+      buffer[i].clear();
+    }
+  }
 }
 
 void EFFECT_REVERB::process(void)
@@ -807,6 +830,11 @@ void EFFECT_MODULATING_DELAY::init(SAMPLE_BUFFER* insample)
   filled.resize(channels(), false);
   delay_index.resize(channels(), 2 * dtime);
   buffer.resize(channels(), std::vector<SAMPLE_SPECS::sample_t> (2 * dtime));
+  for(size_t i = 0; i < buffer.size(); i++) {
+    for(size_t j = 0; j < buffer[i].size(); j++) {
+      buffer[i][j] = 0.0f;
+    }
+  }
 }
 
 void EFFECT_MODULATING_DELAY::process(void)

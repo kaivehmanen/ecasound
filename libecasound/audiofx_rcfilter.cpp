@@ -1,6 +1,7 @@
 // ------------------------------------------------------------------------
 // audiofx_rcfilter.cpp: Simulation of an 3rd-order 36dB active RC-lowpass
 // Copyright (C) 2000 Stefan Fendt, Kai Vehmanen (C++ version)
+// Copyright (C) 2012 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,14 +52,21 @@ CHAIN_OPERATOR::parameter_t EFFECT_RC_LOWPASS_FILTER::get_parameter(int param) c
   return(0.0);
 }
 
+static void priv_resize_buffer(std::vector<SAMPLE_SPECS::sample_t> *buffer, int count, SAMPLE_SPECS::sample_t value)
+{
+  buffer->resize(count);
+  for(int i = 0; i < count; i++)
+    (*buffer)[i] = value;
+}
+
 void EFFECT_RC_LOWPASS_FILTER::init(SAMPLE_BUFFER *insample) {
   i.init(insample);
 
-  lp1_old.resize(insample->number_of_channels(), 0.0015);
-  lp2_old.resize(insample->number_of_channels(), -0.00067);
-  lp3_old.resize(insample->number_of_channels(), 0.0);
-  hp1_old.resize(insample->number_of_channels(), 0.0);
-  feedback.resize(insample->number_of_channels(), 0.0);
+  priv_resize_buffer(&lp1_old, insample->number_of_channels(), 0.0015);
+  priv_resize_buffer(&lp2_old, insample->number_of_channels(), -0.00067);
+  priv_resize_buffer(&lp3_old, insample->number_of_channels(), 0.0);
+  priv_resize_buffer(&hp1_old, insample->number_of_channels(), 0.0);
+  priv_resize_buffer(&feedback, insample->number_of_channels(), 0.0);
 }
 
 void EFFECT_RC_LOWPASS_FILTER::process(void) {

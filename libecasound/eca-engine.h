@@ -325,6 +325,8 @@ private:
   void init_chains(void);
   void cleanup(void);
 
+  void reinit_chains(bool force = false);
+
   void create_cache_object_lists(void);
 
   void init_profiling(void);

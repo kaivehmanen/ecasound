@@ -152,6 +152,8 @@ void ADVANCED_REVERB::init(SAMPLE_BUFFER *insample)
     p->dpos[0] = static_cast<long int>(roomsize_rep * samples_per_second() / 333);
     p->mul[0] = 0.035;
     p->bufferpos_rep = 0;
+    for(size_t i = 0; i < p->buffer.size(); i++)
+      p->buffer[i] = 0.0f;
     for(int i = 1; i < 64; i++) {
       p->dpos[i] = p->dpos[i-1] + (rand() & 511);
       p->mul[i] = p->mul[i-1] * (1 - 1 / feedback_rep / 1000);

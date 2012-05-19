@@ -52,6 +52,8 @@ Howto for reading the entries (2.7.2 and older):
          - changed: pyeca - now requires python 2.4 or newer; fixes
                     sfbug:3059303 
          - changed: removed ecasound.spec file from distribution
+         - changed: flush chainop internal state when position is
+                    changed with a seek (setpos et al)
          - fixed: resample, commas in filenames not handled correctly
          - fixed: bug in map-ladspa-list output, param names not
                   printed out correctly

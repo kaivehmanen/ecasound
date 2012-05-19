@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_amplitude.cpp: Amplitude effects and dynamic processors.
-// Copyright (C) 1999-2000,2003,2008,2009 Kai Vehmanen
+// Copyright (C) 1999-2000,2003,2008,2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -30,6 +30,14 @@
 
 #include "eca-logger.h"
 #include "eca-error.h"
+
+template<class T>
+static void priv_resize_buffer(std::vector<T> *buffer, int count)
+{
+  buffer->resize(count);
+  for(int i = 0; i < count; i++)
+    (*buffer)[i] = 0.0;
+}
 
 EFFECT_AMPLITUDE::~EFFECT_AMPLITUDE(void)
 {
@@ -506,8 +514,8 @@ void EFFECT_COMPRESS::init(SAMPLE_BUFFER *insample)
   set_channels(insample->number_of_channels());
   set_samples_per_second(samples_per_second());
 
-  lastin.resize(insample->number_of_channels());
-  lastout.resize(insample->number_of_channels());
+  priv_resize_buffer<SAMPLE_SPECS::sample_t>(&lastin, insample->number_of_channels());
+  priv_resize_buffer<SAMPLE_SPECS::sample_t>(&lastout, insample->number_of_channels());
 } 
 
 void EFFECT_COMPRESS::process(void)
@@ -607,13 +615,15 @@ void EFFECT_NOISEGATE::init(SAMPLE_BUFFER *insample)
   set_channels(insample->number_of_channels());
   set_samples_per_second(samples_per_second());
 
-  th_time_lask.resize(insample->number_of_channels());
-  attack_lask.resize(insample->number_of_channels());
-  hold_lask.resize(insample->number_of_channels());
-  release_lask.resize(insample->number_of_channels());
-  gain.resize(insample->number_of_channels());
+  priv_resize_buffer<parameter_t>(&th_time_lask, insample->number_of_channels());
+  priv_resize_buffer<parameter_t>(&attack_lask, insample->number_of_channels());
+  priv_resize_buffer<parameter_t>(&hold_lask, insample->number_of_channels());
+  priv_resize_buffer<parameter_t>(&release_lask, insample->number_of_channels());
+  priv_resize_buffer<parameter_t>(&gain, insample->number_of_channels());
 
   ng_status.resize(insample->number_of_channels(), int(ng_waiting));
+  for(size_t n = 0; n < ng_status.size(); n++)
+    ng_status[n] = ng_waiting;
 }
 
 void EFFECT_NOISEGATE::process(void)
