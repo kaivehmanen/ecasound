@@ -304,7 +304,7 @@ Sample format is given as a formatted string. The first letter is
 either "u", "s" and "f" (unsigned, signed, floating point). The 
 following number specifies sample size in bits. If sample is 
 little endian, "_le" is added to the end. Similarly if big endian, 
-"_be" is added. If endianess is not specified, host byte-order is used. 
+"_be" is added. If endianness is not specified, host byte-order is used. 
 Currently supported formats are "u8" (same as "8"), "s16_le" (same 
 as "16"), "s16_be", "s24_le", "s24_be", "s32_le", "s32_be", "f32_le" 
 and "f32_be". An empty string "" picks the system default sample
@@ -396,7 +396,7 @@ used. This will play "file.ext" after position reaches
 passed as is to the child object.
 
 dit(Ecasound Wave Files (EWF) - '*.ewf')
-A special file format that allows to slice and loop full (or segments)
+A special file format that allows one to slice and loop full (or segments)
 of audio files. This format is specific to Ecasound.
 See url(ecasound user's guide)(users_guide/html_uguide/users_guide.html) for more 
 detailed information.
@@ -466,7 +466,7 @@ other JACK clients; in mode "recv" ecasound will follow JACK start,
 stop and position-change events; and mode "sendrecv" which is 
 a combination of the two previous modes.
 
-If not explictly set, in interactive mode (bf('-c') option), the
+If not explicitly set, in interactive mode (bf('-c') option), the
 default mode is "sendrecv", while in batchmode default is
 "notransport". In both cases the mode can be changed with bf(-G)
 option as described above.

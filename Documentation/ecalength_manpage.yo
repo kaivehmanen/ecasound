@@ -6,7 +6,7 @@ manpage(ecalength)
        ()
        (Multimedia software)
 
-manpagename(ecalength)(prints audio file lenght and other information)
+manpagename(ecalength)(prints audio file length and other information)
 
 manpagesynopsis()
     bf(ecalength) [-ahtsfmbcr] FILE1 [FILE2] [FILEn]

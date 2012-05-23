@@ -18,7 +18,7 @@ manpagedescription()
 	bf(ecasoundrc) is the main configuration file for ecasound. 
 	Any user-specific modification should be done to 
 	$HOME/.ecasound/ecasoundrc, not to the global resource file. Ecasound 
-	also allows to disable the normal policy and only read from a specific
+	also allows one to disable the normal policy and only read from a specific
 	resource file (see ecasound (1) and documentation for the bf(-R) option).
 
 	The format is quite simple. One line consists of 
