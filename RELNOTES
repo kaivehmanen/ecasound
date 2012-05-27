@@ -1,9 +1,11 @@
-subject: Ecasound 2.8.1+dev released
+subject: Ecasound 2.9.0 released
 
 1. Summary of changes in this release
 -------------------------------------
 
-TBD
+Support for LV2 plugins has been added. Commands for controlling bypass
+on a chain operator basis have been added. Dozens of bugs have been 
+fixed.
 
 2. What is Ecasound?
 --------------------
@@ -23,64 +25,46 @@ Limited support for Windows is available through Cygwin. Ecasound is
 licensed under the GPL. The Ecasound Control Interface (ECI) is licensed
 under the LGPL.
 
-3. Changes in 2.8 series
-------------------------
+3. Changes in 2.9?.x series
+--------------------------
 
-v2.8.1:
-* Bugfix to a bugfix. jack_multi did not work correctly when connecting
-  to only one JACK port (regression in 2.8.0). Minor other bugfixes.
+* Thanks to Jeremy Salwen, Ecasound now supports LV2 plugins!
+  See http://eca.cx/ecasound/Documentation/examples.html#lv2 for
+  simple usage information.
 
-v2.8.0:
-* The int-float conversion routines have been modified to be symmetric 
-  (previously asymmetric). As this impacts all use-cases involving fixed
-  point audio, the release version was bumped to 2.8 to reflect the change.
-  Ecasound now scales with 2^N for both int-to-float and float-to-int.
-  For 0dBFS signals created in floating point domain, and normalized
-  to [-1,1] range, the positive values are limited just before 0dbFS to
-  avoid overflow (positive values exceeding 2^N-1).
+* New commands: cop-bypass, cop-is-bypassed, stop-sync, c-is-muted,
+  c-is-bypassed
 
-  Pointers to how other projects handle this issue:
-    - Case for symmetric conversions:
-      http://lists.apple.com/archives/coreaudio-api/2009/Dec/msg00120.html
-    - Blog entry to which the above is a response:
-      http://blog.bjornroche.com/2009/12/int-float-int-its-jungle-out-there.html
-    - libsndfile FAQ on the topic:
-      http://www.mega-nerd.com/libsndfile/FAQ.html#Q010
-    - Discussion around the topic on JACK devel list:
-      http://comments.gmane.org/gmane.comp.audio.jackit/20499
+* Chain operator state is now flushed when position is changed with
+  a seek. Previously Ecasound effects worked like their analogue 
+  counterparts, and e.g. a delay operator would not flush its internal
+  delay line when a seek was performed.
 
-* Bugfixes to loop objects, jack_multi, JACK transport support, false runtime
-  DBC warnings, seek support for -klkg, ecasound-ruby hangs and ALSA output.
-  Following bugtracker items closed:
-    - http://sourceforge.net/tracker/?func=detail&aid=2013827&group_id=4605&atid=104605
+* Various minor bug fixes, see NEWS file and git history.
 
-* Signal handling has been simplified for not-so-POSIX platforms. For
-  system/environments which do not provide all three of sigwait(), sigprocmask()
-  and pthread_sigmask(), process will terminate immediately without
-  the usual cleanup procedure upon receing a signal (SIGINT, TERM, et al).
-  The old pause() based kludge has been removed from the codebase. For 
-  many, if not all, users this has no practical impact.
-
-* JACK transport is now disabled by default in batchmode. In interactive
-  mode ('-c' option), the default is still 'sendrecv'. Ecasound now also 
-  provides better feedback about transport related events. Without graphical 
-  feedback, the interaction between JACK and Ecasound has been a common
-  source of user confusion.
-
-For full list of changes, see git commit history.
+Full list of changes is available at:
  - http://www.eca.cx/ecasound/history.php
 
-4. Interface and configuration file changes in 2.8 series
+4. Interface and configuration file changes in 2.9? series
 ---------------------------------------------------------
 
-2.8.0:
-Default JACK transport mode is now "notransport" (do not send nor react to
-JACK transport state changes) when running in batchmode. Interactive
-mode (when started with '-c') still defaults to "sendrecv" as before. Note
-that the transport mode can always be explicitly set by passing '-G'
-option (see ecasound(1) man page for details).
+* New params to c-bypass and c-mute
+  - 'c-mute on' -> set mute on
+  - 'c-mute toggle' -> old behaviour, toggle existing setting
+  - 'c-mute' -> old behaviour as well
+  - 'c-is-muted' -> returns current state
 
-5. Contributors to 2.8 series
+  And same applies to 'c-bypass'.
+
+* Python C implementation of the ECI (Ecasound Control Interface) now
+  deprecated. The Python ECI implementation is still available, 
+  and has been updated to work with more recent versions of Python. 
+
+* RPM packaging files (ecasound.spec) have been removed from git
+  and tarball releases due. They've not been maintained since 2006
+  and serve no practical purpose anymore.
+
+5. Contributors to 2.9 series
 -----------------------------
 
 Patches - Accepted code, documentation and build system changes
@@ -88,55 +72,47 @@ Patches - Accepted code, documentation and build system changes
 
 Extracted with 'git-shortlog -s':
 
-v2.8.2:
-     TBD
-v2.8.1:
-     4  Kai Vehmanen
-v2.8.0:
-     1  Alessandro Ghedini
-    39  Kai Vehmanen
+v2.9.0:
+TBD
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.8.2
-  * Svilen Dobrev (1)
-      commas-in-filenames bug with resample
-  * Jeremy Salwen (1)
-      bug in map-ladspa-list output, param names not
-      printed out correctly
-v2.8.1
-v2.8.0
-  * Joel Roth (3)
-      wrong sample type displayed for loop objects
-      incorrect channel count for jack_multi objects
-      -klg does maintain state across seeks
-  * Julien Claassen (1)
-      runtime DBC warnings
-  * Dan Muresan, Sergei Steshenko (1)
-      problems of asymmetry in int-float conversions
-  * Alessandro Ghedini (1)
-      signal handling bug caused problems to ecasound-ruby apps
-  * Doug F. (1)
-      incomplete playback to ALSA outputs
- 
+v2.9.0
+   * S.Massy (5)
+      LV2 cop-describe, -evp extraneous params, -et bug,
+      regression with -z:db, start+edit race with JACK
+   * Svilen Dobrev (1)
+      proper handling of commas in resample, reverse et al
+   * Jeremy Salwen (1)
+      bug in LADSPA param descriptions
+   * Rocco / linuxmedia4 (1)
+      saving JACK object params with cs-save/cs-edit
+
 Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-None.
+v2.9.0
+  * many, many folks who've kep asking for LV2
+      LV2 support, finally added thanks to Jeremy Salwen!
+  * Adam Linson (1)
+      c-is-muted, this was requested in 2003, so took just
+      9 (nine!) years to deliver this one :P
 
 6. Links and files
 ------------------
    
 Web site (and mirrors):
-	http://eca.cx/ecasound (fi)
-	http://ecasound.seul.org (us)
-	http://ecasound.sourceforge.net (us)
+        http://eca.cx/ecasound (fi)
+        http://ecasound.seul.org (us)
+        http://ecasound.sourceforge.net (us)
 
 Source package:
-	http://eca.cx/ecasound/download.php
-	ecasound-2.8.1.tar.gz, md5sum:
-	<to-be-set-in-announcement-mail>
+        http://eca.cx/ecasound/download.php     
+        ecasound-2.9.0.tar.gz, md5sum:
+        TBD
 
 List of distributions with maintained Ecasound support:
-	See http://eca.cx/ecasound/download.php
+        See http://eca.cx/ecasound/download.php
+
+-- 
