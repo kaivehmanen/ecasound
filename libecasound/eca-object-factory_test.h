@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-object-factory_test.h: Unit test for ECA_OBJECT_FACTORY
-// Copyright (C) 2002,2008,2009 Kai Vehmanen
+// Copyright (C) 2002,2008,2009,2012 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include "audioio-device.h"
 #include "eca-chainop.h"
 #include "audiofx_ladspa.h"
+#include "audiofx_lv2.h"
 #include "preset.h"
 #include "generic-controller.h"
 #include "midiio.h"
@@ -206,7 +207,7 @@ void ECA_OBJECT_FACTORY_TEST::do_run(void)
   ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - LV2-map");
 
   ECA_OBJECT_MAP& lv2_map = ECA_OBJECT_FACTORY::lv2_plugin_map();
-  test_map<EFFECT_LADSPA>(lv2_map);
+  test_map<EFFECT_LV2>(lv2_map);
 
   ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - preset-map");
 
