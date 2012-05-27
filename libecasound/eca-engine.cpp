@@ -408,7 +408,7 @@ void ECA_ENGINE::wait_for_exit(int timeout)
 /**
  * Wait for the editlock signal. Function blocks until 
  * engine has received and processed the 'ep_edit_lock' 
- * command, or until 'timeout' seconds has elapsed.
+ * command.
  * 
  * context: C-level-0
  *
@@ -532,6 +532,22 @@ void ECA_ENGINE::check_command_queue(void)
       break;
     }
 
+    /*
+     * If edit lock is taken, only allow 'exit' and 'unlock' 
+     * commands to come through. Pushing commands on the back of  
+     * the queue may have side-effects, but is required in order to
+     * make sure the actual 'unlock' or 'exit' can get through.
+     */
+    if (edit_lock_rep && 
+        (item.type != ep_exit &&
+         item.type != ep_edit_unlock)) {
+      ECA_LOG_MSG(ECA_LOGGER::system_objects,
+                  "engine edit lock on, unable to handle cmd " +
+                  kvu_numtostr(item.type));
+      impl_repp->command_queue_rep.push_back(item);
+      break;
+    }
+
     switch(item.type) 
       {
         // ---
@@ -570,7 +586,11 @@ void ECA_ENGINE::check_command_queue(void)
         // Edit locks
         // ---            
       case ep_edit_lock: { signal_editlock(); break; }
-      case ep_edit_unlock: { edit_lock_rep = false; break; }
+      case ep_edit_unlock: {
+        edit_lock_rep = false;
+        ECA_LOG_MSG(ECA_LOGGER::system_objects, "edit unlock");
+        break;
+      }
 
         // ---
         // Global position

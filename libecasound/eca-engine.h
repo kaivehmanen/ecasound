@@ -170,6 +170,12 @@ class ECA_ENGINE {
   bool is_prepared(void) const;
   bool is_running(void) const;
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
+
+  /** 
+   * Whether edit lock is enabled.
+   *
+   * @see check_command_queue()
+   */
   bool is_locked_for_editing(void) const { return(edit_lock_rep); }
 
   SAMPLE_SPECS::sample_pos_t current_position_in_samples(void) const;
