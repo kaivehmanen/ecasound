@@ -144,10 +144,9 @@ ECA_OBJECT_MAP& ECA_OBJECT_FACTORY::chain_operator_map(void)
 
 /**
  * Returns an object map containing all registered
- * LADSPA plugin types.
- * 
+ * LV2 plugin types.
  *
- * All stored objects are derived from EFFECT_LADSPA.
+ * All stored objects are derived from EFFECT_LV2.
  *
  * @see ladspa_plugin_id_map()
  */
