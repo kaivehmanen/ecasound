@@ -92,8 +92,7 @@ void ECA_OBJECT_FACTORY_TEST::test_map(const ECA_OBJECT_MAP& objmap)
   while(p != regobjs.end()) {
     const T* obj = dynamic_cast<const T*>(objmap.object(*p));
     if (obj == 0) {
-      ECA_TEST_FAILURE("Unable to create object of type \"" + obj->name()
-		       + "\" from keyword \"" + *p + "\"");
+      ECA_TEST_FAILURE("Unable to create object from keyword \"" + *p + "\"");
     }
     else {
       ECA_LOG_MSG(ECA_LOGGER::user_objects, 
