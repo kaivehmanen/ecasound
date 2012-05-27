@@ -1,3 +1,8 @@
+2012-05-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* kvu_message_queue.h (MESSAGE_QUEUE_RT_C): Added
+	peek_front() method.
+
 2012-04-28  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* kvu_procedure_timer.h: Public API modified to use
