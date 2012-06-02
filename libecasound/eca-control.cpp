@@ -916,7 +916,7 @@ bool ECA_CONTROL::execute_edit_on_connected(const chainsetup_edit_t& edit)
   if (is_engine_ready_for_commands() == true) {
     ECA_ENGINE::complex_command_t engine_cmd;
     engine_cmd.type = ECA_ENGINE::ep_exec_edit;
-    engine_cmd.m.cs = edit;
+    engine_cmd.cs = edit;
     engine_repp->command(engine_cmd);
     retval = true;
   }

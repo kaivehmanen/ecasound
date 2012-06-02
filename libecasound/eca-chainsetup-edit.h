@@ -31,8 +31,10 @@ namespace ECA {
   
     edit_c_bypass = 0,
     edit_c_muting,
-    edit_cop_set_param,
+    edit_cop_add,
     edit_cop_bypass,
+    edit_cop_set_param,
+    edit_ctrl_add,
     edit_ctrl_set_param,
   };
 
@@ -79,7 +81,11 @@ namespace ECA {
 	int op;        /**< @see CHAIN::bypass_operator() */
 	int bypass;    /**< @see CHAIN::bypass_operator() */
       } cop_bypass;
-      
+
+      struct {
+        int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
+      } c_generic_param;
+
       struct {
 	int chain;     /**< @see ECA_CHAINSETUP::get_chain_index() */
 	int op;        /**< @see CHAIN::set_controller_parameter() */
@@ -87,6 +93,10 @@ namespace ECA {
 	double value;  /**< @see CHAIN::set_controller_parameter() */
       } ctrl_set_param;
     } m;
+
+    bool need_chain_reinit;
+    std::string param; /**< arbitrary string parameter, semantics 
+                          depend on 'type' */
   };
 
   typedef struct chainsetup_edit chainsetup_edit_t;

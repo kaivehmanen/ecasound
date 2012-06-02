@@ -405,32 +405,6 @@ void ECA_ENGINE::wait_for_exit(int timeout)
               kvu_pthread_timed_wait_result(ret, "(eca_main) wait_for_exit"));
 }
 
-/**
- * Wait for the editlock signal. Function blocks until 
- * engine has received and processed the 'ep_edit_lock' 
- * command.
- * 
- * context: C-level-0
- *
- * @see signal_exit()
- */
-void ECA_ENGINE::wait_for_editlock(void)
-{
-  int ret = -1;
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "wait_for_editlock");
-
-  pthread_mutex_lock(&impl_repp->editlock_mutex_repp);
-  while(edit_lock_rep != true) {
-    ret = pthread_cond_wait(&impl_repp->editlock_cond_repp, 
-                            &impl_repp->editlock_mutex_repp);
-  }
-  pthread_mutex_unlock(&impl_repp->editlock_mutex_repp);
-
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-              "wait_for_editlock complete, ret " 
-              + kvu_numtostr(ret));
-}
-
 /**********************************************************************
  * Engine implementation - Public functions for observing engine 
  *                         status information
@@ -532,22 +506,6 @@ void ECA_ENGINE::check_command_queue(void)
       break;
     }
 
-    /*
-     * If edit lock is taken, only allow 'exit' and 'unlock' 
-     * commands to come through. Pushing commands on the back of  
-     * the queue may have side-effects, but is required in order to
-     * make sure the actual 'unlock' or 'exit' can get through.
-     */
-    if (edit_lock_rep && 
-        (item.type != ep_exit &&
-         item.type != ep_edit_unlock)) {
-      ECA_LOG_MSG(ECA_LOGGER::system_objects,
-                  "engine edit lock on, unable to handle cmd " +
-                  kvu_numtostr(item.type));
-      impl_repp->command_queue_rep.push_back(item);
-      break;
-    }
-
     switch(item.type) 
       {
         // ---
@@ -555,9 +513,6 @@ void ECA_ENGINE::check_command_queue(void)
         // ---            
       case ep_exit:
         {
-          // FIXME?
-          signal_editlock();
-
           // FIXME: is clear the right thing or should remaining cmds
           //        be still processed? OTOH, client app should know...
           impl_repp->command_queue_rep.clear();
@@ -571,7 +526,10 @@ void ECA_ENGINE::check_command_queue(void)
         // ---
       case ep_exec_edit:
         {
-          csetup_repp->execute_edit(item.m.cs);
+          csetup_repp->execute_edit(item.cs);
+          if (item.cs.need_chain_reinit) {
+            reinit_chains(true);
+          }
           break;
         }
 
@@ -581,16 +539,6 @@ void ECA_ENGINE::check_command_queue(void)
                           status() == engine_status_finished) request_stop(false); break; }
       case ep_stop_with_drain: { if (status() == engine_status_running || 
                                      status() == engine_status_finished) request_stop(true); break; }
-
-        // ---
-        // Edit locks
-        // ---            
-      case ep_edit_lock: { signal_editlock(); break; }
-      case ep_edit_unlock: {
-        edit_lock_rep = false;
-        ECA_LOG_MSG(ECA_LOGGER::system_objects, "edit unlock");
-        break;
-      }
 
         // ---
         // Global position
@@ -801,6 +749,7 @@ void ECA_ENGINE::prepare_operation(void)
   /* 7. change engine to active and running */
   prepared_rep = true;
   init_engine_state();
+  ECA_LOG_MSG(ECA_LOGGER::system_objects, "engine prepared");
 
   // ---
   DBC_ENSURE(is_prepared() == true);
@@ -1034,23 +983,6 @@ void ECA_ENGINE::signal_exit(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling exit");
   pthread_cond_broadcast(&impl_repp->ecasound_exit_cond_repp);
   pthread_mutex_unlock(&impl_repp->ecasound_exit_mutex_repp);
-}
-
-/**
- * Sends a signal indicating that the edit lock has been
- * taken.
- *
- * context: E-level-1/4 
- *
- * @see wait_for_editlock()
- */
-void ECA_ENGINE::signal_editlock(void)
-{
-  pthread_mutex_lock(&impl_repp->editlock_mutex_repp);
-  edit_lock_rep = true;
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, "Signaling editlock");
-  pthread_cond_broadcast(&impl_repp->editlock_cond_repp);
-  pthread_mutex_unlock(&impl_repp->editlock_mutex_repp);
 }
 
 /**
@@ -1369,8 +1301,6 @@ void ECA_ENGINE::init_variables(void)
   batchmode_enabled_rep = false;
   driver_local = false;
 
-  pthread_cond_init(&impl_repp->editlock_cond_repp, NULL);
-  pthread_mutex_init(&impl_repp->editlock_mutex_repp, NULL);
   pthread_cond_init(&impl_repp->ecasound_stop_cond_repp, NULL);
   pthread_mutex_init(&impl_repp->ecasound_stop_mutex_repp, NULL);
   pthread_cond_init(&impl_repp->ecasound_exit_cond_repp, NULL);

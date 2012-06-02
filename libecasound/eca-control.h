@@ -396,9 +396,6 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   void set_audio_object_position_samples(SAMPLE_SPECS::sample_pos_t samples);
   void wave_edit_audio_object(void);
 
-  bool cond_stop_for_editing(void);
-  void cond_start_after_editing(bool was_running);
-
   CHAIN* get_chain_priv(void) const;
 
   void action(int action_id);

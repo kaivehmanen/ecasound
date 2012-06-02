@@ -1768,54 +1768,6 @@ void ECA_CONTROL::wave_edit_audio_object(void)
 }
 
 /**
- * Stops the engine if necessary and locks it 
- * down for editing in case the engine is controlled
- * by an external source.
- *
- * @see cond_stop_for_editing()
- */
-bool ECA_CONTROL::cond_stop_for_editing(void)
-{
-  bool was_running = false;
-
-  if (selected_chainsetup() == connected_chainsetup() && 
-      is_engine_ready_for_commands() == true) {
-
-    // this is not 100% race-free (engine might be just about to
-    // be started), but as this is just a convenience method, 
-    // best guess at previous engine transport state is still
-    // useful
-    if (engine_repp->status() == ECA_ENGINE::engine_status_running)
-      was_running = true;
-
-    engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
-    engine_repp->command(ECA_ENGINE::ep_edit_lock, 0.0);
-
-    // block until engine has processed above ep_edit_lock and 
-    // we know the engine is stopped (and no new start is queued)
-    engine_repp->wait_for_editlock();
-    engine_repp->wait_for_stop(5);
-  }
-
-  return was_running;
-}
-
-/**
- * Stops the engine if necessary and locks it 
- * down for editing in case the engine is controlled
- * by an external source.
- *
- * @see cond_start_after_editing()
- */
-void ECA_CONTROL::cond_start_after_editing(bool was_running)
-{
-  if (is_engine_ready_for_commands() == true && was_running == true) {
-    engine_repp->command(ECA_ENGINE::ep_edit_unlock, 0.0);
-    engine_repp->command(ECA_ENGINE::ep_start, 0.0);
-  }
-}
-
-/**
  * Adds a new chain operator
  *
  * @param gcontrol_params is an Ecasound option string describing
@@ -1833,19 +1785,19 @@ void ECA_CONTROL::add_chain_operator(const string& chainop_params)
   DBC_REQUIRE(selected_chains().size() == 1);
   // --------
 
-  bool was_running = cond_stop_for_editing();
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_cop_add;
+  edit.cs_ptr = selected_chainsetup_repp;
 
-  if (chainop_params.size() > 0) {
-    if (chainop_params[0] != '-')
-      selected_chainsetup_repp->interpret_object_option(string("-") + chainop_params);
-    else
-      selected_chainsetup_repp->interpret_object_option(chainop_params);
-    if (selected_chainsetup_repp->interpret_result() != true) {
-      set_last_error(selected_chainsetup_repp->interpret_result_verbose());
-    }
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    /* note: unlike all other functions, first_selected_chain()
+     *       returns 0..N */
+    edit.m.c_generic_param.chain = p + 1;
+    edit.param = chainop_params;
+    edit.need_chain_reinit = true;
+    execute_edit_on_selected(edit);
   }
-
-  cond_start_after_editing(was_running);
 }
 
 /**
@@ -1871,11 +1823,7 @@ void ECA_CONTROL::add_chain_operator(CHAIN_OPERATOR* cotmp)
   DBC_REQUIRE(cotmp != 0);
   // --------
 
-  bool was_running = cond_stop_for_editing();
-
   selected_chainsetup_repp->add_chain_operator(cotmp);
-
-  cond_start_after_editing(was_running);
 }
 
 /** 
@@ -1966,16 +1914,13 @@ void ECA_CONTROL::remove_chain_operator(void)
 {
   // --------
   DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chainsetup() != connected_chainsetup());
   DBC_REQUIRE(selected_chains().size() == 1);
   // --------
-
-  bool was_running = cond_stop_for_editing();
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size())
     selected_chainsetup_repp->chains[p]->remove_chain_operator(-1);
-
-  cond_start_after_editing(was_running);
 }
 
 /**
@@ -2332,19 +2277,19 @@ void ECA_CONTROL::add_controller(const string& gcontrol_params)
   DBC_REQUIRE(selected_chains().size() > 0);
   // --------
 
-  bool was_running = cond_stop_for_editing();
+  ECA::chainsetup_edit_t edit;
+  edit.type = ECA::edit_ctrl_add;
+  edit.cs_ptr = selected_chainsetup_repp;
 
-  if (gcontrol_params.size() > 0) {
-    if (gcontrol_params[0] != '-') 
-      selected_chainsetup_repp->interpret_object_option(string("-") + gcontrol_params);
-    else
-      selected_chainsetup_repp->interpret_object_option(gcontrol_params);
-    if (selected_chainsetup_repp->interpret_result() != true) {
-      set_last_error(selected_chainsetup_repp->interpret_result_verbose());
-    }
+  unsigned int p = selected_chainsetup_repp->first_selected_chain();
+  if (p < selected_chainsetup_repp->chains.size()) {
+    /* note: unlike all other functions, first_selected_chain()
+     *       returns 0..N */
+    edit.m.c_generic_param.chain = p + 1;
+    edit.param = gcontrol_params;
+    edit.need_chain_reinit = true;
+    execute_edit_on_selected(edit);
   }
-
-  cond_start_after_editing(was_running);
 }
 
 /**
@@ -2386,18 +2331,15 @@ void ECA_CONTROL::remove_controller(void)
 {
   // --------
   DBC_REQUIRE(is_selected() == true);
+  DBC_REQUIRE(selected_chainsetup() != connected_chainsetup());
   DBC_REQUIRE(selected_chains().size() == 1);
   DBC_REQUIRE(get_controller() != 0);
   // --------
-
-  bool was_running = cond_stop_for_editing();
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
     selected_chainsetup_repp->chains[p]->remove_controller();
   }
-
-  cond_start_after_editing(was_running);
 }
 
 /** 

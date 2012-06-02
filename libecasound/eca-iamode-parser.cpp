@@ -558,6 +558,9 @@ bool ECA_IAMODE_PARSER::action_requires_selected_not_connected(int id)
   case ec_c_rename:
   case ec_c_clear:
 
+  case ec_cop_remove:
+  case ec_ctrl_remove:
+
   case ec_ai_add:
   case ec_ai_remove:
   case ec_ai_attach:

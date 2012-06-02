@@ -99,9 +99,6 @@ class ECA_ENGINE {
     ep_setpos,
     ep_setpos_samples,
     ep_setpos_live_samples,
-    // --
-    ep_edit_lock,
-    ep_edit_unlock
   };
   typedef enum Engine_command Engine_command_t;
 
@@ -112,8 +109,6 @@ class ECA_ENGINE {
 	double value;
       } engine;
 
-      ECA::chainsetup_edit_t cs;
-
       struct {
 	int chain;
 	int op;
@@ -122,6 +117,8 @@ class ECA_ENGINE {
       } legacy;
 
     } m;
+
+    ECA::chainsetup_edit_t cs;
   };
   typedef struct complex_command complex_command_t;
 
@@ -138,7 +135,6 @@ class ECA_ENGINE {
   void command(complex_command_t ccmd);
   void wait_for_stop(int timeout);
   void wait_for_exit(int timeout);
-  void wait_for_editlock(void);
 
   /*@}*/
 
@@ -170,13 +166,6 @@ class ECA_ENGINE {
   bool is_prepared(void) const;
   bool is_running(void) const;
   bool batch_mode(void) const { return(batchmode_enabled_rep); }
-
-  /** 
-   * Whether edit lock is enabled.
-   *
-   * @see check_command_queue()
-   */
-  bool is_locked_for_editing(void) const { return(edit_lock_rep); }
 
   SAMPLE_SPECS::sample_pos_t current_position_in_samples(void) const;
   double current_position_in_seconds_exact(void) const;

@@ -2019,6 +2019,36 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
 	break;
       }
 
+#if NOT_YET_IMPLEMENTED
+    case edit_cop_remove:
+    case edit_ctrl_remove:
+      // pass through on purpose
+#endif
+
+    case edit_cop_add:
+    case edit_ctrl_add:
+      {
+        if ((edit.m.c_generic_param.chain < 1) ||
+             (edit.m.c_generic_param.chain > static_cast<int>(chains.size()))) {
+          retval = false;
+          break;
+        }
+        bool locked = is_locked_rep;
+        is_locked_rep = false;
+        const string& params = edit.param;
+        if (params.size() > 0 && params[0] == '-')
+          cparser_rep.interpret_object_option(params);
+        else
+          cparser_rep.interpret_object_option(string("-") + edit.param);
+        if (interpret_result() != true) {
+          ECA_LOG_MSG(ECA_LOGGER::errors,
+                      "cop-add error " + 
+                      interpret_result_verbose());
+        is_locked_rep = locked;
+        }
+        break;
+      }
+
     case edit_cop_set_param:
       {
 	if (edit.m.cop_set_param.chain < 1 ||
@@ -2032,6 +2062,7 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
 			  edit.m.cop_set_param.value);
 	break;
       }
+
     case edit_cop_bypass:
       {
 	if (edit.m.cop_bypass.chain < 1 ||

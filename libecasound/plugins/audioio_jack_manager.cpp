@@ -152,13 +152,10 @@ static int eca_jack_sync_callback(jack_transport_state_t state, jack_position_t 
     SAMPLE_SPECS::sample_pos_t enginepos = current->engine_repp->current_position_in_samples();
 
     /* 1. engine locked for editing, do not touch! */
-    if (current->engine_repp->is_locked_for_editing() == true) {
-      DEBUG_CFLOW_STATEMENT(cerr << "current->engine_repp->is_locked_for_editing() == true\n");
-      result = 0;
-    }
+    // 2012/May: no longer needed
     
     /* 2. transport stopped */
-    else if (state == JackTransportStopped) {
+    if (state == JackTransportStopped) {
       DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_SYNC: JACK stopped" << endl);
       
       /* 2.1 engine at correct place; report success */
@@ -519,12 +516,10 @@ static void eca_jack_process_timebase_slave(jack_nframes_t nframes, void *arg)
   jackstate = jack_transport_query(current->client_repp, &jackpos);
  
   /* 1. engine locked for editing, do not touch! */
-  if (current->engine_repp->is_locked_for_editing() == true) {
-    DEBUG_CFLOW_STATEMENT(cerr << "current->engine_repp->is_locked_for_editing() == true\n");
-  }
+  // 2012/May: no longer needed
 
   /* 2. transport stopped or starting */
-  else if (jackstate == JackTransportStopped) {
+  if (jackstate == JackTransportStopped) {
     // DEBUG_CFLOW_STATEMENT(cerr << "eca_jack_process_timebase_slave(): JACK state stopped" << endl);
     ++current->j_stopped_rounds_rep;
     

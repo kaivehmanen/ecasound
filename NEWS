@@ -54,6 +54,7 @@ Howto for reading the entries (2.7.2 and older):
          - changed: removed ecasound.spec file from distribution
          - changed: flush chainop internal state when position is
                     changed with a seek (setpos et al)
+         - changed: cop-remove and ctrl-remove 
          - fixed: resample, commas in filenames not handled correctly
          - fixed: bug in map-ladspa-list output, param names not
                   printed out correctly
