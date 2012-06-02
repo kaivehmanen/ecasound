@@ -531,7 +531,7 @@ void ECA_CONTROL::disconnect_chainsetup(void)
   DBC_REQUIRE(is_connected());
   // --------
 
-  if (is_engine_running() == true) {
+  if (is_engine_ready_for_commands() == true) {
     stop_on_condition();
   }
   if (is_engine_created()) {
@@ -563,7 +563,7 @@ void ECA_CONTROL::change_chainsetup_position(double seconds)
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_ready_for_commands() == true) {
     if (seconds < 0)
       engine_repp->command(ECA_ENGINE::ep_rewind, -seconds);
     else
@@ -592,7 +592,7 @@ void ECA_CONTROL::change_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t 
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_ready_for_commands() == true) {
     change_chainsetup_position(static_cast<double>(samples) /
 			       selected_chainsetup_repp->samples_per_second());
   }
@@ -618,7 +618,7 @@ void ECA_CONTROL::set_chainsetup_position(double seconds)
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_ready_for_commands() == true) {
     engine_repp->command(ECA_ENGINE::ep_setpos, seconds);
   }
   else {
@@ -643,7 +643,7 @@ void ECA_CONTROL::set_chainsetup_position_samples(SAMPLE_SPECS::sample_pos_t sam
   // FIXME: check whether all audio devices support seeking, 
   //        raise an error if not (note: see other similar FIXMEs)
 
-  if (connected_chainsetup() == selected_chainsetup() && is_engine_running() == true) {
+  if (connected_chainsetup() == selected_chainsetup() && is_engine_ready_for_commands() == true) {
     set_chainsetup_position(static_cast<double>(samples) /
 			    selected_chainsetup_repp->samples_per_second());
   }
@@ -1779,12 +1779,17 @@ bool ECA_CONTROL::cond_stop_for_editing(void)
   bool was_running = false;
 
   if (selected_chainsetup() == connected_chainsetup() && 
-      is_engine_running() == true) {
+      is_engine_ready_for_commands() == true) {
+
+    // this is not 100% race-free (engine might be just about to
+    // be started), but as this is just a convenience method, 
+    // best guess at previous engine transport state is still
+    // useful
+    if (engine_repp->status() == ECA_ENGINE::engine_status_running)
+      was_running = true;
 
     engine_repp->command(ECA_ENGINE::ep_stop, 0.0);
     engine_repp->command(ECA_ENGINE::ep_edit_lock, 0.0);
-
-    was_running = true;
 
     // block until engine has processed above ep_edit_lock and 
     // we know the engine is stopped (and no new start is queued)
@@ -1804,7 +1809,7 @@ bool ECA_CONTROL::cond_stop_for_editing(void)
  */
 void ECA_CONTROL::cond_start_after_editing(bool was_running)
 {
-  if (is_engine_running() == true && was_running == true) {
+  if (is_engine_ready_for_commands() == true && was_running == true) {
     engine_repp->command(ECA_ENGINE::ep_edit_unlock, 0.0);
     engine_repp->command(ECA_ENGINE::ep_start, 0.0);
   }

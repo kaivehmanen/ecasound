@@ -301,7 +301,7 @@ void ECA_CONTROL::quit(void) { close_engine(); }
  */
 void ECA_CONTROL::quit_async(void)
 {
-  if (is_engine_running() != true) 
+  if (is_engine_ready_for_commands() != true) 
     return;
 
   engine_repp->command(ECA_ENGINE::ep_exit, 0.0);
@@ -311,13 +311,13 @@ void ECA_CONTROL::quit_async(void)
  * Starts the processing engine.
  *
  * @pre is_connected() == true
- * @pre is_engine_running() != true
+ * @pre is_engine_ready_for_commands() != true
  */
 void ECA_CONTROL::start_engine_sub(bool batchmode)
 {
   // --------
   DBC_REQUIRE(is_connected() == true);
-  DBC_REQUIRE(is_engine_running() != true);
+  DBC_REQUIRE(is_engine_ready_for_commands() != true);
   // --------
 
   DBC_CHECK(engine_exited_rep.get() != 1);
@@ -367,7 +367,7 @@ void ECA_CONTROL::run_engine(void)
  *
  * ensure:
  *  is_engine_created() != true
- *  is_engine_running() != true
+ *  is_engine_ready_for_commands() != true
  */
 void ECA_CONTROL::close_engine(void)
 {
@@ -414,7 +414,7 @@ void ECA_CONTROL::close_engine(void)
 
   // ---
   DBC_ENSURE(is_engine_created() != true);
-  DBC_ENSURE(is_engine_running() != true);
+  DBC_ENSURE(is_engine_ready_for_commands() != true);
   // ---
 }
 
@@ -551,7 +551,7 @@ double ECA_CONTROL::position_in_seconds_exact(void) const
  * If true, the engine object is available for use, but 
  * the related engine thread is not necessarily running.
  *
- * @see is_engine_running()
+ * @see is_engine_ready_for_commands()
  */
 bool ECA_CONTROL::is_engine_created(void) const
 {
@@ -568,7 +568,7 @@ bool ECA_CONTROL::is_engine_created(void) const
  * 
  * @see is_engine_created()
  */
-bool ECA_CONTROL::is_engine_running(void) const
+bool ECA_CONTROL::is_engine_ready_for_commands(void) const
 {
   bool started = is_engine_created();
 

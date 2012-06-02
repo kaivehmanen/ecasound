@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-mt.h: Multithreaded implementation of ECA_CONTROL_INTERFACE
-// Copyright (C) 2009 Kai Vehmanen
+// Copyright (C) 2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -79,7 +79,7 @@ public:
   virtual bool is_finished(void) const;
   virtual bool is_valid(void) const;
   virtual bool is_engine_created(void) const;
-  virtual bool is_engine_running(void) const;
+  virtual bool is_engine_ready_for_commands(void) const;
 
   virtual const ECA_CHAINSETUP* get_connected_chainsetup(void) const;
 

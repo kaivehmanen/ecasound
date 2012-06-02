@@ -85,7 +85,7 @@ public:
   virtual bool is_finished(void) const = 0;
   virtual bool is_valid(void) const = 0;
   virtual bool is_engine_created(void) const = 0;
-  virtual bool is_engine_running(void) const = 0;
+  virtual bool is_engine_ready_for_commands(void) const = 0;
 
   virtual const ECA_CHAINSETUP* get_connected_chainsetup(void) const = 0;
 

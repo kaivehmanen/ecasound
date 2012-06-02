@@ -965,7 +965,7 @@ void* ecasound_watchdog_thread(void* arg)
      *       some reason react to our exit request).
      */
     if (state->control) {
-      if (state->control->is_engine_running() == true) {
+      if (state->control->is_engine_ready_for_commands() == true) {
 	state->control->quit_async();
       }
     }

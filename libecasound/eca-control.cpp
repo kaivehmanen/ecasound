@@ -791,14 +791,14 @@ void ECA_CONTROL::action(int action_id)
   // Engine commands
   // ---
   case ec_engine_launch: { 
-    if (is_engine_running() != true) 
+    if (is_engine_ready_for_commands() != true) 
       engine_start(); 
     else
       set_last_error("Engine already running, use 'engine-halt' first.");
     break; 
   }
   case ec_engine_halt: {
-    if (is_engine_running() == true)
+    if (is_engine_ready_for_commands() == true)
       close_engine(); 
     else
       set_last_error("Engine not running, use 'engine-launch' first.");
@@ -913,7 +913,7 @@ bool ECA_CONTROL::execute_edit_on_connected(const chainsetup_edit_t& edit)
 
   bool retval = false;
   
-  if (is_engine_running() == true) {
+  if (is_engine_ready_for_commands() == true) {
     ECA_ENGINE::complex_command_t engine_cmd;
     engine_cmd.type = ECA_ENGINE::ep_exec_edit;
     engine_cmd.m.cs = edit;
@@ -956,7 +956,7 @@ bool ECA_CONTROL::execute_edit_on_selected(const chainsetup_edit_t& edit, int in
    */
   if (csetup != 0) {
     if (csetup->is_enabled() == true &&
-	is_engine_running() == true) {
+	is_engine_ready_for_commands() == true) {
       execute_edit_on_connected(edit);
     }
     else {

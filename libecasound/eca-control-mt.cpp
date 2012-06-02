@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-mt.h: ECA_CONTROL_MT class implementation
-// Copyright (C) 2009 Kai Vehmanen
+// Copyright (C) 2009,2012 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -137,10 +137,10 @@ bool ECA_CONTROL_MT::is_engine_created(void) const
   return ec_repp->is_engine_created();
 }
 
-bool ECA_CONTROL_MT::is_engine_running(void) const
+bool ECA_CONTROL_MT::is_engine_ready_for_commands(void) const
 {
   /* see note for is_running() */
-  return ec_repp->is_engine_running();
+  return ec_repp->is_engine_ready_for_commands();
 }
 
 const ECA_CHAINSETUP* ECA_CONTROL_MT::get_connected_chainsetup(void) const

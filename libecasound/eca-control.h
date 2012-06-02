@@ -78,7 +78,7 @@ class ECA_CONTROL : public ECA_IAMODE_PARSER,
   virtual bool is_finished(void) const;
   virtual bool is_valid(void) const;
   virtual bool is_engine_created(void) const;
-  virtual bool is_engine_running(void) const;
+  virtual bool is_engine_ready_for_commands(void) const;
 
   virtual void engine_start(void);
   virtual int start(void);
