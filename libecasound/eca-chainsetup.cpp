@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2006,2008,2009,2011 Kai Vehmanen
+// Copyright (C) 1999-2006,2008,2009,2011,2012 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -2239,7 +2239,7 @@ SAMPLE_SPECS::sample_pos_t ECA_CHAINSETUP::seek_position(SAMPLE_SPECS::sample_po
   ECA_LOG_MSG(ECA_LOGGER::user_objects,
 	      "seek position, chainsetup \"" +
 	      name() +
-	      "\" to pos in sec " + 
+	      "\" to pos in samples " + 
 	      kvu_numtostr(pos) + ".");
 
   if (is_enabled() == true) {
