@@ -2044,8 +2044,9 @@ bool ECA_CHAINSETUP::execute_edit(const chainsetup_edit_t& edit)
           ECA_LOG_MSG(ECA_LOGGER::errors,
                       "cop-add error " + 
                       interpret_result_verbose());
-        is_locked_rep = locked;
+          retval = false;
         }
+        is_locked_rep = locked;
         break;
       }
 
