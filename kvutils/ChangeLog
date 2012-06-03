@@ -1,3 +1,7 @@
+2012-06-03  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* library interface version 10:0:0 frozen
+
 2012-05-27  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* kvu_message_queue.h (MESSAGE_QUEUE_RT_C): Added
