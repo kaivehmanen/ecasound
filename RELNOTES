@@ -56,6 +56,9 @@ Full list of changes is available at:
 
   And same applies to 'c-bypass'.
 
+* 'cop-remove' and 'ctrl-remove' cannot be used on a connected
+  chainsetup anymore.
+
 * Python C implementation of the ECI (Ecasound Control Interface) now
   deprecated. The Python ECI implementation is still available, 
   and has been updated to work with more recent versions of Python. 
