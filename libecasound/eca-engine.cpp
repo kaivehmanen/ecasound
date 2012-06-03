@@ -721,7 +721,7 @@ void ECA_ENGINE::prepare_operation(void)
   mixslot_repp->set_rt_lock(true);
 
   /* 2. reinitialize chains if necessary */
-  init_chains();
+  reinit_chains(true);
 
   /* 3. start subsystem servers and forked audio objects */
   start_forked_objects();
