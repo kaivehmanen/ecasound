@@ -197,7 +197,6 @@ private:
   bool started_rep;
   bool was_running_rep;
   bool driver_local;
-  bool edit_lock_rep;
 
   bool finished_rep;
   int outputs_finished_rep;

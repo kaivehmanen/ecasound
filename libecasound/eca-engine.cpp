@@ -186,7 +186,6 @@ void ECA_ENGINE_DEFAULT_DRIVER::exit(void)
 ECA_ENGINE::ECA_ENGINE(ECA_CHAINSETUP* csetup) 
   : prepared_rep(false),
     running_rep(false),
-    edit_lock_rep(false),
     finished_rep(false),
     outputs_finished_rep(0),
     driver_errors_rep(0),
