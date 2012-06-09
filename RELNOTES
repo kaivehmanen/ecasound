@@ -76,7 +76,11 @@ Patches - Accepted code, documentation and build system changes
 Extracted with 'git-shortlog -s':
 
 v2.9.0:
-TBD
+     2  Alessandro Ghedini
+     1  Jeremy Salwen
+    79  Kai Vehmanen
+     1  S. Massy
+     1  Slack
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,6 +89,8 @@ v2.9.0
    * S.Massy (5)
       LV2 cop-describe, -evp extraneous params, -et bug,
       regression with -z:db, start+edit race with JACK
+   * Joel Roth (1)
+      engine starts by itself
    * Svilen Dobrev (1)
       proper handling of commas in resample, reverse et al
    * Jeremy Salwen (1)
@@ -96,7 +102,7 @@ Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 v2.9.0
-  * many, many folks who've kep asking for LV2
+  * all you folks you've been asking for LV2 :)
       LV2 support, finally added thanks to Jeremy Salwen!
   * Adam Linson (1)
       c-is-muted, this was requested in 2003, so took just
