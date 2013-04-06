@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2006,2008,2009,2011,2012 Kai Vehmanen
+// Copyright (C) 1999-2006,2008,2009,2011-2013 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1315,7 +1315,7 @@ void ECA_CHAINSETUP::remove_audio_object_proxy(AUDIO_IO* aio)
  * Helper function used bu remove_audio_object() to remove input 
  * and output loop devices.
  */
-void ECA_CHAINSETUP::remove_audio_object_loop(const string& label, AUDIO_IO* aio, int dir)
+void ECA_CHAINSETUP::remove_audio_object_loop(const AUDIO_IO* aobj, AUDIO_IO* loop_aio, int dir)
 {
   int rdir = (dir == cs_dir_input ? cs_dir_output : cs_dir_input);
 
@@ -1323,14 +1323,14 @@ void ECA_CHAINSETUP::remove_audio_object_loop(const string& label, AUDIO_IO* aio
    * and output object vectors, so they have to be removed
    * from both, but deleted only once */
 
-  remove_audio_object_impl(label, rdir, false);
+  remove_audio_object_impl(aobj, rdir, false);
 
   /* we also need to remove the loop device from 
    * the loop_map table */
 
   map<string,LOOP_DEVICE*>::iterator iter = loop_map.begin();
   while(iter != loop_map.end()) {
-    if (iter->second == aio) {
+    if (iter->second == loop_aio) {
       loop_map.erase(iter);
       break;
     }
@@ -1444,7 +1444,7 @@ static void priv_erase_object(std::vector<AUDIO_IO*>* vec, const AUDIO_IO* obj)
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::remove_audio_object_impl(const string& label, int dir, bool destroy)
+void ECA_CHAINSETUP::remove_audio_object_impl(const AUDIO_IO* aobj, int dir, bool destroy)
 {
   // ---
   DBC_REQUIRE(is_enabled() != true);
@@ -1462,7 +1462,7 @@ void ECA_CHAINSETUP::remove_audio_object_impl(const string& label, int dir, bool
    */
 
   for(size_t n = 0; n < objs->size(); n++) {
-    if ((*objs)[n]->label() == label) {
+    if ((*objs)[n] == aobj) {
       obj_to_remove = (*objs)[n];
       obj_dir_to_remove = (*objs_dir)[n];
       remove_index = static_cast<int>(n);
@@ -1504,7 +1504,7 @@ void ECA_CHAINSETUP::remove_audio_object_impl(const string& label, int dir, bool
     LOOP_DEVICE* loop_dev = dynamic_cast<LOOP_DEVICE*>(obj_dir_to_remove);
     if (loop_dev != 0 && destroy == true) {
       /* note: destroy must be true to limit recursion */
-      remove_audio_object_loop(label, obj_dir_to_remove, dir);
+      remove_audio_object_loop(aobj, obj_dir_to_remove, dir);
     }
 
     /* finally actually delete the object */
@@ -1523,14 +1523,14 @@ void ECA_CHAINSETUP::remove_audio_object_impl(const string& label, int dir, bool
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::remove_audio_input(const string& label)
+void ECA_CHAINSETUP::remove_audio_input(const AUDIO_IO* aobj)
 {
   // ---
   DBC_REQUIRE(is_enabled() != true);
   DBC_DECLARE(size_t oldsize = inputs.size());
   // ---
 
-  remove_audio_object_impl(label, cs_dir_input, true);
+  remove_audio_object_impl(aobj, cs_dir_input, true);
 
   // ---
   DBC_ENSURE(inputs.size() == inputs_direct_rep.size());
@@ -1543,14 +1543,14 @@ void ECA_CHAINSETUP::remove_audio_input(const string& label)
  *
  * @pre is_enabled() != true
  */
-void ECA_CHAINSETUP::remove_audio_output(const string& label)
+void ECA_CHAINSETUP::remove_audio_output(const AUDIO_IO* aobj)
 {
   // --------
   DBC_REQUIRE(is_enabled() != true);
   DBC_DECLARE(size_t oldsize = outputs.size());
   // --------
 
-  remove_audio_object_impl(label, cs_dir_output, true);
+  remove_audio_object_impl(aobj, cs_dir_output, true);
 
   // ---
   DBC_ENSURE(outputs.size() == outputs_direct_rep.size());

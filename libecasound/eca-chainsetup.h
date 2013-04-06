@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.h: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2004,2006 Kai Vehmanen
+// Copyright (C) 1999-2004,2006,2013 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -119,8 +119,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void add_input(AUDIO_IO* aiod);
   void add_output(AUDIO_IO* aiod, bool truncate);
   void add_default_output(void);
-  void remove_audio_input(const string& label);
-  void remove_audio_output(const string& label);
+  void remove_audio_input(const AUDIO_IO* aobj);
+  void remove_audio_output(const AUDIO_IO* aobj);
   void attach_input_to_selected_chains(const AUDIO_IO* obj);
   void attach_output_to_selected_chains(const AUDIO_IO* obj);
   bool ok_audio_object(const AUDIO_IO* aobj) const;
@@ -394,8 +394,8 @@ class ECA_CHAINSETUP : public ECA_CHAINSETUP_POSITION {
   void propagate_audio_io_manager_options(void);
   AUDIO_IO* add_audio_object_helper(AUDIO_IO* aio);
   void remove_audio_object_proxy(AUDIO_IO* aio);
-  void remove_audio_object_loop(const string& label, AUDIO_IO* aio, int dir);
-  void remove_audio_object_impl(const string& label, int dir, bool destroy);
+  void remove_audio_object_loop(const AUDIO_IO* aobj, AUDIO_IO* loop_aio, int dir);
+  void remove_audio_object_impl(const AUDIO_IO* aobj, int dir, bool destroy);
 
   // -------------------------------------------------------------------
 

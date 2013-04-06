@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004,2006,2008,2009,2012 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2009,2012,2013 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1538,7 +1538,7 @@ void ECA_CONTROL::remove_audio_input(void)
   // --------
   ECA_LOG_MSG(ECA_LOGGER::info, "Removing selected audio input \"" + selected_audio_input_repp->label() +
 	      "\" from selected chains.");
-  selected_chainsetup_repp->remove_audio_input(selected_audio_input_repp->label());
+  selected_chainsetup_repp->remove_audio_input(selected_audio_input_repp);
   selected_audio_input_repp = 0;
 
   // --------
@@ -1564,7 +1564,7 @@ void ECA_CONTROL::remove_audio_output(void)
   // --------
   ECA_LOG_MSG(ECA_LOGGER::info, "Removing selected audio output \"" + selected_audio_output_repp->label() +
 	      "\" from selected chains.");
-  selected_chainsetup_repp->remove_audio_output(selected_audio_output_repp->label());
+  selected_chainsetup_repp->remove_audio_output(selected_audio_output_repp);
   selected_audio_output_repp = 0;
 
   // --------
