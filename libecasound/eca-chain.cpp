@@ -140,6 +140,32 @@ void CHAIN::disconnect_output(void) { output_id_rep = -1; initialized_rep = fals
 void CHAIN::disconnect_buffer(void) { audioslot_repp = 0; initialized_rep = false; release(); }
 
 /**
+ * Notifies chain that an input has been removed.
+ */
+void CHAIN::input_removed(int input)
+{
+  // adjust input_id_rep in case position in input
+  // array has changed
+  if (input_id_rep > input)
+    --input_id_rep;
+  else if (input_id_rep == input)
+    disconnect_input();
+}
+
+/**
+ * Notifies chain that an output has been removed.
+ */
+void CHAIN::output_removed(int output)
+{
+  // adjust output_id_rep in case position in output
+  // array has changed
+  if (output_id_rep > output)
+    --output_id_rep;
+  else if (output_id_rep == output)
+    disconnect_output();
+}
+
+/**
  * Adds the chain operator to the end of the chain
  *
  * require:

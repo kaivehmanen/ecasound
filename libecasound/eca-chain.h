@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chain.cpp: Class representing an abstract audio signal chain.
-// Copyright (C) 1999-2009,2012 Kai Vehmanen
+// Copyright (C) 1999-2009,2012,2013 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -101,6 +101,9 @@ class CHAIN : public ECA_AUDIO_POSITION {
   void connect_output(int output);
   void disconnect_output(void);
   void disconnect_buffer(void);
+
+  void input_removed(int input);
+  void output_removed(int input);
 
   /**
    * Returns an id number to input connected to this chain. If no input

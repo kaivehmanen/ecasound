@@ -1473,18 +1473,15 @@ void ECA_CHAINSETUP::remove_audio_object_impl(const AUDIO_IO* aobj, int dir, boo
     DBC_CHECK(remove_index >= 0);
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "Removing object " + obj_to_remove->label() + ".");
 
-    /* disconnect object from chains */
+    /* disconnect object from chains and update
+     * references to modified input/output tables */
     vector<CHAIN*>::iterator q = chains.begin();
     while(q != chains.end()) {
       if (dir == cs_dir_input) {
-	if ((*q)->connected_input() == remove_index) {
-	  (*q)->disconnect_input();
-	}
+        (*q)->input_removed(remove_index);
       }
       else {
-	if ((*q)->connected_output() == remove_index) {
-	  (*q)->disconnect_output();
-	}
+        (*q)->output_removed(remove_index);
       }
       ++q;
     }
