@@ -122,8 +122,15 @@ int kvu_pthread_cond_timeout(int seconds, struct timespec *out, bool monotonic =
 #endif
   }
   else {
+#if defined(CLOCK_REALTIME)
     res = clock_gettime(CLOCK_REALTIME, out);
     out->tv_sec += seconds;
+#else
+    struct timeval tv;
+    res = gettimeofday(&tv, NULL);
+    out->tv_sec = tv.tv_sec + seconds;
+    out->tv_nsec = tv.tv_usec * 1000;
+#endif
   }
 
   return res;
