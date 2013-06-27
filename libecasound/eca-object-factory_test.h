@@ -22,6 +22,10 @@
 #include <string>
 #include <typeinfo> /* typeid() */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "kvu_numtostr.h"
 
 #include "audioio.h"
@@ -204,10 +208,12 @@ void ECA_OBJECT_FACTORY_TEST::do_run(void)
       ECA_TEST_FAILURE("LADSPA plugin name and id maps have different number of plugins!");
   }
   
+#if ECA_USE_LIBLILV
   ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - LV2-map");
 
   ECA_OBJECT_MAP& lv2_map = ECA_OBJECT_FACTORY::lv2_plugin_map();
   test_map<EFFECT_LV2>(lv2_map);
+#endif
 
   ECA_LOG_MSG(ECA_LOGGER::info, "libecasound_tester: object factories - preset-map");
 
