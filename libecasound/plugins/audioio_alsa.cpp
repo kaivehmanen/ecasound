@@ -58,6 +58,7 @@
 #include <kvu_dbc.h>
 #include <kvu_message_item.h>
 #include <kvu_numtostr.h>
+#include <kvu_inttypes.h>
 #include <kvu_utils.h>
 
 #include "samplebuffer.h"
@@ -370,8 +371,22 @@ void AUDIO_IO_ALSA_PCM::open(void) throw(AUDIO_IO::SETUP_ERROR&)
 
 void AUDIO_IO_ALSA_PCM::stop(bool drain)
 {
-  if (drain == true) {
-    ECA_LOG_MSG(ECA_LOGGER::user_objects, "drain start / " + label());
+  if (drain == true && io_mode() != io_read) {
+
+    /*
+     * The sw-params combination:
+     *    "silence-threshold==0 && silence-size>=boundary"
+     * ... is a API special case to request silencing all
+     * processed frames. This will ensure no stale data is
+     * played out at the end of drain.
+     */
+    snd_pcm_uframes_t boundary;
+    snd_pcm_sw_params_get_boundary(pcm_sw_params_repp, &boundary);
+    snd_pcm_sw_params_set_silence_threshold(audio_fd_repp, pcm_sw_params_repp, 0);
+    snd_pcm_sw_params_set_silence_size(audio_fd_repp, pcm_sw_params_repp, boundary);
+    snd_pcm_sw_params(audio_fd_repp, pcm_sw_params_repp);
+
+    ECA_LOG_MSG(ECA_LOGGER::user_objects, "drain - start / " + label());
     snd_pcm_drain(audio_fd_repp); /* blocking */
     ECA_LOG_MSG(ECA_LOGGER::user_objects, "drain complete / " + label());
   }
