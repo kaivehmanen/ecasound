@@ -41,6 +41,13 @@ class AUDIO_IO_DEVICE : public AUDIO_IO_BUFFERED {
 
   /*@}*/
 
+  /** @name Main functionality */
+  /*@{*/
+
+  virtual void write_buffer(SAMPLE_BUFFER* sbuf);
+
+  /*@}*/
+
   /** @name Configuration 
    * 
    * For setting and getting configuration parameters.

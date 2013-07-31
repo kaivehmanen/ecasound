@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-device.cpp: Virtual base class for real-time devices.
-// Copyright (C) 1999-2001,2010 Kai Vehmanen
+// Copyright (C) 1999-2001,2010,2013 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
 #include <kvu_message_item.h>
 
 #include "audioio-device.h"
+#include "samplebuffer.h"
 
 AUDIO_IO_DEVICE::AUDIO_IO_DEVICE(void) 
   : is_running_rep(false),
@@ -62,4 +63,17 @@ string AUDIO_IO_DEVICE::status(void) const
   mitem << "Hz, buffer " << buffersize() << ".";
 
   return(mitem.to_string());
+}
+
+void AUDIO_IO_DEVICE::write_buffer(SAMPLE_BUFFER* sbuf)
+{
+  long int payload = sbuf->length_in_samples();
+
+  if (payload != buffersize()) {
+    // Always pad write to full buffersize(). SAMPLE_BUFFER
+    // will ensure the added samples are muted.
+    sbuf->length_in_samples(buffersize());
+  }
+
+  AUDIO_IO_BUFFERED::write_buffer(sbuf);
 }
