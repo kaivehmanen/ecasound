@@ -116,7 +116,7 @@ Harris, Steve [swharris]
 	gcc 2.96 (RH7.0) testing and fixes.
 Hughes, Jeremy [jedahu]
 	Bugfix for JACK port muting
-Lavallée, Marc
+LavallÃ©e, Marc
 	Rpm-spec for Mandrake.
 Merino, Pedro Antonio Fructuoso [pfructuoso]
 	Various bugfix patches.
@@ -130,7 +130,7 @@ Poulton, Ron [thok]
 	Helped to track down the mysterious chain-bug.
 Rzewnicki, Eric Dantan [ericdr]
 	Lots of typo fixes and corrections to Ecasound docs.
-Sacré, Dominic [dsacre]
+SacrÃ©, Dominic [dsacre]
 	Fixes to 'jack_generic'.
 Sassmannshausen, Ruediger [rsassman]
 	Mp3 filename parsing fixes.
@@ -152,7 +152,7 @@ Westbrook, Tim [iondiode]
 	Autoconf 2.5x fixes.
 Wever, Mark de [koraq]
 	Bugs in libecasoundc-config.
-Wróblewski, Artur [wrobell]
+WrÃ³blewski, Artur [wrobell]
 	PLD-Linux RPM-specfile, readline and destdir patches.
 
 Contributions - Patches, Bug Hunting and Feature Proposals
@@ -203,7 +203,7 @@ Adam Linson
 Paul Winkler
 Didier Bellamy
 Manfred Berndtgen
-Stéphane Letz
+StÃ©phane Letz
 Paul Marquardt
 kito -at- gentoo-org
 jcwjcw -at- qwest-net
@@ -215,7 +215,7 @@ Kamil Wencel
 Julien Claassen
 Erik de Castro Lopo
 Frederik Eaton
-Philippe Schelté aka Dubphil
+Philippe ScheltÃ© aka Dubphil
 Julian Dobson
 Alexey Shchepin
 Brad Fuller
@@ -246,7 +246,7 @@ Brad Bowman
 Joel Roth
 Martin Michlmayr
 Joe Planisky
-Rémi Rouaud
+RÃ©mi Rouaud
 Etienne Deleflie
 Klaus Schulz
 Keith Creasy
@@ -256,7 +256,7 @@ Andrew Lees
 Sergei Steshenko
 Alexis Ballier
 Avuton Olrich
-Dominic Sacré
+Dominic SacrÃ©
 Erik Nomitch
 Alessandro Ghedini
 Slack <slackml -at- @a1-net>
