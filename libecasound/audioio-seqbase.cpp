@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-seqbase.cpp: Base class for audio sequencer objects
-// Copyright (C) 1999,2002,2005,2008,2009,2010 Kai Vehmanen
+// Copyright (C) 1999,2002,2005,2008-2010,2013 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3 (see Ecasound Programmer's Guide)
@@ -292,10 +292,6 @@ void AUDIO_SEQUENCER_BASE::read_buffer(SAMPLE_BUFFER* sbuf)
       child()->set_buffersize(buffersize());
       child()->read_buffer(sbuf);
 
-      DBC_CHECK((child()->finished() == true &&
-		 buffersize() > sbuf->length_in_samples()) ||
-		child()->finished() != true);
-      
       /* resize the sbuf if needed: either EOF was encountered
        * and sbuf is shorter than buffersize() or otherwise we
        * need to drop some of the samples read so at to not
