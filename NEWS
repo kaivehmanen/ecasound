@@ -42,7 +42,14 @@ Howto for reading the entries (2.7.2 and older):
 
 xxxx2013 (v2.9.x) -** stable release **-
          - fixed: multiple bugs with ai-remove and
-                  ao-remove
+                  ao-remove; reported by Rocco
+         - fixed: multiple issues wih ALSA draining (playing 
+                  the last samples at the end) code added to
+                  2.8.0; reported by Knut Petersen
+         - fixed: silenced invalid dbc/runtime warnings from 
+                  audioio-seqbase.cpp; reported by Julien Claassen
+         - fixed: -t:x inaccuracy that increased with larger
+                  buffersizes; reported by Knut Petersen 
 09062012 (v2.9.0) -** stable release **-
          - note: tested to build with the new gcc-4.7.0
          - added: LV2 support using liblilv [jeremysalwen];
