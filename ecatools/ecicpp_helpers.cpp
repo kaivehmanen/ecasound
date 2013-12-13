@@ -44,12 +44,22 @@ using std::string;
  * Function declarations
  */
 
-int ecicpp_add_file_input(ECA_CONTROL_INTERFACE* eci, const string& filename, string* format)
+static void escape(string& str, string& x, string& rep)
 {
-  if (filename.find(',') != string::npos) {
-    cerr << "Error: Unable to handle filenames with commas. Exiting...\n";
-    return -1;
-  }
+  for (size_t i = 0; (i = str.find(x, i)) != string::npos; i += rep.length())
+    str.replace(i, x.length(), rep);
+}
+
+int ecicpp_add_file_input(ECA_CONTROL_INTERFACE* eci, string& filename, string* format)
+{
+  string space(" ");
+  string space_e("\\ ");
+
+  string comma(",");
+  string comma_e("\\\\,");
+
+  escape(filename, space, space_e);
+  escape(filename, comma, comma_e);
 
   return ecicpp_add_input(eci, filename, format);
 }
