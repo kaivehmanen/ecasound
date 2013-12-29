@@ -80,7 +80,7 @@ dnl to override AM_xxx flags.
 dnl
 dnl modifies: AM_CXXFLAGS, AM_CFLAGS
 dnl ---
-EXTRACPPFLAGS="-D_REENTRANT -D_XOPEN_SOURCE=500"
+EXTRACPPFLAGS="-D_REENTRANT -D_XOPEN_SOURCE=600"
 EXTRAGCCFLAGS="-ffast-math -fstrict-aliasing"
 if test x${GXX} = xyes; then
    AM_CXXFLAGS="$AM_CXXFLAGS $EXTRAGCCFLAGS"

@@ -97,9 +97,9 @@ Optional when running Ecasound:
 To compile Ecasound, you also need...:
 
 - POSIX/SUS development environment, compatible with
-  'The Single UNIX Specification, Version 2' (UNIX98):
-    - http://www.unix.org/version2/
-    - http://www.opengroup.org/onlinepubs/007908799/index.html
+  'The Single UNIX Specification, Version 3' (UNIX03):
+    - http://www.unix.org/version3/
+    - http://pubs.opengroup.org/onlinepubs/000095399/toc.htm
   Ecasound requires the following feature groups:
     - "Realtime":
       http://www.opengroup.org/onlinepubs/007908799/xsh/realtime.html
