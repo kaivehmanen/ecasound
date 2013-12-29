@@ -16,7 +16,9 @@ if test(?x, "../ecasound/ecasound")
     ENV['ECASOUND'] = "../ecasound/ecasound"
 end
 
-require "ecasound"
+# workaround to support both ruby >=1.9 (current dir not
+# in $LOAD_PATH) and older ruby versions
+require File.expand_path('.', "ecasound")
 
 # ---
 # configuration variables
