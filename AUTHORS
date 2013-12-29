@@ -39,6 +39,8 @@ Ewe, Michael [mewe]
 	Signal handling bugfixes to ecasignalview and the ECI C impl.
 Fendt, Stefan (stefan -at- lionfish -dot- ping -dot- de)
 	Original code for reverb (-ete) and RC-lowpass filter (-ef4).
+Ghedini, Alessandro [ghedo]
+        Patches to build scripts, ecasound.el, documentation and others.
 Hall, Jeremy [jhall] (jhall -at- maoz -dot- com)
 	Extensive testing, ALSA 0.6.x support, many design ideas.
 Halttunen, Janne [jhalttun]
