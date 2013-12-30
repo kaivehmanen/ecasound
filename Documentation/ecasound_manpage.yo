@@ -218,15 +218,28 @@ dit(-B:buffering_mode)
 Selects the default buffering mode. Mode is one of: 'auto' (default),
 'nonrt', 'rt', 'rtlowlatency'.
 
-dit(-b:buffer size)
-Sets the size of buffer in samples (must be an exponent of 2). This
-is quite an important option. For real-time processing, you should
-set this as low as possible to reduce the processing delay. Some
-machines can handle buffer values as low as 64 and 128. In some
-circumstances (for instance when using oscillator envelopes) small
-buffer sizes will make envelopes act more smoothly. When not processing
-in real-time (all inputs and outputs are normal files), values between
-512 - 4096 often give better results. Default is 1024.
+dit(-b:buffer_size)
+Sets the processing engine buffer size in samples. The size must be an exponent of 2,
+and it is independent of channel count (e.g. em(-b:1024) at 48kHz will result in
+21.333ms buffer length whether input is mono, stereo or 5.1).
+
+This is an important option as this defines the length of one processing engine
+iteration and affects ecasound behaviour in many ways. If not explicitly
+specified, ecasound will try to choose an optimal value based on current
+buffering mode (see em(-B) option). For real-time processing, you can try to set this
+as low as possible to reduce the processing delay. Some machines can handle buffer
+values as low as 64 and 128. In some circumstances (for instance when using
+oscillator envelopes) small buffer sizes will make envelopes act more smoothly.
+When not processing in real-time (all inputs and outputs are normal files), larger
+values may help to avoid buffer overruns, lower CPU usage and/or otherwise
+improve performance.
+
+Note that when any JACK input/outputs are used, the buffer size setting is overridden
+and set to period/buffer size reported by JACK server (e.g. jackd's '-p' option).
+It is not possible to turn off this behaviour.
+
+If not explicitly specified, the default buffer size is chosen based on current
+buffering mode (see em(-B)).
 
 dit(-r:sched_priority)
 Use realtime scheduling policy (SCHED_FIFO). This is impossible if 
