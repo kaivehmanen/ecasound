@@ -189,10 +189,10 @@ related tools. Announcements of new versions, bug warnings, etc will be
 posted to this list. If you have problems compiling, installing or 
 using Ecasound, this is a good place to ask for help. Reports of 
 working software/hardware combinations are also welcome. You can
-browse the message archives at http://eca.cx/ecasound-list/
+browse the message archives at http://nosignal.fi/ecasound-list/
 
 You can join the lists using the following web front-end: 
-http://eca.cx/ecasound/mlists.php
+http://nosignal.fi/ecasound/mlists.php
 
 - linux-audio-announce at lists.linuxaudio.org
 
@@ -215,20 +215,20 @@ See the 'BUGS' files.
 -----------------------------------------------------------------------
 
 Ecasound home site
-- http://eca.cx/ecasound
+- http://nosignal.fi/ecasound
 
 Download releases
 - http://ecasound.seul.org/download/    (primary site)
 - http://ecawave.sf.net/download/	(mirror)
-- http://eca.cx/download/		(mirror)
+- http://nosignal.fi/download/		(mirror)
 
 Eca projects portal (links, apps based on Ecasound, etc)
-- http://eca.cx 
+- http://nosignal.fi 
 - http://ecasound.seul.org              (US mirror)
 - http://ecasound.sourceforge.net       (another US mirror)
 
 Examples of real-life Ecasound usage
-- http://eca.cx/ecasound_users.html
+- http://nosignal.fi/ecasound_users.html
 
 -----------------------------------------------------------------------
  About free open-source software (FOSS) development

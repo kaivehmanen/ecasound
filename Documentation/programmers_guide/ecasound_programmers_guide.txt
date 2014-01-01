@@ -578,7 +578,7 @@ Library organization
 
 The primary source for class documentation is header files.
 A browsable version of header documentation is at
-http://www.eca.cx/ecasound/Documentation
+http://nosignal.fi/ecasound/Documentation
 Anyway, let's look at the some central classes.
 
 

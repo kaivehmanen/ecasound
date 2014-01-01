@@ -29,7 +29,7 @@ under the LGPL.
 --------------------------
 
 * Thanks to Jeremy Salwen, Ecasound now supports LV2 plugins!
-  See http://eca.cx/ecasound/Documentation/examples.html#lv2 for
+  See http://nosignal.fi/ecasound/Documentation/examples.html#lv2 for
   simple usage information.
 
 * New commands: cop-bypass, cop-is-bypassed, stop-sync, c-is-muted,
@@ -43,7 +43,7 @@ under the LGPL.
 * Various minor bug fixes, see NEWS file and git history.
 
 Full list of changes is available at:
- - http://www.eca.cx/ecasound/history.php
+ - http://nosignal.fi/ecasound/history.php
 
 4. Interface and configuration file changes in 2.9? series
 ---------------------------------------------------------
@@ -112,16 +112,16 @@ v2.9.0
 ------------------
    
 Web site (and mirrors):
-        http://eca.cx/ecasound (fi)
+        http://nosignal.fi/ecasound (fi)
         http://ecasound.seul.org (us)
         http://ecasound.sourceforge.net (us)
 
 Source package:
-        http://eca.cx/ecasound/download.php     
+        http://nosignal.fi/ecasound/download.php     
         ecasound-2.9.0.tar.gz, md5sum:
         TBD
 
 List of distributions with maintained Ecasound support:
-        See http://eca.cx/ecasound/download.php
+        See http://nosignal.fi/ecasound/download.php
 
 -- 

@@ -160,10 +160,10 @@ static const char* ecasound_parameter_help_rep =
 "descriptions of of their use, see ecasound(1) manual page and\n"
 "the documentation at ecasound's website. Documentation is available\n"
 "online at:\n"
-" - http://eca.cx/ecasound/Documentation/ecasound_manpage.html\n"
-" - http://eca.cx/ecasound/Documentation/examples.html\n"
+" - http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html\n"
+" - http://nosignal.fi/ecasound/Documentation/examples.html\n"
 "\n"
-"Report bugs to ecasound-list mailing list (http://www.eca.cx/contact).\n";
+"Report bugs to ecasound-list mailing list (http://nosignal.fi/ecasound/mlists.php).\n";
 
 const char* ecasound_parameter_help(void)
 {

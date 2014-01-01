@@ -86,7 +86,7 @@ session, and use interactive mode commands to control and
 observe ecasound processing.
 
 The NetECI protocol is defined in 
-url(Ecasound's Programmer Guide)(http://eca.cx/ecasound/Documentation/programmers_guide/ecasound_programmers_guide.html#neteci-various)
+url(Ecasound's Programmer Guide)(http://nosignal.fi/ecasound/Documentation/programmers_guide/ecasound_programmers_guide.html#neteci-various)
 
 One example client using this feature is ecamonitor(1). This
 utility is included in the Ecasound distribution package (requires
@@ -1204,7 +1204,7 @@ manpagesection(EXAMPLES)
 
  	Examples of how to perform common tasks with ecasound can
 	be found at 
-	url(http://eca.cx/ecasound/Documentation/examples.html)(http://eca.cx/ecasound/Documentation/examples.html).
+	url(http://nosignal.fi/ecasound/Documentation/examples.html)(http://nosignal.fi/ecasound/Documentation/examples.html).
 
 manpageseealso()
 

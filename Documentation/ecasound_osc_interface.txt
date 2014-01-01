@@ -16,7 +16,7 @@ later Ecasound versions.
 
 To understand Ecasound concepts such as "chain", "chain operator" and
 "controller", please see the User's Guide at:
-http://eca.cx/ecasound/Documentation/users_guide/html_uguide/users_guide.html
+http://nosignal.fi/ecasound/Documentation/users_guide/html_uguide/users_guide.html
 
 Specification
 ~~~~~~~~~~~~~

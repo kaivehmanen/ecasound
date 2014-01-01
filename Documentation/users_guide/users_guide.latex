@@ -166,7 +166,7 @@ to files, the \emph{.ecs} file format is used. The file syntax
 uses the same notation as Ecasound's console (and command-line)
 interface. This makes it easy to edit the chainsetup files
 outside Ecasound, either manually or using external utils.
-See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)} 
+See \href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)} 
 man page for details.
 
 % ----------------------------------------------------------------------
@@ -248,7 +248,7 @@ to multitrack recording and mixing.
 This flexibility doesn't come for free. It's difficult to describe
 Ecasound's features in a few phrases. Because of this, new users
 are encouraged to start from the \texttt{Examples page} at 
-\url{http://www.eca.cx/ecasound/Documentation/examples.html}.
+\url{http://nosignal.fi/ecasound/Documentation/examples.html}.
 It isn't a perfect introduction, and definitely shows only one way to
 use the software, but it does give an overall view of what can be done,
 and more importantly, it shows that many tasks are actually quite simple
@@ -283,7 +283,7 @@ chainsetup (when issuing commands such as ``cs-connect'', or ``start'').
 \section{Chain operators and controllers}
 
 The best place to start is to read through 
-the \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+the \href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page, which contains documentation for all native Ecasound 
 chain objects.
 
@@ -291,7 +291,7 @@ chain objects.
 \section{Configuration}
 
 User preferences are stored in \emph{\textasciitilde /.ecasound/ecasoundrc}.
-See the \href{http://eca.cx/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
+See the \href{http://nosignal.fi/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
 manual page for details.
 
 By default, files for effect presets and oscillator presets are 
@@ -328,9 +328,9 @@ can browse the list archives at \url{http://www.linuxdj.com/audio/lad/archive.ph
 
 Here are links to selected messages from the ecasound-list archives:
 \begin{itemize}
-\item Tuning parameters for reliable recording \url{http://eca.cx/ecasound-list/2005/04/0038.html}.
-\item Smart Buffering \url{http://eca.cx/ecasound-list/2001/10/0020.html}.
-\item Ecasound for Recording \url{http://eca.cx/ecasound-list/2001/06/0016.html}.
+\item Tuning parameters for reliable recording \url{http://nosignal.fi/ecasound-list/2005/04/0038.html}.
+\item Smart Buffering \url{http://nosignal.fi/ecasound-list/2001/10/0020.html}.
+\item Ecasound for Recording \url{http://nosignal.fi/ecasound-list/2001/06/0016.html}.
 \end{itemize}
 
 \subsection{Can I use multiple soundcards?}
@@ -427,9 +427,9 @@ on top of Ecasound, visit Ecasound's web site at \url{http://www.eca.cx}.
 The standalone program ``ecasound'' is the primary user interface
 for Ecasound. 
 
-See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+See \href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page and the \texttt{Examples web page}
-at \url{http://www.eca.cx/ecasound/Documentation/examples.html}.
+at \url{http://nosignal.fi/ecasound/Documentation/examples.html}.
 
 % ----------------------------------------------------------------------
 \section{Ecasignalview}
@@ -555,9 +555,9 @@ Starting from Ecasound version 2.5.0, similar functionality is
 provided by special purpose audio object types 'audioloop', 'audioselect'
 and others. You may choose between EWF and these audio object types
 based on your specific needs. See 
-\href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+\href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page and the \texttt{Examples web page}
-at \url{http://www.eca.cx/ecasound/Documentation/examples.html}
+at \url{http://nosignal.fi/ecasound/Documentation/examples.html}
 for many examples of using these.
 
 Writing to EWF file is nowadays considered to be a deprecated
@@ -567,7 +567,7 @@ feature and it may be removed in a future release.
 
 Ewf-files are stored in ascii format. The syntax is based on ``key=value''
 pairs. The same syntax is used with Ecasound resource files. See
-\href{http://eca.cx/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
+\href{http://nosignal.fi/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
 man page for detailed info. Currently recognized ewf keywords are:
 
 \begin{itemize}
@@ -615,7 +615,7 @@ new effects by combining basic effects and controllers.
 
 Presets can be stored into separate files or they can be stored
 into a global database. Either way, the preset format is the same
-(also see \href{http://eca.cx/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
+(also see \href{http://nosignal.fi/ecasound/Documentation/ecasoundrc\_manpage.html}{ecasoundrc(5)}
  man page, the same file format and syntax is used):
 
 \begin{verbatim} 
@@ -777,7 +777,7 @@ case, both entry and close thresholds are ``5\%'' (peak volume).
 \section{LADSPA plugins}
 
 Ecasound supports LADSPA-effect plugins (Linux Audio Developer's 
-Simple Plugin API). See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+Simple Plugin API). See \href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page and the LADSPA web site at ``www.ladspa.org'' for more information.
 
 \subsection{Ecasound is not able to find any LADSPA plugins I have installed!}
@@ -860,7 +860,7 @@ ecasound -f:f32,2,44100 -i jack,system -o foo.wav
 
 Here we use ``-f:bits,channels,srate'' to set how many channels 
 to record from the sound device using JACK. As described in 
-the \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+the \href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 man page, the parameters to ``-f'' may be overridden
 by the audio objects. In case of JACK, the server always sets
 the sampling rate, and also the sample format is fixed to 32bit
@@ -891,7 +891,7 @@ ecasound -i jack,remote_client            -o foo.wav
 ecasound -i jack,local_portprefix -o foo.wav
 \end{verbatim}
 
-See \href{http://eca.cx/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
+See \href{http://nosignal.fi/ecasound/Documentation/ecasound_manpage.html}{ecasound(1)}
 manual page for descriptions of the ``jack\_multi'' audio object and the variants 
 of ``jack'' usage.
 

@@ -197,7 +197,7 @@ counters by sending a SIGHUP signal to the process (i.e.
 from another console: "killall -v -HUP ecasignalview").
 
 More complete documentation for ecasignalview can be found 
-from "Ecasound User's Guide" (see ''http://www.eca.cx/ecasound 
+from "Ecasound User's Guide" (see ''http://nosignal.fi/ecasound 
 -> Documentation'').
 
 manpagesection(ENVIRONMENT)

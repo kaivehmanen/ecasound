@@ -24,7 +24,7 @@ Quick overview of various sources of change info
   - RELNOTES. The release notes file describe the most important changes in
     a bit more detail. This is maintained in the git tree and is sent
     as the release announcement mail.
-        - For notes of previous releases: http://eca.cx/relnotes/
+        - For notes of previous releases: http://nosignal.fi/ecasound/relnotes/
   - Version control history. Describes all changes in implementation.
         - http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound
   - Library interface changes are documented in ChangeLog files (these
@@ -127,7 +127,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 	   	  objects ("audioloop", "select", "playat")
 20022010 (v2.7.1) -** stable release **-
 	- note: key changes are described in more detail at:
-                http://eca.cx/relnotes/ecasound_v2_7_1_relnotes.txt
+                http://nosignal.fi/ecasound/relnotes/ecasound_v2_7_1_relnotes.txt
 	- fixed: glitches in ALSA capture/playback with some sound 
 	  	 hardware/configurations, and using alsa-lib
 	    	 older than 1.0.15; related to deprecated ALSA API
@@ -147,7 +147,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 (http://students.mimuw.edu.pl/~tk197881/a8cas/)
 17102009 (v2.7.0) -** stable release **-
 	- note: key changes are described in more detail at:
-                http://eca.cx/relnotes/ecasound_v2_7_0_relnotes.txt
+                http://nosignal.fi/ecasound/relnotes/ecasound_v2_7_0_relnotes.txt
 	- added: new exit code of '4' to ecasound; see entry below
 		 about signal handling changes and ecasound(1) for
 		 more details
@@ -213,7 +213,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 reaching end-of-stream at different times [jedahu]
 08022009 (v2.6.0) -** stable release **-
 	- note: key changes are described in more detail at:
-                http://eca.cx/relnotes/ecasound_v2_6_0_relnotes.txt
+                http://nosignal.fi/ecasound/relnotes/ecasound_v2_6_0_relnotes.txt
 	- added: new optional params to 'jack' -> 'jack,clientname,portprefix';
 		 replaces old interfaces 'jack_auto', 'jack_generic' 
 		 and 'jack_alsa'; see ecasound(1) for more details
@@ -278,7 +278,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 during operation
 	- fixed: interactive mode - loop devices saved with incorrect 
 		 syntax, affects cs-save, cs-save-as and cs-edit ; see
-	 	 http://eca.cx/ecasound-list/2009/01/0058.html
+	 	 http://nosignal.fi/ecasound-list/2009/01/0058.html
 	- fixed: problems when seeking back to start with setups using
 		 loop devices; closes sfbug:2527049
 	- fixed: segfault if using a tone generator input with a fixed
@@ -292,7 +292,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 was running the batchmode
 	- fixed: a nasty bug in 'playat' implementation causing audible
 		 artifacts ; see 
-		 http://eca.cx/ecasound-list/2009/01/0089.html
+		 http://nosignal.fi/ecasound-list/2009/01/0089.html
 	- fixed: sndfile and audiofile backends - emit a warning if 
 		 a seek fails (e.g. when seeking beyond current 
 		 end-of-file for output objects)
@@ -313,12 +313,12 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 audioloop, select
 24082008 (v2.5.2) -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_5_2_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_5_2_relnotes.txt
 	- fixed: bug in channel routing of LADSPA plugins that have
 		 more audio output ports than input ports
 21082008 (v2.5.1) -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_5_1_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_5_1_relnotes.txt
 	- fixed: a last minute change in 2.5.0 that caused build errors
 	 	 with gcc-4.3.1 if ALSA support is disabled
 	- fixed: a change in 2.5.0 how process cleanup is initiated from 
@@ -332,7 +332,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 unusable;  errors 
 16082008 (v2.5.0) -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_5_0_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_5_0_relnotes.txt
 	- notice: slightly modified the version numbering scheme -
 		  minor version is incremented whenever non-trivial
 		  new features are added
@@ -386,7 +386,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		   circumstances (previously there were some 
 		   unhandled corner cases)
 	- changed: major updates to the examples.html page (available
-	           also at http://eca.cx/examples )
+	           also at http://nosignal.fi/ecasound/Documentation/examples.html )
 	- changed: refactored logic for propagating seek events 
 		   across chainsetups; warnings are now issued if 
 		   one tries to seek objects that do not supports
@@ -445,7 +445,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 values was accidentally left enabled in the 2.4.6 release
 14082007 (v2.4.6)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_6_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_6_relnotes.txt
 	- added: new option '-R:path-to-resource-file' to use a custom
 		 resource file and disable querying of global and user
 		 resource files; as a special case, by setting this 
@@ -478,7 +478,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 associated controllers; reported by Adam Linson
 07122006 (v2.4.5)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_5_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_5_relnotes.txt
 	- added: ability to compile without a readline library (will
 	         disable the curses based console user-interface)
 	- added: if libsndfile is found and supports flac (sndfile
@@ -557,7 +557,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 	         Joel Roth and Stuart Allie
 27012006 (v2.4.4)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_4_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_4_relnotes.txt
 	- added: eiam - ai-describe, ao-describe, cop-describe and
 	         ctrl-describe commands; see ecasound-iam(1)
 	- added: ecasignalview - ability to pass ecasound options
@@ -598,7 +598,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 makes it again possible to specify ALSA devices, etc
 21082005 (v2.4.3)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_3_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_3_relnotes.txt
 	- added: support for ALSA sequencer support; see ecasound(1)
 	         and examples.html [pedrolc]
 	- added: runtime warning about possible problems when mixing 
@@ -621,7 +621,7 @@ xxxx2013 (v2.9.x) -** stable release **-
                  a batch chainsetup would cause a segfault
 07082005 (v2.4.2)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_2_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_2_relnotes.txt
 	- note: verified to compile ok with gcc-4.0.0 and gcc-4.0.1 [kaiv]
 	- added: eiam - ctrlp-list, ctrlp-selected, ctrlp-get, ctrlp-select
 	         and ctrlp-set commands; the last two are RT-commands;
@@ -662,7 +662,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 resolvable hostname
 08042005 (v2.4.1)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_1_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_1_relnotes.txt
 	- note: verified to work with automake versions 1.6 and 1.9;
 		automake 1.5 and older, as well as autoconf versions
 	        older than 2.50, are no longer supported; these
@@ -714,7 +714,7 @@ xxxx2013 (v2.9.x) -** stable release **-
 		 been given (quiet output mode)
 12032005 (v2.4.0)  -** stable release **-
 	- more verbose description of change available at:
-                 http://eca.cx/relnotes/ecasound_v2_4_0_relnotes.txt
+                 http://nosignal.fi/ecasound/relnotes/ecasound_v2_4_0_relnotes.txt
 	- edi-entries: edi-40 progress
 	- added: support for having commas in arguments by escaping 
 	 	 them with a backslash (example: "ai-add foo\,bar.wav")
