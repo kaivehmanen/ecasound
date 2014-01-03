@@ -89,7 +89,7 @@ Optional when running Ecasound:
 - for .aac/.m4a/.mp4 file support, the FAAC/FAAD2 tools
 - for .flac support, the FLAC package
      - note: since ecasound 2.4.5, libsndfile is the preferred
-	     way for reading and writing FLAC files
+             way for reading and writing FLAC files
 - for MIDI .mid file input: Timidity++
 - for tracker module support: MikMod package
 - for aRts (legacy KDE) support: the aRts server suntime
@@ -113,7 +113,7 @@ To compile Ecasound, you also need...:
 
 Optional when compiling Ecasound:
 
-- for extented file format support (aiff, snd, w64 and so forth): 
+- for extended file format support (aiff, snd, w64 and so forth): 
     - libaudiofile (SGI audio file  library) runtime, and/or
     - libsndfile 
 - for higher quality resampling: libsamplerate

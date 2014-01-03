@@ -1,11 +1,10 @@
-subject: Ecasound 2.9.0 released
+subject: Ecasound 2.9.1 released
 
 1. Summary of changes in this release
 -------------------------------------
 
-Support for LV2 plugins has been added. Commands for controlling bypass
-on a chain operator basis have been added. Dozens of bugs have been 
-fixed.
+Bug fixed with ai-remove/ao-remove. Regression fixed in ALSA PCM draining
+logic. Many minor bugs have been fixed.
 
 2. What is Ecasound?
 --------------------
@@ -25,88 +24,52 @@ Limited support for Windows is available through Cygwin. Ecasound is
 licensed under the GPL. The Ecasound Control Interface (ECI) is licensed
 under the LGPL.
 
-3. Changes in 2.9?.x series
---------------------------
+3. Changes in 2.9.1 release
+---------------------------
 
-* Thanks to Jeremy Salwen, Ecasound now supports LV2 plugins!
-  See http://nosignal.fi/ecasound/Documentation/examples.html#lv2 for
-  simple usage information.
+* Bugfixes to ALSA PCM output, ecatools, ECI ai-remove/ao-remove commands,
+  '-t' option. See NEWS file and git history.
 
-* New commands: cop-bypass, cop-is-bypassed, stop-sync, c-is-muted,
-  c-is-bypassed
-
-* Chain operator state is now flushed when position is changed with
-  a seek. Previously Ecasound effects worked like their analogue 
-  counterparts, and e.g. a delay operator would not flush its internal
-  delay line when a seek was performed.
-
-* Various minor bug fixes, see NEWS file and git history.
+* Ecasound now compiled with SUSv3 (-D_XOPEN_SOURCE=600).
 
 Full list of changes is available at:
  - http://nosignal.fi/ecasound/history.php
 
-4. Interface and configuration file changes in 2.9? series
----------------------------------------------------------
+4. Interface and configuration file changes in 2.9.1 series
+-----------------------------------------------------------
 
-* New params to c-bypass and c-mute
-  - 'c-mute on' -> set mute on
-  - 'c-mute toggle' -> old behaviour, toggle existing setting
-  - 'c-mute' -> old behaviour as well
-  - 'c-is-muted' -> returns current state
+None.
 
-  And same applies to 'c-bypass'.
-
-* 'cop-remove' and 'ctrl-remove' cannot be used on a connected
-  chainsetup anymore.
-
-* Python C implementation of the ECI (Ecasound Control Interface) now
-  deprecated. The Python ECI implementation is still available, 
-  and has been updated to work with more recent versions of Python. 
-
-* RPM packaging files (ecasound.spec) have been removed from git
-  and tarball releases due. They've not been maintained since 2006
-  and serve no practical purpose anymore.
-
-5. Contributors to 2.9 series
------------------------------
+5. Contributors to 2.9.1 series
+-------------------------------
 
 Patches - Accepted code, documentation and build system changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Extracted with 'git-shortlog -s':
 
-v2.9.0:
+v2.9.1:
      2  Alessandro Ghedini
-     1  Jeremy Salwen
-    79  Kai Vehmanen
-     1  S. Massy
-     1  Slack
+    24  Kai Vehmanen
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.9.0
-   * S.Massy (5)
-      LV2 cop-describe, -evp extraneous params, -et bug,
-      regression with -z:db, start+edit race with JACK
-   * Joel Roth (1)
-      engine starts by itself
-   * Svilen Dobrev (1)
-      proper handling of commas in resample, reverse et al
-   * Jeremy Salwen (1)
-      bug in LADSPA param descriptions
+v2.9.1
+   * Knut Petersen (3)
+      multiple issues with ALSA drainining logic added to 2.8.0
+      bug in -t/cs-set-length
    * Rocco / linuxmedia4 (1)
-      saving JACK object params with cs-save/cs-edit
-
+      bug in ai-remove/ao-remove
+   * Brett Koonce (1)
+      build error with Mac XCode 5.x and SUSv2/_XOPEN_SOURCE=500
+   * Julien Claassen (1)
+      invalid design-by-contract warnings
+   
 Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.9.0
-  * all you folks you've been asking for LV2 :)
-      LV2 support, finally added thanks to Jeremy Salwen!
-  * Adam Linson (1)
-      c-is-muted, this was requested in 2003, so took just
-      9 (nine!) years to deliver this one :P
+No features implemented.
 
 6. Links and files
 ------------------
@@ -118,8 +81,9 @@ Web site (and mirrors):
 
 Source package:
         http://nosignal.fi/ecasound/download.php     
-        ecasound-2.9.0.tar.gz, md5sum:
-        TBD
+        ecasound-2.9.1.tar.gz, md5sum:
+        (TBD, see publiseh release notes at:
+         http://nosignal.fi/ecasound/relnotes/)
 
 List of distributions with maintained Ecasound support:
         See http://nosignal.fi/ecasound/download.php

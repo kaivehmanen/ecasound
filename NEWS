@@ -40,15 +40,16 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-xxxx2013 (v2.9.x) -** stable release **-
+03012014 (v2.9.1) -** stable release **-
          - changed: configure.in renamed to configure.ac as automake 2.0
                     will drop support for configure.in [ghedo]
-         - changed: ecatools now accept file names with commas [ghedo]
+         - changed: ecatools now accepts file names with commas [ghedo]
          - changed: build with -D_XOPEN_SOURCE=600, see
                     http://www.unix.org/version3/single_unix_v3.pdf and
                     http://www.unix.org/version3/
          - fixed: compilation errors with Mac Xcode 5.x versions
-                  that have dropped llvm-gcc support
+                  that have dropped llvm-gcc support, reported by
+                  Brett Koonce
          - fixed: multiple bugs with ai-remove and
                   ao-remove; reported by Rocco
          - fixed: multiple issues wih ALSA draining (playing 
