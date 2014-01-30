@@ -1,10 +1,10 @@
-subject: Ecasound 2.9.1 released
+subject: Ecasound 2.9.2 released
 
 1. Summary of changes in this release
 -------------------------------------
 
-Bug fixed with ai-remove/ao-remove. Regression fixed in ALSA PCM draining
-logic. Many minor bugs have been fixed.
+Bug fixed with glitches related to cop-set/ctrlp-set/c-bypass/c-mute when
+in TCP server mode.
 
 2. What is Ecasound?
 --------------------
@@ -24,23 +24,21 @@ Limited support for Windows is available through Cygwin. Ecasound is
 licensed under the GPL. The Ecasound Control Interface (ECI) is licensed
 under the LGPL.
 
-3. Changes in 2.9.1 release
+3. Changes in 2.9.2 release
 ---------------------------
 
-* Bugfixes to ALSA PCM output, ecatools, ECI ai-remove/ao-remove commands,
-  '-t' option. See NEWS file and git history.
-
-* Ecasound now compiled with SUSv3 (-D_XOPEN_SOURCE=600).
+* Bug fixed with glitches related to cop-set/ctrl-set/c-bypass/c-mute when 
+  in TCP server mode.
 
 Full list of changes is available at:
  - http://nosignal.fi/ecasound/history.php
 
-4. Interface and configuration file changes in 2.9.1 series
+4. Interface and configuration file changes in 2.9.2 series
 -----------------------------------------------------------
 
 None.
 
-5. Contributors to 2.9.1 series
+5. Contributors to 2.9.2 series
 -------------------------------
 
 Patches - Accepted code, documentation and build system changes
@@ -48,23 +46,14 @@ Patches - Accepted code, documentation and build system changes
 
 Extracted with 'git-shortlog -s':
 
-v2.9.1:
-     2  Alessandro Ghedini
-    24  Kai Vehmanen
+v2.9.2:
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.9.1
-   * Knut Petersen (3)
-      multiple issues with ALSA drainining logic added to 2.8.0
-      bug in -t/cs-set-length
-   * Rocco / linuxmedia4 (1)
-      bug in ai-remove/ao-remove
-   * Brett Koonce (1)
-      build error with Mac XCode 5.x and SUSv2/_XOPEN_SOURCE=500
-   * Julien Claassen (1)
-      invalid design-by-contract warnings
+v2.9.2
+   * Raphaël Mouneyres (1)
+      nasty bug with TCP mode and cop-set/ctrlp-set and others
    
 Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
