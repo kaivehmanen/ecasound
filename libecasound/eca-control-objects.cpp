@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-control-objects.cpp: Class for configuring libecasound objects
-// Copyright (C) 2000-2004,2006,2008,2009,2012,2013 Kai Vehmanen
+// Copyright (C) 2000-2004,2006,2008,2009,2012-2014 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -2027,6 +2027,7 @@ void ECA_CONTROL::set_chain_operator_parameter(CHAIN_OPERATOR::parameter_t value
   ECA::chainsetup_edit_t edit;
   edit.type = ECA::edit_cop_set_param;
   edit.cs_ptr = selected_chainsetup_repp;
+  edit.need_chain_reinit = false;
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
@@ -2074,6 +2075,7 @@ void ECA_CONTROL::set_chain_muting(const string &arg)
   ECA::chainsetup_edit_t edit;
   edit.type = ECA::edit_c_muting;
   edit.cs_ptr = selected_chainsetup_repp;
+  edit.need_chain_reinit = false;
 
   int state_arg = priv_onofftoggle_to_int(arg);
 
@@ -2102,6 +2104,7 @@ void ECA_CONTROL::set_chain_bypass(const string& arg)
   ECA::chainsetup_edit_t edit;
   edit.type = ECA::edit_c_bypass;
   edit.cs_ptr = selected_chainsetup_repp;
+  edit.need_chain_reinit = false;
 
   int state_arg = priv_onofftoggle_to_int(arg);
 
@@ -2132,6 +2135,7 @@ void ECA_CONTROL::bypass_chain_operator(const string& arg)
   ECA::chainsetup_edit_t edit;
   edit.type = ECA::edit_cop_bypass;
   edit.cs_ptr = selected_chainsetup_repp;
+  edit.need_chain_reinit = false;
 
   int bypass_arg = priv_onofftoggle_to_int(arg);
 
@@ -2517,6 +2521,7 @@ void ECA_CONTROL::set_controller_parameter(CHAIN_OPERATOR::parameter_t value)
   ECA::chainsetup_edit_t edit;
   edit.type = ECA::edit_ctrl_set_param;
   edit.cs_ptr = selected_chainsetup_repp;
+  edit.need_chain_reinit = false;
 
   unsigned int p = selected_chainsetup_repp->first_selected_chain();
   if (p < selected_chainsetup_repp->chains.size()) {
