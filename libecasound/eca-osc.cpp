@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-osc.cpp: Class implementing the Ecasound OSC interface
-// Copyright (C) 2009,2012 Kai Vehmanen
+// Copyright (C) 2009,2012,2014 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -246,6 +246,7 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 	  p_res == 0) {
 	DBC_CHECK(types[0] == 'f');
 	edit.type = ECA::edit_cop_set_param;
+        edit.need_chain_reinit = false;
 
 	edit.m.cop_set_param.chain = c_index;
 	edit.m.cop_set_param.op = std::atoi(op_s.c_str());
@@ -277,7 +278,8 @@ int ECA_OSC_INTERFACE::handle_chain_message(const std::string &path, const char 
 	  p_res == 0) {
 	DBC_CHECK(types[0] == 'f');
 	edit.type = ECA::edit_ctrl_set_param;
-
+        edit.need_chain_reinit = false;
+  
 	edit.m.ctrl_set_param.chain = c_index;
 	edit.m.ctrl_set_param.op = std::atoi(ctrl_s.c_str());
 	edit.m.ctrl_set_param.param = param;
