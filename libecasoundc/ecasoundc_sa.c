@@ -88,7 +88,7 @@
 #define ECI_MAX_RESYNC_ATTEMPTS    9
 #define ECI_MAX_LAST_COMMAND_SIZE  64
 
-#define ECI_READ_TIMEOUT_MS        5000
+#define ECI_READ_TIMEOUT_MS        15000
 #define ECI_READ_RETVAL_TIMEOUT_MS 30000
 
 #define ECI_STATE_INIT             0
