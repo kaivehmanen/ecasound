@@ -54,7 +54,7 @@ else
 jack_target =
 endif
 
-INCLUDES =	-I$(srcdir) \
+AM_CPPFLAGS =	-I$(srcdir) \
 		-I$(top_srcdir) \
 		-I$(top_srcdir)/libecasound \
 		-I$(top_srcdir)/kvutils \

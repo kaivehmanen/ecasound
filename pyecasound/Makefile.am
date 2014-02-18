@@ -32,7 +32,7 @@ pyecasound_install_list2 = 	pyecasound.so
 pyecasound_uninstall_list2 =   	$(DESTDIR)$(ECA_S_PYTHON_DLMODULES)/pyecasound.so
 endif
 
-INCLUDES 			= -I$(srcdir) \
+AM_CPPFLAGS 			= -I$(srcdir) \
 				-I$(top_srcdir)/libecasoundc \
 				-I$(ECA_S_PYTHON_INCLUDES)
 

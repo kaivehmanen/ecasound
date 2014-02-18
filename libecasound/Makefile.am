@@ -51,7 +51,7 @@ endif
 #       also libtool 1.3.2 and older have problems 
 #       with stripping libraries.
 
-INCLUDES = 	-I$(srcdir) \
+AM_CPPFLAGS = 	-I$(srcdir) \
 		-I$(top_srcdir) \
 		-I$(top_srcdir)/kvutils \
 		$(ECA_S_EXTRA_CPPFLAGS)

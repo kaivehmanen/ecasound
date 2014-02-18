@@ -19,7 +19,7 @@ else
 eca_ldflags = -s -version-info @LIBECASOUNDC_VERSION@:0:@LIBECASOUNDC_VERSION_AGE@ -static
 endif
 
-INCLUDES = -I$(srcdir)
+AM_CPPFLAGS = -I$(srcdir)
 # -I$(top_srcdir)/libecasound
 
 # ----------------------------------------------------------------------

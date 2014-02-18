@@ -19,7 +19,7 @@ endif
 TESTS = libkvutils_tester
 check_PROGRAMS = $(TESTS)
 
-INCLUDES = $(ECA_S_EXTRA_CPPFLAGS)
+AM_CPPFLAGS = $(ECA_S_EXTRA_CPPFLAGS)
 
 kvutil_sources = 	kvu_dbc.cpp \
 			kvu_debug.cpp \

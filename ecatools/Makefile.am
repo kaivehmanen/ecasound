@@ -22,7 +22,7 @@ if ECA_AM_USE_TERMCAP
 termcap_library = -ltermcap
 endif
 
-INCLUDES = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound -I$(top_srcdir)/libecasoundc
+AM_CPPFLAGS = -I$(srcdir) -I$(top_srcdir) -I$(top_srcdir)/kvutils -I$(top_srcdir)/libecasound -I$(top_srcdir)/libecasoundc
 
 bin_SCRIPTS = ecamonitor
 
