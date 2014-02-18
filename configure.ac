@@ -749,7 +749,7 @@ if test x$RUBYPATH = xnone; then
   rubyecasound_support=no
   ECA_S_RUBY_SITEDIR=""
 else
-  ECA_S_RUBY_SITEDIR="`ruby -e 'require "rbconfig"; include Config; print CONFIG[["sitedir"]] + "/" + CONFIG[["MAJOR"]] + "." + CONFIG[["MINOR"]]'`"
+  ECA_S_RUBY_SITEDIR="`ruby -e 'require "rbconfig"; include RbConfig; print CONFIG[["sitedir"]] + "/" + CONFIG[["MAJOR"]] + "." + CONFIG[["MINOR"]]'`"
 fi
 
 AC_SUBST(ECA_S_RUBY_SITEDIR)
