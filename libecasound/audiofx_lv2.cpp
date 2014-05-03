@@ -37,8 +37,6 @@
 #include "eca-error.h"
 #include "eca-logger.h"
 
-
-
 EFFECT_LV2::EFFECT_LV2 (Lilv::Plugin pdesc) throw(ECA_ERROR&) :plugin_desc(pdesc) 
 {
   bool inplacebroken=plugin_desc.has_feature(ECA_LV2_WORLD::InPlaceBrokenNode());
@@ -50,7 +48,7 @@ EFFECT_LV2::EFFECT_LV2 (Lilv::Plugin pdesc) throw(ECA_ERROR&) :plugin_desc(pdesc
   Lilv::Node name(plugin_desc.get_name());
   name_rep = string(name.as_string());
   unique_rep = string(plugin_desc.get_uri().as_string());
-  Lilv::Node author(plugin_desc.get_author_name()); 
+  Lilv::Node author(plugin_desc.get_author_name());
   if(author) {
     maker_rep = string(author.as_string());
   } else {
@@ -63,7 +61,7 @@ EFFECT_LV2::EFFECT_LV2 (Lilv::Plugin pdesc) throw(ECA_ERROR&) :plugin_desc(pdesc
 EFFECT_LV2::~EFFECT_LV2 (void)
 {
   release();
-  
+
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
       lilv_instance_deactivate(plugins_rep[n]->me);
@@ -86,7 +84,7 @@ void EFFECT_LV2::parameter_description(int param, struct PARAM_DESCRIPTION *pd) 
 }
 
 EFFECT_LV2* EFFECT_LV2::clone(void) const
-{ 
+{
   EFFECT_LV2* result = new EFFECT_LV2(plugin_desc);
   for(int n = 0; n < number_of_params(); n++) {
     result->set_parameter(n + 1, get_parameter(n + 1));
@@ -106,12 +104,12 @@ void EFFECT_LV2::init_ports(void) throw(ECA_ERROR&)
     Lilv::Port port=plugin_desc.get_port_by_index(m);
     if(port.is_a(ECA_LV2_WORLD::AudioClassNode())) {
       if(port.is_a(ECA_LV2_WORLD::InputClassNode())) {
-	    ++in_audio_ports;
+        ++in_audio_ports;
       } else if (port.is_a(ECA_LV2_WORLD::OutputClassNode())) {
-  	    ++out_audio_ports;
+        ++out_audio_ports;
       }
     } else if (port.is_a(ECA_LV2_WORLD::ControlClassNode())) {
-      struct PARAM_DESCRIPTION pd; 
+      struct PARAM_DESCRIPTION pd;
       parse_parameter_hint_information(plugin_desc,port, &pd);
       params.push_back(pd.default_value);
       param_descs_rep.push_back(pd);
@@ -119,8 +117,8 @@ void EFFECT_LV2::init_ports(void) throw(ECA_ERROR&)
       string tmp (kvu_string_search_and_replace(string(pd.description), ",", "\\,"));
       param_names_rep += kvu_string_search_and_replace(tmp, ":", "\\:");
     } else if(!port.has_property(ECA_LV2_WORLD::PortConnectionOptionalNode())){
-		  throw(ECA_ERROR("AUDIOFX_LV2", "Plugin has required ports which are not audio or control ports."));
-	}
+      throw(ECA_ERROR("AUDIOFX_LV2", "Plugin has required ports which are not audio or control ports."));
+    }
   }
 }
 
@@ -131,26 +129,25 @@ void EFFECT_LV2::parse_parameter_hint_information(Lilv::Plugin plugin, Lilv::Por
   SAMPLE_SPECS::sample_rate_t srate = samples_per_second();
   /* FIXME: this is just ugly! */
   if (srate <= 0) { srate = 44100; }
-  
+
   Lilv::Node name=p.get_name();
-  
+
   /* parameter name */
   pd->description =name.as_string();
-  
+
   Lilv::Node deflt(NULL);
   Lilv::Node min(NULL);
   Lilv::Node max(NULL);
-  
+
   lilv_port_get_range(plugin.me,p.me,&deflt.me,&min.me,&max.me);
-  
 
   bool isSRRelative=p.has_property(ECA_LV2_WORLD::PortSamplerateDependentNode());
-  
+
   /* upper and lower bounds */
   if (min) {
     pd->bounded_below = true;
-    
-	pd->lower_bound=min.as_float();
+
+    pd->lower_bound=min.as_float();
     if (isSRRelative) {
       pd->lower_bound *= srate;
     }
@@ -164,7 +161,7 @@ void EFFECT_LV2::parse_parameter_hint_information(Lilv::Plugin plugin, Lilv::Por
 
    pd->upper_bound=max.as_float();
    if (isSRRelative) {
-	pd->upper_bound *= srate;
+     pd->upper_bound *= srate;
    }
   }
   else {
@@ -197,12 +194,12 @@ void EFFECT_LV2::parse_parameter_hint_information(Lilv::Plugin plugin, Lilv::Por
     else if (pd->lower_bound < 0 && pd->upper_bound < 0) pd->default_value = pd->upper_bound;
     else pd->default_value = pd->lower_bound;
   }
-  
+
   /* defaults - case 5 */
   else {
     DBC_CHECK(!min && !max);
 
-    if (isSRRelative) 
+    if (isSRRelative)
       pd->default_value = srate;
     else
       pd->default_value = 1.0f;
@@ -212,12 +209,12 @@ void EFFECT_LV2::parse_parameter_hint_information(Lilv::Plugin plugin, Lilv::Por
     pd->toggled = true;
   else
     pd->toggled = false;
-  
+
   if (p.has_property(ECA_LV2_WORLD::PortIntegerNode()))
     pd->integer = true;
   else
     pd->integer = false;
-  
+
   if (p.has_property(ECA_LV2_WORLD::PortLogarithmicNode()))
     pd->logarithmic = true;
   else
@@ -238,7 +235,7 @@ void EFFECT_LV2::set_parameter(int param, CHAIN_OPERATOR::parameter_t value)
   }
 }
 
-CHAIN_OPERATOR::parameter_t EFFECT_LV2::get_parameter(int param) const 
+CHAIN_OPERATOR::parameter_t EFFECT_LV2::get_parameter(int param) const
 {
   if (param > 0 && (param - 1 < static_cast<int>(params.size()))) {
     //  cerr << "lv2: getting param " << param << " with value " << params[param - 1] << "." << endl;
@@ -249,7 +246,7 @@ CHAIN_OPERATOR::parameter_t EFFECT_LV2::get_parameter(int param) const
 
 int EFFECT_LV2::output_channels(int i_channels) const
 {
-  // note: We have two separate cases: either one plugin 
+  // note: We have two separate cases: either one plugin
   //       is instantiated for each channel, or one plugin
   //       per chain. See EFFECT_LV2::init().
 
@@ -258,12 +255,12 @@ int EFFECT_LV2::output_channels(int i_channels) const
 
     return out_audio_ports;
   }
-  
+
   return i_channels;
 }
 
 void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
-{ 
+{
   EFFECT_BASE::init(insample);
 
   DBC_CHECK(samples_per_second() > 0);
@@ -276,7 +273,7 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
 
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
-		lilv_instance_deactivate(plugins_rep[n]->me);
+      lilv_instance_deactivate(plugins_rep[n]->me);
       lilv_instance_free(plugins_rep[n]->me);
       delete plugins_rep[n];
     }
@@ -291,68 +288,68 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
     int inport = 0;
     int outport = 0;
     for(unsigned long m = 0; m < port_count_rep; m++) {
-		Lilv::Port p= plugin_desc.get_port_by_index(m);
-		if (p.is_a(ECA_LV2_WORLD::AudioClassNode())) {
-			if (p.is_a(ECA_LV2_WORLD::InputClassNode())) {
-				if (inport < channels()) {
-					plugins_rep[0]->connect_port(m, buffer_repp->buffer[inport]);
-				}
-				++inport;
-			} else if(p.is_a(ECA_LV2_WORLD::OutputClassNode())) {
-				if (outport < channels()) {
-					plugins_rep[0]->connect_port(m, buffer_repp->buffer[outport]);
-				}
-				++outport;
-			}
-		}
+      Lilv::Port p= plugin_desc.get_port_by_index(m);
+      if (p.is_a(ECA_LV2_WORLD::AudioClassNode())) {
+        if (p.is_a(ECA_LV2_WORLD::InputClassNode())) {
+          if (inport < channels()) {
+            plugins_rep[0]->connect_port(m, buffer_repp->buffer[inport]);
+          }
+          ++inport;
+        } else if(p.is_a(ECA_LV2_WORLD::OutputClassNode())) {
+          if (outport < channels()) {
+            plugins_rep[0]->connect_port(m, buffer_repp->buffer[outport]);
+          }
+          ++outport;
+        }
+      }
     }
-    
+
     if (inport > channels())
-      ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "WARNING: chain has less channels than plugin has input ports ("
-		  + name() + ").");
+      ECA_LOG_MSG(ECA_LOGGER::info,
+                  "WARNING: chain has less channels than plugin has input ports ("
+                  + name() + ").");
     if (outport > channels())
-      ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "WARNING: chain has less channels than plugin has output ports ("
-		  + name() + ").");
+      ECA_LOG_MSG(ECA_LOGGER::info,
+                  "WARNING: chain has less channels than plugin has output ports ("
+                  + name() + ").");
   } else {
     for(int n = 0; n < channels(); n++) {
       plugins_rep.push_back(Lilv::Instance::create(plugin_desc,samples_per_second(),NULL));
       for(unsigned long m = 0; m < port_count_rep; m++) {
-	    Lilv::Port p= plugin_desc.get_port_by_index(m);
-		if (p.is_a(ECA_LV2_WORLD::AudioClassNode())) {
-			plugins_rep[n]->connect_port(m,buffer_repp->buffer[n]);
-		}
+        Lilv::Port p= plugin_desc.get_port_by_index(m);
+        if (p.is_a(ECA_LV2_WORLD::AudioClassNode())) {
+          plugins_rep[n]->connect_port(m,buffer_repp->buffer[n]);
+        }
       }
     }
   }
 
-  ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		"Instantiated " +
-		kvu_numtostr(plugins_rep.size()) + 
-		" LV2 plugin(s), each with " + 
-		kvu_numtostr(in_audio_ports) + 
-		" audio input port(s) and " +
-		kvu_numtostr(out_audio_ports) +
-		" output port(s), to chain with " +
-		kvu_numtostr(channels()) +
-		" channel(s) and srate of " +
-		kvu_numtostr(samples_per_second()) +
-		".");
+  ECA_LOG_MSG(ECA_LOGGER::system_objects,
+              "Instantiated " +
+              kvu_numtostr(plugins_rep.size()) +
+              " LV2 plugin(s), each with " +
+              kvu_numtostr(in_audio_ports) +
+              " audio input port(s) and " +
+              kvu_numtostr(out_audio_ports) +
+              " output port(s), to chain with " +
+              kvu_numtostr(channels()) +
+              " channel(s) and srate of " +
+              kvu_numtostr(samples_per_second()) +
+              ".");
 
   int data_index = 0;
   for(unsigned long m = 0; m < port_count_rep; m++) {
-	  Lilv::Port p=plugin_desc.get_port_by_index(m);
-	  if (p.is_a(ECA_LV2_WORLD::ControlClassNode())) {
-		for(unsigned int n = 0; n < plugins_rep.size(); n++) {
-			plugins_rep[n]->connect_port(m,&(params[data_index]));
-		}
-		++data_index;
-	  }
+    Lilv::Port p=plugin_desc.get_port_by_index(m);
+    if (p.is_a(ECA_LV2_WORLD::ControlClassNode())) {
+      for(unsigned int n = 0; n < plugins_rep.size(); n++) {
+        plugins_rep[n]->connect_port(m,&(params[data_index]));
+      }
+      ++data_index;
+    }
   }
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
-	plugins_rep[m]->activate();
-	
+    plugins_rep[m]->activate();
+
 }
 
 void EFFECT_LV2::release(void)
