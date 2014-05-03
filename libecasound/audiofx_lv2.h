@@ -57,7 +57,7 @@ private:
   SAMPLE_BUFFER* buffer_repp;
   
   Lilv::Plugin plugin_desc;
-  std::vector<Lilv::Instance> plugins_rep;
+  std::vector<Lilv::Instance*> plugins_rep;
 
   unsigned long port_count_rep;
   int in_audio_ports;

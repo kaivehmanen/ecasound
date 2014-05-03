@@ -66,8 +66,9 @@ EFFECT_LV2::~EFFECT_LV2 (void)
   
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
-      lilv_instance_deactivate(plugins_rep[n]);
-      lilv_instance_free(plugins_rep[n]);
+      lilv_instance_deactivate(plugins_rep[n]->me);
+      lilv_instance_free(plugins_rep[n]->me);
+      delete plugins_rep[n];
     }
   }
 }
@@ -275,8 +276,9 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
 
   if (plugin_desc != 0) {
     for(unsigned int n = 0; n < plugins_rep.size(); n++) {
-		lilv_instance_deactivate(plugins_rep[n]);
-      lilv_instance_free(plugins_rep[n]);
+		lilv_instance_deactivate(plugins_rep[n]->me);
+      lilv_instance_free(plugins_rep[n]->me);
+      delete plugins_rep[n];
     }
     plugins_rep.clear();
   }
@@ -285,7 +287,7 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
   if (in_audio_ports > 1 ||
       out_audio_ports > 1) {
     //Just insert into the first location
-    plugins_rep.push_back(Lilv::Instance(plugin_desc,samples_per_second()));
+    plugins_rep.push_back(Lilv::Instance::create(plugin_desc,samples_per_second(),NULL));
     int inport = 0;
     int outport = 0;
     for(unsigned long m = 0; m < port_count_rep; m++) {
@@ -293,12 +295,12 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
 		if (p.is_a(ECA_LV2_WORLD::AudioClassNode())) {
 			if (p.is_a(ECA_LV2_WORLD::InputClassNode())) {
 				if (inport < channels()) {
-					plugins_rep[0].connect_port(m, buffer_repp->buffer[inport]);
+					plugins_rep[0]->connect_port(m, buffer_repp->buffer[inport]);
 				}
 				++inport;
 			} else if(p.is_a(ECA_LV2_WORLD::OutputClassNode())) {
 				if (outport < channels()) {
-					plugins_rep[0].connect_port(m, buffer_repp->buffer[outport]);
+					plugins_rep[0]->connect_port(m, buffer_repp->buffer[outport]);
 				}
 				++outport;
 			}
@@ -315,11 +317,11 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
 		  + name() + ").");
   } else {
     for(int n = 0; n < channels(); n++) {
-      plugins_rep.push_back(Lilv::Instance(plugin_desc,samples_per_second()));
+      plugins_rep.push_back(Lilv::Instance::create(plugin_desc,samples_per_second(),NULL));
       for(unsigned long m = 0; m < port_count_rep; m++) {
 	    Lilv::Port p= plugin_desc.get_port_by_index(m);
 		if (p.is_a(ECA_LV2_WORLD::AudioClassNode())) {
-			plugins_rep[n].connect_port(m,buffer_repp->buffer[n]);
+			plugins_rep[n]->connect_port(m,buffer_repp->buffer[n]);
 		}
       }
     }
@@ -343,13 +345,13 @@ void EFFECT_LV2::init(SAMPLE_BUFFER *insample)
 	  Lilv::Port p=plugin_desc.get_port_by_index(m);
 	  if (p.is_a(ECA_LV2_WORLD::ControlClassNode())) {
 		for(unsigned int n = 0; n < plugins_rep.size(); n++) {
-			plugins_rep[n].connect_port(m,&(params[data_index]));
+			plugins_rep[n]->connect_port(m,&(params[data_index]));
 		}
 		++data_index;
 	  }
   }
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
-	plugins_rep[m].activate();
+	plugins_rep[m]->activate();
 	
 }
 
@@ -364,7 +366,7 @@ void EFFECT_LV2::release(void)
 void EFFECT_LV2::process(void)
 {
   for(unsigned long m = 0; m < plugins_rep.size(); m++)
-    lilv_instance_run(plugins_rep[m], buffer_repp->length_in_samples());
+    lilv_instance_run(plugins_rep[m]->me, buffer_repp->length_in_samples());
 }
 
 #endif /* ECA_USE_LIBLILV */
