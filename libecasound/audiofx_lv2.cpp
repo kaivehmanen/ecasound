@@ -1,10 +1,10 @@
 // ------------------------------------------------------------------------
 // audiofx_lv2.cpp: Wrapper class for LV2 plugins
-// Copyright (C) 2000-2004, 2011 Kai Vehmanen
+// Copyright (C) 2011 Jeremy Salwen
+// Copyright (C) 2000-2004, 2011,2014 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
-//
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
