@@ -2,7 +2,7 @@
 // audioio-mp3.cpp: Interface for mp3 decoders and encoders that support 
 //                  input/output using standard streams. Defaults to
 //                  mpg123 and lame.
-// Copyright (C) 1999-2006,2008,2009 Kai Vehmanen
+// Copyright (C) 1999-2006,2008,2009,2015 Kai Vehmanen
 // Note! Routines for parsing mp3 header information were taken from XMMS
 //       1.2.5's mpg123 plugin. Improvements to parsing logic were
 //       contributed by Julian Dobson.
@@ -510,7 +510,7 @@ std::string MP3FILE::get_parameter(int param) const
 void MP3FILE::get_mp3_params(const std::string& fname) throw(AUDIO_IO::SETUP_ERROR&)
 {
   std::string urlprefix;
-  struct frame fr;
+  struct frame fr = { 0 };
 
   if (mpg123_detect_by_content(fname.c_str(), &fr) != true) {
     /* not a file, next search for an URL */
