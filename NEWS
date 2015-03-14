@@ -40,11 +40,15 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-xxyy2014 (v2.9.2) -** stable release **-
+xxyy2015 (v2.9.2) -** stable release **-
          - fixed: in some cases (especially in TCP server mode), 
                   cop-set/ctrlp-set/c-mute/c-bypass/cop-bypass caused a full
                   chain reinit, which depending on chain complexity
                   caused a severe glitch in realtime operation
+         - fixed: use of obsolete automake and ruby interface [ghedo]
+         - fixed: LV2/liblilv build errors due to use deprecated
+                  Lilv::Instance::Instance
+         - fixed: compiler warnings triggered by gcc-4.7.2 and newer
 03012014 (v2.9.1) -** stable release **-
          - changed: configure.in renamed to configure.ac as automake 2.0
                     will drop support for configure.in [ghedo]
