@@ -539,12 +539,12 @@ To play an audio file in reserve:
 
 <p>
 The various operations can also be stacked. Let's first start
-by selecting a 5sec second out of a bigger file and play 
-that out to the ALSA device.
+by using 'select' to play a 10sec clip covering range [5sec,15sec] of the input
+file 'example.wav', using the ALSA output device.
 </p>
 
 <blockquote>
-<pre class="codepre">4. ecasound  -i select,5,10,audioclip.wav -o alsa</pre>
+<pre class="codepre">4. ecasound  -i select,5,10,example.wav -o alsa</pre>
 </blockquote>
 
 <p>
@@ -552,7 +552,7 @@ Next let's play that segment in reverse:
 </p>
 
 <blockquote>
-<pre class="codepre">5. ecasound  -i reverse,select,5,10,audioclip.wav -o alsa</pre>
+<pre class="codepre">5. ecasound  -i reverse,select,5,10,example.wav -o alsa</pre>
 </blockquote>
 
 <p>
