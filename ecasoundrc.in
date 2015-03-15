@@ -19,7 +19,7 @@ default-mix-mode = avg
 #ext-cmd-text-editor = nano
 #ext-cmd-text-editor-use-getenv = true
 #ext-cmd-wave-editor = ecawave
-#ext-cmd-mp3-input = mpg123 --stereo -r %s -b 0 -q -s -k %o %f
+#ext-cmd-mp3-input = mpg123 --stereo -r %s -q -s -k %o %f
 #ext-cmd-mp3-output = lame -b %B -s %S --little-endian -S - %f
 #ext-cmd-ogg-input = ogg123 -d raw -o byteorder:%E --file=- %f
 #ext-cmd-ogg-output = oggenc -b %B --raw --raw-bits=%b --raw-chan=%c --raw-rate=%s --raw-endianness 0 --output=%f -

@@ -54,7 +54,7 @@
 
 #include "eca-logger.h"
 
-const char *default_input_cmd = "mpg123 --stereo -b 0 -q -s -k %o %f";
+const char *default_input_cmd = "mpg123 --stereo -q -s -k %o %f";
 const char *default_output_cmd = "lame -b %B -s %S -r --big-endian -S - %f";
 const long int default_output_bitrate = 128000;
 
