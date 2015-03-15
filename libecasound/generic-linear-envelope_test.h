@@ -59,10 +59,6 @@ void GENERIC_LINEAR_ENVELOPE_TEST::do_run(void)
 {
   GENERIC_LINEAR_ENVELOPE f;
 
-  bool verbose = false;
-  if (getenv("V") != NULL)
-    verbose = true;
-
   f.set_parameter(1, 4);
   f.set_parameter(2, 40.0);// point1
   f.set_parameter(3, 0.1);
