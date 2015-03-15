@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-device.cpp: Virtual base class for real-time devices.
-// Copyright (C) 1999-2001,2010,2013 Kai Vehmanen
+// Copyright (C) 1999-2001,2010,2013,2015 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,9 +69,11 @@ void AUDIO_IO_DEVICE::write_buffer(SAMPLE_BUFFER* sbuf)
 {
   long int payload = sbuf->length_in_samples();
 
-  if (payload != buffersize()) {
-    // Always pad write to full buffersize(). SAMPLE_BUFFER
-    // will ensure the added samples are muted.
+  if (payload != buffersize() &&
+      sbuf->event_tag_test(SAMPLE_BUFFER::tag_var_length) != true) {
+    // Unless explicitly allowed with 'tag_var_length' tag, pad the
+    // buffer to full buffersize(). SAMPLE_BUFFER will ensure the
+    // added samples are muted.
     sbuf->length_in_samples(buffersize());
   }
 

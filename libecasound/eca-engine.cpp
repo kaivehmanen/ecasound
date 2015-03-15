@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2009,2012 Kai Vehmanen
+// Copyright (C) 1999-2009,2012,2015 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1386,10 +1386,12 @@ void ECA_ENGINE::init_chains(void)
 {
   mixslot_repp->number_of_channels(max_channels());
   mixslot_repp->event_tag_set(SAMPLE_BUFFER::tag_mixed_content);
+  mixslot_repp->event_tag_set(SAMPLE_BUFFER::tag_var_length, false);
 
   cslots_rep.resize(chains_repp->size());
   for(size_t n = 0; n < cslots_rep.size(); n++) {
     cslots_rep[n] = new SAMPLE_BUFFER(buffersize(), max_channels());
+    cslots_rep[n]->event_tag_set(SAMPLE_BUFFER::tag_var_length, false);
   }
 
   for (unsigned int c = 0; c != chains_repp->size(); c++) {

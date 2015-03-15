@@ -53,6 +53,8 @@ class SAMPLE_BUFFER {
     tag_end_of_stream = 1,
     /* buffer contains samples from multiple inputs */
     tag_mixed_content = (1 << 1),
+    /* buffer length may vary from buffer to another */
+    tag_var_length = (1 << 2),
     /* internal: placeholder */
     tag_last =  (1 << 30),
     /* internal: matches all tags */

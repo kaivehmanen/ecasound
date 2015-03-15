@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audiofx_misc.cpp: Miscellanous effect processing routines.
-// Copyright (C) 1999-2003,2005 Kai Vehmanen
+// Copyright (C) 1999-2003,2005,2015 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -195,6 +195,7 @@ void EFFECT_PITCH_SHIFT::release(void)
 void EFFECT_PITCH_SHIFT::process(void)
 {
   sbuf_repp->resample(samples_per_second(), target_rate_rep); 
+  sbuf_repp->event_tag_set(SAMPLE_BUFFER::tag_var_length, true);
 }
 
 long int EFFECT_PITCH_SHIFT::max_output_samples(long int i_samples) const
