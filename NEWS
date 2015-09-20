@@ -49,6 +49,11 @@ xxyy2015 (v2.9.2) -** stable release **-
          - fixed: LV2/liblilv build errors due to use deprecated
                   Lilv::Instance::Instance
          - fixed: compiler warnings triggered by gcc-4.7.2 and newer
+         - fixed: -ei with output to a ALSA/OSS device was broken in 2.9.1;
+                  output to JACK with -ei continues to be unsupported,
+                  see BUGS
+         - fixed: default mpg123 launch command change to omit "-b 0"
+                  as that caused an error with mpg321
 03012014 (v2.9.1) -** stable release **-
          - changed: configure.in renamed to configure.ac as automake 2.0
                     will drop support for configure.in [ghedo]
