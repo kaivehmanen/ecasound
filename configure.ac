@@ -985,6 +985,10 @@ if test x$alsa_support = x; then
 		   AC_MSG_WARN([ALSA version older than 0.9.0 not supported - update to a newer version or compile with --disable-alsa])
 		 ])
 fi
+AC_LANG_C
+AC_SEARCH_LIBS(snd_pcm_open, asound)
+AC_CHECK_FUNCS(snd_pcm_sw_params_set_tstamp_type)
+AC_LANG_CPLUSPLUS
 
 AM_CONDITIONAL(ECA_AM_COMPILE_ALSA, test x$alsa_support = xyes)
 

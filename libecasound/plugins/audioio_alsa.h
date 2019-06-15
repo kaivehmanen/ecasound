@@ -74,6 +74,7 @@ private:
   void fill_and_set_hw_params(void);
   void fill_and_set_sw_params(void);
   void print_pcm_info(void);
+  void handle_xrun_print_gap_duration(snd_pcm_status_t *status);
   void handle_xrun_capture(void);
   void handle_xrun_playback(void);
 

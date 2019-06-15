@@ -84,6 +84,18 @@ do { \
 } while (0)
 #endif
 
+#ifndef timermsub
+#define	timermsub(a, b, result) \
+do { \
+	(result)->tv_sec = (a)->tv_sec - (b)->tv_sec; \
+	(result)->tv_nsec = (a)->tv_nsec - (b)->tv_nsec; \
+	if ((result)->tv_nsec < 0) { \
+		--(result)->tv_sec; \
+		(result)->tv_nsec += 1000000000; \
+	} \
+} while (0)
+#endif
+
 const string AUDIO_IO_ALSA_PCM::default_pcm_device_rep = "default";
 
 AUDIO_IO_ALSA_PCM::AUDIO_IO_ALSA_PCM (int card, 
@@ -329,7 +341,6 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "buffer time set to " + kvu_numtostr(buffer_size_rep) + " frames.");
   ECA_LOG_MSG(ECA_LOGGER::system_objects, "total latency is " + kvu_numtostr(latency()) + " frames.");
 
-
   /* 9. all set, now active hw params */
   err = snd_pcm_hw_params(audio_fd_repp, pcm_hw_params_repp);
   if (err < 0) {
@@ -360,7 +371,18 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_sw_params(void)
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params_repp/xfer_align: " + string(snd_strerror(err))));
 #endif
 
-  /* 4. activate params */
+  /* 4. set tstamp mode */
+  err = snd_pcm_sw_params_set_tstamp_mode(audio_fd_repp, pcm_sw_params_repp, SND_PCM_TSTAMP_ENABLE);
+  if (err < 0) {
+    ECA_LOG_MSG(ECA_LOGGER::info, "audio device does not support timestamp mode, unable to report accurate xrun duration info");
+  }
+#ifdef HAVE_SND_PCM_SW_PARAMS_SET_TSTAMP_TYPE
+  else {
+    err = snd_pcm_sw_params_set_tstamp_type(audio_fd_repp, pcm_sw_params_repp, SND_PCM_TSTAMP_TYPE_MONOTONIC);
+  }
+#endif
+
+  /* 5. activate params */
   err = snd_pcm_sw_params(audio_fd_repp, pcm_sw_params_repp);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::unexpected, "AUDIOIO-ALSA: Error when setting up pcm_sw_params_repp: " + string(snd_strerror(err))));
 }
@@ -511,18 +533,8 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_capture(void)
   if (res >= 0) {
     snd_pcm_state_t state = snd_pcm_status_get_state(status);
     if (state == SND_PCM_STATE_XRUN) {
-      struct timeval now, diff, tstamp;
-      gettimeofday(&now, 0);
-      snd_pcm_status_get_trigger_tstamp(status, &tstamp);
-      timersub(&now, &tstamp, &diff);
-
-      cerr << "WARNING: ALSA recording overrun, some audio samples were lost!" 
-		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
-							  1000 +
-							  diff.tv_usec /
-							  1000.0) 
-		<< " ms long." << endl;
-
+      cerr << "WARNING: ALSA recording overrun, some audio samples were lost!";
+      handle_xrun_print_gap_duration(status);
       overruns_rep++;
       stop();
       prepare();
@@ -614,6 +626,37 @@ void AUDIO_IO_ALSA_PCM::write_samples(void* target_buffer, long int samples)
   }
 }
 
+void AUDIO_IO_ALSA_PCM::handle_xrun_print_gap_duration(snd_pcm_status_t *status)
+{
+  snd_pcm_tstamp_t tstamp_type = SND_PCM_TSTAMP_NONE;
+  snd_timestamp_t tstamp;
+  double seconds = 0;
+  snd_pcm_sw_params_get_tstamp_mode(pcm_sw_params_repp, &tstamp_type);
+  if (tstamp_type == SND_PCM_TSTAMP_ENABLE) {
+    snd_pcm_status_get_trigger_tstamp(status, &tstamp);
+#ifdef HAVE_CLOCK_GETTIME
+    int monotonic = snd_pcm_hw_params_is_monotonic(pcm_hw_params_repp);
+    if (monotonic) {
+      struct timespec now, diff;
+      struct timespec *tstamp_ptr = reinterpret_cast<struct timespec *>(&tstamp);
+      clock_gettime(CLOCK_MONOTONIC, &now);
+      timermsub(&now, tstamp_ptr, &diff);
+      seconds = diff.tv_sec * 1000 + diff.tv_nsec / 1000000.0;
+    }
+    else
+#endif
+    {
+      struct timeval now, diff;
+      struct timeval *tstamp_ptr = static_cast<struct timeval *>(&tstamp);
+      gettimeofday(&now, 0);
+      timersub(&now, tstamp_ptr, &diff);
+      seconds = diff.tv_sec * 1000 + diff.tv_usec / 1000.0;
+    }
+    cerr << " Break was at least " << kvu_numtostr(seconds)
+         << " ms long." << endl;
+  }
+}
+
 void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
 {
   snd_pcm_status_t *status;
@@ -623,17 +666,8 @@ void AUDIO_IO_ALSA_PCM::handle_xrun_playback(void)
   if (res >= 0) {
     snd_pcm_state_t state = snd_pcm_status_get_state(status);
     if (state == SND_PCM_STATE_XRUN) {
-      struct timeval now, diff, tstamp;
-      gettimeofday(&now, 0);
-      snd_pcm_status_get_trigger_tstamp(status, &tstamp);
-      timersub(&now, &tstamp, &diff);
-      
-      cerr << "WARNING: ALSA playback underrun, glitches in audio playback possible!" 
-		<< " Break was at least " << kvu_numtostr(diff.tv_sec *
-							  1000 +
-							  diff.tv_usec /
-							  1000.0) 
-		<< " ms long." << endl;
+      cerr << "WARNING: ALSA playback underrun, glitches in audio playback possible!";
+      handle_xrun_print_gap_duration(status);
       underruns_rep++;
       stop();
       prepare();
