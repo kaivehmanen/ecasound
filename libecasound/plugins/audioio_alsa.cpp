@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
-// audioio-alsa.cpp: ALSA 0.9.x PCM input and output.
-// Copyright (C) 1999-2004,2008 Kai Vehmanen
+// audioio-alsa.cpp: ALSA PCM input and output
+// Copyright (C) 1999-2004,2008,2019 Kai Vehmanen
 // Copyright (C) 2001,2002 Jeremy Hall 
 //
 // Attributes:
@@ -270,6 +270,13 @@ void AUDIO_IO_ALSA_PCM::fill_and_set_hw_params(void)
 					0);
   if (err < 0) throw(SETUP_ERROR(SETUP_ERROR::sample_rate, "AUDIOIO-ALSA: Sample rate " +
 				 kvu_numtostr(samples_per_second()) + " is out of range!"));
+  if (static_cast<int>(uivalue) != samples_per_second()) {
+    ECA_LOG_MSG(ECA_LOGGER::info,
+                "exact sampling rate not supported, adjust from "
+                + kvu_numtostr(samples_per_second()) + " to " +
+                kvu_numtostr(uivalue));
+    set_samples_per_second(uivalue);
+  }
 
   /* 6. create buffers for noninterleaved i/o */
   if (interleaved_channels() != true) {
