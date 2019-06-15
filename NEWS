@@ -40,7 +40,7 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-xxyy2015 (v2.9.2) -** stable release **-
+xxyy2019 (v2.9.2) -** stable release **-
          - fixed: in some cases (especially in TCP server mode), 
                   cop-set/ctrlp-set/c-mute/c-bypass/cop-bypass caused a full
                   chain reinit, which depending on chain complexity
@@ -54,6 +54,8 @@ xxyy2015 (v2.9.2) -** stable release **-
                   see BUGS
          - fixed: default mpg123 launch command change to omit "-b 0"
                   as that caused an error with mpg321
+         - fixed: alsa - do not ignore small differences in effective sampling
+                  rate without a warning with ALSA devices
 03012014 (v2.9.1) -** stable release **-
          - changed: configure.in renamed to configure.ac as automake 2.0
                     will drop support for configure.in [ghedo]
