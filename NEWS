@@ -40,7 +40,14 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-xxyy2019 (v2.9.2) -** stable release **-
+16062019 (v2.9.2) -** stable release **-
+         - changed: compiler hygiene -- C++ builds now pass "-std=c++98"
+                    by default as ecasound codebase does not use any
+                    c++11 features but codebase uses some features that
+                    are marked deprecated in c++11 and will be removed
+                    in c++17, so better start preparing for that
+         - changed: update config.guess and config.sub to latest
+                    version (2019-06-10 and 2019-05-29)
          - fixed: in some cases (especially in TCP server mode), 
                   cop-set/ctrlp-set/c-mute/c-bypass/cop-bypass caused a full
                   chain reinit, which depending on chain complexity
@@ -56,6 +63,10 @@ xxyy2019 (v2.9.2) -** stable release **-
                   as that caused an error with mpg321
          - fixed: alsa - do not ignore small differences in effective sampling
                   rate without a warning with ALSA devices
+         - fixed: alsa - fix xrun warning message, the xrun duration
+                  has been miscalculated incorrectly with all current versions
+                  of ALSA (ever since clock_monotonic became the default
+                  for trigger tstamp)
 03012014 (v2.9.1) -** stable release **-
          - changed: configure.in renamed to configure.ac as automake 2.0
                     will drop support for configure.in [ghedo]

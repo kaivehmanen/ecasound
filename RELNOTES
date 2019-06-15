@@ -4,7 +4,9 @@ subject: Ecasound 2.9.2 released
 -------------------------------------
 
 Bug fixed with glitches related to cop-set/ctrlp-set/c-bypass/c-mute when
-in TCP server mode.
+in TCP server mode. A few minor fixes to ALSA, mp3 and LV2 support.
+Five years since last stable release (2.9.1), 20 years since first public
+release (v1.1.4)!
 
 2. What is Ecasound?
 --------------------
@@ -27,9 +29,6 @@ under the LGPL.
 3. Changes in 2.9.2 release
 ---------------------------
 
-* Bug fixed with glitches related to cop-set/ctrl-set/c-bypass/c-mute when 
-  in TCP server mode.
-
 Full list of changes is available at:
  - http://nosignal.fi/ecasound/history.php
 
@@ -47,6 +46,8 @@ Patches - Accepted code, documentation and build system changes
 Extracted with 'git-shortlog -s':
 
 v2.9.2:
+     Alessandro Ghedini (3)
+     Kai Vehmanen (19)
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -58,7 +59,7 @@ v2.9.2
 Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-No features implemented.
+No new features implemented.
 
 6. Links and files
 ------------------
@@ -70,8 +71,8 @@ Web site (and mirrors):
 
 Source package:
         http://nosignal.fi/ecasound/download.php     
-        ecasound-2.9.1.tar.gz, md5sum:
-        (TBD, see publiseh release notes at:
+        ecasound-2.9.2.tar.gz, sha256sum:
+        (TBD, see published release notes at:
          http://nosignal.fi/ecasound/relnotes/)
 
 List of distributions with maintained Ecasound support:
