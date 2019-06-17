@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-chainsetup.cpp: Class representing an ecasound chainsetup object.
-// Copyright (C) 1999-2006,2008,2009,2011-2013 Kai Vehmanen
+// Copyright (C) 1999-2006,2008,2009,2011-2013,2019 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -1783,11 +1783,10 @@ void ECA_CHAINSETUP::enable_audio_object_helper(AUDIO_IO* aobj) const
     const std::string act_format =
       ECA_OBJECT_FACTORY::audio_object_format_to_eos(aobj);
     if (act_format != req_format) {
-      DBC_CHECK(aobj->locked_audio_format() == true);
       ECA_LOG_MSG(ECA_LOGGER::info, 
-		  "NOTE: using existing audio parameters " + act_format +
-		  " for object '" + aobj->label() + "' (tried to open with " +
-		  req_format + ").");
+                  "NOTE: audio parameters modified at open to " + act_format +
+                  " for object '" + aobj->label() + "' (requested " +
+                  req_format + ").");
     }
   }
   if (aobj->is_open() == true) {
