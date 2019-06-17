@@ -8,7 +8,7 @@ About the version numbers... "vX.Y[.Z[.R]][+extraT]" :
   X = major version  - incremented after major redesigns and/or major
       	    	       new features
   Y = minor version  - incremented when new features are added and/or
-      	    	       changes in core code that impact many yse-cases
+                       changes in core code that impact many use-cases
   Z = micro version  - incremented if major.minor version is not
 		       modified (optional)
   R = revision       - urgent fixes to planned releases (optional)
@@ -26,7 +26,7 @@ Quick overview of various sources of change info
     as the release announcement mail.
         - For notes of previous releases: http://nosignal.fi/ecasound/relnotes/
   - Version control history. Describes all changes in implementation.
-        - http://ecasound.git.sourceforge.net/git/gitweb.cgi?p=ecasound
+        - https://sourceforge.net/p/ecasound/code/ci/master/tree/
   - Library interface changes are documented in ChangeLog files (these
     are distributed along with the source code).
 
