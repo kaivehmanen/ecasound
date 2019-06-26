@@ -1161,7 +1161,7 @@ AC_ARG_ENABLE(liblilv,
   [
     case "$enableval" in
       y | yes)
-        PKG_CHECK_MODULES([LIBLILV], [lv2core lilv-0], HAVE_LIBLILV=yes, HAVE_LIBLILV=no)
+        PKG_CHECK_MODULES([LIBLILV], [lv2 lilv-0], HAVE_LIBLILV=yes, HAVE_LIBLILV=no)
         if test "x${HAVE_LIBLILV}" = xyes ; then 
 	  AC_MSG_RESULT(yes)
           enable_liblilv=yes 
