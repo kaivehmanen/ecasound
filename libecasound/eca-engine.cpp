@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // eca-engine.cpp: Main processing engine
-// Copyright (C) 1999-2009,2012,2015 Kai Vehmanen
+// Copyright (C) 1999-2009,2012,2015,2020 Kai Vehmanen
 // Copyright (C) 2005 Stuart Allie
 //
 // Attributes:
@@ -531,13 +531,31 @@ void ECA_ENGINE::check_command_queue(void)
           }
           break;
         }
-
-      case ep_prepare: { if (is_prepared() != true) prepare_operation(); break; }
-      case ep_start: { if (status() != engine_status_running) request_start(); break; }
-      case ep_stop: { if (status() == engine_status_running || 
-                          status() == engine_status_finished) request_stop(false); break; }
-      case ep_stop_with_drain: { if (status() == engine_status_running || 
-                                     status() == engine_status_finished) request_stop(true); break; }
+      case ep_prepare:
+        {
+          if (is_prepared() != true)
+            prepare_operation();
+          break;
+        }
+      case ep_start:
+        {
+          if (status() != engine_status_running)
+            request_start();
+          break;
+        }
+      case ep_stop:
+        {
+          if (status() == engine_status_running ||
+              status() == engine_status_finished) request_stop(false);
+          break;
+        }
+      case ep_stop_with_drain:
+        {
+          if (status() == engine_status_running ||
+              status() == engine_status_finished)
+            request_stop(true);
+          break;
+        }
 
         // ---
         // Global position
