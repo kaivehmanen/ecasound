@@ -3,11 +3,13 @@
    Can be used to replace the C implementation 'pyecasound.so'.
 """
 
+from __future__ import print_function
+import sys
+
 authors="""Kai Vehmanen, Eric S. Tiedemann and Janne Halttunen."""
 
-import sys
-if sys.hexversion < 0x02040000:
-    print >>sys.stderr, "ERROR: Python 2.4 or newer is required by ecacontrol.py"
+if sys.hexversion < 0x02070000:
+    print("ERROR: Python 2.7 or newer is required by ecacontrol.py", file=sys.stderr)
     sys.exit(-1)
 
 import re
@@ -42,18 +44,18 @@ class ECA_CONTROL_INTERFACE:
         if f != None:
             val=I.command_float_arg(cmd, f)
         else:
-            cmds=string.split(cmd, '\n')
+            cmds=str.split(cmd, '\n')
             if len(cmds) > 1:
                 v=[]
                 for c in cmds:
-                    c=string.strip(c)
+                    c=str.strip(c)
                     if c:
                         v.append(I.command(c))
                     
                         if I.error():
                             raise Exception(v[-1])
                     
-                val=string.join(map(str, v), '\n')
+                val=str.join(str(list(map(str, v))), '\n')
             else:
                 val=I.command(cmd)
                     
@@ -63,10 +65,10 @@ class ECA_CONTROL_INTERFACE:
         return val            
 
     def _readline(I):
-        return string.strip(I.eca.stdout.readline())
+        return str(I.eca.stdout.readline()).strip()
         
     def _read_eca(I):
-        buffer=''
+        buffer=''.encode()
         while select([I.eca.stdout.fileno()],[],[I.eca.stdout.fileno()],0.01)[0]:
            buffer=buffer+I.eca.stdout.read(1)
         return buffer
@@ -74,14 +76,14 @@ class ECA_CONTROL_INTERFACE:
     def _parse_response(I):
         tm=''; r=(); failcount=0
         if I.verbose > 2:
-            print 'c=' + I._cmd
+            print('c=' + I._cmd)
         while 1:
             
-            s=I._read_eca()
+            s=I._read_eca().decode()
             #print 'read s=' + s
             if s:
                 if I.verbose > 3:
-                    print 's=<', s, '>'
+                    print('s=<', s, '>')
             else:
                 failcount = failcount + 1
                 if failcount < I._timeout * 10:
@@ -89,7 +91,7 @@ class ECA_CONTROL_INTERFACE:
                     time.sleep(0.01)
                     continue
                 else:
-                    print 'timeout: s=<' + s, '>, cmd=' + I._cmd + '.'
+                    print('timeout: s=<' + s, '>, cmd=' + I._cmd + '.')
                     r=('e', eci_str_sync_lost)
                     break
             tm=tm+s
@@ -97,7 +99,7 @@ class ECA_CONTROL_INTERFACE:
             r=parse_eiam_response(tm, m)
             if r:
                 if I.verbose > 2:
-                    print 'r=', r
+                    print('r=', r)
                 break
 
         if not r:
@@ -107,19 +109,19 @@ class ECA_CONTROL_INTERFACE:
         else:
             I._type=r[0]
             
-            if I._cmd in type_override.keys():
+            if I._cmd in list(type_override.keys()):
                 I._type=type_override[I._cmd]
             
             if I._type == 'S':
-                    I._resp[I._type]=string.split(r[1], ',')            
+                    I._resp[I._type]=str.split(str(r[1]), ',')
             elif I._type == 'Sn':
-                    I._resp[I._type]=string.split(r[1], '\n')
+                    I._resp[I._type]=str.split(str(r[1]), '\n')
             elif I._type == 'f':
                     I._resp[I._type]=float(r[1])
             elif I._type == 'i':
                     I._resp[I._type]=int(r[1])
             elif I._type == 'li':
-                    I._resp[I._type]=long(r[1])
+                    I._resp[I._type]=int(r[1])
             else:
                     I._resp[I._type]=r[1]
 
@@ -154,7 +156,7 @@ class ECA_CONTROL_INTERFACE:
 
         version=I._readline()
             
-        s=string.find(version, 'ecasound v')
+        s=str.find(version, 'ecasound v')
         if float(version[s+10:s+13])>=2.2:
             lines=lines+version+'\n'
         else:
@@ -163,10 +165,10 @@ class ECA_CONTROL_INTERFACE:
         lines=lines+I._readline()+'\n'
         
         if I.verbose:
-            print lines
-            print __doc__
-            print 'by', authors
-            print '\n(to get rid of this message, pass zero to instance init)'
+            print(lines)
+            print(__doc__)
+            print('by', authors)
+            print('\n(to get rid of this message, pass zero to instance init)')
             
         I.command('int-output-mode-wellformed')
         #I._read_eca()
@@ -175,7 +177,7 @@ class ECA_CONTROL_INTERFACE:
     def cleanup(I):
         """Free all reserved resources"""
         
-        I.eca.stdin.write('quit\n')
+        I.eca.stdin.write('quit\n'.encode())
 
         os.kill(I.eca.pid, signal.SIGTERM)
                 
@@ -194,10 +196,10 @@ class ECA_CONTROL_INTERFACE:
     def command(I,cmd):
         """Issue an EIAM command"""
         
-        cmd=string.strip(cmd)
+        cmd=str.strip(cmd)
         if cmd:
             I._cmd=cmd
-            I.eca.stdin.write(cmd+'\n')
+            I.eca.stdin.write(str(cmd+'\n').encode())
             return I._parse_response()
         
     def command_float_arg(I,cmd,f=None):
@@ -206,7 +208,7 @@ class ECA_CONTROL_INTERFACE:
         This function can be used instead of command(string), 
         if the command in question requires exactly one numerical parameter."""
         
-        cmd=string.strip(cmd)
+        cmd=str.strip(cmd)
         if cmd:
             I._cmd=cmd
             if f:
@@ -269,8 +271,8 @@ class ECA_CONTROL_INTERFACE:
 
 
 def handler(*args):
-    print 'AARGH!'
-    raise Exception, 'killing me not so softly'
+    print('AARGH!')
+    raise Exception('killing me not so softly')
 
 expand=re.compile('256 ([0-9]{1,5}) (.+)\r\n(.*)\r\n\r\n.*', re.MULTILINE | re.S)
 
@@ -306,7 +308,7 @@ def parse_eiam_response(st, m=None):
     if m and len(m.groups()) == 3:
         #print 'received=', len(m.group(3)), ', expected=', m.group(1)
         if int(m.group(1)) != len(m.group(3)):
-            print '(pyeca) Response length error. Received ', len(m.group(3)), ', expected for ', m.group(1), '.'
+            print('(pyeca) Response length error. Received ', len(m.group(3)), ', expected for ', m.group(1), '.')
             #print 'g=', m.group(3)
             return ('e', 'Response length error.')
 
@@ -343,16 +345,16 @@ class EIAM:
 
 def main():
     e=ECA_CONTROL_INTERFACE()
-    print e.command('c-add huppaa')
-    print e.command('c-list')
+    print(e.command('c-add huppaa'))
+    print(e.command('c-list'))
 
-    print e("""
+    print(e("""
 
     c-list
     c-status
-    """)
+    """))
 
-    print e.cleanup()
+    print(e.cleanup())
 
 if __name__ == '__main__':
     main()

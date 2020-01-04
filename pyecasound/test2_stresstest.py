@@ -76,7 +76,7 @@ while 1 and e.last_type() != 'e':
     total_cmds = total_cmds + 4
 
 if e.last_type() == 'e':
-    print 'Ended to error:', e.last_error()
+    print('Ended to error:', e.last_error())
     result = -1
 else:
     e.command("stop")
