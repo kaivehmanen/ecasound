@@ -674,10 +674,10 @@ int kvu_sleep(long int seconds, long int nanoseconds)
   struct timespec len;
   len.tv_sec = static_cast<time_t>(seconds);
   len.tv_nsec = nanoseconds;
-  ret = nanosleep(&len, NULL);
+  ret = ::nanosleep(&len, NULL);
 
 #elif HAVE_USLEEP
-  ret = usleep(seconds * 1000000 + nanoseconds / 1000);
+  ret = ::usleep(seconds * 1000000 + nanoseconds / 1000);
 
 #else
   cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << endl;
