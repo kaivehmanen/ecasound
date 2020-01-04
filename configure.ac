@@ -1301,6 +1301,7 @@ echo "------------------------------------------------------------------"
 dnl ---
 dnl Checks for functions.
 dnl ---
+AC_LANG_C
 AC_FUNC_MMAP
 AC_CHECK_FUNCS(execvp gettimeofday pthread_mutexattr_init,,
 		      AC_MSG_ERROR([*** not all required library functions were found ***]))
@@ -1324,6 +1325,7 @@ AC_CHECK_FUNCS(setlocale)
 AC_CHECK_FUNCS(sigprocmask)
 AC_CHECK_FUNCS(sigwait)
 AC_CHECK_FUNCS(usleep)
+AC_LANG_CPLUSPLUS
 
 dnl ------------------------------------------------------------------
 
