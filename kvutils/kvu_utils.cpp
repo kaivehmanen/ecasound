@@ -681,6 +681,7 @@ int kvu_sleep(long int seconds, long int nanoseconds)
 
 #else
   cerr << "(libkvutils) kvutils:: warning! neither nanosleep() or usleep() found!" << endl;
+  return -1;
 #endif
 
   return ret;
