@@ -130,7 +130,7 @@ class ControlInterface
             response = ""
             begin
                 # TimeoutError is raised unless response is complete
-                timeout(TIMEOUT) do
+                Timeout.timeout(TIMEOUT) do
                     loop do
                         response += read()
                         break if response =~ /256 ([0-9]{1,5}) (\-|i|li|f|s|S|e)\r\n(.*)\r\n\r\n/m
