@@ -569,14 +569,6 @@ AC_ARG_ENABLE(pyecasound,
 		python)
 		  pyecasound_support=python
 		;;
-
-		c)
-		  AC_MSG_ERROR([C python implementation is deprecated. Use --enable-pyecasound=iwantc if you really need and want to use it. Please raise this on ecasound-list to stop the deprecation process.])
-		;;
-
-		iwantc)
-		  pyecasound_support=c
-		;;
         
 		*)
 		  pyecasound_support=python
@@ -593,44 +585,6 @@ if test x$PYTHONPATH = xnone; then
   python_install_prefix=""
 else
   python_install_prefix=`python -c "import sys; print (sys.prefix)"`
-fi
-
-dnl --
-dnl Python header files
-
-ECA_S_PYTHON_INCLUDES=
-AC_MSG_CHECKING([for Python include files])
-
-AC_ARG_WITH(python-includes, [  --with-python-includes=DIR  Python include files are in DIR])
-if test ! "X$with_python_includes" = "X"
-then
-	python_incdirs=$with_python_includes
-else
-	python_incdirs="/usr/local/include /usr/include"
-	dnl -- Double-brackets to espace the real brackets
-	python_incdirsmore=`python -c "import sys; print (sys.prefix + '/include/python' + sys.version[[:3]])"`
-	python_incdirs="$python_incdirs $python_incdirsmore"
-fi
-
-for d in $python_incdirs
-do
-	if test -r $d/Python.h
-	then
-		ECA_S_PYTHON_INCLUDES=$d
-		break
-	fi
-done
-
-AC_SUBST(ECA_S_PYTHON_INCLUDES)
-if test "X$ECA_S_PYTHON_INCLUDES" = "X"
-then
-	AC_MSG_WARN([Python.h not found])
-	if test x${pyecasound_support} = xc; then
-	    dnl -- No python headers found, cannot compile C extension
-	    pyecasound_support=python
-	fi
-else
-	AC_MSG_RESULT($ECA_S_PYTHON_INCLUDES)
 fi
 
 dnl --
