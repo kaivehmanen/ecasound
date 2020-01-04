@@ -40,6 +40,20 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
+xxxx2020 (v2.10.0) -** stable release **-
+         - changed: python3 support to all ecasound python modules,
+                    including ECI (pyecasound) and ecamonitor
+         - changed: the C python module implementation of ECI
+                    was removed (it was deprecated in 2.9.0 in
+                    2012) -- python apps can use ECI using
+                    the pyeca.py module as before
+         - changed: python3 support to ecamonitor, python2.7 new
+                    minimum requirement
+         - fixed: configure check for LV2 updated to use "lv2" instead
+                  of deprecated "lv2core"
+         - fixed: bugfix to LADSPA plugin port capability parsing
+         - fixed: rubyecasound - silence continuous warnings about
+                  use of deprecated Object#timeout interface
 16062019 (v2.9.2) -** stable release **-
          - changed: compiler hygiene -- C++ builds now pass "-std=c++98"
                     by default as ecasound codebase does not use any
