@@ -110,6 +110,8 @@ Grabner Markus [grabner]
 	Updated RPM spec-file for x86_64 platforms.
 Groffen, Fabian [grobian] (grobian -at- gentoo -dot- org)
 	OS X build fixes.
+Runge, David [dvzrv]
+        fix to lv2 build checks
 Head, Chris [hawk777]
 	Patches fixing ecasignalview build errors.
 Heller, Aaron [aheller]
