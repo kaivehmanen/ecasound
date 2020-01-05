@@ -1,4 +1,5 @@
 """Native Python ECI (ecasound control interface) implementation"""
+
 from __future__ import print_function
 import sys
 import re
@@ -156,7 +157,7 @@ class ECA_CONTROL_INTERFACE:
     def cleanup(self):
         """Free all reserved resources"""
 
-        self.eca.stdin.write("quit\n")
+        self.eca.stdin.write("quit\n".encode())
 
         os.kill(self.eca.pid, signal.SIGTERM)
 
