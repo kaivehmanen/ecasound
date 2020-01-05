@@ -1,6 +1,4 @@
-"""Native Python ECI (ecasound control interface) implementation
-   Can be used to replace the C implementation 'pyecasound.so'.
-"""
+"""Native Python ECI (ecasound control interface) implementation"""
 from __future__ import print_function
 import sys
 import re
