@@ -18,10 +18,10 @@ import os
 from pyeca import *
 
 # test the native Python implementation
-#from ecacontrol import *
+# from ecacontrol import *
 
 # test the C implementation
-#from pyecasound import *
+# from pyecasound import *
 
 # ---
 # configuration variables
@@ -29,13 +29,13 @@ from pyeca import *
 # run for how many seconds
 runlen = 5
 # debug level (0, 1, 2, ...)
-debuglevel = 1
+debuglevel = 0
 
-if os.path.isfile('../ecasound/ecasound_debug'):
-    os.environ['ECASOUND'] = '../ecasound/ecasound_debug'
+if os.path.isfile("../ecasound/ecasound_debug"):
+    os.environ["ECASOUND"] = "../ecasound/ecasound_debug"
 
-if os.path.isfile('../ecasound/ecasound'):
-    os.environ['ECASOUND'] = '../ecasound/ecasound'
+if os.path.isfile("../ecasound/ecasound"):
+    os.environ["ECASOUND"] = "../ecasound/ecasound"
 
 # if above tests fail, the default ecasound binary
 # will be used
@@ -59,33 +59,36 @@ e.command("start")
 
 total_cmds = 0
 
-while 1 and e.last_type() != 'e':
+while 1 and e.last_type() != "e":
     e.command("get-position")
     curpos = e.last_float()
-    if curpos > runlen or e.last_type() == 'e': break
+    if curpos > runlen or e.last_type() == "e":
+        break
     e.command("copp-get")
     if debuglevel == 2:
-        #print curpos, e.last_float()
-        #if curpos == None:
+        # print curpos, e.last_float()
+        # if curpos == None:
         #    curpos = 0.0
-        sys.stderr.write('%6.2f %6.4f\r' % (curpos,e.last_float()))
+        sys.stderr.write("%6.2f %6.4f\r" % (curpos, e.last_float()))
     else:
         if debuglevel == 1:
-            sys.stderr.write('.')
-            
+            sys.stderr.write(".")
+
     total_cmds = total_cmds + 2
 
-if e.last_type() == 'e':
-    print('Ended to error:', e.last_error())
+if e.last_type() == "e":
+    print("Ended to error:", e.last_error())
     result = -1
 else:
     e.command("stop")
     e.command("cs-disconnect")
 
 if debuglevel == 2:
-    sys.stderr.write('\nprocessing speed: ' + str(total_cmds / runlen) + ' cmds/second.\n')
+    sys.stderr.write(
+        "\nprocessing speed: " + str(total_cmds / runlen) + " cmds/second.\n"
+    )
 
 if debuglevel > 0:
-    sys.stderr.write('\n')
+    sys.stderr.write("\n")
 
 sys.exit(result)
