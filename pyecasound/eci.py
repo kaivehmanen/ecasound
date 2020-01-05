@@ -6,8 +6,8 @@
 some updates by Janne Halttunen
 """
 
-import pyeca as _pyeca
-import types as _types
+import pyeca
+
 
 class ECIError(Exception):
     def __init__(self, what):
@@ -15,7 +15,8 @@ class ECIError(Exception):
         self.what = what
 
     def __str__(self):
-        return '<ECIException %s>' % self.what
+        return "<ECIException %s>" % self.what
+
 
 class ECI:
     """An ECI is and ECA Control Interface object.
@@ -28,26 +29,26 @@ class ECI:
     The value of a command (or of the last command in a sequence)
     if returned as a value of the appropriate Python type
     (possibly None).
-    
+
     On errors, an ECIException is raised that has a `what'
     member with the exception message.  These exceptions also
     stringify prettily.
     """
-    
+
     def __init__(self, *args):
-        self.e = _pyeca.ECA_CONTROL_INTERFACE(*args)
+        self.e = pyeca.ECA_CONTROL_INTERFACE(*args)
 
     def __call__(self, cmd, f=None):
-        if f != None:
+        if f is not None:
             self.e.command_float_arg(cmd, f)
         else:
-            if type(cmd) == _types.ListType or type(cmd) == _types.TupleType:
+            if type(cmd) in [list, tuple]:
                 v = None
                 for c in cmd:
                     v = self(c)
                 return v
             else:
-                cmds = cmd.split('\n')
+                cmds = cmd.split("\n")
                 if len(cmds) > 1:
                     v = None
                     for c in cmds:
@@ -55,45 +56,49 @@ class ECI:
                     return v
                 else:
                     self.e.command(cmd)
-            
+
         t = self.e.last_type()
-        if not t or t == '-':
+        if not t or t == "-":
             return None
-        elif t == 'S':
+        elif t == "S":
             return self.e.last_string_list()
-        elif t == 's':
+        elif t == "s":
             return self.e.last_string()
-        elif t == 'f':
+        elif t == "f":
             return self.e.last_float()
-        elif t == 'i':
+        elif t == "i":
             return self.e.last_integer()
-        elif t == 'li':
+        elif t == "li":
             return self.e.last_long_integer()
-	elif t == 'e' or self.e.error():
-	    raise ECIError('%s: %s' % (self.e.last_error(), cmd))
+        elif t == "e" or self.e.error():
+            raise ECIError("%s: %s" % (self.e.last_error(), cmd))
         else:
             raise ECIError("unknown return type '%s'!" % t)
 
-if __name__ == '__main__':
-    import time, sys
+
+if __name__ == "__main__":
+    import time
+    import sys
 
     file = sys.argv[1]
     e = ECI()
 
     # uncomment to raise an error :)
-    #e('foo')
-    
-    e("""
+    # e('foo')
+
+    e(
+        """
     cs-add play_chainsetup
     c-add 1st_chain
     ai-add %s
-    ao-add /dev/dsp
+    ao-add-default
     cop-add -efl:100
     cop-select 1
     copp-select 1
     cs-connect
     start"""
-      % file)
+        % file
+    )
 
     cutoff_inc = 500.0
 
@@ -103,7 +108,9 @@ if __name__ == '__main__':
             break
         e("copp-set", cutoff_inc + e("copp-get"))
 
-    e("""stop
-         cs-disconnect""")
+    e(
+        """stop
+         cs-disconnect"""
+    )
 
     print("Chain operator status: ", e("cop-status"))
