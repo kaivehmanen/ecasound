@@ -3,12 +3,11 @@ subject: Ecasound 2.10 released
 1. Summary of changes in this release
 -------------------------------------
 
-Update pyecasound and ecamonitor to work with Python3.
-Python2.7 or newer is now required. The old C based
-implementation of ECI for Python is dropped completely.
-It has been deprecated since 2.9.0 (2012). A few
-minor fixes to compiler warnings, LADSPA plugin capability
-parsing and rubyecasound.
+Update pyecasound and ecamonitor to work with Python3. Python2.7 or
+newer is now required. The old C based implementation of ECI for
+Python is dropped completely. It has been deprecated since 2.9.0
+(2012). A few minor fixes to compiler warnings, LADSPA plugin
+capability parsing and rubyecasound.
 
 2. What is Ecasound?
 --------------------
