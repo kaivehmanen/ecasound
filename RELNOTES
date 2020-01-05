@@ -1,12 +1,14 @@
-subject: Ecasound 2.9.2 released
+subject: Ecasound 2.10 released
 
 1. Summary of changes in this release
 -------------------------------------
 
-Bug fixed with glitches related to cop-set/ctrlp-set/c-bypass/c-mute when
-in TCP server mode. A few minor fixes to ALSA, mp3 and LV2 support.
-Five years since last stable release (2.9.1), 20 years since first public
-release (v1.1.4)!
+Update pyecasound and ecamonitor to work with Python3.
+Python2.7 or newer is now required. The old C based
+implementation of ECI for Python is dropped completely.
+It has been deprecated since 2.9.0 (2012). A few
+minor fixes to compiler warnings, LADSPA plugin capability
+parsing and rubyecasound.
 
 2. What is Ecasound?
 --------------------
@@ -26,35 +28,31 @@ Limited support for Windows is available through Cygwin. Ecasound is
 licensed under the GPL. The Ecasound Control Interface (ECI) is licensed
 under the LGPL.
 
-3. Changes in 2.9.2 release
+3. Changes in this release
 ---------------------------
 
 Full list of changes is available at:
  - http://nosignal.fi/ecasound/history.php
 
-4. Interface and configuration file changes in 2.9.2 series
+4. Interface and configuration file changes in this release
 -----------------------------------------------------------
 
-None.
+- build: '--enable-python=iwantc' removed
 
-5. Contributors to 2.9.2 series
+5. Contributors to this release
 -------------------------------
 
 Patches - Accepted code, documentation and build system changes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Extracted with 'git-shortlog -s':
-
-v2.9.2:
-     Alessandro Ghedini (3)
-     Kai Vehmanen (19)
+<replace with 'git-shortlog' output in emailed release notes>
 
 Bug Hunting - Reports that led to bugfixes (items closed)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-v2.9.2
-   * Raphaël Mouneyres (1)
-      nasty bug with TCP mode and cop-set/ctrlp-set and others
+v2.10
+   * David O'Toole (1)
+      compile error on Cygwin
    
 Feature suggestions - Ideas that led to new features (items)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -71,8 +69,8 @@ Web site (and mirrors):
 
 Source package:
         http://nosignal.fi/ecasound/download.php     
-        ecasound-2.9.2.tar.gz, sha256sum:
-        (TBD, see published release notes at:
+        ecasound-2.10.0.tar.gz, sha256sum:
+        (PLACEHOLDER, digest in published release notes at:
          http://nosignal.fi/ecasound/relnotes/)
 
 List of distributions with maintained Ecasound support:
