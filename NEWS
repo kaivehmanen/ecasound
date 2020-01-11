@@ -40,7 +40,7 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
-xxxx2020 (v2.10.0) -** stable release **-
+11012020 (v2.9.3) -** stable release **-
          - changed: python3 support to all ecasound python modules,
                     including ECI (pyecasound) and ecamonitor
          - changed: the C python module implementation of ECI
