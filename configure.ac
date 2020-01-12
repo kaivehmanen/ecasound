@@ -1136,7 +1136,7 @@ AC_ARG_ENABLE(liblilv,
     esac
   ],
   [
-    PKG_CHECK_MODULES([LIBLILV], [lv2core lilv-0 > 0.5.0 ], HAVE_LIBLILV=yes, HAVE_LIBLILV=no)
+    PKG_CHECK_MODULES([LIBLILV], [lv2 lilv-0 > 0.5.0 ], HAVE_LIBLILV=yes, HAVE_LIBLILV=no)
     enable_liblilv=${HAVE_LIBLILV}
     AC_MSG_RESULT(${enable_liblilv})
   ]
