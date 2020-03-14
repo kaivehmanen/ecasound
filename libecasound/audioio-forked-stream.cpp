@@ -207,7 +207,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_read(void)
   else {
     int fpipes[2];
     if (pipe(fpipes) == 0) {
-      sigkill_sent_rep = false;
+      sigterm_sent_rep = false;
       pid_of_child_rep = fork();
       if (pid_of_child_rep == 0) { 
 	// ---
@@ -273,7 +273,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_fifo_read(void)
 
   init_state_before_fork();
 
-  sigkill_sent_rep = false;
+  sigterm_sent_rep = false;
   pid_of_child_rep = fork();
   if (pid_of_child_rep == 0) { 
     // ---
@@ -330,7 +330,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
 
   int fpipes[2];
   if (pipe(fpipes) == 0) {
-    sigkill_sent_rep = false;
+    sigterm_sent_rep = false;
     pid_of_child_rep = fork();
     if (pid_of_child_rep == 0) { 
       // ---
@@ -384,7 +384,7 @@ void AUDIO_IO_FORKED_STREAM::fork_child_for_write(void)
  * it attemts to terminate the child anyways, but the child's 
  *  state is not known exactly when function returns.
  *
- * @param force if true, client is terminated with SIGKILL,
+ * @param force if true, client is terminated with SIGTERM,
  *              which guarantees that it terminates (but 
  *              possibly without going through normal 
  *              exit procedure); should be avoided especially
@@ -405,15 +405,15 @@ void AUDIO_IO_FORKED_STREAM::clean_child(bool force)
 
   if (pid_of_child_rep > 0 && 
       force == true) {
-    if (sigkill_sent_rep != true) {
+    if (sigterm_sent_rep != true) {
       ECA_LOG_MSG(ECA_LOGGER::system_objects, 
-		  "Sending SIGKILL to child process related to: "
+		  "Sending SIGTERM to child process related to: "
 		  + object_rep);
-      kill(pid_of_child_rep, SIGKILL);
-      sigkill_sent_rep = true;
+      kill(pid_of_child_rep, SIGTERM);
+      sigterm_sent_rep = true;
     }
     else {
-      /* SIGKILL already sent once for this process, don't send it again */
+      /* SIGTERM already sent once for this process, don't send it again */
       pid_of_child_rep = -1;
     }
   }

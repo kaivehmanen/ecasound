@@ -22,7 +22,7 @@ class AUDIO_IO_FORKED_STREAM : public AUDIO_IO_BARRIER {
   int pid_of_child_rep;
   int fd_rep;
   bool last_fork_rep;
-  bool sigkill_sent_rep;
+  bool sigterm_sent_rep;
   std::string tmpfile_repp;
   bool tmp_file_created_rep;
   bool use_named_pipe_rep;
@@ -74,7 +74,7 @@ public:
     pid_of_child_rep(-1),
     fd_rep(0),
     last_fork_rep(false),
-    sigkill_sent_rep(false),
+    sigterm_sent_rep(false),
     tmp_file_created_rep(false),
     use_named_pipe_rep(false) { }
   virtual ~AUDIO_IO_FORKED_STREAM(void);
