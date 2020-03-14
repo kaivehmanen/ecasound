@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio-buffered.cpp: A lower level interface for audio I/O objects
-// Copyright (C) 1999-2002,2008,2009 Kai Vehmanen
+// Copyright (C) 1999-2002,2008,2009,2020 Kai Vehmanen
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -108,11 +108,13 @@ void AUDIO_IO_BUFFERED::write_buffer(SAMPLE_BUFFER* sbuf)
   if (interleaved_channels() == true) {
     sbuf->export_interleaved(iobuf_uchar_repp,
 			     sample_format(),
+			     sample_coding(),
 			     channels());
   }
   else {
     sbuf->export_noninterleaved(iobuf_uchar_repp,
 				sample_format(),
+				sample_coding(),
 				channels());
   }
 

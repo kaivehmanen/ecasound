@@ -40,6 +40,9 @@ Howto for reading the entries (2.7.2 and older):
 
 ***********************************************************************
 
+xxxx2020 (v2.9.x) -** stable release **-
+         - changed: do not normalize output floating point data
+                    to [-1,1] range
 11012020 (v2.9.3) -** stable release **-
          - changed: python3 support to all ecasound python modules,
                     including ECI (pyecasound) and ecamonitor

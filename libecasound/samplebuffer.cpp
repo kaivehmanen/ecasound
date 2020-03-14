@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // samplebuffer.cpp: Class representing a buffer of audio samples.
-// Copyright (C) 1999-2005,2009 Kai Vehmanen
+// Copyright (C) 1999-2005,2009,2020 Kai Vehmanen
 //
 // Attributes:
 //     eca-style-version: 3
@@ -699,6 +699,7 @@ void SAMPLE_BUFFER::export_helper(unsigned char* obuffer,
  */
 void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
 				       ECA_AUDIO_FORMAT::Sample_format fmt,
+				       ECA_AUDIO_FORMAT::Sample_coding coding,
 				       channel_size_t chcount) 
 {
   // --------
@@ -712,9 +713,10 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
   for(buf_size_t isize = 0; isize < buffersize_rep; isize++) {
     for(channel_size_t c = 0; c < chcount; c++) {
       sample_t stemp = buffer[c][isize];
-      if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
-      else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-
+      if (coding != ECA_AUDIO_FORMAT::sc_float) {
+        if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
+        else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
+      }
       SAMPLE_BUFFER::export_helper(target, &osize, stemp, fmt);
     }
   }
@@ -737,6 +739,7 @@ void SAMPLE_BUFFER::export_interleaved(unsigned char* target,
  */
 void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
 					  ECA_AUDIO_FORMAT::Sample_format fmt,
+					  ECA_AUDIO_FORMAT::Sample_coding coding,
 					  channel_size_t chcount)
 {
   // --------
@@ -750,9 +753,10 @@ void SAMPLE_BUFFER::export_noninterleaved(unsigned char* target,
   for(channel_size_t c = 0; c < chcount; c++) {
     for(buf_size_t isize = 0; isize < buffersize_rep; isize++) {
       sample_t stemp = buffer[c][isize];
-      if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
-      else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
-      
+      if (coding != ECA_AUDIO_FORMAT::sc_float) {
+        if (stemp > SAMPLE_SPECS::impl_max_value) stemp = SAMPLE_SPECS::impl_max_value;
+        else if (stemp < SAMPLE_SPECS::impl_min_value) stemp = SAMPLE_SPECS::impl_min_value;
+      }
       SAMPLE_BUFFER::export_helper(target, &osize, stemp, fmt);
     }
   }

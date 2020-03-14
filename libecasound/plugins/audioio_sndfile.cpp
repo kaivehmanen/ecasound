@@ -1,6 +1,6 @@
 // ------------------------------------------------------------------------
 // audioio_sndfile.cpp: Interface to the sndfile library.
-// Copyright (C) 2003-2004,2006-2007,2009,2012 Kai Vehmanen
+// Copyright (C) 2003-2004,2006-2007,2009,2012,2020 Kai Vehmanen
 // Copyright (C) 2004 Jesse Chappell
 //
 // Attributes:
@@ -410,6 +410,7 @@ void SNDFILE_INTERFACE::write_buffer(SAMPLE_BUFFER* sbuf)
 
   sbuf->export_interleaved(get_iobuf(),
                            audioio_sndfile_sfmt,
+                           sample_coding(),
                            channels());
   write_samples(get_iobuf(), sbuf->length_in_samples());
   change_position_in_samples(sbuf->length_in_samples());

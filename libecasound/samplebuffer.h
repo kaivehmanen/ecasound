@@ -117,8 +117,8 @@ class SAMPLE_BUFFER {
 
   void import_interleaved(unsigned char* source, buf_size_t samples, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
   void import_noninterleaved(unsigned char* source, buf_size_t samples, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
-  void export_interleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
-  void export_noninterleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, channel_size_t ch);
+  void export_interleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, ECA_AUDIO_FORMAT::Sample_coding coding, channel_size_t ch);
+  void export_noninterleaved(unsigned char* target, ECA_AUDIO_FORMAT::Sample_format fmt, ECA_AUDIO_FORMAT::Sample_coding coding, channel_size_t ch);
   
   /*@}*/
         
