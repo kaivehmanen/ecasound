@@ -1,3 +1,8 @@
+2020-03-14  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
+
+	* modifications to class, ABI change
+	* library interface version to 25:0:0
+
 2012-06-03  Kai Vehmanen  <kaiv@.devtag.AUTHORS>
 
 	* library interface version 24:0:0 frozen (2.9.0 release)
