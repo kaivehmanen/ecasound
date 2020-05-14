@@ -105,7 +105,6 @@ plugin_all_sources = 	$(all_af_src) \
 libecasound_plugins_la_SOURCES          = audioio_dummy.cpp $(plugin_cond_sources)
 EXTRA_libecasound_plugins_la_SOURCES    = $(plugin_all_sources)
 libecasound_plugins_la_LIBADD		= $(ECA_S_EXTRA_LIBS)
-libecasound_plugins_la_LDFLAGS 		= -static
 
 libecasound_plugins_debug_la_SOURCES	= $(libecasound_plugins_la_SOURCES)
 EXTRA_libecasound_plugins_debug_la_SOURCES = $(EXTRA_libecasound_plugins_la_SOURCES)
