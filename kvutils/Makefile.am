@@ -56,13 +56,12 @@ kvutil_headers = 	kvu_dbc.h \
 			kvu_value_queue.h
 
 libkvutils_la_SOURCES = $(kvutil_sources) $(kvutil_headers)
-libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:@LIBKVUTILS_VERSION_AGE@ -static
+libkvutils_la_LDFLAGS = -version-info @LIBKVUTILS_VERSION@:0:@LIBKVUTILS_VERSION_AGE@
 
 libkvutils_debug_la_SOURCES = $(libkvutils_la_SOURCES)
 libkvutils_debug_la_LDFLAGS = $(libkvutils_la_LDFLAGS)
 
 libkvutils_tester_SOURCES = libkvutils_tester.cpp
-libkvutils_tester_LDFLAGS = -static
 libkvutils_tester_LDADD = $(lib_LTLIBRARIES)
 
 noinst_HEADERS = $(kvutil_headers)

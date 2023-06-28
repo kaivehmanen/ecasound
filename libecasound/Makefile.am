@@ -368,7 +368,7 @@ libecasound_tester_src = \
 
 libecasound_la_SOURCES = $(ecasound_common1_src) $(ecasound_common2_src)
 libecasound_debug_la_SOURCES = $(ecasound_common1_src) $(ecasound_common2_src)
-libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags) -static
+libecasound_la_LDFLAGS = -export-dynamic $(eca_ldflags)
 libecasound_la_LIBADD = $(eca_libadd)
 libecasound_debug_la_LDFLAGS = $(libecasound_la_LDFLAGS)
 libecasound_debug_la_LIBADD = $(libecasound_la_LIBADD)

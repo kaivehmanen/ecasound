@@ -14,9 +14,9 @@ AUTOMAKE_OPTIONS = foreign
 # !!!
 # remember to update eca-version.cpp
 if ECA_AM_DEBUG_MODE
-eca_ldflags = -version-info @LIBECASOUNDC_VERSION@:0:@LIBECASOUNDC_VERSION_AGE@ -static
+eca_ldflags = -version-info @LIBECASOUNDC_VERSION@:0:@LIBECASOUNDC_VERSION_AGE@
 else
-eca_ldflags = -s -version-info @LIBECASOUNDC_VERSION@:0:@LIBECASOUNDC_VERSION_AGE@ -static
+eca_ldflags = -s -version-info @LIBECASOUNDC_VERSION@:0:@LIBECASOUNDC_VERSION_AGE@
 endif
 
 AM_CPPFLAGS = -I$(srcdir)
