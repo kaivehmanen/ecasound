@@ -1006,9 +1006,11 @@ dnl Check for readline.h or readline/readline.h (same with history.h)
 dnl and for readline and history libraries
 
 if test x$enable_sysreadline = xyes; then
-  AC_CHECK_HEADER(readline.h, ECA_S_READLINE_INCLUDES=/usr/include, 
+  PKG_CHECK_MODULES([READLINE], [readline])
+  READLINE_INCFLAGS=`pkg-config readline --variable includedir`
+  AC_CHECK_HEADER(readline.h, ECA_S_READLINE_INCLUDES=$READLINE_INCFLAGS,
     [AC_CHECK_HEADER(readline/readline.h,
-		     ECA_S_READLINE_INCLUDES=/usr/include/readline,
+		     ECA_S_READLINE_INCLUDES="$READLINE_INCFLAGS/readline",
       [
         AC_MSG_WARN([*** readline headers not installed ***])
 	enable_sysreadline=no	 
@@ -1028,7 +1030,7 @@ if test x$enable_sysreadline = xyes; then
      readline_extra_libs="-l${termcap_library}"
   fi
 
-  AC_CHECK_LIB(readline, main, ECA_S_READLINE_LIBS="-lreadline", 
+  AC_CHECK_LIB(readline, main, ECA_S_READLINE_LIBS=$READLINE_LIBS,
     [
       AC_MSG_WARN([*** readline support not installed ***])
       enable_sysreadline=no
