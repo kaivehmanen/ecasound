@@ -602,7 +602,7 @@ then
         pyecasound_support=none
 	AC_MSG_RESULT([none])
 	if test x$PYTHONPATH != xnone; then
-	    python_prefix_tmp=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+	    python_prefix_tmp=`python -c "import sys; print (sys.prefix + '/lib/python' + '{0}.{1}'.format(sys.version_info.major, sys.version_info.minor))"`
 	else
 	    python_prefix_tmp="DIR"
 	fi
@@ -617,7 +617,7 @@ then
     else
         pymoddirs="/usr/local/lib /usr/lib"
         dnl -- Double-brackets to espace the real brackets
-        pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + sys.version[[:3]])"`
+        pymoddirsmore=`python -c "import sys; print (sys.prefix + '/lib/python' + '{0}.{1}'.format(sys.version_info.major, sys.version_info.minor))"`
         pymoddirs="$pymoddirs $pymoddirsmore"
 	AC_MSG_RESULT($pymoddirs)
     fi
